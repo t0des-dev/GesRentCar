@@ -47,6 +47,12 @@ self.addEventListener('fetch', (event) => {
     return; // don't intercept — browser handles it normally
   }
 
+  // CRITICAL: Cache API only supports GET requests. 
+  // Bypass cache for POST, PUT, DELETE (e.g., admin forms, bookings)
+  if (event.request.method !== 'GET') {
+    return; 
+  }
+
   // Same-origin: stale-while-revalidate strategy
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) =>
