@@ -23,6 +23,8 @@ Route::prefix('auth')->group(function () {
                 'user' => $request->user(),
             ];
         });
+        Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+        Route::put('/user/password', [AuthController::class, 'updatePassword']);
     });
 });
 

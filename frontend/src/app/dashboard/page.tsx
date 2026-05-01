@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import {
   Car, Calendar, FileText, CreditCard,
   Download, Clock, CheckCircle, XCircle, AlertCircle,
-  User, LogOut, ChevronRight, Loader2, ArrowRight, Crown, MapPin
+  User, LogOut, ChevronRight, Loader2, ArrowRight, Crown, MapPin, Shield
 } from "lucide-react";
 import { useMyReservations, useCancelReservation } from "@/hooks/useApi";
 import { useSession, signOut } from "next-auth/react";
@@ -222,13 +222,22 @@ export default function DashboardPage() {
               <p className="text-slate-500 text-sm font-medium mt-2">Votre voyage sur mesure continue ici.</p>
             </div>
           </div>
-          <button 
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="mt-8 md:mt-0 flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all group"
-          >
-            <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-            Quitter le Salon
-          </button>
+          <div className="flex flex-col md:flex-row items-center gap-6 mt-8 md:mt-0">
+            <Link 
+              href="/dashboard/profile"
+              className="flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all group"
+            >
+              <Shield size={16} className="text-primary group-hover:scale-110 transition-transform" /> 
+              Sécurité & Profil
+            </Link>
+            <button 
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all group"
+            >
+              <LogOut size={16} className="group-hover:-translate-x-1 transition-transform text-red-500" /> 
+              Quitter le Salon
+            </button>
+          </div>
         </header>
 
         {/* ── KPI GRID ───────────────────────────────────────────────────── */}

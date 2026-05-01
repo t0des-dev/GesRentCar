@@ -57,4 +57,34 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Déconnecté']);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($request->only('name', 'email'));
+
+        return response()->json([
+            'message' => 'Profil mis à jour avec succès',
+            'user' => $user
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|current_password',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $request->user()->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return response()->json(['message' => 'Mot de passe modifié avec succès']);
+    }
 }
