@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
   Car, Calendar, FileText, CreditCard,
@@ -110,6 +110,11 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<"all" | ReservationStatus>("all");
   const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
   const { data: apiReservations, isLoading: reservationsLoading } = useMyReservations();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Use API data if available, otherwise fall back to mocks for demo
   const RESERVATIONS: Reservation[] = (apiReservations as any)?.data ?? MOCK_RESERVATIONS;
@@ -175,7 +180,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-right">
                     <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">Investissement</p>
-                    <p className="font-black text-2xl text-white">{selectedRes.totalPrice.toLocaleString()} DH</p>
+                    <p className="font-black text-2xl text-white">{mounted ? selectedRes.totalPrice.toLocaleString() : selectedRes.totalPrice} DH</p>
                     <p className="text-[10px] text-emerald-400 font-bold mt-1 uppercase tracking-widest">Transaction Sécurisée</p>
                   </div>
                 </div>
@@ -234,7 +239,7 @@ export default function DashboardPage() {
           <KpiCard 
             icon={CreditCard} 
             label="Total Investi" 
-            value={`${totalSpent.toLocaleString()} DH`} 
+            value={mounted ? `${totalSpent.toLocaleString()} DH` : `${totalSpent} DH`} 
             color="bg-white/5 text-white border-white/10"
           />
         </div>
@@ -318,7 +323,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right lg:text-right w-full lg:w-auto border-t lg:border-none pt-6 lg:pt-0 border-white/5">
                       <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">Montant Total</p>
-                      <p className="text-4xl font-black text-white tracking-tighter">{res.totalPrice.toLocaleString()} <span className="text-sm font-medium text-slate-500">DH</span></p>
+                      <p className="text-4xl font-black text-white tracking-tighter">{mounted ? res.totalPrice.toLocaleString() : res.totalPrice} <span className="text-sm font-medium text-slate-500">DH</span></p>
                       <p className="text-[10px] text-emerald-400 font-bold mt-2 uppercase tracking-widest">Virement Confirmé</p>
                     </div>
                   </div>
