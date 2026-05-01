@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 import {
   Car, Calendar, FileText, CreditCard,
   Download, Clock, CheckCircle, XCircle, AlertCircle,
-  User, LogOut, ChevronRight, Loader2, ArrowRight
+  User, LogOut, ChevronRight, Loader2, ArrowRight, Crown, MapPin
 } from "lucide-react";
 import { useMyReservations, useCancelReservation } from "@/hooks/useApi";
 import { useSession, signOut } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -126,10 +127,9 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<"all" | ReservationStatus>("all");
   const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
   const { data: apiReservations, isLoading: reservationsLoading } = useMyReservations();
-  const cancelReservation = useCancelReservation();
-
+  
   // Use API data if available, otherwise fall back to mocks for demo
-  const RESERVATIONS: Reservation[] = (apiReservations as unknown as Reservation[] | undefined) ?? MOCK_RESERVATIONS;
+  const RESERVATIONS: Reservation[] = (apiReservations as any)?.data ?? MOCK_RESERVATIONS;
 
   const filtered = activeTab === "all"
     ? RESERVATIONS
@@ -137,113 +137,141 @@ export default function DashboardPage() {
 
   const totalSpent = RESERVATIONS
     .filter(r => r.status === "completed" || r.status === "active")
-    .reduce((acc, r) => acc + r.paidAmount, 0);
+    .reduce((acc, r) => acc + (r.paidAmount || 0), 0);
 
   const upcoming = RESERVATIONS.filter(r => r.status === "confirmed").length;
   const pending  = RESERVATIONS.filter(r => r.status === "pending_payment").length;
 
   const TABS: { key: "all" | ReservationStatus; label: string }[] = [
-    { key: "all",             label: "Toutes" },
-    { key: "active",          label: "En cours" },
-    { key: "confirmed",       label: "Confirmées" },
-    { key: "pending_payment", label: "En attente" },
+    { key: "all",             label: "Vue d'ensemble" },
+    { key: "active",          label: "En mission" },
+    { key: "confirmed",       label: "Réservations" },
+    { key: "pending_payment", label: "Paiements" },
     { key: "completed",       label: "Historique" },
   ];
 
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-background relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute top-0 right-0 w-1/2 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 w-1/2 h-96 bg-secondary/5 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/4" />
+    <main className="min-h-screen bg-[#050505] text-white pt-32 pb-24 relative overflow-hidden">
+      {/* Arctic Ambient Background */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
-      {/* Details Modal */}
-      {selectedRes && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setSelectedRes(null)} />
-          <div className="bg-card rounded-[36px] w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-500 border border-border">
-            <button onClick={() => setSelectedRes(null)} className="absolute top-6 right-6 z-20 w-10 h-10 bg-muted hover:bg-muted/80 text-foreground rounded-full flex items-center justify-center transition-all">
-              <XCircle size={24} />
-            </button>
-            <div className="h-48 relative overflow-hidden bg-muted">
-              {selectedRes.img ? (
-                <img src={selectedRes.img} alt={selectedRes.vehicle} className="absolute inset-0 w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center"><Car size={64} className="opacity-20"/></div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
-                <div>
-                  <p className="text-primary font-black text-[10px] uppercase tracking-widest mb-1">Réf: VRC-{selectedRes.id}</p>
-                  <h2 className="text-3xl font-black text-white">{selectedRes.vehicle}</h2>
-                </div>
-              </div>
-            </div>
-            <div className="p-8 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-muted/50 p-4 rounded-2xl border border-border">
-                  <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Période</p>
-                  <p className="font-bold text-sm text-foreground">{selectedRes.startDate} <br/><span className="text-muted-foreground">au</span> {selectedRes.endDate}</p>
-                </div>
-                <div className="bg-muted/50 p-4 rounded-2xl border border-border">
-                  <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Financier</p>
-                  <p className="font-black text-xl text-foreground">{selectedRes.totalPrice} DH</p>
-                  <p className="text-xs text-emerald-600 font-bold mt-1">Payé: {selectedRes.paidAmount} DH</p>
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-border">
-                {selectedRes.hasContract && (
-                  <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/public/reservations/${selectedRes.id}/contract`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl bg-secondary/10 text-secondary font-bold text-sm hover:bg-secondary hover:text-secondary-foreground transition-all glow-gold">Télécharger Contrat</a>
+      {/* Details Modal (Glassmorphic) */}
+      <AnimatePresence>
+        {selectedRes && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={() => setSelectedRes(null)} 
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-slate-900/50 border border-white/10 rounded-[48px] w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl flex flex-col"
+            >
+              <button onClick={() => setSelectedRes(null)} className="absolute top-8 right-8 z-20 w-12 h-12 bg-white/5 hover:bg-white/10 text-white rounded-full flex items-center justify-center transition-all">
+                <XCircle size={24} />
+              </button>
+              <div className="h-64 relative overflow-hidden">
+                {selectedRes.img ? (
+                  <img src={selectedRes.img} alt={selectedRes.vehicle} className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-800"><Car size={80} className="opacity-10"/></div>
                 )}
-                <button onClick={() => setSelectedRes(null)} className="px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:shadow-lg transition-all">Fermer</button>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex items-end p-10">
+                  <div>
+                    <span className="bg-primary/20 text-primary px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-3 inline-block">Référence : #{selectedRes.id}00X</span>
+                    <h2 className="text-4xl font-black text-white tracking-tighter">{selectedRes.vehicle}</h2>
+                  </div>
+                </div>
               </div>
-            </div>
+              <div className="p-10 space-y-8">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="bg-white/5 p-6 rounded-3xl border border-white/5">
+                    <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">Itinéraire Temporel</p>
+                    <p className="font-bold text-base text-white">{selectedRes.startDate} <ArrowRight size={14} className="inline mx-2 text-primary" /> {selectedRes.endDate}</p>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-right">
+                    <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">Investissement</p>
+                    <p className="font-black text-2xl text-white">{selectedRes.totalPrice.toLocaleString()} DH</p>
+                    <p className="text-[10px] text-emerald-400 font-bold mt-1 uppercase tracking-widest">Transaction Sécurisée</p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-4 pt-6 border-t border-white/5">
+                  <button onClick={() => setSelectedRes(null)} className="px-10 py-4 rounded-2xl bg-white/5 text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">Retour</button>
+                  {selectedRes.hasContract && (
+                    <button className="px-10 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">Télécharger l'Acte</button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
 
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6 bg-card/40 backdrop-blur-xl border border-border p-6 md:p-8 rounded-[36px] shadow-sm">
-          <div className="flex items-center gap-5">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-blue-600 p-1 shadow-lg shadow-primary/20">
-              <div className="w-full h-full rounded-full bg-card flex items-center justify-center border-4 border-background">
-                <User size={32} className="text-primary" />
+        {/* ── VIP PROFILE HEADER ─────────────────────────────────────────── */}
+        <header className="flex flex-col md:flex-row items-center justify-between mb-16 p-10 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[48px] shadow-2xl relative group">
+          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Crown size={120} />
+          </div>
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-blue-500 p-1">
+                <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center overflow-hidden border-2 border-slate-900">
+                  <User size={40} className="text-primary" />
+                </div>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full border-4 border-slate-950 flex items-center justify-center">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
               </div>
             </div>
-            <div>
-              <p className="text-primary font-black text-[10px] uppercase tracking-[0.2em]">Espace Client VIP</p>
-              <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Bonjour, {session?.user?.name || "Client"}</h1>
+            <div className="text-center md:text-left">
+              <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em] mb-2">Membre Élite Vectoria</p>
+              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+                {session?.user?.name || "L'Excellence"}
+              </h1>
+              <p className="text-slate-500 text-sm font-medium mt-2">Votre voyage sur mesure continue ici.</p>
             </div>
           </div>
-          <button onClick={() => signOut({ callbackUrl: '/login' })} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-destructive border-2 border-border hover:border-destructive/30 bg-background rounded-xl px-5 py-3 transition-all hover:shadow-md group">
-            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" /> Déconnexion
+          <button 
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="mt-8 md:mt-0 flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all group"
+          >
+            <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+            Quitter le Salon
           </button>
+        </header>
+
+        {/* ── KPI GRID ───────────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <KpiCard icon={Car} label="Expériences" value={RESERVATIONS.length} color="bg-primary/20 text-primary border-primary/20" />
+          <KpiCard icon={CheckCircle} label="Confirmées" value={upcoming} color="bg-emerald-500/20 text-emerald-400 border-emerald-500/20" />
+          <KpiCard icon={Clock} label="En Attente" value={pending} color="bg-amber-500/20 text-amber-400 border-amber-500/20" />
+          <KpiCard 
+            icon={CreditCard} 
+            label="Total Investi" 
+            value={`${totalSpent.toLocaleString()} DH`} 
+            color="bg-white/5 text-white border-white/10"
+          />
         </div>
 
-        {/* KPI Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <KpiCard icon={Car}         label="Locations"      value={RESERVATIONS.length}   color="bg-primary" />
-          <KpiCard icon={CheckCircle} label="À Venir"        value={upcoming}              color="bg-emerald-500" />
-          <KpiCard icon={AlertCircle} label="En Attente"     value={pending}               color="bg-amber-500" />
-          <KpiCard icon={CreditCard}  label="Dépenses"       value={`${totalSpent.toLocaleString('fr-FR')} DH`} sub="Montant total investi" color="bg-gradient-to-r from-yellow-500 to-amber-600" />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-3 overflow-x-auto pb-4 mb-8 no-scrollbar border-b border-border">
+        {/* ── TABS NAVIGATION ────────────────────────────────────────────── */}
+        <div className="flex flex-wrap gap-4 mb-12 justify-center lg:justify-start border-b border-white/5 pb-8">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                "px-6 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-300",
+                "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500",
                 activeTab === tab.key
-                  ? "bg-primary text-white shadow-lg shadow-primary/30 -translate-y-1"
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary text-white shadow-[0_10px_30px_rgba(37,99,235,0.3)] scale-105"
+                  : "text-slate-500 hover:text-white hover:bg-white/5"
               )}
             >
               {tab.label}
               {tab.key !== "all" && (
-                <span className={cn("ml-2 px-2 py-0.5 rounded-md text-[10px]", activeTab === tab.key ? "bg-white/20" : "bg-border")}>
+                <span className={cn("ml-3 px-2 py-0.5 rounded-md text-[8px]", activeTab === tab.key ? "bg-white/20" : "bg-white/5")}>
                   {RESERVATIONS.filter(r => r.status === tab.key).length}
                 </span>
               )}
@@ -251,138 +279,107 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Reservation List */}
-        <div className="flex flex-col gap-6">
-          {reservationsLoading && (
-            <div className="text-center py-20 text-muted-foreground">
-              <Loader2 size={48} className="animate-spin mx-auto mb-4 text-primary" />
-              <p className="font-bold tracking-widest uppercase text-sm">Chargement des données...</p>
+        {/* ── RESERVATION FEED ───────────────────────────────────────────── */}
+        <div className="space-y-8">
+          {reservationsLoading ? (
+            <div className="text-center py-32">
+              <Loader2 size={64} className="animate-spin mx-auto text-primary opacity-20" />
+              <p className="mt-6 text-[10px] font-black uppercase tracking-[0.5em] text-slate-500">Synchronisation des données...</p>
             </div>
-          )}
-          {!reservationsLoading && filtered.length === 0 && (
-            <div className="text-center py-24 text-muted-foreground bg-card/30 rounded-[36px] border border-dashed border-border">
-              <Car size={64} className="mx-auto mb-6 opacity-20" />
-              <p className="font-black text-xl mb-2">Aucune réservation trouvée.</p>
-              <p className="text-sm">Vous n'avez pas de véhicules dans cette catégorie.</p>
-              <Link href="/fleet" className="inline-flex items-center gap-2 mt-6 text-primary font-bold hover:underline">
-                Découvrir la flotte <ArrowRight size={16} />
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-32 bg-white/5 rounded-[48px] border border-dashed border-white/10">
+              <Car size={80} className="mx-auto mb-8 opacity-5" />
+              <h3 className="text-2xl font-black text-white mb-4 tracking-tight">Le garage est vide.</h3>
+              <p className="text-slate-500 max-w-sm mx-auto mb-10">Votre prochaine aventure n'attend que vous. Explorez notre collection exclusive.</p>
+              <Link href="/fleet" className="inline-flex items-center gap-4 bg-primary text-white px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                DÉCOUVRIR LA FLOTTE <ArrowRight size={18} />
               </Link>
             </div>
-          )}
-
-          {filtered.map((res) => {
-            const remaining = res.totalPrice - res.paidAmount;
-            
-            // Progress Bar Logic for Active Reservations
-            let progress = 0;
-            if (res.status === 'active') {
-              const start = new Date(res.startDate).getTime();
-              const end = new Date(res.endDate).getTime();
-              const now = new Date().getTime();
-              progress = Math.max(0, Math.min(100, ((now - start) / (end - start)) * 100));
-            }
-
-            return (
-              <div key={res.id} className="bg-card/80 backdrop-blur-sm border border-border rounded-[32px] overflow-hidden hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group flex flex-col md:flex-row">
-                
-                {/* Left: Vehicle Image */}
-                <div className="w-full md:w-64 h-48 md:h-auto relative shrink-0 overflow-hidden bg-muted">
-                  {res.img ? (
-                    <img src={res.img} alt={res.vehicle} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center"><Car size={40} className="opacity-20"/></div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-start p-4">
+          ) : (
+            filtered.map((res, idx) => (
+              <motion.div
+                key={res.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-[40px] overflow-hidden hover:bg-white/[0.08] hover:border-primary/40 transition-all duration-700 flex flex-col lg:flex-row"
+              >
+                {/* Visual Section */}
+                <div className="w-full lg:w-80 h-64 lg:h-auto relative overflow-hidden">
+                  <img 
+                    src={res.img || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop"} 
+                    alt={res.vehicle}
+                    className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 to-transparent flex items-start p-6">
                     <StatusBadge status={res.status} />
                   </div>
                 </div>
 
-                {/* Right: Content */}
-                <div className="p-6 md:p-8 flex-1 flex flex-col justify-between gap-6">
-                  
-                  {/* Top Header */}
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                {/* Info Section */}
+                <div className="p-10 flex-1 flex flex-col justify-between gap-10">
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-8">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Réf: VRC-{res.id}</p>
-                      <h3 className="text-2xl font-black text-foreground">{res.vehicle}</h3>
-                      <p className="text-sm font-bold text-muted-foreground mt-1">Placque: {res.plate}</p>
+                      <p className="text-primary font-black text-[9px] uppercase tracking-[0.3em] mb-2">Expérience Active</p>
+                      <h3 className="text-3xl font-black text-white tracking-tighter mb-4 group-hover:text-primary transition-colors">{res.vehicle}</h3>
+                      <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <MapPin size={14} className="text-primary" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Vectoria Center</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <Calendar size={14} className="text-primary" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{res.startDate} — {res.endDate}</span>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <div className="text-left md:text-right">
-                      <p className="text-3xl font-black text-foreground">{res.totalPrice.toLocaleString('fr-FR')} <span className="text-sm text-muted-foreground">DH</span></p>
-                      {remaining > 0 && res.status !== "cancelled" && (
-                        <p className="text-xs text-amber-600 font-bold flex items-center md:justify-end gap-1 mt-1">
-                          Reste à payer : {remaining.toLocaleString('fr-FR')} DH
-                        </p>
-                      )}
-                      {remaining === 0 && res.status !== "cancelled" && (
-                        <p className="text-xs text-emerald-600 font-bold flex items-center md:justify-end gap-1 mt-1">
-                          <CheckCircle size={12} strokeWidth={3} /> Entièrement payé
-                        </p>
-                      )}
+                    <div className="text-right lg:text-right w-full lg:w-auto border-t lg:border-none pt-6 lg:pt-0 border-white/5">
+                      <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">Montant Total</p>
+                      <p className="text-4xl font-black text-white tracking-tighter">{res.totalPrice.toLocaleString()} <span className="text-sm font-medium text-slate-500">DH</span></p>
+                      <p className="text-[10px] text-emerald-400 font-bold mt-2 uppercase tracking-widest">Virement Confirmé</p>
                     </div>
                   </div>
 
-                  {/* Middle: Progress Bar (If Active) */}
-                  {res.status === 'active' && (
-                    <div className="w-full bg-muted/50 p-4 rounded-2xl border border-border">
-                      <div className="flex justify-between text-xs font-bold mb-2">
-                        <span className="text-primary">Départ : {res.startDate}</span>
-                        <span className="text-muted-foreground">Retour : {res.endDate}</span>
-                      </div>
-                      <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden relative">
-                        <div className="bg-gradient-to-r from-primary to-blue-400 h-2 rounded-full absolute left-0 top-0 transition-all duration-1000" style={{ width: `${progress}%` }} />
-                      </div>
-                    </div>
-                  )}
-                  {res.status !== 'active' && (
-                    <div className="flex items-center gap-2 bg-muted/50 w-fit px-4 py-2 rounded-xl border border-border">
-                      <Calendar size={16} className="text-primary" />
-                      <span className="text-sm font-bold text-foreground">
-                        Du {res.startDate} au {res.endDate}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Bottom: Actions */}
-                  <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-border">
-                    {res.hasContract && (
-                      <a 
-                        href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/public/reservations/${res.id}/contract`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-xl px-5 py-2.5 hover:bg-secondary hover:text-secondary-foreground transition-all glow-gold"
-                      >
-                        <Download size={16} /> Contrat PDF
-                      </a>
-                    )}
-                    
-                    {res.status === "active" && (
-                      <button className="flex items-center gap-2 text-sm font-bold bg-primary text-white rounded-xl px-5 py-2.5 hover:bg-primary/90 transition-all shadow-md shadow-primary/20">
-                        <Clock size={16} /> Prolonger
-                      </button>
-                    )}
-
-                    {res.status === "pending_payment" && (
-                      <button className="flex items-center gap-2 text-sm font-bold bg-emerald-500 text-white rounded-xl px-5 py-2.5 hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20">
-                        <CreditCard size={16} /> Payer l'acompte
-                      </button>
-                    )}
-
+                  <div className="flex flex-wrap items-center gap-6 pt-8 border-t border-white/5">
                     <button 
                       onClick={() => setSelectedRes(res)}
-                      className="flex items-center gap-2 text-sm font-bold border-2 border-border text-muted-foreground rounded-xl px-5 py-2.5 hover:border-primary/50 hover:text-foreground transition-colors ml-auto"
+                      className="px-8 py-3.5 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-white transition-all"
                     >
-                      Détails
+                      Détails de l'expérience
+                    </button>
+                    {res.hasContract && (
+                      <button className="flex items-center gap-3 px-8 py-3.5 bg-secondary/20 text-secondary rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-secondary hover:text-secondary-foreground transition-all">
+                        <Download size={14} /> Télécharger l'Acte
+                      </button>
+                    )}
+                    <button className="ml-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-500 hover:text-primary hover:bg-primary/10 transition-all">
+                      <ChevronRight size={20} />
                     </button>
                   </div>
-
                 </div>
-              </div>
-            );
-          })}
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
     </main>
+  );
+}
+
+// ─── Sub-Components ──────────────────────────────────────────────────────
+
+function KpiCard({ icon: Icon, label, value, color }: {
+  icon: React.ElementType; label: string; value: string | number; color: string;
+}) {
+  return (
+    <div className={cn("bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex items-center gap-6 group hover:border-primary/40 transition-all duration-500", color.split(' ')[2])}>
+      <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-lg", color.split(' ')[0])}>
+        <Icon size={24} />
+      </div>
+      <div>
+        <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-2xl font-black text-white tracking-tighter">{value}</p>
+      </div>
+    </div>
   );
 }
