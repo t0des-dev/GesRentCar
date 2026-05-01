@@ -239,11 +239,11 @@ export default function Home() {
                     id={v.id}
                     brand={v.brand}
                     model={v.model}
-                    type={v.type}
+                    type={v.category || v.type}
                     price={v.price_per_day}
                     seats={(v as any).seats ?? 5}
-                    fuel={(v as any).fuel ?? "Essence"}
-                    transmission={(v as any).transmission ?? "Automatique"}
+                    fuel={v.fuel_type || (v as any).fuel || "Diesel"}
+                    transmission={v.transmission || "Automatique"}
                     imageUrl={v.image_url ?? undefined}
                     dynamicPrice={v.dynamic_price}
                     dynamicReason={v.dynamic_reason}

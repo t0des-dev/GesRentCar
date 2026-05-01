@@ -52,150 +52,133 @@ export default function VehicleCard({
   return (
     <div
       className={cn(
-        "group flex flex-col bg-card border border-border/60 rounded-3xl overflow-hidden relative",
-        "shadow-md hover:shadow-2xl hover:-translate-y-2 hover:border-primary/40 transition-all duration-300",
+        "group flex flex-col bg-card border border-border/60 rounded-[40px] overflow-hidden relative",
+        "shadow-lg hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-4 hover:border-primary/20 transition-all duration-700",
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 group-hover:before:opacity-100 before:transition-opacity",
         className
       )}
     >
+      {/* Glow Effect */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-[40px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
       {/* Dynamic Pricing Badge */}
       {dynamicReason && (
-        <div className="absolute top-14 left-3 z-10 bg-white/90 backdrop-blur-md text-primary text-[10px] font-black px-2 py-1 rounded-lg shadow-sm border border-primary/10 animate-pulse">
+        <div className="absolute top-14 left-6 z-10 bg-white/90 backdrop-blur-md text-primary text-[10px] font-black px-4 py-2 rounded-xl shadow-xl border border-primary/10 animate-pulse">
           {dynamicReason.toUpperCase()}
         </div>
       )}
-      {/* Image */}
-      <div className="relative aspect-[16/9] bg-muted overflow-hidden">
+
+      {/* Image Container */}
+      <div className="relative aspect-[16/10] bg-muted overflow-hidden">
         {imageUrl ? (
           <img
             src={imageUrl.startsWith('/storage') ? `http://localhost:8000${imageUrl}` : imageUrl}
             alt={`${brand} ${model}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s] ease-out"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-20 h-20 text-muted-foreground/30" fill="none" stroke="currentColor" strokeWidth={1}>
-              <path d="M19 17H5a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2z" />
-              <path d="M7 17v2m10-2v2M3 13h18M9 7l1-3h4l1 3" />
-            </svg>
+            <Car size={64} className="text-muted-foreground/20" />
           </div>
         )}
 
         {/* Quick View Overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[4px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700">
           <button 
             onClick={(e) => { e.preventDefault(); onQuickView?.(); }}
-            className="bg-white text-slate-900 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-primary hover:text-white"
+            className="bg-white text-slate-900 px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] flex items-center gap-3 transform translate-y-8 group-hover:translate-y-0 transition-all duration-700 hover:bg-primary hover:text-white hover:scale-105"
           >
-            <Eye size={16} /> Aperçu Rapide
+            <Eye size={18} /> Vision 360°
           </button>
         </div>
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        {/* Type Badge */}
+        <div className="absolute top-6 left-6 flex flex-col gap-2">
+          <span className="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/10 uppercase tracking-widest">
+            {type}
+          </span>
+        </div>
 
-        {/* Type badge */}
-        <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full shadow-md">
-          {type}
-        </span>
-
-        {/* Rating */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full">
-          <Star size={11} className="fill-yellow-400 text-yellow-400" />
-          <span className="font-semibold">{rating}</span>
+        {/* Top Right: Rating */}
+        <div className="absolute top-6 right-6 flex items-center gap-2 bg-white/90 backdrop-blur-md text-slate-900 text-xs px-3 py-1.5 rounded-2xl border border-slate-100 shadow-lg">
+          <Star size={14} className="fill-yellow-400 text-yellow-400" />
+          <span className="font-black">{rating}</span>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col gap-4 p-6 flex-1">
-        <div>
-          <p className="text-xs text-primary font-bold uppercase tracking-widest mb-1">{brand}</p>
-          <h3 className="text-xl font-extrabold text-foreground">{model}</h3>
-        </div>
-
-        {/* Specs */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <Users size={14} className="text-primary" />
-            {seats}
-          </span>
-          <span className="flex items-center gap-1.5" title={`${horsepower || ''} CV`}>
-            <Fuel size={14} className="text-primary" />
-            {fuel}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Gauge size={14} className="text-primary" />
-            {transmission}
-          </span>
+      {/* Content Container */}
+      <div className="flex flex-col gap-8 p-10 flex-1 bg-white relative">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">{brand}</p>
+            <h3 className="text-4xl font-black text-foreground tracking-tighter group-hover:text-primary transition-colors duration-500 leading-none">{model}</h3>
+          </div>
           {year && (
-            <span className="text-[10px] font-black bg-slate-100 px-2 py-0.5 rounded text-slate-500">
-               {year}
-            </span>
+             <span className="text-[10px] font-black bg-slate-100 px-3 py-1 rounded-lg text-slate-500 border border-slate-200">
+                {year}
+             </span>
           )}
         </div>
 
-        {/* Rarity Counter */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-            <span className={cn(
-              id % 2 === 0 ? "text-orange-500" : "text-slate-400"
-            )}>
-              {id % 2 === 0 ? "⚠️ Disponibilité Limitée" : "Disponible"}
-            </span>
-            <span className="text-slate-900">{id % 2 === 0 ? "2" : "5"}+ véhicules</span>
-          </div>
-          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div 
-              className={cn(
-                "h-full transition-all duration-1000",
-                id % 2 === 0 ? "bg-orange-500 w-[30%]" : "bg-green-500 w-[80%]"
-              )} 
-            />
-          </div>
+        {/* High-End Specs Grid */}
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { icon: Users, value: `${seats} pers`, label: "Capacité" },
+            { icon: Fuel, value: fuel, label: "Moteur" },
+            { icon: Gauge, value: transmission, label: "Boîte" }
+          ].map((spec, i) => (
+            <div key={i} className="flex flex-col gap-1 border-l-2 border-slate-100 pl-4 group/spec hover:border-primary transition-colors">
+              <spec.icon size={16} className="text-slate-400 group-hover/spec:text-primary transition-colors" />
+              <span className="text-xs font-black text-foreground">{spec.value}</span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{spec.label}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="h-px bg-border mt-auto" />
+        <div className="h-px bg-slate-100 w-full" />
 
-        {/* Price & CTA */}
-        <div className="flex items-center justify-between pt-1">
+        {/* Price & CTA Section */}
+        <div className="flex items-center justify-between mt-auto">
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-foreground">{displayPrice}</span>
+              <span className="text-4xl font-black text-foreground tracking-tighter">{displayPrice.toLocaleString()}</span>
               {isPriceChanged && (
-                <span className="text-sm text-muted-foreground line-through opacity-50">{price}</span>
+                <span className="text-sm text-muted-foreground line-through opacity-40">{price}</span>
               )}
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">DH / JOUR</span>
             </div>
-            <span className="text-sm text-muted-foreground">{t("price_per_day")}</span>
           </div>
-          <div className="flex items-center gap-2">
+          
+          <div className="flex items-center gap-4">
             <button
               onClick={(e) => {
                 e.preventDefault();
                 isSelected ? removeFromCompare(id) : addToCompare(id);
               }}
               className={cn(
-                "p-2.5 rounded-xl border transition-all",
+                "w-12 h-12 rounded-2xl border transition-all flex items-center justify-center",
                 isSelected
-                  ? "bg-secondary text-secondary-foreground border-secondary shadow-inner"
-                  : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-xl"
+                  : "bg-slate-50 text-slate-400 border-slate-100 hover:border-primary hover:text-primary"
               )}
               title="Comparer"
             >
               <ArrowRight
-                size={16}
+                size={20}
                 className={cn(
-                  "transition-transform rotate-[-45deg]",
-                  isSelected && "text-primary"
+                  "transition-transform",
+                  isSelected ? "rotate-[-45deg]" : "rotate-0"
                 )}
               />
             </button>
             <Link
               href={`/booking?vehicle=${id}`}
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl
-                         text-sm font-bold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30
-                         transition-all group/btn"
+              className="bg-slate-900 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest
+                         hover:bg-primary hover:shadow-2xl hover:shadow-primary/40
+                         transition-all group/btn flex items-center gap-2"
             >
               {t("rent_now")}
-              <ArrowRight size={15} className="group-hover/btn:translate-x-0.5 transition-transform" />
+              <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>

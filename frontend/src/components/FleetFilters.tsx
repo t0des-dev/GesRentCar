@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { SlidersHorizontal, X, Car, Gauge, Users, Wallet, RotateCcw } from "lucide-react";
+import { SlidersHorizontal, Car, Gauge, Users, Wallet, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
 const TRANSMISSIONS = ["All", "Automatic", "Manual"];
@@ -42,25 +43,27 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
   };
 
   return (
-    <div className={cn("flex flex-col gap-10", className)}>
+    <div className={cn("flex flex-col gap-12", className)}>
       {/* Title & Reset */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+        <h3 className="text-xl font-black text-foreground tracking-tighter flex items-center gap-3">
           <SlidersHorizontal size={20} className="text-primary" />
-          Filtres
+          FILTRES
         </h3>
-        <button 
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={reset}
-          className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary flex items-center gap-2 transition-all"
+          className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-primary flex items-center gap-2 transition-all bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
         >
-          <RotateCcw size={12} /> Réinitialiser
-        </button>
+          <RotateCcw size={10} /> CLEAR
+        </motion.button>
       </div>
 
       {/* Category: Vehicle Type */}
       <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2">
-          <Car size={14} /> Catégorie
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
+          <Car size={14} /> CATÉGORIE
         </label>
         <div className="flex flex-col gap-2">
           {TYPES.map((t) => (
@@ -68,16 +71,16 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
               key={t}
               onClick={() => update("type", t)}
               className={cn(
-                "group flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all border",
+                "group flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black transition-all border",
                 filters.type === t
-                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                  : "bg-white border-slate-100 text-slate-600 hover:border-primary/40 hover:bg-slate-50"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-xl"
+                  : "bg-transparent border-white/10 text-slate-400 hover:border-primary/40 hover:bg-white/5"
               )}
             >
-              {t}
+              {t.toUpperCase()}
               <div className={cn(
-                "w-2 h-2 rounded-full transition-all",
-                filters.type === t ? "bg-white" : "bg-slate-200 group-hover:bg-primary/40"
+                "w-1.5 h-1.5 rounded-full transition-all",
+                filters.type === t ? "bg-primary scale-150" : "bg-slate-700 group-hover:bg-primary/40"
               )} />
             </button>
           ))}
@@ -86,22 +89,22 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
 
       {/* Category: Transmission */}
       <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2">
-          <Gauge size={14} /> Transmission
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
+          <Gauge size={14} /> TRANSMISSION
         </label>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {TRANSMISSIONS.map((t) => (
             <button
               key={t}
               onClick={() => update("transmission", t)}
               className={cn(
-                "flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all border",
+                "flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black transition-all border uppercase tracking-widest",
                 filters.transmission === t
-                  ? "bg-slate-900 text-white border-slate-900 shadow-lg"
-                  : "bg-white border-slate-100 text-slate-600 hover:border-slate-900/40"
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                  : "bg-transparent border-white/10 text-slate-500 hover:border-white/20"
               )}
             >
-              {t}
+              {t === "All" ? "TOUT" : t.toUpperCase()}
             </button>
           ))}
         </div>
@@ -109,8 +112,8 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
 
       {/* Category: Seats */}
       <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2">
-          <Users size={14} /> Places
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
+          <Users size={14} /> CAPACITÉ
         </label>
         <div className="flex flex-wrap gap-2">
           {SEATS.map((s) => (
@@ -118,10 +121,10 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
               key={s}
               onClick={() => update("seats", s)}
               className={cn(
-                "w-12 h-12 flex items-center justify-center rounded-xl text-sm font-black border transition-all",
+                "w-12 h-12 flex items-center justify-center rounded-2xl text-xs font-black border transition-all",
                 filters.seats === s
-                  ? "bg-primary text-white border-primary"
-                  : "bg-white border-slate-100 text-slate-400 hover:border-primary/40"
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-transparent border-white/10 text-slate-500 hover:border-primary/40"
               )}
             >
               {s}
@@ -133,10 +136,10 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
       {/* Category: Price Range */}
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2">
-            <Wallet size={14} /> Prix Max
+          <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
+            <Wallet size={14} /> PRIX MAX
           </label>
-          <span className="text-sm font-black text-slate-900">{filters.maxPrice} DH/j</span>
+          <span className="text-sm font-black text-foreground">{filters.maxPrice} DH/J</span>
         </div>
         <div className="relative pt-2">
           <input
@@ -146,11 +149,11 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
             step="50"
             value={filters.maxPrice}
             onChange={(e) => update("maxPrice", Number(e.target.value))}
-            className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary"
+            className="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer accent-primary"
           />
-          <div className="flex justify-between mt-3">
-            <span className="text-[10px] font-bold text-slate-300">200 DH</span>
-            <span className="text-[10px] font-bold text-slate-300">3000+ DH</span>
+          <div className="flex justify-between mt-4">
+            <span className="text-[9px] font-black text-slate-600 tracking-tighter">200 DH</span>
+            <span className="text-[9px] font-black text-slate-600 tracking-tighter">3000+ DH</span>
           </div>
         </div>
       </div>

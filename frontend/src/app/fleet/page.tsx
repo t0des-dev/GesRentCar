@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useVehicles } from "@/hooks/useApi";
 import QuickViewModal from "@/components/QuickViewModal";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const VEHICLES = [
   { id: 1, brand: "Mercedes", model: "Class C 220d", type: "Sedan", price: 850, seats: 5, fuel: "Diesel", transmission: "Automatic", rating: 4.9 },
@@ -64,128 +66,179 @@ function FleetContent() {
   const totalPages = apiData?.last_page ?? 1;
 
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-white relative">
-      {/* Dynamic Background */}
-      <div className="absolute top-0 inset-x-0 h-[600px] bg-slate-50 border-b border-slate-100" />
+    <main className="min-h-screen pt-32 pb-24 bg-background relative selection:bg-primary/20 overflow-hidden">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 inset-x-0 h-[1000px] pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
+      </div>
       
       <div className="container mx-auto px-4 relative z-10">
         
-        {/* Breadcrumbs / Back */}
-        <div className="flex items-center gap-2 mb-12 animate-fade-in">
-          <Link href="/" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">Accueil</Link>
-          <div className="w-1 h-1 bg-slate-300 rounded-full" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Flotte</span>
-        </div>
+        {/* Premium Header */}
+        <div className="mb-24">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-3 mb-8"
+          >
+            <div className="w-12 h-px bg-primary" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Luxury Fleet 2026</span>
+          </motion.div>
 
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
-          <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-none">
-              Explorez la <br /><span className="text-gradient">Collection</span>.
-            </h1>
-            <p className="text-slate-500 font-medium text-lg max-w-xl">
-              Choisissez l'excellence parmi notre sélection de véhicules de prestige, disponibles immédiatement.
-            </p>
-          </div>
-          
-          {/* Search Box */}
-          <div className="w-full md:w-96 relative group">
-            <div className="absolute inset-0 bg-primary/5 blur-xl group-focus-within:bg-primary/10 transition-all" />
-            <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
-            <input
-              type="text"
-              placeholder="Rechercher un modèle..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-16 pr-6 py-5 rounded-[24px] border border-slate-200 bg-white text-slate-900 font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all relative z-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-16">
-          
-          {/* Sidebar Filters */}
-          <aside className="w-full lg:w-80 shrink-0">
-            <div className="sticky top-32">
-              <FleetFilters onFilter={(f) => { setFilters(f); setPage(1); }} />
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+            <div className="max-w-3xl">
+              <motion.h1 
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-7xl md:text-[120px] font-black text-foreground tracking-tighter leading-[0.85] mb-8"
+              >
+                L'ART DE LA <br />
+                <span className="text-gradient-gold">PERFORMANCE</span>.
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-slate-500 font-medium text-xl md:text-2xl max-w-xl leading-relaxed opacity-80"
+              >
+                Découvrez une collection de véhicules d'exception, alliant ingénierie de pointe et design intemporel.
+              </motion.p>
             </div>
+            
+            {/* Search Glassmorphism */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="w-full lg:w-[400px] relative group"
+            >
+              <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-2xl transition-all group-focus-within:border-primary/50" />
+              <Search size={22} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <input
+                type="text"
+                placeholder="Chercher une icône..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="w-full pl-20 pr-8 py-7 rounded-[32px] bg-transparent text-foreground font-black text-lg focus:outline-none relative z-10 placeholder:text-slate-600"
+              />
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-20">
+          
+          {/* Advanced Sidebar Filters */}
+          <aside className="w-full lg:w-80 shrink-0">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="sticky top-32 space-y-8"
+            >
+              <div className="p-8 rounded-[40px] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
+                <FleetFilters onFilter={(f) => { setFilters(f); setPage(1); }} />
+              </div>
+
+              {/* Promo Card */}
+              <div className="p-8 rounded-[40px] bg-primary relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                <h4 className="text-white font-black text-lg mb-2 relative z-10">Membre Privilège ?</h4>
+                <p className="text-white/70 text-xs font-medium mb-6 relative z-10">Bénéficiez de -15% sur toute la collection Sport.</p>
+                <button className="bg-white text-primary px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">S'inscrire</button>
+              </div>
+            </motion.div>
           </aside>
 
-          {/* Main Catalog Grid */}
-          <div className="flex-1 space-y-12">
-            {/* Sorting & Stats */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-6">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                {isLoading ? "Synchronisation..." : `${filtered.length} véhicules disponibles`}
-              </p>
+          {/* Main Asymmetric Grid */}
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-12">
               <div className="flex items-center gap-4">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Trier par:</span>
-                <select className="bg-transparent border-none outline-none font-bold text-sm text-slate-900 cursor-pointer">
-                  <option>Prix: Croissant</option>
-                  <option>Prix: Décroissant</option>
-                  <option>Nouveautés</option>
-                </select>
+                <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  {isLoading ? "Synchronisation en cours..." : `${filtered.length} CHEFS-D'ŒUVRE DISPONIBLES`}
+                </p>
               </div>
             </div>
 
-            {/* Grid Container */}
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="aspect-[4/5] bg-slate-50 rounded-[32px] animate-pulse" />
+                  <div key={i} className={cn(
+                    "bg-slate-50/5 rounded-[48px] animate-pulse",
+                    i % 3 === 0 ? "aspect-[4/3] md:col-span-2" : "aspect-[3/4]"
+                  )} />
                 ))}
               </div>
             ) : filtered.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  {filtered.map((v) => (
-                    <VehicleCard
-                      key={v.id}
-                      id={v.id}
-                      brand={v.brand}
-                      model={v.model}
-                      type={v.type}
-                      price={v.price_per_day}
-                      seats={(v as any).seats ?? 5}
-                      fuel={v.fuel_type || "Diesel"}
-                      transmission={v.transmission || "Automatic"}
-                      year={v.year}
-                      horsepower={v.horsepower}
-                      imageUrl={v.image_url ?? undefined}
-                      dynamicPrice={v.dynamic_price}
-                      dynamicReason={v.dynamic_reason}
-                      onQuickView={() => setQuickViewVehicle({
-                        ...v,
-                        price: v.price_per_day,
-                        seats: (v as any).seats ?? 5,
-                        fuel: v.fuel_type || "Diesel",
-                        transmission: v.transmission || "Automatic",
-                        imageUrl: v.image_url ?? undefined
-                      })}
-                    />
-                  ))}
+              <div className="space-y-24">
+                {/* Dynamic Asymmetric Layout Logic */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+                  <AnimatePresence mode="popLayout">
+                    {filtered.map((v, idx) => (
+                      <motion.div
+                        key={v.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        className={cn(
+                          "relative",
+                          // Make every 3rd vehicle featured (wider)
+                          idx % 3 === 0 ? "md:col-span-2" : ""
+                        )}
+                      >
+                        <VehicleCard
+                          id={v.id}
+                          brand={v.brand}
+                          model={v.model}
+                          type={v.type}
+                          price={v.price_per_day}
+                          seats={(v as any).seats ?? 5}
+                          fuel={v.fuel_type || "Diesel"}
+                          transmission={v.transmission || "Automatic"}
+                          year={v.year}
+                          horsepower={v.horsepower}
+                          imageUrl={v.image_url ?? undefined}
+                          dynamicPrice={v.dynamic_price}
+                          dynamicReason={v.dynamic_reason}
+                          className={idx % 3 === 0 ? "min-h-[500px]" : "h-full"}
+                          onQuickView={() => setQuickViewVehicle({
+                            ...v,
+                            price: v.price_per_day,
+                            seats: (v as any).seats ?? 5,
+                            fuel: v.fuel_type || "Diesel",
+                            transmission: v.transmission || "Automatic",
+                            imageUrl: v.image_url ?? undefined
+                          })}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-4 pt-12">
+                  <div className="flex items-center justify-center gap-6 pt-12 border-t border-white/5">
                     <button
                       onClick={() => setPage(Math.max(1, page - 1))}
                       disabled={page === 1}
-                      className="w-14 h-14 rounded-full border border-slate-100 flex items-center justify-center hover:bg-slate-50 disabled:opacity-30 transition-all"
+                      className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-20 transition-all text-foreground"
                     >
-                      <ChevronLeft size={20} />
+                      <ChevronLeft size={24} />
                     </button>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {Array.from({ length: totalPages }).map((_, i) => (
                         <button
                           key={i}
                           onClick={() => setPage(i + 1)}
                           className={cn(
-                            "w-10 h-10 rounded-xl text-xs font-black transition-all",
+                            "w-12 h-12 rounded-2xl text-xs font-black transition-all",
                             page === i + 1
-                              ? "bg-primary text-white shadow-lg shadow-primary/30"
-                              : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                              ? "bg-primary text-white shadow-[0_0_30px_rgba(37,99,235,0.4)]"
+                              : "bg-white/5 text-slate-500 hover:bg-white/10"
                           )}
                         >
                           {i + 1}
@@ -195,21 +248,21 @@ function FleetContent() {
                     <button
                       onClick={() => setPage(Math.min(totalPages, page + 1))}
                       disabled={page === totalPages}
-                      className="w-14 h-14 rounded-full border border-slate-100 flex items-center justify-center hover:bg-slate-50 disabled:opacity-30 transition-all"
+                      className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-20 transition-all text-foreground"
                     >
-                      <ChevronRight size={20} />
+                      <ChevronRight size={24} />
                     </button>
                   </div>
                 )}
-              </>
+              </div>
             ) : (
-              <div className="py-32 flex flex-col items-center justify-center text-center space-y-6">
-                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center">
-                  <Search size={40} className="text-slate-200" />
+              <div className="py-32 flex flex-col items-center justify-center text-center space-y-10">
+                <div className="w-32 h-32 bg-white/5 rounded-[40px] flex items-center justify-center border border-white/10">
+                  <Search size={48} className="text-slate-700" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">Aucun véhicule trouvé</h3>
-                  <p className="text-slate-400 font-medium">Ajustez vos filtres pour voir d'autres modèles.</p>
+                  <h3 className="text-3xl font-black text-foreground mb-4 tracking-tight">AUCUN SYMBOLE TROUVÉ</h3>
+                  <p className="text-slate-500 font-medium text-lg max-w-sm">Ajustez vos critères pour découvrir d'autres chefs-d'œuvre de notre collection.</p>
                 </div>
               </div>
             )}
