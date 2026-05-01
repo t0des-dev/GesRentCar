@@ -7,6 +7,7 @@ import {
   ArrowRight, Calendar, MapPin, Car, Loader2, Sparkles,
   ShieldCheck, HeadphonesIcon, Crown, Star, CheckCircle2,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useVehicles } from "@/hooks/useApi";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
