@@ -14,6 +14,7 @@ import VehicleCard from "@/components/VehicleCard";
 import ExperienceMap from "@/components/ExperienceMap";
 import VehicleComparator from "@/components/VehicleComparator";
 import LifestyleSlider from "@/components/LifestyleSlider";
+import PromotionBanner from "@/components/PromotionBanner";
 
 export default function Home() {
   const router = useRouter();
@@ -50,98 +51,140 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-background">
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* ── IMMERSIVE HERO ─────────────────────────────────────────────────── */}
+      <section className="relative h-[110vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
-            src={heroImage}
-            alt="Luxury Car"
-            className="w-full h-full object-cover object-center animate-slow-zoom"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-background" />
+          <motion.div 
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="w-full h-full"
+          >
+            <img
+              src={heroImage}
+              alt="Luxury Car"
+              className="w-full h-full object-cover object-center scale-110"
+            />
+          </motion.div>
+          {/* Advanced Layering for Depth */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+          
+          {/* Animated Light Streaks */}
+          <div className="absolute top-1/4 -left-1/4 w-[1000px] h-[300px] bg-primary/20 blur-[120px] rotate-12 animate-pulse" />
         </div>
 
-        <div className="container relative z-10 mx-auto px-4 pt-20">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-24">
             
             <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-2.5 rounded-full text-white text-[10px] font-black uppercase tracking-[0.4em] mb-8 animate-fade-in-up">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-[0_0_10px_#2563eb]" />
-                {agency.agency_name || "Vectoria"} Premium 2026
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="inline-flex items-center gap-4 bg-white/5 backdrop-blur-2xl border border-white/10 px-8 py-3 rounded-full text-white mb-10"
+              >
+                <span className="w-2 h-2 bg-primary rounded-full animate-ping" />
+                <span className="text-[10px] font-black uppercase tracking-[0.5em] opacity-80">Collection Exclusive 2026</span>
+              </motion.div>
 
-              <h1 className="text-6xl md:text-[110px] font-black text-white tracking-tighter mb-8 animate-fade-in-up [animation-delay:100ms] leading-[0.9]">
-                {t("hero_title")}<br />
-                <span className="text-gradient-gold drop-shadow-[0_0_40px_rgba(251,191,36,0.3)]">
-                  {agency.agency_name || "Vectoria"}
-                </span>
-              </h1>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <h1 className="text-7xl md:text-[140px] font-black text-white tracking-tighter leading-[0.8] mb-10">
+                  DOMINEZ LA <br />
+                  <span className="text-gradient-gold italic">ROUTE</span>.
+                </h1>
+              </motion.div>
 
-              <p className="text-lg md:text-2xl text-slate-300 max-w-xl mb-12 font-medium animate-fade-in-up [animation-delay:200ms] leading-relaxed opacity-80">
-                {aboutText || t("hero_subtitle")}
-              </p>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl md:text-3xl text-slate-300 max-w-2xl mb-14 font-medium leading-relaxed opacity-70"
+              >
+                {aboutText || "Vivez l'exceptionnel avec Vectoria. Une sélection de prestige pour ceux qui ne font aucun compromis sur l'excellence."}
+              </motion.p>
               
-              {sections.stats && (
-                <div className="hidden lg:flex items-center gap-12 animate-fade-in-up [animation-delay:300ms]">
-                  {STATS.slice(0, 3).map((stat, i) => (
-                    <div key={i} className="flex flex-col gap-1">
-                      <span className="text-3xl font-black text-white tracking-tighter">{stat.value}</span>
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-slate-500 font-black">{stat.label}</span>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex flex-wrap items-center gap-12"
+              >
+                <div className="flex -space-x-4">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="w-14 h-14 rounded-full border-4 border-slate-950 bg-slate-800 overflow-hidden">
+                      <img src={`https://i.pravatar.cc/100?u=${i}`} alt="User" />
                     </div>
                   ))}
+                  <div className="w-14 h-14 rounded-full border-4 border-slate-950 bg-primary flex items-center justify-center text-xs font-black text-white">+2k</div>
                 </div>
-              )}
+                <div className="text-slate-400">
+                  <div className="flex gap-1 mb-1">
+                    {[1,2,3,4,5].map(i => <Star key={i} size={14} className="fill-primary text-primary" />)}
+                  </div>
+                  <p className="text-[10px] font-black uppercase tracking-widest">Élu service premium de l'année</p>
+                </div>
+              </motion.div>
             </div>
 
-            <div className="w-full lg:w-[480px] animate-fade-in-up [animation-delay:400ms]">
-              <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[var(--radius,48px)] p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] relative group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            {/* Premium Concierge Booking Form */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, type: "spring" }}
+              className="w-full lg:w-[500px]"
+            >
+              <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/10 rounded-[60px] p-12 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
                 
-                <h2 className="text-white font-black text-2xl mb-10 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center">
-                    <Sparkles size={24} className="text-primary" />
+                <div className="flex items-center gap-5 mb-12">
+                  <div className="w-14 h-14 bg-primary/20 rounded-[24px] flex items-center justify-center">
+                    <Calendar size={28} className="text-primary" />
                   </div>
-                  Réserver un véhicule
-                </h2>
+                  <div>
+                    <h2 className="text-white font-black text-2xl tracking-tight">VOTRE VOYAGE</h2>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Configuration de l'expérience</p>
+                  </div>
+                </div>
 
-                <div className="space-y-8">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Lieu de prise en charge</label>
-                    <div className="flex items-center bg-black/40 border border-white/5 rounded-3xl px-6 py-5 text-white focus-within:border-primary/50 transition-all group/field">
-                      <MapPin size={20} className="text-primary mr-4 group-focus-within/field:scale-110 transition-transform" />
+                <div className="space-y-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] ml-2">Point de Départ</label>
+                    <div className="flex items-center bg-white/5 border border-white/5 rounded-[28px] px-8 py-6 text-white focus-within:border-primary/40 transition-all">
+                      <MapPin size={22} className="text-primary mr-4" />
                       <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        placeholder="Aéroport, Hôtel, Ville..."
-                        className="bg-transparent border-none focus:outline-none text-sm w-full font-bold placeholder:text-slate-600"
+                        placeholder="Où commence l'aventure ?"
+                        className="bg-transparent border-none focus:outline-none text-base w-full font-black placeholder:text-slate-700"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Départ</label>
-                      <div className="flex items-center bg-black/40 border border-white/5 rounded-3xl px-6 py-5 text-white focus-within:border-primary/50 transition-all">
-                        <Calendar size={18} className="text-primary mr-3" />
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] ml-2">Arrivée</label>
+                      <div className="flex items-center bg-white/5 border border-white/5 rounded-[28px] px-6 py-6 text-white focus-within:border-primary/40 transition-all">
                         <input
                           type="date"
                           value={startDate}
                           onChange={(e) => setStartDate(e.target.value)}
-                          className="bg-transparent border-none focus:outline-none text-xs font-bold w-full [color-scheme:dark]"
+                          className="bg-transparent border-none focus:outline-none text-xs font-black w-full [color-scheme:dark]"
                         />
                       </div>
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Retour</label>
-                      <div className="flex items-center bg-black/40 border border-white/5 rounded-3xl px-6 py-5 text-white focus-within:border-primary/50 transition-all">
-                        <Calendar size={18} className="text-primary mr-3" />
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] ml-2">Départ</label>
+                      <div className="flex items-center bg-white/5 border border-white/5 rounded-[28px] px-6 py-6 text-white focus-within:border-primary/40 transition-all">
                         <input
                           type="date"
                           value={endDate}
                           onChange={(e) => setEndDate(e.target.value)}
-                          className="bg-transparent border-none focus:outline-none text-xs font-bold w-full [color-scheme:dark]"
+                          className="bg-transparent border-none focus:outline-none text-xs font-black w-full [color-scheme:dark]"
                         />
                       </div>
                     </div>
@@ -149,14 +192,14 @@ export default function Home() {
 
                   <button 
                     onClick={handleSearch}
-                    className="w-full bg-primary hover:bg-blue-600 text-white py-6 rounded-3xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-2xl shadow-primary/40 active:scale-95 flex items-center justify-center gap-3 group/btn"
+                    className="w-full bg-primary hover:bg-primary/90 text-white py-8 rounded-[32px] font-black uppercase tracking-[0.4em] text-[10px] transition-all shadow-[0_20px_50px_rgba(37,99,235,0.3)] active:scale-95 flex items-center justify-center gap-4 group/btn"
                   >
-                    Explorer la flotte
+                    CONFIRMER LA SÉLECTION
                     <ArrowRight size={20} className="group-hover/btn:translate-x-2 transition-transform duration-500" />
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -214,6 +257,9 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* ── PROMOTION BANNER ─────────────────────────────────────────────── */}
+      <PromotionBanner />
 
       {/* ── FEATURED FLEET ───────────────────────────────────────────────── */}
       {sections.featured && (
