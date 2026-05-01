@@ -1,0 +1,134 @@
+# 🚗 Vectoria Rent Car - Premium ERP & B2C Platform
+
+**Vectoria Rent Car** est une plateforme SaaS complète (ERP B2B + Portail B2C) de location de véhicules haut de gamme. Elle est construite avec une architecture moderne séparant le frontend B2C/Dashboard et le backend ERP/Admin Panel.
+
+![Vectoria Architecture](https://img.shields.io/badge/Architecture-DDD-purple.svg)
+![Frontend](https://img.shields.io/badge/Frontend-Next.js_14-black.svg)
+![Backend](https://img.shields.io/badge/Backend-Laravel_11-red.svg)
+![Admin](https://img.shields.io/badge/Admin-Filament_v3-yellow.svg)
+
+---
+
+## 🎯 Fonctionnalités Principales
+
+### 🖥️ Portail Client (Frontend - Next.js)
+- **UI/UX Premium** : Design "Glassmorphism" moderne, animations fluides, responsive design (Tailwind CSS).
+- **Découverte de Flotte** : Recherche en temps réel, filtres avancés (Prix, Type, Transmission).
+- **Tunnel de Réservation** : Processus de location multi-étapes avec validation en temps réel.
+- **Tableau de Bord Client** : Suivi des réservations actives, historiques, contrats et paiements.
+- **Authentification Sécurisée** : Connexion/Inscription protégées via Laravel Sanctum.
+- **State Management** : Gestion asynchrone des données et du cache via TanStack React Query.
+
+### ⚙️ ERP & Admin Panel (Backend - Laravel)
+- **Architecture DDD** : Logique métier encapsulée dans des Services (`AvailabilityEngine`, `PricingService`, etc.).
+- **Gestion de la Flotte** : Ajout, modification, retrait des véhicules, et gestion du statut de maintenance via Filament.
+- **Gestion des Réservations** : Suivi du cycle de vie complet (En attente, Confirmé, Terminé, Annulé).
+- **API RESTful** : Endpoints documentés et sécurisés pour la communication avec le frontend.
+
+---
+
+## 🏗️ Architecture Technique
+
+Le projet est divisé en deux répertoires principaux :
+
+*   `/frontend` : Application Next.js (App Router), React, Tailwind CSS, Axios, React Query.
+*   `/backend` : Application Laravel 11, Filament Admin Panel, SQLite (par défaut) / PostgreSQL.
+
+---
+
+## 🚀 Guide d'Installation (Environnement Local Windows)
+
+Si vous êtes sur Windows et que vous ne souhaitez pas utiliser Docker, vous pouvez faire tourner le projet nativement grâce à SQLite.
+
+### 1️⃣ Prérequis
+*   **PHP >= 8.2** avec les extensions suivantes activées dans votre `php.ini` : `intl`, `zip`, `pcntl`, `pdo_sqlite`.
+*   **Composer** installé globalement.
+*   **Node.js** (v18+) et npm.
+
+### 2️⃣ Configuration du Backend (Laravel)
+Ouvrez un terminal dans le dossier `/backend` :
+
+```bash
+# 1. Installer les dépendances PHP (ignore platform reqs si nécessaire)
+composer install --ignore-platform-reqs
+
+# 2. Copier le fichier d'environnement et générer la clé de sécurité
+cp .env.example .env
+php artisan key:generate
+
+# 3. Créer la base de données SQLite (si elle n'existe pas)
+touch database/database.sqlite
+
+# 4. Lancer les migrations et remplir la base avec des données de test
+php artisan migrate --seed
+
+# 5. Lancer le serveur de développement Laravel (Sera accessible sur http://localhost:8000)
+php artisan serve
+```
+*L'Admin Panel sera accessible sur : `http://localhost:8000/admin`*
+
+### 3️⃣ Configuration du Frontend (Next.js)
+Ouvrez un **nouveau terminal** dans le dossier `/frontend` :
+
+```bash
+# 1. Installer les dépendances JavaScript
+npm install
+
+# 2. Configurer les variables d'environnement
+# Créer un fichier .env.local contenant :
+# NEXT_PUBLIC_API_URL=http://localhost:8000/api
+
+# 3. Lancer le serveur de développement Next.js
+npm run dev
+```
+*Le portail client sera accessible sur : `http://localhost:3000`*
+
+---
+
+## 🐳 Guide d'Installation (Avec Docker)
+
+Si vous possédez **Docker Desktop**, le projet inclut un fichier `docker-compose.yml` pré-configuré pour un environnement de production/développement robuste (incluant PostgreSQL et Redis).
+
+À la racine du projet (`/VectoriaRentCar`) :
+
+```bash
+# Construire et lancer les conteneurs en arrière-plan
+docker-compose up -d --build
+
+# Lancer les migrations dans le conteneur backend
+docker-compose exec backend php artisan migrate --seed
+```
+
+---
+
+## 🔑 Comptes de Démonstration
+
+Une fois les *seeders* exécutés, vous pouvez utiliser ces comptes :
+
+**Admin Panel Filament (`http://localhost:8000/admin`) :**
+*   Email : `admin@vectoria.com`
+*   Mot de passe : `Admin2026!`
+
+**Portail Client B2C (`http://localhost:3000/login`) :**
+*   Email : `client@vectoria.com`
+*   Mot de passe : `Client2026!`
+
+---
+
+## 📁 Structure des Dossiers Importants
+
+### Frontend
+- `src/app/` : Routes Next.js (page principale, fleet, booking, dashboard, login).
+- `src/components/` : Composants UI réutilisables (VehicleCard, Navbar, FleetFilters).
+- `src/lib/api/` : Services Axios (client, auth, vehicles, reservations).
+- `src/hooks/` : Hooks React Query (`useApi.ts`).
+
+### Backend
+- `app/Filament/Resources/` : Interfaces d'administration générées (VehicleResource, ReservationResource).
+- `app/Http/Controllers/Api/` : Contrôleurs REST (VehicleController, ReservationController).
+- `app/Models/` : Entités de base de données (Vehicle, Reservation, User).
+- `routes/api.php` : Définition des endpoints.
+
+---
+
+*Développé dans le cadre de la construction de l'écosystème ERP Premium Vectoria.*

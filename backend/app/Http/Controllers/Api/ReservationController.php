@@ -1,0 +1,199 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Reservation;
+use App\Models\Vehicle;
+use App\Models\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+use App\Services\NotificationService;
+
+class ReservationController extends Controller
+{
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+    public function index(Request $request)
+    {
+        return response()->json(Reservation::with(['client', 'vehicle'])->get());
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
+
+        // Non-overlapping check
+        if (!$vehicle->isAvailable($validated['start_date'], $validated['end_date'])) {
+            return response()->json(['message' => 'Vehicle is not available for these dates.'], 422);
+        }
+
+        // Calculate total price
+        $days = (new \DateTime($validated['start_date']))->diff(new \DateTime($validated['end_date']))->days;
+        if ($days == 0) $days = 1;
+        
+        $totalPrice = $days * $vehicle->price_per_day;
+
+        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle) {
+            $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
+            
+            return Reservation::create(array_merge($validated, [
+                'total_price' => $totalPrice,
+                'status' => $status
+            ]));
+        });
+
+        if ($reservation->status === 'confirmed') {
+            $this->notificationService->notifyReservationConfirmed($reservation);
+        }
+
+        return response()->json($reservation, 201);
+    }
+
+    public function publicStore(Request $request)
+    {
+        $validated = $request->validate([
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'client.name' => 'required|string',
+            'client.email' => 'required|email',
+            'client.phone' => 'required|string',
+            'client.cin' => 'required|string',
+            'client.license_number' => 'nullable|string',
+            'payment_method' => 'required|string',
+        ]);
+
+        $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
+
+        // Non-overlapping check
+        if (!$vehicle->isAvailable($validated['start_date'], $validated['end_date'])) {
+            return response()->json(['message' => 'Vehicle is not available for these dates.'], 422);
+        }
+
+        // Create or find client
+        $clientData = $validated['client'];
+        $client = Client::firstOrCreate(
+            ['email' => $clientData['email']],
+            [
+                'name' => $clientData['name'],
+                'phone' => $clientData['phone'],
+                'cin' => $clientData['cin'],
+                'license_number' => $clientData['license_number'] ?? null,
+            ]
+        );
+
+        // Calculate total price
+        $days = (new \DateTime($validated['start_date']))->diff(new \DateTime($validated['end_date']))->days;
+        if ($days == 0) $days = 1;
+        
+        $totalPrice = $days * $vehicle->price_per_day;
+
+        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle, $client) {
+            $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
+            
+            return Reservation::create([
+                'client_id' => $client->id,
+                'vehicle_id' => $vehicle->id,
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'total_price' => $totalPrice,
+                'status' => $status
+            ]);
+        });
+
+        if ($reservation->status === 'confirmed') {
+            $this->notificationService->notifyReservationConfirmed($reservation);
+        }
+
+        return response()->json($reservation, 201);
+    }
+
+    public function show(Reservation $reservation)
+    {
+        return response()->json($reservation->load(['client', 'vehicle', 'payment', 'contract']));
+    }
+
+    public function update(Request $request, Reservation $reservation)
+    {
+        $validated = $request->validate([
+            'status' => 'sometimes|string|in:pending,confirmed,ongoing,completed,cancelled,attente_paiement',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|date|after:start_date',
+            'vehicle_id' => 'sometimes|exists:vehicles,id',
+        ]);
+
+        if (isset($validated['start_date']) || isset($validated['end_date']) || isset($validated['vehicle_id'])) {
+            $vehicleId = $validated['vehicle_id'] ?? $reservation->vehicle_id;
+            $startDate = $validated['start_date'] ?? $reservation->start_date;
+            $endDate = $validated['end_date'] ?? $reservation->end_date;
+            
+            $vehicle = Vehicle::findOrFail($vehicleId);
+            
+            // Check availability (excluding current reservation)
+            $isAvailable = !$vehicle->reservations()
+                ->where('id', '!=', $reservation->id)
+                ->whereIn('status', ['confirmed', 'ongoing'])
+                ->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereBetween('start_date', [$startDate, $endDate])
+                          ->orWhereBetween('end_date', [$startDate, $endDate])
+                          ->orWhere(function ($query) use ($startDate, $endDate) {
+                              $query->where('start_date', '<=', $startDate)
+                                    ->where('end_date', '>=', $endDate);
+                          });
+                })->exists();
+
+            if (!$isAvailable) {
+                return response()->json(['message' => 'Le véhicule n\'est pas disponible pour ces dates.'], 422);
+            }
+            
+            // Recalculate price if dates changed
+            $days = (new \DateTime($startDate))->diff(new \DateTime($endDate))->days;
+            if ($days == 0) $days = 1;
+            $validated['total_price'] = $days * $vehicle->price_per_day;
+        }
+
+        $reservation->update($validated);
+
+        return response()->json($reservation);
+    }
+
+    public function accept(Reservation $reservation)
+    {
+        if ($reservation->status !== 'pending_partner') {
+            return response()->json(['message' => 'Invalid reservation status.'], 422);
+        }
+
+        $reservation->update(['status' => 'attente_paiement']);
+
+        $this->notificationService->sendSms(
+            $reservation->client->phone, 
+            "VectoriaRentCar: Votre demande #{$reservation->id} a ete ACCEPTEE. Merci de proceder au paiement pour confirmer."
+        );
+
+        return response()->json(['message' => 'Reservation accepted by partner.', 'reservation' => $reservation]);
+    }
+
+    public function reject(Reservation $reservation)
+    {
+        if ($reservation->status !== 'pending_partner') {
+            return response()->json(['message' => 'Invalid reservation status.'], 422);
+        }
+
+        $reservation->update(['status' => 'cancelled']);
+
+        return response()->json(['message' => 'Reservation rejected by partner.', 'reservation' => $reservation]);
+    }
+}

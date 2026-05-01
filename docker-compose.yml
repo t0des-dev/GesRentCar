@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: vectoria-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    volumes:
+      - ./backend:/var/www
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=vectoria
+      - DB_USERNAME=admin
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      - db
+      - redis
+
+  # Frontend Web
+  frontend:
+    build: ./frontend
+    container_name: vectoria-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  # Database
+  db:
+    image: postgres:15-alpine
+    container_name: vectoria-db
+    restart: always
+    environment:
+      - POSTGRES_DB=vectoria
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Redis Cache & Queues
+  redis:
+    image: redis:7-alpine
+    container_name: vectoria-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
