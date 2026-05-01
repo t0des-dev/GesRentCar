@@ -4,11 +4,13 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
 import { Globe, Menu, X, CarFront, User, Crown, ChevronDown, Check } from "lucide-react";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -135,13 +137,32 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <Link
-            href="/login"
-            className={cn("text-sm font-bold transition-colors flex items-center gap-2", textColor, hoverColor)}
-          >
-            <User size={18} />
-            {t("nav_login")}
-          </Link>
+          {session ? (
+            <div className="flex items-center gap-4">
+              <Link
+                href="/dashboard"
+                className={cn("text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2", textColor, hoverColor)}
+              >
+                <User size={16} className="text-primary" />
+                {t("nav_dashboard") || "Compte"}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className={cn("text-xs font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity", textColor)}
+              >
+                {t("nav_logout") || "Déconnexion"}
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className={cn("text-sm font-bold transition-colors flex items-center gap-2", textColor, hoverColor)}
+            >
+              <User size={18} />
+              {t("nav_login")}
+            </Link>
+          )}
+
           <Link
             href="/booking"
             className="bg-primary text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:shadow-primary/40 hover:-translate-y-1 glow-primary flex items-center gap-2"
@@ -197,6 +218,25 @@ export default function Navbar() {
                 </div>
               </div>
 
+              {session ? (
+                <div className="flex flex-col gap-2 mt-2">
+                  <Link href="/dashboard" className="text-primary font-black py-4 px-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
+                    <User size={20} />
+                    {t("nav_dashboard") || "MON COMPTE VIP"}
+                  </Link>
+                  <button 
+                    onClick={() => { signOut({ callbackUrl: '/' }); setMobileMenuOpen(false); }}
+                    className="text-muted-foreground font-bold py-3 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors text-left"
+                  >
+                    {t("nav_logout") || "Déconnexion"}
+                  </button>
+                </div>
+              ) : (
+                <Link href="/login" className="text-foreground font-bold py-3 px-4 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_login")}
+                </Link>
+              )}
+              
               <Link href="/booking" className="bg-primary text-center text-white px-5 py-4 rounded-2xl font-black uppercase tracking-widest mt-6 shadow-xl glow-primary flex justify-center items-center gap-3 active:scale-95 transition-transform" onClick={() => setMobileMenuOpen(false)}>
                 <Crown size={20} className="text-secondary" />
                 {t("nav_book")}
