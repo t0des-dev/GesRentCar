@@ -58,22 +58,22 @@ function CheckoutForm({
 }: {
   reservationId: number;
   deposit: number;
-  onSuccess: () => void;
+  onSuccess: (reservationId?: number) => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isReady, setIsReady] = useState(false);
 
   const handlePay = async () => {
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !isReady) return;
     setStatus("loading");
     setErrorMsg("");
 
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // No redirect needed — we handle success in-app
         return_url: window.location.origin + "/booking/success",
       },
       redirect: "if_required",
@@ -97,15 +97,22 @@ function CheckoutForm({
 
   return (
     <div className="space-y-6">
-      <PaymentElement
-        options={{
-          layout: "accordion",
-          defaultValues: { billingDetails: { address: { country: "MA" } } },
-        }}
-      />
+      <div className={!isReady ? "opacity-50 pointer-events-none" : ""}>
+        <PaymentElement
+          onReady={() => setIsReady(true)}
+          onLoaderError={(e) => {
+            setErrorMsg("Échec du chargement du module de paiement.");
+            console.error("Stripe Load Error:", e);
+          }}
+          options={{
+            layout: "accordion",
+            defaultValues: { billingDetails: { address: { country: "MA" } } },
+          }}
+        />
+      </div>
 
       {errorMsg && (
-        <div className="flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 rounded-2xl px-5 py-4">
+        <div className="flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 rounded-2xl px-5 py-4 animate-in fade-in slide-in-from-top-2">
           <AlertCircle size={18} className="shrink-0" />
           <p className="text-sm font-semibold">{errorMsg}</p>
         </div>
@@ -113,7 +120,7 @@ function CheckoutForm({
 
       <button
         onClick={handlePay}
-        disabled={!stripe || status === "loading"}
+        disabled={!stripe || !isReady || status === "loading"}
         className="w-full py-5 rounded-2xl bg-slate-900 text-white font-black text-lg hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-xl shadow-slate-900/20 flex items-center justify-center gap-3"
       >
         {status === "loading" ? (
@@ -139,6 +146,7 @@ export interface StripeCheckoutProps {
     start_date: string;
     end_date: string;
     client: { name: string; email: string; phone: string; cin: string; license_number?: string };
+    signature?: string;
   };
   onSuccess: (reservationId?: number) => void;
 }
@@ -150,21 +158,36 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!deposit || !bookingPayload.vehicle_id) return;
+    if (!deposit || !bookingPayload.vehicle_id) {
+      setLoading(false);
+      return;
+    }
+
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    if (!key || key.includes("1000000")) {
+      console.error("Stripe Error: Publishable key is missing or is a placeholder.");
+      setInitError("Erreur de configuration Stripe (Clé manquante).");
+      setLoading(false);
+      return;
+    }
 
     stripeService
       .createIntent({ ...bookingPayload, amount: deposit })
       .then((res) => {
+        if (!res.client_secret) {
+          throw new Error("Client secret missing from API response");
+        }
         setClientSecret(res.client_secret);
         setReservationId(res.reservation_id);
       })
       .catch((err) => {
+        console.error("Stripe Intent Error:", err);
         const msg = err?.response?.data?.message ?? "Impossible d'initialiser le paiement.";
         setInitError(msg);
       })
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
+  }, []); 
 
   if (loading) {
     return (
@@ -189,8 +212,12 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
 
   if (!clientSecret || !reservationId) return null;
 
+  // Masking for security in logs
+  const maskedSecret = clientSecret.substring(0, 10) + "..." + clientSecret.substring(clientSecret.length - 10);
+  console.log("Stripe: Rendering Elements with clientSecret:", maskedSecret);
+
   return (
-    <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+    <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret, appearance }}>
       <CheckoutForm
         reservationId={reservationId}
         deposit={deposit}

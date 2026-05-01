@@ -56,4 +56,12 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
+    'cmi' => [
+        'client_id'    => env('CMI_CLIENT_ID'),
+        'store_key'    => env('CMI_STORE_KEY'),
+        'base_url'     => env('CMI_BASE_URL', 'https://test.cmi.co.ma/fim/est3Dgate'),
+        'redirect_url' => env('CMI_REDIRECT_URL'),
+        'fail_url'     => env('CMI_FAIL_URL'),
+    ],
+
 ];

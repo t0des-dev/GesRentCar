@@ -38,11 +38,13 @@ Route::get('/public/reservations/{reservation}/contract', [\App\Http\Controllers
 Route::post('/public/reservations/{reservation}/sign', [\App\Http\Controllers\Api\ContractController::class, 'publicSign']);
 
 // ─── Stripe ───────────────────────────────────────────────────────────────────
-// Create a PaymentIntent (no auth needed — client-side booking flow)
 Route::post('/stripe/intent',   [StripeController::class, 'createIntent']);
 Route::post('/stripe/confirm',  [StripeController::class, 'confirm']);
-// Webhook from Stripe servers (must be exempt from CSRF/auth)
 Route::post('/stripe/webhook',  [StripeController::class, 'webhook']);
+
+// ─── CMI Maroc ───────────────────────────────────────────────────────────────
+Route::post('/cmi/init/{reservation}', [\App\Http\Controllers\Api\CmiController::class, 'init']);
+Route::post('/cmi/callback',           [\App\Http\Controllers\Api\CmiController::class, 'callback']);
 
 // Reservations (Protected)
 Route::middleware(['auth:sanctum', 'audit'])->group(function () {

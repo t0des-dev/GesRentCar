@@ -100,6 +100,7 @@ class StripeController extends Controller
                     'reservation_id' => $res->id,
                     'signature_data' => $request->signature,
                     'signed_at'      => now(),
+                    'file_path'      => 'contracts/contract_' . $res->id . '.pdf',
                 ]);
             }
 
