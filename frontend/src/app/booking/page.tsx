@@ -181,9 +181,9 @@ export default function BookingPage() {
       model: v.model,
       price: v.price_per_day,
       type: "Premium",
-      img: v.image_url || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600",
-      specs: { transmission: "Auto", fuel: "Diesel", seats: 5, mileage: v.mileage },
-      desc: "L'élégance et le confort absolu pour vos trajets."
+      img: v.image_url ? `http://localhost:8000${v.image_url}` : "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600",
+      specs: { transmission: v.transmission || "Auto", fuel: v.fuel_type || "Diesel", seats: 5, mileage: v.mileage },
+      desc: v.description_fr || "L'élégance et le confort absolu pour vos trajets."
     }));
   }, [vehiclesData]);
 

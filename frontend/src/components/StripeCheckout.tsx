@@ -100,7 +100,7 @@ function CheckoutForm({
       <div className={!isReady ? "opacity-50 pointer-events-none" : ""}>
         <PaymentElement
           onReady={() => setIsReady(true)}
-          onLoaderError={(e) => {
+          onLoadError={(e) => {
             setErrorMsg("Échec du chargement du module de paiement.");
             console.error("Stripe Load Error:", e);
           }}

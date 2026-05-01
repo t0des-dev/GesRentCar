@@ -77,6 +77,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::post('/vehicles', [VehicleController::class, 'store']);
     Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
     Route::post('/vehicles/{vehicle}/image', [VehicleController::class, 'uploadImage']);
+    Route::post('/vehicles/{vehicle}/photos', [VehicleController::class, 'uploadPhotos']);
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
 
     Route::apiResource('maintenances', \App\Http\Controllers\Api\MaintenanceController::class);

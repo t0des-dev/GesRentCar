@@ -90,8 +90,13 @@ class VehicleController extends Controller
             'type' => 'required|in:internal,collaborator',
             'status' => 'required|in:available,rented,maintenance',
             'category' => 'required|string',
+            'fuel_type' => 'nullable|string',
+            'horsepower' => 'nullable|string',
+            'year' => 'nullable|integer',
+            'color' => 'nullable|string',
             'commission_rate' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'photos' => 'nullable|array',
             'description_fr' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ar' => 'nullable|string',
@@ -114,8 +119,13 @@ class VehicleController extends Controller
             'price_per_day' => 'sometimes|numeric',
             'status' => 'sometimes|in:available,rented,maintenance',
             'category' => 'sometimes|string',
+            'fuel_type' => 'nullable|string',
+            'horsepower' => 'nullable|string',
+            'year' => 'nullable|integer',
+            'color' => 'nullable|string',
             'commission_rate' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'photos' => 'nullable|array',
             'description_fr' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ar' => 'nullable|string',
@@ -140,6 +150,27 @@ class VehicleController extends Controller
             $url = Storage::url($path);
             $vehicle->update(['image_url' => $url]);
             return response()->json(['url' => $url]);
+        }
+
+        return response()->json(['message' => 'Aucun fichier'], 400);
+    }
+
+    public function uploadPhotos(Request $request, Vehicle $vehicle)
+    {
+        $request->validate([
+            'photos' => 'required|array',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $currentPhotos = $vehicle->photos ?? [];
+        
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('vehicles/gallery', 'public');
+                $currentPhotos[] = Storage::url($path);
+            }
+            $vehicle->update(['photos' => $currentPhotos]);
+            return response()->json(['photos' => $currentPhotos]);
         }
 
         return response()->json(['message' => 'Aucun fichier'], 400);

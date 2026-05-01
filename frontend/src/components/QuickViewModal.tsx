@@ -40,7 +40,7 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
         {/* Left: Gallery */}
         <div className="flex-1 relative bg-slate-100 min-h-[400px]">
           <img 
-            src={vehicle.imageUrl || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
+            src={vehicle.imageUrl ? (vehicle.imageUrl.startsWith('/storage') ? `http://localhost:8000${vehicle.imageUrl}` : vehicle.imageUrl) : "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
             className="w-full h-full object-cover" 
             alt={vehicle.model}
           />

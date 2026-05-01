@@ -147,8 +147,10 @@ function FleetContent() {
                       type={v.type}
                       price={v.price_per_day}
                       seats={(v as any).seats ?? 5}
-                      fuel={(v as any).fuel ?? "N/A"}
-                      transmission={(v as any).transmission ?? "Automatic"}
+                      fuel={v.fuel_type || "Diesel"}
+                      transmission={v.transmission || "Automatic"}
+                      year={v.year}
+                      horsepower={v.horsepower}
                       imageUrl={v.image_url ?? undefined}
                       dynamicPrice={v.dynamic_price}
                       dynamicReason={v.dynamic_reason}
@@ -156,8 +158,8 @@ function FleetContent() {
                         ...v,
                         price: v.price_per_day,
                         seats: (v as any).seats ?? 5,
-                        fuel: (v as any).fuel ?? "N/A",
-                        transmission: (v as any).transmission ?? "Automatic",
+                        fuel: v.fuel_type || "Diesel",
+                        transmission: v.transmission || "Automatic",
                         imageUrl: v.image_url ?? undefined
                       })}
                     />

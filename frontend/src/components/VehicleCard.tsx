@@ -13,6 +13,8 @@ interface VehicleCardProps {
   seats: number;
   fuel: string;
   transmission: string;
+  year?: number;
+  horsepower?: string;
   mileage?: number;
   rating?: number;
   imageUrl?: string;
@@ -31,6 +33,8 @@ export default function VehicleCard({
   seats,
   fuel,
   transmission,
+  year,
+  horsepower,
   rating = 4.8,
   imageUrl,
   className,
@@ -63,7 +67,7 @@ export default function VehicleCard({
       <div className="relative aspect-[16/9] bg-muted overflow-hidden">
         {imageUrl ? (
           <img
-            src={imageUrl}
+            src={imageUrl.startsWith('/storage') ? `http://localhost:8000${imageUrl}` : imageUrl}
             alt={`${brand} ${model}`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -114,7 +118,7 @@ export default function VehicleCard({
             <Users size={14} className="text-primary" />
             {seats}
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5" title={`${horsepower || ''} CV`}>
             <Fuel size={14} className="text-primary" />
             {fuel}
           </span>
@@ -122,6 +126,11 @@ export default function VehicleCard({
             <Gauge size={14} className="text-primary" />
             {transmission}
           </span>
+          {year && (
+            <span className="text-[10px] font-black bg-slate-100 px-2 py-0.5 rounded text-slate-500">
+               {year}
+            </span>
+          )}
         </div>
 
         {/* Rarity Counter */}
