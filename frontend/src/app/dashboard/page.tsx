@@ -103,23 +103,6 @@ function StatusBadge({ status }: { status: ReservationStatus }) {
   );
 }
 
-// ─── KPI Card ───────────────────────────────────────────────────────────────
-function KpiCard({ icon: Icon, label, value, sub, color }: {
-  icon: React.ElementType; label: string; value: string | number; sub?: string; color: string;
-}) {
-  return (
-    <div className="bg-card/50 backdrop-blur-md border border-border rounded-3xl p-6 flex items-center gap-5 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all duration-300">
-      <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-inner", color)}>
-        <Icon size={26} className="text-white" />
-      </div>
-      <div>
-        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{label}</p>
-        <p className="text-3xl font-black text-foreground tracking-tight">{value}</p>
-        {sub && <p className="text-xs text-muted-foreground mt-1 font-semibold">{sub}</p>}
-      </div>
-    </div>
-  );
-}
 
 // ─── Main Dashboard ────────────────────────────────────────────────────────
 export default function DashboardPage() {
