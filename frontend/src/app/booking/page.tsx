@@ -15,7 +15,15 @@ interface BookingState {
   endDate: string;
   location: string;
   options: string[];
-  client: { name: string; email: string; phone: string; cin: string; licenseNumber: string; };
+  client: { 
+    name: string; 
+    email: string; 
+    phone: string; 
+    cin: string; 
+    licenseNumber: string; 
+    cinImageUrl?: string; 
+    licenseImageUrl?: string;
+  };
   paymentMethod: "deposit_card" | "full_card";
 }
 
@@ -189,37 +197,43 @@ export default function BookingPage() {
 
   const [booking, setBooking] = useState<BookingState>({
     vehicleId: null, startDate: "", endDate: "", location: "", options: [],
-    client: { name: "", email: "", phone: "", cin: "", licenseNumber: "" },
+    client: { 
+      name: "", email: "", phone: "", cin: "", licenseNumber: "",
+      cinImageUrl: "", licenseImageUrl: "" 
+    },
     paymentMethod: "deposit_card",
   });
 
   const update = (key: keyof BookingState, val: unknown) => setBooking(prev => ({ ...prev, [key]: val }));
   
-  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>, type: "cin" | "license" = "cin") => {
     if (!e.target.files?.[0]) return;
     setIsScanning(true);
     setScanSuccess(false);
     
     const formData = new FormData();
     formData.append("image", e.target.files[0]);
-    formData.append("type", "cin");
+    formData.append("type", type);
 
     try {
       const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const res = await fetch(`${apiBase}/ocr/scan`, {
         method: "POST",
         body: formData,
-        // If auth is needed, add Authorization header, but OcrController seems open or we can pass token if needed.
-        // Assuming public or demo for now.
       });
       const data = await res.json();
       
       if (data.success && data.data) {
+        if (data.warnings && data.warnings.length > 0) {
+          alert("⚠️ ATTENTION : " + data.warnings.join("\n"));
+        }
         update("client", {
           ...booking.client,
           name: data.data.name || booking.client.name,
-          cin: data.data.id_number || booking.client.cin,
-          licenseNumber: data.data.license_number || booking.client.licenseNumber,
+          cin: type === "cin" ? (data.data.id_number || booking.client.cin) : booking.client.cin,
+          licenseNumber: type === "license" ? (data.data.license_number || booking.client.licenseNumber) : booking.client.licenseNumber,
+          cinImageUrl: type === "cin" ? (data.data.image_url || booking.client.cinImageUrl) : booking.client.cinImageUrl,
+          licenseImageUrl: type === "license" ? (data.data.image_url || booking.client.licenseImageUrl) : booking.client.licenseImageUrl,
         });
         setScanSuccess(true);
         setTimeout(() => setScanSuccess(false), 3000);
@@ -550,18 +564,62 @@ export default function BookingPage() {
                       <div className="text-white text-center md:text-left">
                         <h3 className="text-xl font-black mb-2 flex items-center justify-center md:justify-start gap-2">
                           <ScanLine className="text-amber-400" />
-                          Remplissage IA
+                          Système OCR Intégré
                         </h3>
-                        <p className="text-slate-400 text-sm font-medium">Uploadez votre permis ou CIN. Notre IA extraira vos informations en 2 secondes pour vous faire gagner du temps.</p>
+                        <p className="text-slate-400 text-sm font-medium leading-relaxed">
+                          Gagnez du temps en scannant vos documents. <br/>
+                          Notre IA extrait automatiquement vos données et sécurise vos justificatifs.
+                        </p>
                       </div>
                       
-                      <div className="relative shrink-0">
-                        <input type="file" accept="image/*" onChange={handleScan} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isScanning} />
-                        <button disabled={isScanning} className={cn("flex items-center gap-2 px-6 py-4 rounded-2xl font-black transition-all", isScanning ? "bg-slate-700 text-slate-400 cursor-not-allowed" : scanSuccess ? "bg-emerald-500 text-white" : "bg-amber-500 text-slate-900 hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20")}>
-                          {isScanning ? <><Loader2 className="animate-spin" size={20}/> Analyse en cours...</> : scanSuccess ? <><Check size={20}/> Extraction réussie</> : <><Camera size={20}/> Scanner mon document</>}
-                        </button>
+                      <div className="flex flex-wrap justify-center gap-4">
+                        <div className="relative group/scan">
+                          <input type="file" accept="image/*" onChange={(e) => handleScan(e, "cin")} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isScanning} />
+                          <button disabled={isScanning} className={cn(
+                            "flex items-center gap-3 px-6 py-4 rounded-2xl font-black transition-all border-2", 
+                            isScanning ? "bg-slate-700 text-slate-400 cursor-not-allowed border-transparent" : 
+                            booking.client.cinImageUrl ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : 
+                            "bg-white text-slate-900 border-white hover:bg-amber-500 hover:border-amber-500"
+                          )}>
+                            {isScanning ? <Loader2 className="animate-spin" size={20}/> : <Camera size={20}/>}
+                            {booking.client.cinImageUrl ? "CIN Scanné ✓" : "Scanner CIN"}
+                          </button>
+                        </div>
+
+                        <div className="relative group/scan">
+                          <input type="file" accept="image/*" onChange={(e) => handleScan(e, "license")} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={isScanning} />
+                          <button disabled={isScanning} className={cn(
+                            "flex items-center gap-3 px-6 py-4 rounded-2xl font-black transition-all border-2", 
+                            isScanning ? "bg-slate-700 text-slate-400 cursor-not-allowed border-transparent" : 
+                            booking.client.licenseImageUrl ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : 
+                            "bg-white text-slate-900 border-white hover:bg-amber-500 hover:border-amber-500"
+                          )}>
+                            {isScanning ? <Loader2 className="animate-spin" size={20}/> : <Camera size={20}/>}
+                            {booking.client.licenseImageUrl ? "Permis Scanné ✓" : "Scanner Permis"}
+                          </button>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Previews */}
+                    {(booking.client.cinImageUrl || booking.client.licenseImageUrl) && (
+                      <div className="mt-8 flex gap-4 animate-in slide-in-from-top-4 relative z-10">
+                        {booking.client.cinImageUrl && (
+                          <div className="relative group">
+                            <img src={`http://localhost:8000${booking.client.cinImageUrl}`} alt="CIN Preview" className="w-32 h-20 object-cover rounded-xl border-2 border-white/20 hover:scale-105 transition-transform" />
+                            <div className="absolute top-1 right-1 bg-emerald-500 text-white rounded-full p-0.5"><Check size={10} strokeWidth={4} /></div>
+                            <span className="absolute -bottom-5 left-0 right-0 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Aperçu CIN</span>
+                          </div>
+                        )}
+                        {booking.client.licenseImageUrl && (
+                          <div className="relative group">
+                            <img src={`http://localhost:8000${booking.client.licenseImageUrl}`} alt="License Preview" className="w-32 h-20 object-cover rounded-xl border-2 border-white/20 hover:scale-105 transition-transform" />
+                            <div className="absolute top-1 right-1 bg-emerald-500 text-white rounded-full p-0.5"><Check size={10} strokeWidth={4} /></div>
+                            <span className="absolute -bottom-5 left-0 right-0 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Aperçu Permis</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Manual Fields */}
@@ -657,6 +715,8 @@ export default function BookingPage() {
                               phone: booking.client.phone,
                               cin: booking.client.cin,
                               license_number: booking.client.licenseNumber,
+                              cin_image_url: booking.client.cinImageUrl,
+                              license_image_url: booking.client.licenseImageUrl,
                             },
                           }}
                           onSuccess={(resId?: number) => { if (resId) setReservationId(resId); setConfirmed(true); }}

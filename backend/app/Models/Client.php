@@ -15,7 +15,9 @@ class Client extends Model
         'email',
         'phone',
         'cin',
-        'license',
+        'license_number',
+        'cin_image_url',
+        'license_image_url',
     ];
 
     public function reservations()

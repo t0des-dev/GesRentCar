@@ -62,6 +62,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::get('stats/revenue', [\App\Http\Controllers\Api\StatsController::class, 'revenueByCategory']);
     Route::get('stats/calendar', [\App\Http\Controllers\Api\StatsController::class, 'calendarData']);
     Route::get('stats/general', [\App\Http\Controllers\Api\StatsController::class, 'generalStats']);
+    Route::get('stats/profitability', [\App\Http\Controllers\Api\StatsController::class, 'vehicleProfitability']);
 
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
     Route::get('/stats', [\App\Http\Controllers\Api\StatsController::class, 'generalStats']);
@@ -81,6 +82,8 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::post('/vehicles/{vehicle}/image', [VehicleController::class, 'uploadImage']);
     Route::post('/vehicles/{vehicle}/photos', [VehicleController::class, 'uploadPhotos']);
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+
+    Route::get('/documents/preview/{filename}', [\App\Http\Controllers\Api\DocumentController::class, 'preview']);
 
     Route::apiResource('maintenances', \App\Http\Controllers\Api\MaintenanceController::class);
 

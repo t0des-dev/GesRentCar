@@ -20,6 +20,9 @@ class ClientController extends Controller
             'email' => 'required|email|unique:clients',
             'phone' => 'required|string',
             'cin' => 'required|string|unique:clients',
+            'license' => 'nullable|string',
+            'cin_image_url' => 'nullable|string',
+            'license_image_url' => 'nullable|string',
         ]);
 
         $client = Client::create($validated);

@@ -36,6 +36,8 @@ class StripeController extends Controller
             'client.phone'    => 'required|string',
             'client.cin'      => 'required|string',
             'client.license_number' => 'nullable|string',
+            'client.cin_image_url' => 'nullable|string',
+            'client.license_image_url' => 'nullable|string',
             'amount'          => 'required|numeric|min:1', // Deposit amount in DH (integer)
             'signature'       => 'nullable|string',
         ]);
@@ -49,6 +51,8 @@ class StripeController extends Controller
                 'phone'          => $clientData['phone'],
                 'cin'            => $clientData['cin'],
                 'license_number' => $clientData['license_number'] ?? null,
+                'cin_image_url'  => $clientData['cin_image_url'] ?? null,
+                'license_image_url' => $clientData['license_image_url'] ?? null,
             ]
         );
 

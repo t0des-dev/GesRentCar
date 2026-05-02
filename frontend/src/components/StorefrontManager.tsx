@@ -6,8 +6,9 @@ import {
   Save, Palette, Type, Image as ImageIcon, Loader2, Plus, Trash2, 
   Tag, TrendingUp, Layout, Menu, Phone, Globe, MousePointer2, 
   Layers, Smartphone, Monitor, CheckCircle2, Sliders, Settings,
-  Hash, Share2, Instagram, MessageCircle
+  Hash, Share2
 } from "lucide-react";
+import api from "@/lib/api/client";
 import styles from "./StorefrontManager.module.css";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
@@ -96,22 +97,18 @@ export default function StorefrontManager() {
         category_prices: currentAgency.category_prices || form.category_prices,
         special_offers: (currentAgency.special_offers as SpecialOffer[]) || [],
         header_config: { ...form.header_config, ...currentAgency.header_config },
-        footer_config: { ...form.footer_config, ...currentAgency.footer_config },
-        theme_config: { ...form.theme_config, ...currentAgency.theme_config },
-        stats_config: { ...form.stats_config, ...currentAgency.stats_config }
+        footer_config: { ...form.footer_config, ...(currentAgency.footer_config as any) },
+        theme_config: { ...form.theme_config, ...(currentAgency.theme_config as any) },
+        stats_config: { ...form.stats_config, ...(currentAgency.stats_config as any) }
       });
     }
   }, [currentAgency]);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const token = localStorage.getItem("vectoria_token");
-      if (!token) return;
       try {
-        const res = await fetch(`${API}/stats/revenue`, {
-          headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" }
-        });
-        if (res.ok) setStats(await res.json());
+        const res = await api.get("/stats/revenue");
+        setStats(res.data);
       } catch (err) { console.error(err); }
     };
     fetchStats();
@@ -119,18 +116,9 @@ export default function StorefrontManager() {
 
   const handleSave = async () => {
     setLoading(true);
-    const token = localStorage.getItem("vectoria_token");
     try {
-      const res = await fetch(`${API}/config`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
-      if (res.ok) {
+      const res = await api.post("/config", form);
+      if (res.status === 200) {
         alert("Configuration sauvegardée avec succès !");
         window.location.reload();
       }

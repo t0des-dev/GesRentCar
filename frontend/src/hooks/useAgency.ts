@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { hexToHsl } from "@/lib/utils";
+import api from "@/lib/api/client";
 
 export interface NavLink {
   label: string;
@@ -83,11 +84,13 @@ export function useAgency() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.agency_name) {
-          setConfig(data);
+    const fetchConfig = async () => {
+      try {
+        const { data } = await api.get("/config");
+        if (data) {
+          // Merge defaults with fetched data
+          setConfig(prev => ({ ...prev, ...data }));
+          
           if (data.primary_color) {
             document.documentElement.style.setProperty("--primary", hexToHsl(data.primary_color));
           }
@@ -95,8 +98,12 @@ export function useAgency() {
             document.documentElement.style.setProperty("--radius", data.theme_config.border_radius);
           }
         }
-      })
-      .catch(() => { /* Fallback */ });
+      } catch (err) {
+        console.error("Failed to fetch agency config:", err);
+      }
+    };
+    
+    fetchConfig();
   }, []);
 
   return config;

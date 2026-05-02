@@ -14,7 +14,7 @@ class StatsController extends Controller
         $stats = DB::table('payments')
             ->join('reservations', 'payments.reservation_id', '=', 'reservations.id')
             ->join('vehicles', 'reservations.vehicle_id', '=', 'vehicles.id')
-            ->select('vehicles.category', DB::raw('SUM(payments.amount) as total_revenue'), DB::raw('COUNT(DISTINCT reservations.id) as reservation_count'))
+            ->select('vehicles.category', DB::raw('SUM(payments.paid_amount) as total_revenue'), DB::raw('COUNT(DISTINCT reservations.id) as reservation_count'))
             ->groupBy('vehicles.category')
             ->get();
 
@@ -46,7 +46,7 @@ class StatsController extends Controller
 
     public function generalStats()
     {
-        $totalRevenue = (float) Payment::sum('amount');
+        $totalRevenue = (float) Payment::sum('paid_amount');
         $reservationsCount = DB::table('reservations')->count();
         $activeBookings = DB::table('reservations')->whereIn('status', ['confirmed', 'active'])->count();
         $fleetSize = DB::table('vehicles')->count();
@@ -55,7 +55,7 @@ class StatsController extends Controller
 
         // Revenue History (Last 6 months)
         $revenueHistory = DB::table('payments')
-            ->select(DB::raw("strftime('%m', created_at) as month"), DB::raw('SUM(amount) as revenue'))
+            ->select(DB::raw("strftime('%m', created_at) as month"), DB::raw('SUM(paid_amount) as revenue'))
             ->groupBy('month')
             ->orderBy('month')
             ->limit(6)
@@ -151,5 +151,35 @@ class StatsController extends Controller
             'top_vehicles' => $topVehicles,
             'payment_status' => $paymentStatus,
         ]);
+    }
+
+    public function vehicleProfitability()
+    {
+        // Use subqueries to avoid join-inflation (Cartesian product)
+        $revenueSub = DB::table('payments')
+            ->join('reservations', 'payments.reservation_id', '=', 'reservations.id')
+            ->select('reservations.vehicle_id', DB::raw('SUM(paid_amount) as total_revenue'))
+            ->groupBy('reservations.vehicle_id');
+
+        $costsSub = DB::table('maintenances')
+            ->select('vehicle_id', DB::raw('SUM(cost) as total_costs'))
+            ->groupBy('vehicle_id');
+
+        $stats = DB::table('vehicles')
+            ->leftJoinSub($revenueSub, 'rev', 'vehicles.id', '=', 'rev.vehicle_id')
+            ->leftJoinSub($costsSub, 'costs', 'vehicles.id', '=', 'costs.vehicle_id')
+            ->select(
+                'vehicles.brand',
+                'vehicles.model',
+                'vehicles.plate',
+                DB::raw('COALESCE(rev.total_revenue, 0) as total_revenue'),
+                DB::raw('COALESCE(costs.total_costs, 0) as total_costs'),
+                DB::raw('(COALESCE(rev.total_revenue, 0) - COALESCE(costs.total_costs, 0)) as net_profit')
+            )
+            ->whereNull('vehicles.deleted_at')
+            ->orderByDesc('net_profit')
+            ->get();
+
+        return response()->json($stats);
     }
 }

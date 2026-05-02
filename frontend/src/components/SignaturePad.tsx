@@ -2,13 +2,15 @@
 
 import { useRef, useState, useEffect } from "react";
 import { PenTool, RotateCcw, Check, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SignaturePadProps {
   onSave: (base64: string) => void;
   onClear?: () => void;
+  isLoading?: boolean;
 }
 
-export default function SignaturePad({ onSave, onClear }: SignaturePadProps) {
+export default function SignaturePad({ onSave, onClear, isLoading }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
@@ -89,23 +91,24 @@ export default function SignaturePad({ onSave, onClear }: SignaturePadProps) {
         </div>
         <button 
           onClick={clear}
-          className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-tighter text-slate-400 hover:text-red-500 transition-colors"
+          disabled={isLoading}
+          className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-tighter text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
         >
           <RotateCcw size={12} />
           Effacer
         </button>
       </div>
 
-      <div className="relative group">
+      <div className={cn("relative group", isLoading && "opacity-50 cursor-not-allowed")}>
         <canvas
           ref={canvasRef}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseOut={stopDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
+          onMouseDown={isLoading ? undefined : startDrawing}
+          onMouseMove={isLoading ? undefined : draw}
+          onMouseUp={isLoading ? undefined : stopDrawing}
+          onMouseOut={isLoading ? undefined : stopDrawing}
+          onTouchStart={isLoading ? undefined : startDrawing}
+          onTouchMove={isLoading ? undefined : draw}
+          onTouchEnd={isLoading ? undefined : stopDrawing}
           className="w-full h-48 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] cursor-crosshair touch-none transition-all group-hover:border-primary/30"
         />
         

@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('clients', function (Blueprint $table) {
+            $table->string('cin_image_url')->nullable()->after('cin');
+            $table->string('license_image_url')->nullable()->after('license');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('clients', function (Blueprint $table) {
+            $table->dropColumn(['cin_image_url', 'license_image_url']);
+        });
+    }
+};

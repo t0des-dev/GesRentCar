@@ -93,9 +93,18 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <h1 className="text-7xl md:text-[140px] font-black text-white tracking-tighter leading-[0.8] mb-10">
-                  DOMINEZ LA <br />
-                  <span className="text-gradient-gold italic">ROUTE</span>.
+                <h1 className="text-7xl md:text-[140px] font-black text-white tracking-tighter leading-[0.8] mb-10 uppercase">
+                  {agency.agency_slogan ? (
+                    <>
+                      {agency.agency_slogan.split(' ').slice(0, -1).join(' ')} <br />
+                      <span className="text-gradient-gold italic">{agency.agency_slogan.split(' ').slice(-1)}</span>
+                    </>
+                  ) : (
+                    <>
+                      DOMINEZ LA <br />
+                      <span className="text-gradient-gold italic">ROUTE</span>.
+                    </>
+                  )}
                 </h1>
               </motion.div>
 
@@ -286,7 +295,7 @@ export default function Home() {
                     id={v.id}
                     brand={v.brand}
                     model={v.model}
-                    type={v.category || v.type}
+                    type={v.type}
                     price={v.price_per_day}
                     seats={(v as any).seats ?? 5}
                     fuel={v.fuel_type || (v as any).fuel || "Diesel"}

@@ -263,7 +263,43 @@ MSG;
             $this->sendSms($client->phone, "VectoriaRentCar: Contrat {$refNum} signé. Copie: {$contractUrl}");
         }
 
+        if ($client->email) {
+            try { $client->notify(new \App\Notifications\ContractSigned($reservation)); } catch (\Exception $e) {
+                Log::warning('[Email] ContractSigned attachment failed: ' . $e->getMessage());
+            }
+        }
+
         Log::info("[NotificationService] Contract signed notification sent for reservation #{$reservation->id}");
+    }
+
+    /**
+     * 🛡️ Proactive Maintenance & Document Expiry Audit
+     * Can be called daily via task scheduler.
+     */
+    public function checkMaintenanceAlerts(): void
+    {
+        $today = now();
+        $warningLimit = $today->copy()->addDays(15);
+
+        // 1. Check Document Expiries
+        $expiring = \App\Models\Vehicle::where(function($q) use ($today, $warningLimit) {
+            $q->whereBetween('insurance_date', [$today, $warningLimit])
+              ->orWhereBetween('tech_inspection_date', [$today, $warningLimit]);
+        })->get();
+
+        foreach ($expiring as $vehicle) {
+            $this->notifyAdmin("🟡 ALERTE DOCUMENT : Le véhicule {$vehicle->brand} {$vehicle->plate} arrive à échéance prochainement.");
+        }
+
+        // 2. Check Maintenance (based on km)
+        // This usually happens during vehicle return, but we can do a general check
+        $dueMaintenances = \App\Models\Maintenance::where('status', 'scheduled')
+            ->where('next_due_date', '<=', $warningLimit)
+            ->get();
+
+        foreach ($dueMaintenances as $m) {
+            $this->notifyMaintenanceDue($m);
+        }
     }
 
     /**

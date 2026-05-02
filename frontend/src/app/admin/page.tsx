@@ -7,11 +7,12 @@ import {
   TrendingUp, Calendar, Car, Percent,
   CheckCircle, XCircle, Download,
   AlertTriangle, RefreshCw, Users,
-  Trophy, Wallet,
+  Trophy, Wallet, Eye,
 } from "lucide-react";
 import RevenueChart from "@/components/RevenueChart";
 import FleetPieChart from "@/components/FleetPieChart";
 import PricingSimulator from "@/components/PricingSimulator";
+import ProfitabilityTable from "@/components/ProfitabilityTable";
 // StorefrontManager is available at /admin/storefront route
 import styles from "./page.module.css";
 import { Palette } from "lucide-react";
@@ -30,7 +31,11 @@ type Reservation = {
   end_date: string;
   total_price: number;
   status: string;
-  client?: { name: string };
+  client?: { 
+    name: string; 
+    cin_image_url?: string; 
+    license_image_url?: string; 
+  };
   vehicle?: { brand: string; model: string; plate: string };
 };
 
@@ -53,6 +58,7 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [previewDocs, setPreviewDocs] = useState<{cin?: string, license?: string, name?: string} | null>(null);
 
 
   const fetchData = useCallback(async () => {
@@ -278,6 +284,13 @@ export default function AdminDashboard() {
       )}
 
       {/* Reservations Table */}
+      {/* ── Profitability Section ── */}
+      {!loading && (
+        <div className="mb-12">
+          <ProfitabilityTable />
+        </div>
+      )}
+
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <Users size={20} className="text-primary" />
@@ -321,9 +334,23 @@ export default function AdminDashboard() {
                     </td>
                     <td className={styles.price}>{r.total_price.toLocaleString('fr-FR')} DH</td>
                     <td>
-                      <span className={`${styles.statusBadge} ${styles[`status_${r.status}`]}`}>
-                        {r.status}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`${styles.statusBadge} ${styles[`status_${r.status}`]}`}>
+                          {r.status}
+                        </span>
+                        {r.client?.cin_image_url && (
+                          <button 
+                            onClick={() => setPreviewDocs({
+                              cin: r.client?.cin_image_url,
+                              license: r.client?.license_image_url,
+                              name: r.client?.name
+                            })}
+                            className="text-[9px] font-black uppercase text-primary hover:underline flex items-center gap-1"
+                          >
+                            <Eye size={10} /> Docs
+                          </button>
+                        )}
+                      </div>
                     </td>
                     <td className={styles.actions}>
                       {r.status === "pending" ? (
@@ -436,6 +463,62 @@ export default function AdminDashboard() {
             ))}
           </div>
         </section>
+      )}
+      {/* Document Preview Modal */}
+      {previewDocs && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-md" onClick={() => setPreviewDocs(null)} />
+          <div className="bg-white rounded-[40px] w-full max-w-4xl max-h-[90vh] overflow-hidden relative z-10 shadow-2xl flex flex-col animate-in zoom-in-95 duration-500 border border-white/20">
+            <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">Documents : {previewDocs.name}</h3>
+                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Justificatifs d'identité et de conduite</p>
+              </div>
+              <button onClick={() => setPreviewDocs(null)} className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all">
+                <XCircle size={24} className="text-slate-400" />
+              </button>
+            </div>
+            
+            <div className="p-8 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-white">
+              {previewDocs.cin && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Carte d'Identité (CIN)</span>
+                    <a href={`http://localhost:8000${previewDocs.cin}`} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
+                  </div>
+                  <div className="aspect-video rounded-3xl overflow-hidden border-4 border-slate-100 shadow-inner group relative">
+                    <img src={`http://localhost:8000${previewDocs.cin}`} alt="CIN" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-all pointer-events-none" />
+                  </div>
+                </div>
+              )}
+              {previewDocs.license && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Permis de Conduire</span>
+                    <a href={`http://localhost:8000${previewDocs.license}`} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
+                  </div>
+                  <div className="aspect-video rounded-3xl overflow-hidden border-4 border-slate-100 shadow-inner group relative">
+                    <img src={`http://localhost:8000${previewDocs.license}`} alt="Permis" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-all pointer-events-none" />
+                  </div>
+                </div>
+              )}
+              {!previewDocs.cin && !previewDocs.license && (
+                <div className="col-span-2 py-20 text-center text-slate-400">
+                  <AlertTriangle size={48} className="mx-auto mb-4 opacity-20" />
+                  <p className="font-bold">Aucun document numérisé pour ce client.</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button onClick={() => setPreviewDocs(null)} className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-primary transition-all">
+                Fermer l'Aperçu
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

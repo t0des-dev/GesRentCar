@@ -14,7 +14,7 @@ interface VehicleCardProps {
   fuel: string;
   transmission: string;
   year?: number;
-  horsepower?: string;
+  horsepower?: string | number;
   mileage?: number;
   rating?: number;
   imageUrl?: string;

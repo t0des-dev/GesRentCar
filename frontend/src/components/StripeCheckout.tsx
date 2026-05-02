@@ -145,7 +145,15 @@ export interface StripeCheckoutProps {
     vehicle_id: number;
     start_date: string;
     end_date: string;
-    client: { name: string; email: string; phone: string; cin: string; license_number?: string };
+    client: { 
+      name: string; 
+      email: string; 
+      phone: string; 
+      cin: string; 
+      license_number?: string;
+      cin_image_url?: string;
+      license_image_url?: string;
+    };
     signature?: string;
   };
   onSuccess: (reservationId?: number) => void;

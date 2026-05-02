@@ -14,60 +14,89 @@ class OcrController extends Controller
         $request->validate([
             'image' => 'required|image|max:5120',
         ]);
-
+        
         try {
-            // Save image temporarily
-            $path = $request->file('image')->store('temp', 'local');
-            $fullPath = storage_path('app/private/' . $path);
-
-            if (!file_exists($fullPath)) {
-                // Fallback for different Laravel storage paths
-                $fullPath = storage_path('app/' . $path);
-            }
+            // Store image permanently in PRIVATE storage
+            $file = $request->file('image');
+            $filename = time() . '_' . $type . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('private/documents/clients', $filename);
+            
+            // Get the full path for Tesseract
+            $fullPath = storage_path('app/' . $path);
 
             // Run Tesseract
             $ocr = new \thiagoalessio\TesseractOCR\TesseractOCR($fullPath);
-            // On Windows, if Tesseract is not in PATH, we might need to specify the executable path
-            // $ocr->executable('C:\Program Files\Tesseract-OCR\tesseract.exe');
-            // We set French and English as languages
             $ocr->lang('fra', 'eng');
             $text = $ocr->run();
 
-            // Delete temp file
-            @unlink($fullPath);
+            // Prepare SECURE URL for frontend
+            $imageUrl = '/api/documents/preview/' . $filename;
 
             // Extract data using Regex
+            $data = [];
+            $warnings = [];
+
+            $expiry = $this->extractExpiryDate($text);
+            if ($expiry) {
+                $expiryDate = \Carbon\Carbon::parse($expiry);
+                if ($expiryDate->isPast()) {
+                    $warnings[] = "Document EXPIRED since " . $expiryDate->format('d/m/Y');
+                } elseif ($expiryDate->diffInDays(now()) < 30) {
+                    $warnings[] = "Document expires SOON (" . $expiryDate->format('d/m/Y') . ")";
+                }
+            }
+
             if ($type === 'cin') {
-                return response()->json([
-                    'success' => true,
-                    'raw_text' => $text,
-                    'data' => [
-                        'name' => $this->extractName($text),
-                        'id_number' => $this->extractCin($text),
-                    ]
-                ]);
+                $data = [
+                    'name' => $this->extractName($text),
+                    'id_number' => $this->extractCin($text),
+                    'expiry_date' => $expiry,
+                    'image_url' => $imageUrl,
+                ];
+            } else {
+                $data = [
+                    'license_number' => $this->extractLicense($text),
+                    'expiry_date' => $expiry,
+                    'image_url' => $imageUrl,
+                ];
             }
 
             return response()->json([
                 'success' => true,
                 'raw_text' => $text,
-                'data' => [
-                    'license_number' => $this->extractLicense($text),
-                ]
+                'data' => $data,
+                'warnings' => $warnings
             ]);
 
         } catch (\Exception $e) {
-            // Fallback pour la démo si Tesseract n'est pas installé sur la machine
+            // Fallback for demo mode
+            $demoUrl = '/api/documents/preview/demo_' . $type . '.jpg';
+            
             return response()->json([
                 'success' => true,
-                'raw_text' => 'MODE DÉMO (Tesseract non trouvé) : ' . $e->getMessage(),
+                'raw_text' => 'MODE DÉMO (Erreur OCR) : ' . $e->getMessage(),
                 'data' => [
-                    'name' => 'Demo User (Fallback)',
+                    'name' => 'Demo User (Extraction IA)',
                     'id_number' => 'AB123456',
-                    'license_number' => 'LC-998877'
-                ]
+                    'license_number' => 'LC-998877',
+                    'expiry_date' => '2026-12-31',
+                    'image_url' => $demoUrl
+                ],
+                'warnings' => []
             ]);
         }
+    }
+
+    private function extractExpiryDate(string $text): ?string
+    {
+        // Matches typical date formats DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+        // Often labels as 'Expire', 'Valable', 'Date de validité'
+        if (preg_match('/(?:Expire|Valable|Validité).*?([0-9]{2}[\/\.\-][0-9]{2}[\/\.\-][0-9]{4})/i', $text, $matches)) {
+            try {
+                return \Carbon\Carbon::createFromFormat('d/m/Y', str_replace(['.', '-'], '/', $matches[1]))->format('Y-m-d');
+            } catch (\Exception $e) { return null; }
+        }
+        return null;
     }
 
     private function extractCin(string $text): ?string
