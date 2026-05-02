@@ -23,8 +23,6 @@ Route::prefix('auth')->group(function () {
                 'user' => $request->user(),
             ];
         });
-        Route::put('/user/profile', [AuthController::class, 'updateProfile']);
-        Route::put('/user/password', [AuthController::class, 'updatePassword']);
     });
 });
 
@@ -54,6 +52,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::apiResource('/clients', \App\Http\Controllers\Api\ClientController::class);
     Route::post('/reservations', [ReservationController::class, 'store']);
     Route::get('/reservations', [ReservationController::class, 'index']);
+    Route::get('/reservations/my', [ReservationController::class, 'my']);
     Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update']);
     Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
@@ -84,4 +83,11 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
 
     Route::apiResource('maintenances', \App\Http\Controllers\Api\MaintenanceController::class);
+
+    // User Profile
+    Route::get('/user/profile', function (Request $request) {
+        return $request->user();
+    });
+    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/user/password', [AuthController::class, 'updatePassword']);
 });

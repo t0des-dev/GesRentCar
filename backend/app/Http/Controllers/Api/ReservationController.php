@@ -24,6 +24,16 @@ class ReservationController extends Controller
         return response()->json(Reservation::with(['client', 'vehicle'])->get());
     }
 
+    public function my(Request $request)
+    {
+        $user = $request->user();
+        $reservations = Reservation::whereHas('client', function($q) use ($user) {
+            $q->where('email', $user->email);
+        })->with(['vehicle', 'client'])->get();
+
+        return response()->json($reservations);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

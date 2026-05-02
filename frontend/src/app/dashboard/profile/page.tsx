@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "@/lib/api/axios";
+import api from "@/lib/api/client";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
