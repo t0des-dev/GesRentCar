@@ -130,6 +130,10 @@ class ReservationController extends Controller
 
         if ($reservation->status === 'confirmed') {
             $this->notificationService->notifyReservationConfirmed($reservation);
+            
+            // 📄 Automate contract generation
+            $contractCtrl = new \App\Http\Controllers\Api\ContractController($this->notificationService);
+            $contractCtrl->generate($reservation);
         }
 
         return response()->json($reservation, 201);
@@ -191,6 +195,10 @@ class ReservationController extends Controller
         }
 
         $reservation->update(['status' => 'attente_paiement']);
+
+        // 📄 Automate contract generation
+        $contractCtrl = new \App\Http\Controllers\Api\ContractController($this->notificationService);
+        $contractCtrl->generate($reservation);
 
         $this->notificationService->sendSms(
             $reservation->client->phone, 

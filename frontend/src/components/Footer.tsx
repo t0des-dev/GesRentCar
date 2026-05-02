@@ -65,6 +65,14 @@ export default function Footer() {
               <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-secondary" />
               {t("nav_locations")}
             </Link>
+            <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
+              <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-secondary" />
+              {t("nav_about")}
+            </Link>
+            <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
+              <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-secondary" />
+              {t("nav_contact")}
+            </Link>
             <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
               <ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-secondary" />
               Conditions
@@ -117,9 +125,12 @@ export default function Footer() {
         {/* Copyright */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground/60">
           <p>© {new Date().getFullYear()} {agency.agency_name || "VectoriaRentCar"}. Tous droits réservés.</p>
-          <div className="flex gap-6">
-            <Link href="/sitemap" className="hover:text-primary transition-colors">Plan du site</Link>
-            <Link href="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
+          <div className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-2">
+            <Link href="/cookies" className="hover:text-primary transition-colors whitespace-nowrap">{t("footer_cookies")}</Link>
+            <Link href="/privacy" className="hover:text-primary transition-colors whitespace-nowrap">{t("footer_privacy")}</Link>
+            <Link href="/accessibility" className="hover:text-primary transition-colors whitespace-nowrap">{t("footer_accessibility")}</Link>
+            <Link href="/dsa" className="hover:text-primary transition-colors whitespace-nowrap">{t("footer_dsa")}</Link>
+            <Link href="/terms" className="hover:text-primary transition-colors whitespace-nowrap">{t("footer_terms")}</Link>
           </div>
         </div>
       </div>

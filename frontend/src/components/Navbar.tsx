@@ -41,7 +41,8 @@ export default function Navbar() {
     { label: t("nav_fleet"), url: "/fleet" },
     { label: t("nav_locations"), url: "/locations" },
     { label: t("nav_offers"), url: "/offers" },
-    { label: t("nav_about"), url: "/about" }
+    { label: t("nav_about"), url: "/about" },
+    { label: t("nav_contact"), url: "/contact" }
   ];
 
   // Colors

@@ -53,6 +53,14 @@ export interface AgencyConfig {
   };
   category_prices?: any;
   special_offers?: any[];
+  testimonials?: any[];
+  sections_order?: any[];
+  seo_config?: {
+    title?: string;
+    description?: string;
+    keywords?: string;
+    og_image?: string;
+  };
 }
 
 export function useAgency() {

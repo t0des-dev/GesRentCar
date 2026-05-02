@@ -313,6 +313,7 @@ export default function AdminDashboard() {
                   <th>Période de Location</th>
                   <th>Montant Net</th>
                   <th>État</th>
+                  <th>Contrat</th>
                   <th className="text-right">Gestion</th>
                 </tr>
               </thead>
@@ -351,6 +352,35 @@ export default function AdminDashboard() {
                           </button>
                         )}
                       </div>
+                    </td>
+                    <td>
+                      {(r as any).contract ? (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1">
+                            <CheckCircle size={10} /> Généré
+                          </span>
+                          <a 
+                            href={`http://localhost:8000/storage/${(r as any).contract.file_path}`} 
+                            target="_blank" 
+                            className="text-[9px] font-black text-primary hover:underline flex items-center gap-1"
+                          >
+                            <Download size={10} /> Télécharger
+                          </a>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={async () => {
+                            setActionLoading(r.id);
+                            try {
+                              await api.post(`/reservations/${r.id}/contract`);
+                              await fetchData();
+                            } catch { alert("Erreur génération"); } finally { setActionLoading(null); }
+                          }}
+                          className="text-[9px] font-black text-slate-400 hover:text-primary uppercase tracking-widest border border-slate-200 px-2 py-1 rounded-lg hover:border-primary transition-all flex items-center gap-1"
+                        >
+                          <RefreshCw size={10} /> Générer
+                        </button>
+                      )}
                     </td>
                     <td className={styles.actions}>
                       {r.status === "pending" ? (

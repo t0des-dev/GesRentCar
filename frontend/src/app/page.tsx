@@ -16,6 +16,7 @@ import ExperienceMap from "@/components/ExperienceMap";
 import VehicleComparator from "@/components/VehicleComparator";
 import LifestyleSlider from "@/components/LifestyleSlider";
 import PromotionBanner from "@/components/PromotionBanner";
+import FAQSection from "@/components/FAQSection";
 
 export default function Home() {
   const router = useRouter();
@@ -333,6 +334,9 @@ export default function Home() {
 
       {/* ── EXPERIENCE MAP ─────────────────────────────────────────────────── */}
       {sections.map && <ExperienceMap />}
+
+      {/* ── FAQ SECTION ─────────────────────────────────────────────────────── */}
+      <FAQSection />
 
       {/* ── VEHICLE COMPARATOR ─────────────────────────────────────────────── */}
       <VehicleComparator />

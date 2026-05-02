@@ -29,7 +29,7 @@ class ContractReady extends Notification
             ->subject('Votre contrat de location est prêt - #' . $this->reservation->id)
             ->line('Votre contrat de location pour la réservation #' . $this->reservation->id . ' a été généré.')
             ->line('Vous pouvez le consulter et le signer numériquement depuis votre espace client.')
-            ->action('Signer le contrat', url('/dashboard/contracts/' . $this->reservation->id))
+            ->action('Signer le contrat', config('app.frontend_url') . '/dashboard/contracts/' . $this->reservation->id)
             ->line('Si vous avez des questions, n\'hésitez pas à nous contacter.');
     }
 }

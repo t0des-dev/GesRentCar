@@ -9,9 +9,37 @@ use Illuminate\Http\Request;
 
 class ConfigController extends Controller
 {
+    /**
+     * Upload an asset (logo, hero image, etc.) for the storefront branding.
+     */
+    public function uploadAsset(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|image|max:5120', // Max 5MB
+            'type' => 'required|string|in:logo,hero,favicon'
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $type = $request->input('type');
+            
+            $filename = time() . '_' . $type . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/branding', $filename);
+            
+            $url = asset('storage/branding/' . $filename);
+
+            return response()->json([
+                'url' => $url,
+                'message' => 'Fichier téléchargé avec succès'
+            ]);
+        }
+
+        return response()->json(['message' => 'Aucun fichier fourni'], 400);
+    }
+
     public function index(): JsonResponse
     {
-        $setting = Setting::first(); // On utilise le premier enregistrement pour les colonnes étendues
+        $setting = Setting::first();
 
         return response()->json([
             'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
@@ -28,6 +56,10 @@ class ConfigController extends Controller
             'footer_config' => $setting->footer_config,
             'theme_config' => $setting->theme_config,
             'stats_config' => $setting->stats_config,
+            'sections_order' => $setting->sections_order,
+            'testimonials' => $setting->testimonials,
+            'seo_config' => $setting->seo_config,
+            'social_hub' => $setting->social_hub,
         ]);
     }
 
@@ -51,6 +83,12 @@ class ConfigController extends Controller
         if (isset($data['footer_config'])) $setting->footer_config = $data['footer_config'];
         if (isset($data['theme_config'])) $setting->theme_config = $data['theme_config'];
         if (isset($data['stats_config'])) $setting->stats_config = $data['stats_config'];
+        
+        // CMS & SEO
+        if (isset($data['sections_order'])) $setting->sections_order = $data['sections_order'];
+        if (isset($data['testimonials'])) $setting->testimonials = $data['testimonials'];
+        if (isset($data['seo_config'])) $setting->seo_config = $data['seo_config'];
+        if (isset($data['social_hub'])) $setting->social_hub = $data['social_hub'];
         
         $setting->save();
 

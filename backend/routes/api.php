@@ -67,6 +67,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
     Route::get('/stats', [\App\Http\Controllers\Api\StatsController::class, 'generalStats']);
     Route::post('/config', [\App\Http\Controllers\Api\ConfigController::class, 'update']);
+    Route::post('/config/upload', [\App\Http\Controllers\Api\ConfigController::class, 'uploadAsset']);
 
     Route::get('/exports/reservations', [\App\Http\Controllers\Api\ExportController::class, 'reservations']);
     
