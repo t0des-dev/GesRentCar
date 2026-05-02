@@ -1,9 +1,10 @@
 "use client";
 
-import { X, ChevronLeft, ChevronRight, Calendar, Star, ShieldCheck, Gauge, Fuel, Users, ArrowRight } from "lucide-react";
+import { X, Star, ShieldCheck, Gauge, Fuel, Users, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface QuickViewModalProps {
   vehicle: {
@@ -22,6 +23,7 @@ interface QuickViewModalProps {
 }
 
 export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps) {
+  const { t } = useTranslation();
   const [activeImage, setActiveImage] = useState(0);
   const images = vehicle.imageUrl ? [vehicle.imageUrl, vehicle.imageUrl, vehicle.imageUrl] : []; // Mocking gallery
 
@@ -61,17 +63,17 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                 <div className="flex items-center gap-1.5 bg-yellow-400/10 text-yellow-600 px-3 py-1 rounded-full text-xs font-black">
                   <Star size={14} fill="currentColor" /> {vehicle.rating || 4.9}
                 </div>
-                <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">{vehicle.type}</span>
+                <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t(`cat_${vehicle.type.toLowerCase()}`)}</span>
               </div>
             </div>
 
             {/* Specs Grid */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Users, label: "Places", value: vehicle.seats },
-                { icon: Gauge, label: "Transmission", value: vehicle.transmission },
-                { icon: Fuel, label: "Carburant", value: vehicle.fuel },
-                { icon: ShieldCheck, label: "Sécurité", value: "Premium" },
+                { icon: Users, label: t("qv_seats"), value: `${vehicle.seats} ${t("spec_pers")}` },
+                { icon: Gauge, label: t("qv_transmission"), value: t(`trans_${vehicle.transmission.toLowerCase()}`) },
+                { icon: Fuel, label: t("qv_fuel"), value: vehicle.fuel },
+                { icon: ShieldCheck, label: t("qv_security"), value: "Premium" },
               ].map((s, i) => (
                 <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col gap-1">
                   <s.icon size={16} className="text-primary mb-2" />
@@ -86,7 +88,7 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
             <div>
               <div className="flex items-baseline gap-2 mb-8">
                 <span className="text-5xl font-black text-slate-900">{vehicle.price}</span>
-                <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">DH / Jour</span>
+                <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">{t("currency_day")}</span>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
@@ -94,14 +96,14 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                   href={`/booking?vehicle=${vehicle.id}`}
                   className="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:bg-blue-600 transition-all flex items-center justify-center gap-3"
                 >
-                  Louer maintenant
+                  {t("qv_rent")}
                   <ArrowRight size={18} />
                 </Link>
                 <button 
                   onClick={onClose}
                   className="w-full bg-slate-100 text-slate-500 py-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all"
                 >
-                  Continuer mes recherches
+                  {t("qv_continue")}
                 </button>
               </div>
             </div>

@@ -64,7 +64,9 @@ export default function VehicleCard({
       {/* Dynamic Pricing Badge */}
       {dynamicReason && (
         <div className="absolute top-14 left-6 z-10 bg-white/90 backdrop-blur-md text-primary text-[10px] font-black px-4 py-2 rounded-xl shadow-xl border border-primary/10 animate-pulse">
-          {dynamicReason.toUpperCase()}
+          {t(`badge_${dynamicReason.toLowerCase().replace(' ', '_')}`) !== `badge_${dynamicReason.toLowerCase().replace(' ', '_')}` 
+            ? t(`badge_${dynamicReason.toLowerCase().replace(' ', '_')}`).toUpperCase() 
+            : dynamicReason.toUpperCase()}
         </div>
       )}
 
@@ -88,14 +90,14 @@ export default function VehicleCard({
             onClick={(e) => { e.preventDefault(); onQuickView?.(); }}
             className="bg-white text-slate-900 px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-[0.2em] flex items-center gap-3 transform translate-y-8 group-hover:translate-y-0 transition-all duration-700 hover:bg-primary hover:text-white hover:scale-105"
           >
-            <Eye size={18} /> Vision 360°
+            <Eye size={18} /> {t("vision_360")}
           </button>
         </div>
 
         {/* Type Badge */}
         <div className="absolute top-6 left-6 flex flex-col gap-2">
           <span className="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-black px-4 py-1.5 rounded-full border border-white/10 uppercase tracking-widest">
-            {type}
+            {t(`badge_${type.toLowerCase()}`)}
           </span>
         </div>
 
@@ -123,9 +125,9 @@ export default function VehicleCard({
         {/* High-End Specs Grid */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { icon: Users, value: `${seats} pers`, label: "Capacité" },
-            { icon: Fuel, value: fuel, label: "Moteur" },
-            { icon: Gauge, value: transmission, label: "Boîte" }
+            { icon: Users, value: `${seats} ${t("spec_pers")}`, label: t("spec_seats") },
+            { icon: Fuel, value: fuel, label: t("spec_fuel") },
+            { icon: Gauge, value: t(`trans_${transmission.toLowerCase()}`), label: t("spec_gearbox") }
           ].map((spec, i) => (
             <div key={i} className="flex flex-col gap-1 border-l-2 border-slate-100 pl-4 group/spec hover:border-primary transition-colors">
               <spec.icon size={16} className="text-slate-400 group-hover/spec:text-primary transition-colors" />
@@ -145,7 +147,7 @@ export default function VehicleCard({
               {isPriceChanged && (
                 <span className="text-sm text-muted-foreground line-through opacity-40">{price}</span>
               )}
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">DH / JOUR</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">{t("currency_day")}</span>
             </div>
           </div>
           
@@ -161,7 +163,7 @@ export default function VehicleCard({
                   ? "bg-slate-900 text-white border-slate-900 shadow-xl"
                   : "bg-slate-50 text-slate-400 border-slate-100 hover:border-primary hover:text-primary"
               )}
-              title="Comparer"
+              title={t("compare")}
             >
               <ArrowRight
                 size={20}

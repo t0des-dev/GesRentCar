@@ -13,6 +13,18 @@ export interface Vehicle {
   photos: string[] | null;
   dynamic_price?: number;
   dynamic_reason?: string | null;
+  
+  // Technical specs
+  year?: number;
+  fuel_type?: string;
+  transmission?: string;
+  seats?: number;
+  horsepower?: number;
+  
+  // Localized descriptions
+  description_fr?: string;
+  description_en?: string;
+  description_ar?: string;
 }
 
 export interface VehicleFilters {

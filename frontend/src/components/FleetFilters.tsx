@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SlidersHorizontal, Car, Gauge, Users, Wallet, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
 const TRANSMISSIONS = ["All", "Automatic", "Manual"];
@@ -23,6 +24,7 @@ export interface FleetFilterState {
 }
 
 export default function FleetFilters({ onFilter, className }: FleetFiltersProps) {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<FleetFilterState>({
     type: "All",
     transmission: "All",
@@ -42,13 +44,22 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
     onFilter(def);
   };
 
+  const getCategoryLabel = (type: string) => {
+    return t(`cat_${type.toLowerCase()}`);
+  };
+
+  const getTransmissionLabel = (trans: string) => {
+    if (trans === "All") return t("all");
+    return t(`trans_${trans.toLowerCase()}`);
+  };
+
   return (
     <div className={cn("flex flex-col gap-12", className)}>
       {/* Title & Reset */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-black text-foreground tracking-tighter flex items-center gap-3">
           <SlidersHorizontal size={20} className="text-primary" />
-          FILTRES
+          {t("filter_title")}
         </h3>
         <motion.button 
           whileHover={{ scale: 1.05 }}
@@ -56,14 +67,14 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
           onClick={reset}
           className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-primary flex items-center gap-2 transition-all bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
         >
-          <RotateCcw size={10} /> CLEAR
+          <RotateCcw size={10} /> {t("filter_clear")}
         </motion.button>
       </div>
 
       {/* Category: Vehicle Type */}
       <div className="space-y-6">
         <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Car size={14} /> CATÉGORIE
+          <Car size={14} /> {t("filter_category")}
         </label>
         <div className="flex flex-col gap-2">
           {TYPES.map((t) => (
@@ -77,7 +88,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                   : "bg-transparent border-white/10 text-slate-400 hover:border-primary/40 hover:bg-white/5"
               )}
             >
-              {t.toUpperCase()}
+              {getCategoryLabel(t).toUpperCase()}
               <div className={cn(
                 "w-1.5 h-1.5 rounded-full transition-all",
                 filters.type === t ? "bg-primary scale-150" : "bg-slate-700 group-hover:bg-primary/40"
@@ -90,21 +101,21 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
       {/* Category: Transmission */}
       <div className="space-y-6">
         <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Gauge size={14} /> TRANSMISSION
+          <Gauge size={14} /> {t("filter_transmission")}
         </label>
         <div className="grid grid-cols-2 gap-2">
-          {TRANSMISSIONS.map((t) => (
+          {TRANSMISSIONS.map((tr) => (
             <button
-              key={t}
-              onClick={() => update("transmission", t)}
+              key={tr}
+              onClick={() => update("transmission", tr)}
               className={cn(
                 "flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black transition-all border uppercase tracking-widest",
-                filters.transmission === t
+                filters.transmission === tr
                   ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
                   : "bg-transparent border-white/10 text-slate-500 hover:border-white/20"
               )}
             >
-              {t === "All" ? "TOUT" : t.toUpperCase()}
+              {getTransmissionLabel(tr).toUpperCase()}
             </button>
           ))}
         </div>
@@ -113,7 +124,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
       {/* Category: Seats */}
       <div className="space-y-6">
         <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Users size={14} /> CAPACITÉ
+          <Users size={14} /> {t("filter_capacity")}
         </label>
         <div className="flex flex-wrap gap-2">
           {SEATS.map((s) => (
@@ -127,7 +138,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                   : "bg-transparent border-white/10 text-slate-500 hover:border-primary/40"
               )}
             >
-              {s}
+              {s === "All" ? t("all").toUpperCase() : s}
             </button>
           ))}
         </div>
@@ -137,9 +148,9 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-            <Wallet size={14} /> PRIX MAX
+            <Wallet size={14} /> {t("filter_price_max")}
           </label>
-          <span className="text-sm font-black text-foreground">{filters.maxPrice} DH/J</span>
+          <span className="text-sm font-black text-foreground">{filters.maxPrice} {t("currency_day")}</span>
         </div>
         <div className="relative pt-2">
           <input

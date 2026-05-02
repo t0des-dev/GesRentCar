@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useEffect, useCallback } from "react";
 
 type Language = "fr" | "ar" | "en";
 
@@ -52,6 +52,58 @@ const translations = {
     stat_fleet: "Véhicules premium",
     stat_exp: "Années d'expérience",
     stat_support: "Support disponible",
+    
+    // Filters & Specs
+    filter_title: "FILTRES",
+    filter_clear: "EFFACER",
+    filter_category: "CATÉGORIE",
+    filter_transmission: "TRANSMISSION",
+    filter_capacity: "CAPACITÉ",
+    filter_price_max: "PRIX MAX",
+    spec_seats: "Capacité",
+    spec_fuel: "Moteur",
+    spec_gearbox: "Boîte",
+    spec_pers: "pers",
+    currency_day: "DH / JOUR",
+    vision_360: "Vision 360°",
+    compare: "Comparer",
+    all: "Tout",
+    
+    // Fleet Page
+    fleet_title_1: "L'ART DE LA",
+    fleet_title_2: "PERFORMANCE",
+    fleet_subtitle: "Découvrez une collection de véhicules d'exception, alliant ingénierie de pointe et design intemporel.",
+    fleet_count: "CHEFS-D'ŒUVRE DISPONIBLES",
+    fleet_empty_title: "AUCUN SYMBOLE TROUVÉ",
+    fleet_empty_desc: "Ajustez vos critères pour découvrir d'autres chefs-d'œuvre de notre collection.",
+    
+    // Quick View
+    qv_rent: "Louer maintenant",
+    qv_continue: "Continuer mes recherches",
+    qv_security: "Sécurité",
+    qv_fuel: "Carburant",
+    qv_transmission: "Transmission",
+    qv_seats: "Places",
+    
+    // Badges & Labels
+    badge_special: "OFFRE SPÉCIALE",
+    badge_internal: "INTERNE",
+    fleet_tag: "Flotte de Luxe 2026",
+    
+    // Membership Banner
+    member_title: "Membre Privilège ?",
+    member_desc: "Bénéficiez de -15% sur toute la collection Sport.",
+    member_btn: "S'inscrire",
+
+    // Categories
+    cat_all: "Tout",
+    cat_sedan: "Berline",
+    cat_suv: "SUV",
+    cat_sport: "Sport",
+    cat_compact: "Compacte",
+    cat_luxury: "Luxe",
+    trans_automatic: "Automatique",
+    trans_manual: "Manuelle",
   },
   en: {
     nav_fleet: "Our Fleet",
@@ -100,6 +152,58 @@ const translations = {
     stat_fleet: "Premium Fleet",
     stat_exp: "Years Experience",
     stat_support: "24/7 Support",
+
+    // Filters & Specs
+    filter_title: "FILTERS",
+    filter_clear: "CLEAR",
+    filter_category: "CATEGORY",
+    filter_transmission: "TRANSMISSION",
+    filter_capacity: "CAPACITY",
+    filter_price_max: "MAX PRICE",
+    spec_seats: "Capacity",
+    spec_fuel: "Engine",
+    spec_gearbox: "Gearbox",
+    spec_pers: "pers",
+    currency_day: "DH / DAY",
+    vision_360: "360° Vision",
+    compare: "Compare",
+    all: "All",
+
+    // Fleet Page
+    fleet_title_1: "THE ART OF",
+    fleet_title_2: "PERFORMANCE",
+    fleet_subtitle: "Discover a collection of exceptional vehicles, combining cutting-edge engineering and timeless design.",
+    fleet_count: "MASTERPIECES AVAILABLE",
+    fleet_empty_title: "NO SYMBOL FOUND",
+    fleet_empty_desc: "Adjust your criteria to discover other masterpieces from our collection.",
+
+    // Quick View
+    qv_rent: "Rent now",
+    qv_continue: "Continue searching",
+    qv_security: "Security",
+    qv_fuel: "Fuel",
+    qv_transmission: "Transmission",
+    qv_seats: "Seats",
+
+    // Badges & Labels
+    badge_special: "SPECIAL OFFER",
+    badge_internal: "INTERNAL",
+    fleet_tag: "Luxury Fleet 2026",
+
+    // Membership Banner
+    member_title: "Privilege Member?",
+    member_desc: "Get -15% off the entire Sport collection.",
+    member_btn: "Join Now",
+
+    // Categories
+    cat_all: "All",
+    cat_sedan: "Sedan",
+    cat_suv: "SUV",
+    cat_sport: "Sport",
+    cat_compact: "Compact",
+    cat_luxury: "Luxury",
+    trans_automatic: "Automatic",
+    trans_manual: "Manual",
   },
   ar: {
     nav_fleet: "أسطولنا",
@@ -148,6 +252,58 @@ const translations = {
     stat_fleet: "أسطول فاخر",
     stat_exp: "سنوات الخبرة",
     stat_support: "دعم متاح",
+
+    // Filters & Specs
+    filter_title: "الفلاتر",
+    filter_clear: "مسح",
+    filter_category: "الفئة",
+    filter_transmission: "ناقل الحركة",
+    filter_capacity: "السعة",
+    filter_price_max: "أقصى سعر",
+    spec_seats: "السعة",
+    spec_fuel: "المحرك",
+    spec_gearbox: "الناقل",
+    spec_pers: "أشخاص",
+    currency_day: "درهم / يوم",
+    vision_360: "رؤية 360°",
+    compare: "مقارنة",
+    all: "الكل",
+
+    // Fleet Page
+    fleet_title_1: "فن",
+    fleet_title_2: "الأداء",
+    fleet_subtitle: "اكتشف مجموعة من السيارات الاستثنائية، التي تجمع بين الهندسة المتطورة والتصميم الخالد.",
+    fleet_count: "تحفة فنية متاحة",
+    fleet_empty_title: "لم يتم العثور على أي رمز",
+    fleet_empty_desc: "اضبط معاييرك لاكتشاف روائع أخرى من مجموعتنا.",
+
+    // Quick View
+    qv_rent: "احجز الآن",
+    qv_continue: "متابعة البحث",
+    qv_security: "الأمان",
+    qv_fuel: "الوقود",
+    qv_transmission: "ناقل الحركة",
+    qv_seats: "المقاعد",
+
+    // Badges & Labels
+    badge_special: "عرض خاص",
+    badge_internal: "داخلي",
+    fleet_tag: "أسطول فاخر 2026",
+
+    // Membership Banner
+    member_title: "عضو متميز؟",
+    member_desc: "استفد من خصم 15% على مجموعة السيارات الرياضية.",
+    member_btn: "انضم الآن",
+
+    // Categories
+    cat_all: "الكل",
+    cat_sedan: "سيدان",
+    cat_suv: "دفع رباعي",
+    cat_sport: "رياضية",
+    cat_compact: "مدمجة",
+    cat_luxury: "فاخرة",
+    trans_automatic: "أوتوماتيك",
+    trans_manual: "يدوي",
   }
 };
 
@@ -192,9 +348,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const t = (key: string) => {
+  const t = useCallback((key: string) => {
     return translations[lang][key as keyof typeof translations["fr"]] || key;
-  };
+  }, [lang]);
 
   return (
     <LanguageContext.Provider value={{ lang, switchLang, t, isReady }}>

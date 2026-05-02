@@ -182,7 +182,7 @@ export default function BookingPage() {
       price: v.price_per_day,
       type: "Premium",
       img: v.image_url ? `http://localhost:8000${v.image_url}` : "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600",
-      specs: { transmission: v.transmission || "Auto", fuel: v.fuel_type || "Diesel", seats: 5, mileage: v.mileage },
+      specs: { transmission: v.transmission || "Auto", fuel: v.fuel_type || "Diesel", seats: v.seats || 5, mileage: v.mileage },
       desc: v.description_fr || "L'élégance et le confort absolu pour vos trajets."
     }));
   }, [vehiclesData]);
@@ -431,7 +431,7 @@ export default function BookingPage() {
                             <div className="grid grid-cols-3 gap-3 mb-8">
                               <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1 border border-slate-100">
                                 <Users size={16} className="text-slate-400" />
-                                <span className="text-[10px] font-black text-slate-900">{v.specs?.places || 5} PLACES</span>
+                                <span className="text-[10px] font-black text-slate-900">{v.specs?.seats || 5} PLACES</span>
                               </div>
                               <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1 border border-slate-100">
                                 <Settings2 size={16} className="text-slate-400" />
@@ -439,7 +439,7 @@ export default function BookingPage() {
                               </div>
                               <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1 border border-slate-100">
                                 <Fuel size={16} className="text-slate-400" />
-                                <span className="text-[10px] font-black text-slate-900 uppercase">{v.specs?.carburant || "DIESEL"}</span>
+                                <span className="text-[10px] font-black text-slate-900 uppercase">{v.specs?.fuel || "DIESEL"}</span>
                               </div>
                             </div>
                             
