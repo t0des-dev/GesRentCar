@@ -93,4 +93,12 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     });
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
     Route::put('/user/password', [AuthController::class, 'updatePassword']);
+
+    // Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', [\App\Http\Controllers\Api\UserController::class, 'index']);
+        Route::post('/users', [\App\Http\Controllers\Api\UserController::class, 'store']);
+        Route::put('/users/{user}', [\App\Http\Controllers\Api\UserController::class, 'update']);
+        Route::delete('/users/{user}', [\App\Http\Controllers\Api\UserController::class, 'destroy']);
+    });
 });

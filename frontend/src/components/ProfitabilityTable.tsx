@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import api from "@/lib/api/client";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Car } from "lucide-react";
 
 interface VehicleProfit {
   brand: string;
@@ -14,95 +14,85 @@ interface VehicleProfit {
   net_profit: number;
 }
 
-export default function ProfitabilityTable() {
-  const [data, setData] = useState<VehicleProfit[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ProfitabilityTable({ data: initialData }: { data?: VehicleProfit[] }) {
+  const [data, setData] = useState<VehicleProfit[]>(initialData || []);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
-    api.get("/stats/profitability")
-      .then(res => setData(res.data))
-      .catch(err => console.error("Profitability fetch error:", err))
-      .finally(() => setLoading(false));
-  }, []);
+    if (!initialData) {
+      api.get("/stats/profitability")
+        .then(res => setData(res.data))
+        .catch(err => console.error("Profitability fetch error:", err))
+        .finally(() => setLoading(false));
+    } else {
+      setData(initialData);
+      setLoading(false);
+    }
+  }, [initialData]);
 
-  if (loading) return <div className="p-8 text-center opacity-50 uppercase tracking-widest text-[10px]">Analyse de rentabilité...</div>;
+  if (loading) return (
+    <div className="p-20 text-center flex flex-col items-center gap-4">
+      <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Calcul du ROI en cours...</p>
+    </div>
+  );
 
   return (
-    <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[40px] overflow-hidden shadow-2xl">
-      <div className="p-10 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-white/[0.02] to-transparent">
-        <div>
-          <p className="text-[9px] font-black text-primary uppercase tracking-[0.4em] mb-2">Performance Financière</p>
-          <h3 className="font-black text-white text-xl tracking-tighter flex items-center gap-3">
-            <DollarSign className="text-primary" size={24} strokeWidth={3} />
-            Rentabilité de la Flotte
-          </h3>
-        </div>
-        <div className="text-right">
-          <span className="px-4 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">
-            Live Analytics
-          </span>
-        </div>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-white/[0.02]">
-              <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Véhicule</th>
-              <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Revenus Bruts</th>
-              <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Charges (Maint.)</th>
-              <th className="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Marge Nette</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {data.map((v, i) => (
-              <tr key={v.plate} className="group hover:bg-white/[0.03] transition-all duration-500">
-                <td className="px-10 py-8">
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className="border-b border-slate-100">
+            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Véhicule</th>
+            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Revenus Bruts</th>
+            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Charges (Maint.)</th>
+            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Profit Net</th>
+            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Marge %</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-50">
+          {data.map((v, i) => {
+            const margin = v.total_revenue > 0 ? (v.net_profit / v.total_revenue) * 100 : 0;
+            return (
+              <tr key={v.plate} className="group hover:bg-slate-50 transition-all duration-300">
+                <td className="px-6 py-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:border-primary/30 transition-all duration-500">
-                      <TrendingUp size={20} />
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                      <Car size={18} />
                     </div>
                     <div>
-                      <p className="text-base font-black text-white tracking-tight group-hover:text-primary transition-colors duration-500">{v.brand} {v.model}</p>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{v.plate}</p>
+                      <p className="font-black text-slate-900 tracking-tight leading-none mb-1">{v.brand} {v.model}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{v.plate}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-10 py-8 text-right font-bold text-slate-200">
-                  <span className="text-xs text-slate-500 mr-1 font-medium">DH</span>
-                  {Number(v.total_revenue).toLocaleString()}
+                <td className="px-6 py-6 text-right font-bold text-slate-700">
+                  {Number(v.total_revenue).toLocaleString()} <span className="text-[10px] text-slate-400">DH</span>
                 </td>
-                <td className="px-10 py-8 text-right font-bold text-rose-500/70">
-                  <span className="text-xs mr-1 font-medium">-DH</span>
-                  {Number(v.total_costs).toLocaleString()}
+                <td className="px-6 py-6 text-right font-bold text-rose-500/80">
+                  -{Number(v.total_costs).toLocaleString()} <span className="text-[10px] text-slate-300">DH</span>
                 </td>
-                <td className="px-10 py-8 text-right">
+                <td className="px-6 py-6 text-right">
                   <div className={cn(
-                    "inline-flex flex-col items-end px-6 py-3 rounded-2xl border transition-all duration-500",
-                    v.net_profit >= 0 
-                      ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/30" 
-                      : "bg-rose-500/5 border-rose-500/10 text-rose-500 group-hover:bg-rose-500/10 group-hover:border-rose-500/30"
+                    "inline-flex items-center gap-1.5 font-black text-sm",
+                    v.net_profit >= 0 ? "text-emerald-600" : "text-rose-600"
                   )}>
-                    <div className="flex items-center gap-2 font-black text-lg tracking-tighter">
-                      {Number(v.net_profit).toLocaleString()} DH
-                      {v.net_profit >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                    </div>
-                    <span className="text-[8px] font-black uppercase tracking-widest opacity-60">
-                      {v.net_profit >= 0 ? "Profit Net" : "Déficit"}
-                    </span>
+                    {Number(v.net_profit).toLocaleString()} DH
+                    {v.net_profit >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  </div>
+                </td>
+                <td className="px-6 py-6 text-right">
+                  <div className={cn(
+                    "inline-flex px-3 py-1 rounded-lg text-[10px] font-black tracking-widest uppercase",
+                    margin > 50 ? "bg-emerald-50 text-emerald-600" : margin > 20 ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"
+                  )}>
+                    {margin.toFixed(1)}%
                   </div>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      <div className="p-8 bg-white/[0.01] border-t border-white/5 text-center">
-        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">
-          Données consolidées basées sur les flux réels de trésorerie
-        </p>
-      </div>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
