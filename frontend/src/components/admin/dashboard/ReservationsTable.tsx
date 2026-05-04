@@ -1,8 +1,10 @@
 "use client";
 
-import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import styles from "@/app/admin/page.module.css";
+import ReservationDrawer from "./ReservationDrawer";
 
 interface ReservationsTableProps {
   reservations: Reservation[];
@@ -19,15 +21,41 @@ export default function ReservationsTable({
   onPreviewDocs, 
   actionLoading 
 }: ReservationsTableProps) {
+  const [drawerReservation, setDrawerReservation] = useState<Reservation | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredReservations = useMemo(() => {
+    return reservations.filter(r => 
+      r.client?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.vehicle?.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.vehicle?.model?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.id.toString().includes(searchQuery)
+    );
+  }, [reservations, searchQuery]);
+
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
-        <Users size={20} className="text-primary" />
-        <h2>Flux des Réservations</h2>
-        <span className={styles.badge}>{reservations.length} total</span>
+        <div className="flex items-center gap-3">
+          <Users size={20} className="text-primary" />
+          <h2>Flux des Réservations</h2>
+          <span className={styles.badge}>{reservations.length} total</span>
+        </div>
+      </div>
+
+      <div className="relative mb-8 flex items-center">
+        <Search size={20} className="text-slate-400 absolute ml-5" />
+        <input 
+          type="text" 
+          placeholder="Rechercher par client, véhicule ou référence..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.searchInput}
+          style={{ paddingLeft: '3.5rem', width: '100%', maxWidth: '600px' }}
+        />
       </div>
       <div className={styles.tableWrapper}>
-        {reservations.length === 0 ? (
+        {filteredReservations.length === 0 ? (
           <div className={styles.empty}>
             <Calendar size={60} strokeWidth={1} />
             <p className="font-medium">Aucune réservation enregistrée.</p>
@@ -47,8 +75,8 @@ export default function ReservationsTable({
               </tr>
             </thead>
             <tbody>
-              {reservations.map((r) => (
-                <tr key={r.id}>
+              {filteredReservations.map((r) => (
+                <tr key={r.id} onClick={() => setDrawerReservation(r)} className="cursor-pointer">
                   <td className={styles.resId}>VC-{r.id.toString().padStart(4, "0")}</td>
                   <td>
                     <div className="flex items-center gap-2">
@@ -70,11 +98,14 @@ export default function ReservationsTable({
                       </span>
                       {r.client?.cin_image_url && (
                         <button 
-                          onClick={() => onPreviewDocs({
-                            cin: r.client?.cin_image_url,
-                            license: r.client?.license_image_url,
-                            name: r.client?.name
-                          })}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPreviewDocs({
+                              cin: r.client?.cin_image_url,
+                              license: r.client?.license_image_url,
+                              name: r.client?.name
+                            });
+                          }}
                           className="text-[9px] font-black uppercase text-primary hover:underline flex items-center gap-1"
                         >
                           <Eye size={10} /> Docs
@@ -91,6 +122,7 @@ export default function ReservationsTable({
                         <a 
                           href={`http://localhost:8000/storage/${r.contract.file_path}`} 
                           target="_blank" 
+                          onClick={(e) => e.stopPropagation()}
                           className="text-[9px] font-black text-primary hover:underline flex items-center gap-1"
                         >
                           <Download size={10} /> Télécharger
@@ -98,7 +130,7 @@ export default function ReservationsTable({
                       </div>
                     ) : (
                       <button 
-                        onClick={() => onGenerateContract(r.id)}
+                        onClick={(e) => { e.stopPropagation(); onGenerateContract(r.id); }}
                         disabled={actionLoading === r.id}
                         className="text-[9px] font-black text-slate-400 hover:text-primary uppercase tracking-widest border border-slate-200 px-2 py-1 rounded-lg hover:border-primary transition-all flex items-center gap-1"
                       >
@@ -112,14 +144,14 @@ export default function ReservationsTable({
                       <>
                         <button
                           className={styles.btnAccept}
-                          onClick={() => onAction(r.id, "accept")}
+                          onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }}
                           disabled={actionLoading === r.id}
                         >
                           Accepter
                         </button>
                         <button
                           className={styles.btnReject}
-                          onClick={() => onAction(r.id, "reject")}
+                          onClick={(e) => { e.stopPropagation(); onAction(r.id, "reject"); }}
                           disabled={actionLoading === r.id}
                         >
                           Rejeter
@@ -140,8 +172,8 @@ export default function ReservationsTable({
 
       {/* Mobile View */}
       <div className={styles.mobileResGrid}>
-        {reservations.map((r) => (
-          <div key={r.id} className={styles.mobileResCard}>
+        {filteredReservations.map((r) => (
+          <div key={r.id} className={styles.mobileResCard} onClick={() => setDrawerReservation(r)}>
             <div className={styles.cardHeader}>
               <span className={styles.resId}>VC-{r.id.toString().padStart(4, "0")}</span>
               <span className={`${styles.statusBadge} ${styles[`status_${r.status}`]}`} style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}>
@@ -160,14 +192,23 @@ export default function ReservationsTable({
               <div className={styles.price}>{r.total_price.toLocaleString()} DH</div>
               {r.status === "pending" && (
                 <div className={styles.mobileActions}>
-                  <button className={styles.btnAccept} onClick={() => onAction(r.id, "accept")} disabled={actionLoading === r.id}>Accepter</button>
-                  <button className={styles.btnReject} onClick={() => onAction(r.id, "reject")} disabled={actionLoading === r.id}>Rejeter</button>
+                  <button className={styles.btnAccept} onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }} disabled={actionLoading === r.id}>Accepter</button>
+                  <button className={styles.btnReject} onClick={(e) => { e.stopPropagation(); onAction(r.id, "reject"); }} disabled={actionLoading === r.id}>Rejeter</button>
                 </div>
               )}
             </div>
           </div>
         ))}
       </div>
+
+      {drawerReservation && (
+        <ReservationDrawer 
+          reservation={drawerReservation} 
+          onClose={() => setDrawerReservation(null)}
+          onGenerateContract={onGenerateContract}
+          actionLoading={actionLoading}
+        />
+      )}
     </section>
   );
 }

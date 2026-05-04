@@ -6,6 +6,8 @@ export interface Reservation {
   status: string;
   client?: { 
     name: string; 
+    email?: string;
+    phone?: string;
     cin_image_url?: string; 
     license_image_url?: string; 
   };

@@ -11,6 +11,7 @@ import { Reservation, DashboardStats } from "@/types/admin";
 // Modular Components
 import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
 import StatCards from "@/components/admin/dashboard/StatCards";
+import FleetCalendar from "@/components/admin/dashboard/FleetCalendar";
 import ReservationsTable from "@/components/admin/dashboard/ReservationsTable";
 import MaintenanceAlerts from "@/components/admin/dashboard/MaintenanceAlerts";
 import DocumentPreviewModal from "@/components/admin/dashboard/DocumentPreviewModal";
@@ -78,6 +79,8 @@ export default function AdminDashboard() {
       )}
 
       {!loading && <div className="mb-12"><ProfitabilityTable /></div>}
+
+      <FleetCalendar reservations={reservations} />
 
       <ReservationsTable 
         reservations={reservations} 

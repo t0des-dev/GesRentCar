@@ -46,9 +46,15 @@ export default function AgentHome({ onNewRental }: { onNewRental: () => void }) 
           <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2 uppercase">
             Bonjour, <span className="text-primary italic">{user?.name?.split(" ")[0] ?? "Agent"}</span> 👋
           </h2>
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.3em]">
-            {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-          </p>
+          <div className="flex items-center gap-4 mt-2">
+            <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.3em]">
+              {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            </p>
+            <div className="flex items-center gap-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Live System</span>
+            </div>
+          </div>
         </div>
         <button 
           onClick={onNewRental}

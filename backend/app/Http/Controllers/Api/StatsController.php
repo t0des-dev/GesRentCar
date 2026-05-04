@@ -53,9 +53,12 @@ class StatsController extends Controller
         
         $occupancyRate = $fleetSize > 0 ? round(($activeBookings / $fleetSize) * 100) : 0;
 
-        // Revenue History (Last 6 months) - pgsql compatible
+        // Revenue History (Last 6 months)
+        $isSqlite = DB::getDriverName() === 'sqlite';
+        $monthExpr = $isSqlite ? "strftime('%m', created_at)" : "TO_CHAR(created_at, 'MM')";
+
         $revenueHistory = DB::table('payments')
-            ->select(DB::raw("TO_CHAR(created_at, 'MM') as month"), DB::raw('SUM(paid_amount) as revenue'))
+            ->select(DB::raw("$monthExpr as month"), DB::raw('SUM(paid_amount) as revenue'))
             ->groupBy('month')
             ->orderBy('month')
             ->limit(6)

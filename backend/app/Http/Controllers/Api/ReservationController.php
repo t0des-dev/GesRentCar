@@ -21,7 +21,7 @@ class ReservationController extends Controller
     }
     public function index(Request $request)
     {
-        return response()->json(Reservation::with(['client', 'vehicle'])->get());
+        return response()->json(Reservation::with(['client', 'vehicle'])->latest('id')->get());
     }
 
     public function my(Request $request)

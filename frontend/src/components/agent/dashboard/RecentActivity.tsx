@@ -52,6 +52,8 @@ export default function RecentActivity({ reservations, loading }: RecentActivity
                   "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border",
                   r.status === 'confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                   r.status === 'pending' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                  r.status === 'pending_payment' || r.status === 'attente_paiement' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                  r.status === 'pending_partner' ? "bg-pink-50 text-pink-600 border-pink-100" :
                   "bg-slate-50 text-slate-400 border-slate-100"
                 )}>
                   {r.status}

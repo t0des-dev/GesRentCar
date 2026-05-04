@@ -6,7 +6,7 @@ import { Menu, X, ChevronDown, Check } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useCurrency } from "@/hooks/useCurrency";
 
 // Modular Sub-components
@@ -61,18 +61,27 @@ export default function Navbar() {
     { code: "ar", label: "العربية" }
   ];
 
+  const { scrollYProgress } = useScroll();
+
   return (
     <header
       className={cn(
         sticky ? "fixed top-0 w-full z-50" : "relative w-full",
-        "transition-all duration-500",
+        "transition-all duration-700 ease-in-out",
         (isScrolled || !transparentHero)
-          ? "glass border-b border-border/50 shadow-lg py-3"
-          : "bg-transparent py-6"
+          ? "glass-header border-b border-white/10 shadow-2xl py-3 backdrop-blur-2xl bg-white/80"
+          : "bg-transparent py-7"
       )}
     >
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+      {/* Scroll Progress Bar */}
+      <motion.div
+        className="absolute bottom-0 left-0 h-[2px] bg-primary z-[60] origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         <Logo agencyName={agency.agency_name} textColor={textColor} />
+
 
         <NavLinks links={menuLinks} textColor={textColor} hoverColor={hoverColor} />
 

@@ -247,6 +247,9 @@
 .status_pending   { background: #fef9c3; color: #854d0e; }
 .status_rejected  { background: #fee2e2; color: #991b1b; }
 .status_completed { background: #e0f2fe; color: #0c4a6e; }
+.status_pending_payment { background: #dbeafe; color: #1e40af; }
+.status_pending_partner { background: #fce7f3; color: #9d174d; }
+.status_attente_paiement { background: #dbeafe; color: #1e40af; }
 
 .actions {
   display: flex;
@@ -355,4 +358,140 @@
 
 @media (max-width: 640px) {
   .statsGrid { grid-template-columns: 1fr; }
+}
+
+/* ── Drawer & Timeline ── */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.4s ease;
+}
+
+.drawerContent {
+  width: 100%;
+  max-width: 650px;
+  background: white;
+  height: 100%;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.1);
+  padding: 3rem;
+  overflow-y: auto;
+  position: relative;
+  animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+.drawerClose {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.drawerClose:hover { background: #fee2e2; color: #ef4444; transform: rotate(90deg); }
+
+.timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin: 3rem 0;
+  padding: 0 1rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #f1f5f9;
+  z-index: 1;
+}
+
+.timelineStep {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stepDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  transition: all 0.5s;
+}
+
+.activeStep .stepDot {
+  border-color: #6366f1;
+  background: #6366f1;
+  color: white;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.completedStep .stepDot {
+  border-color: #059669;
+  background: #dcfce7;
+  color: #059669;
+}
+
+.stepLabel {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+}
+
+.activeStep .stepLabel { color: #6366f1; }
+.completedStep .stepLabel { color: #059669; }
+
+.searchContainer {
+  margin-bottom: 2.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 1.25rem 1.75rem;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  transition: all 0.3s;
+}
+.searchInput:focus {
+  background: white;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  outline: none;
 }
