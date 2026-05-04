@@ -3,7 +3,7 @@
 import { TrendingUp, Car, Trophy, Wallet } from "lucide-react";
 import RevenueChart from "@/components/RevenueChart";
 import FleetPieChart from "@/components/FleetPieChart";
-import styles from "../../page.module.css";
+import styles from "@/app/admin/page.module.css";
 
 interface PerformanceChartsProps {
   stats: any;
