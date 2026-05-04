@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { hexToHsl } from "@/lib/utils";
 import api from "@/lib/api/client";
+import { useEffect, useMemo } from "react";
 
 export interface NavLink {
   label: string;
@@ -14,6 +15,7 @@ export interface AgencyConfig {
   agency_slogan: string;
   primary_color: string;
   hero_image_url?: string;
+  hero_video_url?: string;
   about_text_fr?: string;
   about_text_en?: string;
   about_text_ar?: string;
@@ -23,6 +25,10 @@ export interface AgencyConfig {
     why_us?: boolean;
     testimonials?: boolean;
     map?: boolean;
+    vibe_selector?: boolean;
+    lifestyle_gallery?: boolean;
+    faq?: boolean;
+    concierge_banner?: boolean;
   };
   header_config?: {
     sticky?: boolean;
@@ -63,56 +69,66 @@ export interface AgencyConfig {
   };
 }
 
+const DEFAULT_CONFIG: AgencyConfig = {
+  agency_name: "Vectoria Rent Car",
+  agency_slogan: "Premium Car Rental Experience",
+  primary_color: "#6366f1",
+  sections_config: {
+    featured: true,
+    stats: true,
+    why_us: true,
+    testimonials: true,
+    map: true,
+    vibe_selector: true,
+    lifestyle_gallery: true,
+    faq: true,
+    concierge_banner: true
+  },
+  header_config: {
+    sticky: true,
+    transparent_hero: true,
+    menu_links: [
+      { label: "Accueil", url: "/" },
+      { label: "Flotte", url: "/fleet" },
+      { label: "Contact", url: "/contact" }
+    ]
+  },
+  theme_config: {
+    border_radius: "24px",
+    button_style: "pill",
+    glassmorphism: true
+  },
+  stats_config: {
+    label_1: "Clients satisfaits", value_1: "2,400+",
+    label_2: "Véhicules premium", value_2: "80+",
+    label_3: "Années d'expérience", value_3: "15",
+    label_4: "Support disponible", value_4: "24/7"
+  }
+};
+
 export function useAgency() {
-  const [config, setConfig] = useState<AgencyConfig>({
-    agency_name: "Vectoria Rent Car",
-    agency_slogan: "Premium Car Rental Experience",
-    primary_color: "#6366f1",
-    sections_config: {
-      featured: true,
-      stats: true,
-      why_us: true,
-      testimonials: true,
-      map: true
+  const { data } = useQuery({
+    queryKey: ["agency-config"],
+    queryFn: async () => {
+      const { data } = await api.get(`/config?t=${Date.now()}`);
+      return data;
     },
-    header_config: {
-      sticky: true,
-      transparent_hero: true,
-      menu_links: [
-        { label: "Accueil", url: "/" },
-        { label: "Flotte", url: "/fleet" },
-        { label: "Contact", url: "/contact" }
-      ]
-    },
-    theme_config: {
-      border_radius: "24px",
-      button_style: "pill",
-      glassmorphism: true
-    }
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  const config = useMemo(() => ({ 
+    ...DEFAULT_CONFIG, 
+    ...data 
+  }), [data]);
+
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const { data } = await api.get("/config");
-        if (data) {
-          // Merge defaults with fetched data
-          setConfig(prev => ({ ...prev, ...data }));
-          
-          if (data.primary_color) {
-            document.documentElement.style.setProperty("--primary", hexToHsl(data.primary_color));
-          }
-          if (data.theme_config?.border_radius) {
-            document.documentElement.style.setProperty("--radius", data.theme_config.border_radius);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch agency config:", err);
-      }
-    };
-    
-    fetchConfig();
-  }, []);
+    if (config.primary_color) {
+      document.documentElement.style.setProperty("--primary", hexToHsl(config.primary_color));
+    }
+    if (config.theme_config?.border_radius) {
+      document.documentElement.style.setProperty("--radius", config.theme_config.border_radius);
+    }
+  }, [config.primary_color, config.theme_config?.border_radius]);
 
   return config;
 }

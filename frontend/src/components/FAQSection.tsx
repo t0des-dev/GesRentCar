@@ -4,19 +4,25 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, HelpCircle } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useAgency } from "@/hooks/useAgency";
 import { cn } from "@/lib/utils";
 
 export default function FAQSection() {
   const { t } = useTranslation();
+  const agency = useAgency();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const faqs = [
+  const defaultFaqs = [
     { q: t("faq_q1"), a: t("faq_a1") },
     { q: t("faq_q2"), a: t("faq_a2") },
     { q: t("faq_q3"), a: t("faq_a3") },
     { q: t("faq_q4"), a: t("faq_a4") },
     { q: t("faq_q5"), a: t("faq_a5") },
   ];
+
+  const faqs = (agency.faq_config && (agency.faq_config as any[]).length > 0) 
+    ? agency.faq_config as { q: string, a: string }[] 
+    : defaultFaqs;
 
   return (
     <section className="py-32 bg-slate-50 relative overflow-hidden">

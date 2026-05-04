@@ -53,9 +53,9 @@ class StatsController extends Controller
         
         $occupancyRate = $fleetSize > 0 ? round(($activeBookings / $fleetSize) * 100) : 0;
 
-        // Revenue History (Last 6 months)
+        // Revenue History (Last 6 months) - pgsql compatible
         $revenueHistory = DB::table('payments')
-            ->select(DB::raw("strftime('%m', created_at) as month"), DB::raw('SUM(paid_amount) as revenue'))
+            ->select(DB::raw("TO_CHAR(created_at, 'MM') as month"), DB::raw('SUM(paid_amount) as revenue'))
             ->groupBy('month')
             ->orderBy('month')
             ->limit(6)
@@ -91,33 +91,31 @@ class StatsController extends Controller
                   ->orWhereBetween('vignette_date', [$today, $thirtyDaysFromNow])
                   ->orWhere('vignette_date', '<', $today);
             })
-            ->whereNull('deleted_at')
+            // Removed manual deleted_at check as column is missing in migration
             ->select('brand', 'model', 'plate', 'insurance_date', 'tech_inspection_date', 'vignette_date')
             ->limit(5)
             ->get()
             ->map(function($v) use ($today) {
-                // Find the most urgent alert
                 $days = 999;
                 $reason = "Alerte";
-                $docDate = null;
                 
                 if ($v->insurance_date) {
-                    $d = \Carbon\Carbon::parse($v->insurance_date)->diffInDays(now(), false) * -1; // -1 to get future days positive
-                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Assurance"; $docDate = $v->insurance_date; }
+                    $d = \Carbon\Carbon::parse($v->insurance_date)->diffInDays(now(), false) * -1;
+                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Assurance"; }
                 }
                 if ($v->tech_inspection_date) {
                     $d = \Carbon\Carbon::parse($v->tech_inspection_date)->diffInDays(now(), false) * -1;
-                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Visite Technique"; $docDate = $v->tech_inspection_date; }
+                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Visite Technique"; }
                 }
                 if ($v->vignette_date) {
                     $d = \Carbon\Carbon::parse($v->vignette_date)->diffInDays(now(), false) * -1;
-                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Vignette"; $docDate = $v->vignette_date; }
+                    if ($d <= 30 && $d < $days) { $days = $d; $reason = "Vignette"; }
                 }
 
                 return [
                     'vehicle' => $v->brand . ' ' . $v->model . ' (' . $reason . ')',
                     'plate' => $v->plate,
-                    'days' => $days <= 0 ? 0 : floor($days) // 0 or negative means expired
+                    'days' => $days <= 0 ? 0 : floor($days)
                 ];
             })
             ->sortBy('days')
@@ -140,11 +138,15 @@ class StatsController extends Controller
             ->groupBy('status')
             ->get();
 
+        $clientsCount = DB::table('clients')->count();
+
         return response()->json([
             'revenue' => $totalRevenue,
             'reservations_count' => $reservationsCount,
             'active_bookings' => $activeBookings,
             'occupancy_rate' => $occupancyRate,
+            'fleet_size' => $fleetSize,
+            'clients_count' => $clientsCount,
             'maintenance_alerts' => $maintenanceAlerts,
             'revenue_history' => $revenueHistory,
             'fleet_distribution' => $fleetDistribution,

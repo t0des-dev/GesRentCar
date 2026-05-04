@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { 
-  ChevronLeft, Calendar, Users, Fuel, 
-  Settings, ShieldCheck, Star, Loader2,
-  CheckCircle2
-} from "lucide-react";
+import { ChevronLeft, CheckCircle2, Shield } from "lucide-react";
+import api from "@/lib/api/client";
+import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
-const API = "http://localhost:8000/api";
+// Modular Components
+import VehicleInfo from "@/components/booking/VehicleInfo";
+import BookingForm from "@/components/booking/BookingForm";
+import BookingSuccess from "@/components/booking/BookingSuccess";
+import SignatureStep from "@/components/booking/SignatureStep";
+import { StripeCheckout } from "@/components/StripeCheckout";
 
 const IMAGE_MAPPING: Record<string, string> = {
   "mercedes": "/mercedes_c_class_white_1777383858811.png",
@@ -17,33 +20,29 @@ const IMAGE_MAPPING: Record<string, string> = {
   "range rover": "/range_rover_grey_1777383961416.png",
 };
 
+type BookingStep = "info" | "signature" | "payment" | "success";
+
 export default function VehicleDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const [vehicle, setVehicle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [booking, setBooking] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState<BookingStep>("info");
   const [totalPrice, setTotalPrice] = useState(0);
+  const [deposit, setDeposit] = useState(0);
+  const [signature, setSignature] = useState<string | null>(null);
 
-  // Form State
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    cin: "",
-    start_date: "",
-    end_date: "",
+    name: "", email: "", phone: "", cin: "", start_date: "", end_date: "",
   });
 
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    fetch(`${API}/vehicles/${id}`)
-      .then(r => r.json())
-      .then(d => {
-        setVehicle(d);
-        setTotalPrice(d.price_per_day);
+    api.get(`/vehicles/${id}`)
+      .then(res => {
+        setVehicle(res.data);
+        setTotalPrice(res.data.price_per_day);
       })
       .finally(() => setLoading(false));
   }, [id]);
@@ -54,186 +53,126 @@ export default function VehicleDetailPage() {
       const end = new Date(form.end_date);
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-      setTotalPrice(diffDays * vehicle.price_per_day);
+      const total = diffDays * vehicle.price_per_day;
+      setTotalPrice(total);
+      setDeposit(Math.floor(total * 0.15)); // 15% deposit
     }
   }, [form.start_date, form.end_date, vehicle]);
 
-  const handleBooking = async (e: React.FormEvent) => {
+  const handleInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setBooking(true);
-    try {
-      // 1. Créer/Vérifier le client
-      const clientRes = await fetch(`${API}/clients`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ name: form.name, email: form.email, phone: form.phone, cin: form.cin })
-      });
-      const clientData = await clientRes.json();
-      const clientId = clientData.id;
+    setStep("signature");
+  };
 
-      // 2. Créer la réservation
-      const res = await fetch(`${API}/reservations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({
-          client_id: clientId,
-          vehicle_id: id,
-          start_date: form.start_date,
-          end_date: form.end_date
-        })
-      });
-
-      if (res.ok) {
-        setSuccess(true);
-        setTimeout(() => router.push("/"), 3000);
-      } else {
-        const errorData = await res.json();
-        alert(errorData.message || "Erreur lors de la réservation");
-      }
-    } catch (err) {
-      alert("Une erreur est survenue.");
-    } finally {
-      setBooking(false);
-    }
+  const handleSignatureComplete = (sig: string) => {
+    setSignature(sig);
+    setStep("payment");
   };
 
   if (loading) return (
-    <div className={styles.loading}>
-      <Loader2 className={styles.spin} />
-      <p>Chargement du véhicule...</p>
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+       <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Initialisation de votre voyage...</p>
+       </div>
     </div>
   );
 
-  if (!vehicle) return <div className="container">Véhicule introuvable.</div>;
+  if (!vehicle) return <div className="container py-32">Véhicule introuvable.</div>;
 
   const vehicleImage = IMAGE_MAPPING[vehicle.brand.toLowerCase()] || "/car-placeholder.png";
 
+  const bookingPayload = {
+    vehicle_id: Number(id),
+    start_date: form.start_date,
+    end_date: form.end_date,
+    client: {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      cin: form.cin
+    },
+    signature: signature || undefined
+  };
+
   return (
-    <div className={styles.container}>
-      <button onClick={() => router.back()} className={styles.backBtn}>
-        <ChevronLeft size={20} />
-        Retour à la recherche
-      </button>
+    <main className="min-h-screen pt-32 pb-24 bg-[#f8fafc] relative selection:bg-primary/10 overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-[1000px] pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
+      </div>
 
-      <div className={styles.layout}>
-        {/* Left: Gallery & Info */}
-        <div className={styles.mainInfo}>
-          <div className={styles.gallery}>
-            <img src={vehicleImage} alt={vehicle.model} className={styles.mainImg} />
-          </div>
-
-          <div className={styles.specs}>
-            <div className={styles.specItem}>
-              <Users size={20} />
-              <span>5 Places</span>
-            </div>
-            <div className={styles.specItem}>
-              <Fuel size={20} />
-              <span>Diesel / Hybride</span>
-            </div>
-            <div className={styles.specItem}>
-              <Settings size={20} />
-              <span>Automatique</span>
-            </div>
-            <div className={styles.specItem}>
-              <ShieldCheck size={20} />
-              <span>Assurance Premium</span>
-            </div>
-          </div>
-
-          <div className={styles.description}>
-            <h2>À propos de ce véhicule</h2>
-            <p>
-              La {vehicle.brand} {vehicle.model} allie performance et élégance. 
-              Parfaite pour vos déplacements professionnels ou vos escapades en famille, 
-              ce véhicule offre un confort inégalé et une sécurité de premier ordre.
-            </p>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex items-center justify-between mb-12">
+          <button onClick={() => router.back()} className="group flex items-center gap-2 text-slate-400 hover:text-primary transition-all text-xs font-black uppercase tracking-widest">
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Retour à la sélection
+          </button>
+          
+          <div className="flex items-center gap-6">
+             {["info", "signature", "payment"].map((s, i) => (
+                <div key={s} className="flex items-center gap-3">
+                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${step === s ? "bg-primary text-white shadow-lg shadow-primary/20 scale-110" : i < ["info", "signature", "payment"].indexOf(step) ? "bg-emerald-500 text-white" : "bg-white border border-slate-200 text-slate-400"}`}>
+                      {i < ["info", "signature", "payment"].indexOf(step) ? <CheckCircle2 size={14} /> : i + 1}
+                   </div>
+                   {i < 2 && <div className={`w-12 h-0.5 rounded-full ${i < ["info", "signature", "payment"].indexOf(step) ? "bg-emerald-500" : "bg-slate-200"}`} />}
+                </div>
+             ))}
           </div>
         </div>
 
-        {/* Right: Booking Card */}
-        <aside className={styles.bookingCard}>
-          {success ? (
-            <div className={styles.successMsg}>
-              <CheckCircle2 size={60} color="#10b981" />
-              <h3>Réservation Envoyée !</h3>
-              <p>Votre demande est en cours de traitement. Vous recevrez un SMS de confirmation sous peu.</p>
-              <button onClick={() => router.push("/")} className={styles.btnHome}>Retour à l'accueil</button>
-            </div>
-          ) : (
-            <>
-              <div className={styles.priceHeader}>
-                <span className={styles.price}>{totalPrice.toLocaleString("fr-FR")} DH</span>
-                <span className={styles.unit}>{form.start_date && form.end_date ? "Total" : "/ jour"}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+          <div className="lg:col-span-7">
+            <VehicleInfo vehicle={vehicle} image={vehicleImage} />
+          </div>
+
+          <aside className="lg:col-span-5 bg-white rounded-[40px] border border-slate-200/60 shadow-2xl p-10 lg:sticky lg:top-32 overflow-hidden relative">
+            <AnimatePresence mode="wait">
+              {step === "info" && (
+                <motion.div key="info" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <div className="flex items-center justify-between mb-10">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Estimation du séjour</p>
+                      <h2 className="text-3xl font-black text-slate-900 tracking-tight">{totalPrice.toLocaleString("fr-FR")} DH</h2>
+                    </div>
+                    <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
+                       <span className="text-[10px] font-black uppercase tracking-widest text-primary">{form.start_date && form.end_date ? "Total" : "/ jour"}</span>
+                    </div>
+                  </div>
+                  <BookingForm form={form} setForm={setForm} onSubmit={handleInfoSubmit} loading={false} today={today} />
+                </motion.div>
+              )}
+
+              {step === "signature" && (
+                <SignatureStep key="signature" onComplete={handleSignatureComplete} onBack={() => setStep("info")} />
+              )}
+
+              {step === "payment" && (
+                <motion.div key="payment" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+                   <div className="text-center mb-8">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest mb-4">
+                         <Shield size={14} /> Paiement de l'acompte (15%)
+                      </div>
+                      <h3 className="text-2xl font-black text-slate-900 mb-2">{deposit.toLocaleString()} DH</h3>
+                      <p className="text-slate-400 text-xs font-medium italic">Le reste ({ (totalPrice - deposit).toLocaleString() } DH) sera payé lors de la prise du véhicule.</p>
+                   </div>
+                   <StripeCheckout deposit={deposit} bookingPayload={bookingPayload} onSuccess={() => setStep("success")} />
+                </motion.div>
+              )}
+
+              {step === "success" && (
+                <BookingSuccess key="success" />
+              )}
+            </AnimatePresence>
+
+            {step !== "success" && (
+              <div className="mt-8 pt-8 border-t border-slate-100 space-y-3">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500"><CheckCircle2 size={14} /> Annulation gratuite (24h)</div>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400"><CheckCircle2 size={14} /> Kilométrage illimité</div>
               </div>
-
-              <form onSubmit={handleBooking} className={styles.form}>
-                <div className={styles.inputGroup}>
-                  <label>Nom Complet</label>
-                  <input 
-                    type="text" required placeholder="Ex: Jean Dupont"
-                    value={form.name} onChange={e => setForm({...form, name: e.target.value})}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Email</label>
-                  <input 
-                    type="email" required placeholder="jean@example.com"
-                    value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Téléphone (SMS)</label>
-                  <input 
-                    type="tel" required placeholder="06XXXXXXXX"
-                    value={form.phone} onChange={e => setForm({...form, phone: e.target.value})}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>N° CIN / Passeport</label>
-                  <input 
-                    type="text" required placeholder="AB123456"
-                    value={form.cin} onChange={e => setForm({...form, cin: e.target.value})}
-                  />
-                </div>
-
-                <div className={styles.dateGrid}>
-                  <div className={styles.inputGroup}>
-                    <label>Départ</label>
-                    <input 
-                      type="date" required min={today}
-                      value={form.start_date} onChange={e => setForm({...form, start_date: e.target.value})}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Retour</label>
-                    <input 
-                      type="date" required min={form.start_date || today}
-                      value={form.end_date} onChange={e => setForm({...form, end_date: e.target.value})}
-                    />
-                  </div>
-                </div>
-
-                {form.start_date && form.end_date && (
-                  <div className={styles.priceSummary}>
-                    <span>{vehicle.price_per_day} DH x {Math.ceil(Math.abs(new Date(form.end_date).getTime() - new Date(form.start_date).getTime()) / (1000 * 60 * 60 * 24)) || 1} jours</span>
-                    <strong>{totalPrice.toLocaleString("fr-FR")} DH</strong>
-                  </div>
-                )}
-
-                <button type="submit" className={styles.btnSubmit} disabled={booking}>
-                  {booking ? <Loader2 className={styles.spin} size={20} /> : "Confirmer ma Réservation"}
-                </button>
-              </form>
-
-              <div className={styles.guarantees}>
-                <div className={styles.guarantee}><CheckCircle2 size={14} /> Annulation gratuite (24h)</div>
-                <div className={styles.guarantee}><CheckCircle2 size={14} /> Kilométrage illimité</div>
-              </div>
-            </>
-          )}
-        </aside>
+            )}
+          </aside>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import {
   BarChart,
   Bar,
@@ -16,7 +17,7 @@ interface RevenueData {
   revenue: number;
 }
 
-export default function RevenueChart({ data }: { data: RevenueData[] }) {
+const RevenueChart = memo(function RevenueChart({ data }: { data: RevenueData[] }) {
   if (!data || data.length === 0) return <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>Aucune donnée disponible</div>;
 
   return (
@@ -50,4 +51,6 @@ export default function RevenueChart({ data }: { data: RevenueData[] }) {
       </ResponsiveContainer>
     </div>
   );
-}
+});
+
+export default RevenueChart;

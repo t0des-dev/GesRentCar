@@ -2,44 +2,31 @@
 
 import { useState } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import styles from "./page.module.css";
+
+// Modular Components
+import AgentSidebar from "@/components/agent/AgentSidebar";
+
+// Sections (already modular)
 import AgentHome from "./sections/AgentHome";
 import NewRental from "./sections/NewRental";
 import MyReservations from "./sections/MyReservations";
 import VehicleInspection from "./sections/VehicleInspection";
-import { LayoutDashboard, PlusCircle, ClipboardList, ShieldCheck } from "lucide-react";
-import styles from "./page.module.css";
-
-const TABS = [
-  { id: "home",         label: "Accueil",    icon: LayoutDashboard },
-  { id: "new",          label: "Nouvelle",   icon: PlusCircle },
-  { id: "reservations", label: "Locations",  icon: ClipboardList },
-  { id: "inspection",   label: "Inspection", icon: ShieldCheck },
-];
 
 export default function AgentPortal() {
   const { checking } = useAuthGuard();
   const [tab, setTab] = useState("home");
 
   if (checking) return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "#94a3b8" }}>
+    <div className="flex items-center justify-center h-[60vh] text-slate-400 font-black uppercase text-[10px] tracking-widest">
       Vérification de la session...
     </div>
   );
 
   return (
     <div className={styles.portal}>
-      <nav className={styles.tabs}>
-        {TABS.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={`${styles.tab} ${tab === id ? styles.tabActive : ""}`}
-            onClick={() => setTab(id)}
-          >
-            <Icon size={18} />
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
+      <AgentSidebar activeTab={tab} setTab={setTab} />
+      
       <div className={styles.content}>
         {tab === "home"         && <AgentHome onNewRental={() => setTab("new")} />}
         {tab === "new"          && <NewRental />}

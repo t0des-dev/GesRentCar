@@ -9,6 +9,8 @@ import CompareFloatingBar from "@/components/CompareFloatingBar";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SessionProvider } from "next-auth/react";
 import ConciergeAI from "@/components/ConciergeAI";
+import CustomCursor from "@/components/CustomCursor";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +48,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { CurrencyProvider } from "@/hooks/useCurrency";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,12 +61,27 @@ export default function RootLayout({
         <SessionProvider>
           <ReactQueryProvider>
             <LanguageProvider>
-              <ServiceWorkerRegister />
-              <LayoutWrapper>
-                {children}
-                <ConciergeAI />
-              </LayoutWrapper>
-              <CompareFloatingBar />
+              <CurrencyProvider>
+                <CustomCursor />
+                <ServiceWorkerRegister />
+                <LayoutWrapper>
+                  {children}
+                  <ConciergeAI />
+                </LayoutWrapper>
+                <CompareFloatingBar />
+                <Toaster position="bottom-right" toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#0f172a',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    padding: '12px 24px',
+                  }
+                }} />
+              </CurrencyProvider>
             </LanguageProvider>
           </ReactQueryProvider>
         </SessionProvider>

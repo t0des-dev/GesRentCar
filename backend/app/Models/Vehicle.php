@@ -35,6 +35,9 @@ class Vehicle extends Model
         'insurance_date',
         'tech_inspection_date',
         'vignette_date',
+        'seo_title',
+        'seo_description',
+        'og_image_url',
     ];
 
     protected $casts = [

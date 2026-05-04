@@ -24,33 +24,12 @@ class ContractController extends Controller
     public function generate(Reservation $reservation)
     {
         $lang = request('lang', 'fr');
-        \Illuminate\Support\Facades\App::setLocale($lang);
-
-        $pdf = Pdf::loadView('pdf.contract', [
-            'reservation' => $reservation->load(['client', 'vehicle', 'contract']),
-            'client'      => $reservation->client,
-            'vehicle'     => $reservation->vehicle,
-            'lang'        => $lang,
-        ])
-        ->setPaper('a4', 'portrait')
-        ->setOption('dpi', 150)
-        ->setOption('defaultFont', 'DejaVu Sans')
-        ->setOption('isRemoteEnabled', false);
-
-        $fileName = 'contracts/contract_' . $reservation->id . '.pdf';
-        Storage::disk('public')->put($fileName, $pdf->output());
-
-        $contract = Contract::updateOrCreate(
-            ['reservation_id' => $reservation->id],
-            ['file_path' => $fileName]
-        );
-
-        $this->notificationService->sendContractLink($reservation);
+        
+        \App\Jobs\GenerateContractPdf::dispatch($reservation->id, $lang);
 
         return response()->json([
-            'message'  => 'Contract generated successfully.',
-            'contract' => $contract,
-            'url'      => asset('storage/' . $fileName),
+            'message'  => 'Contract generation queued.',
+            'reservation_id' => $reservation->id
         ]);
     }
 
@@ -97,15 +76,13 @@ class ContractController extends Controller
             'signed_at'      => now(),
         ]);
 
-        // Re-generate PDF with signature embedded
-        $this->generate($reservation);
-
+        // Re-generate PDF with signature embedded in background
+        \App\Jobs\GenerateContractPdf::dispatch($reservation->id, 'fr');
         $this->notificationService->notifyContractSigned($reservation);
 
         return response()->json([
-            'message'  => 'Contract signed successfully.',
+            'message'  => 'Signature received. Contract re-generation queued.',
             'contract' => $contract->fresh(),
-            'url'      => asset('storage/' . $contract->file_path),
         ]);
     }
 

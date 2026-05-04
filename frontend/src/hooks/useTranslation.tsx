@@ -152,6 +152,8 @@ const translations = {
     about_val_2_desc: "Une transparence totale sur nos tarifs et conditions.",
     about_val_3: "Innovation",
     about_val_3_desc: "Des outils technologiques au service de votre confort.",
+    cta_title: "Prêt pour la route ?",
+    cta_desc: "Réservez votre véhicule de rêve en quelques minutes et profitez de l'excellence.",
   },
   en: {
     nav_fleet: "Our Fleet",
@@ -300,6 +302,8 @@ const translations = {
     about_val_2_desc: "Total transparency on our rates and conditions.",
     about_val_3: "Innovation",
     about_val_3_desc: "Technological tools at the service of your comfort.",
+    cta_title: "Ready for the road?",
+    cta_desc: "Book your dream vehicle in minutes and experience excellence.",
   },
   ar: {
     nav_fleet: "أسطولنا",
@@ -448,6 +452,8 @@ const translations = {
     about_val_2_desc: "شفافية تامة في أسعارنا وشروطنا.",
     about_val_3: "الابتكار",
     about_val_3_desc: "أدوات تكنولوجية في خدمة راحتكم.",
+    cta_title: "هل أنت جاهز للانطلاق؟",
+    cta_desc: "احجز سيارة أحلامك في دقائق واستمتع بالتميز المطلق.",
   }
 };
 

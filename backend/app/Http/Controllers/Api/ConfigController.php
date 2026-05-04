@@ -39,13 +39,29 @@ class ConfigController extends Controller
 
     public function index(): JsonResponse
     {
-        $setting = Setting::first();
+        $setting = Setting::where('key', 'agency_config')->first();
+        
+        // If agency_config record doesn't exist, try to migrate from legacy records
+        if (!$setting) {
+            $name = Setting::where('key', 'agency_name')->value('value') ?? env('AGENCY_NAME', 'Vectoria Rent Car');
+            $slogan = Setting::where('key', 'agency_slogan')->value('value') ?? env('AGENCY_SLOGAN', 'Premium Car Rental');
+            $color = Setting::where('key', 'agency_primary_color')->value('value') ?? env('AGENCY_PRIMARY_COLOR', '#6366f1');
+            
+            return response()->json([
+                'agency_name' => $name,
+                'agency_slogan' => $slogan,
+                'primary_color' => $color,
+                'sections_config' => null,
+                'sections_order' => null,
+            ]);
+        }
 
         return response()->json([
             'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
             'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
             'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
             'hero_image_url' => $setting->hero_image_url,
+            'hero_video_url' => $setting->hero_video_url,
             'about_text_fr' => $setting->about_text_fr,
             'about_text_en' => $setting->about_text_en,
             'about_text_ar' => $setting->about_text_ar,
@@ -60,6 +76,10 @@ class ConfigController extends Controller
             'testimonials' => $setting->testimonials,
             'seo_config' => $setting->seo_config,
             'social_hub' => $setting->social_hub,
+            'faq_config' => $setting->faq_config,
+            'features_config' => $setting->features_config,
+            'concierge_config' => $setting->concierge_config,
+            'sections_content' => $setting->sections_content,
         ]);
     }
 
@@ -67,12 +87,13 @@ class ConfigController extends Controller
     {
         $data = $request->all();
         
-        $setting = Setting::first() ?: new Setting();
+        $setting = Setting::firstOrCreate(['key' => 'agency_config']);
         
         if (isset($data['name'])) $setting->value = $data['name'];
         if (isset($data['slogan'])) $setting->agency_slogan = $data['slogan'];
         if (isset($data['primary_color'])) $setting->agency_primary_color = $data['primary_color'];
         if (isset($data['hero_image_url'])) $setting->hero_image_url = $data['hero_image_url'];
+        if (isset($data['hero_video_url'])) $setting->hero_video_url = $data['hero_video_url'];
         if (isset($data['about_text_fr'])) $setting->about_text_fr = $data['about_text_fr'];
         if (isset($data['about_text_en'])) $setting->about_text_en = $data['about_text_en'];
         if (isset($data['about_text_ar'])) $setting->about_text_ar = $data['about_text_ar'];
@@ -89,6 +110,10 @@ class ConfigController extends Controller
         if (isset($data['testimonials'])) $setting->testimonials = $data['testimonials'];
         if (isset($data['seo_config'])) $setting->seo_config = $data['seo_config'];
         if (isset($data['social_hub'])) $setting->social_hub = $data['social_hub'];
+        if (isset($data['faq_config'])) $setting->faq_config = $data['faq_config'];
+        if (isset($data['features_config'])) $setting->features_config = $data['features_config'];
+        if (isset($data['concierge_config'])) $setting->concierge_config = $data['concierge_config'];
+        if (isset($data['sections_content'])) $setting->sections_content = $data['sections_content'];
         
         $setting->save();
 

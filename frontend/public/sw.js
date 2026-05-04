@@ -71,3 +71,49 @@ self.addEventListener('fetch', (event) => {
     )
   );
 });
+
+// ── Push Notifications ────────────────────────────────────────────────────────
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : { 
+    title: 'Vectoria Rent Car', 
+    body: 'Votre réservation a été mise à jour.',
+    url: '/dashboard'
+  };
+  
+  const options = {
+    body: data.body,
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/'
+    },
+    actions: [
+      { action: 'view', title: 'Voir Détails' },
+      { action: 'close', title: 'Fermer' }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  
+  if (event.action === 'close') return;
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === event.notification.data.url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(event.notification.data.url);
+      }
+    })
+  );
+});

@@ -20,46 +20,23 @@ class NotificationService
      */
     public function sendWhatsApp(string $to, string $message, string $template = null, array $components = []): bool
     {
-        // Normalize phone: remove spaces, ensure +212 format
         $to = $this->normalizePhone($to);
+        Log::info("[Queue] WhatsApp → {$to}");
 
-        Log::info("[WhatsApp] → {$to}: " . substr($message, 0, 80) . '…');
-
-        $token   = config('services.whatsapp.token');
-        $phoneId = config('services.whatsapp.phone_number_id');
-        $version = config('services.whatsapp.version', 'v17.0');
-
-        if (!$token || !$phoneId) {
-            Log::debug('[WhatsApp] Credentials not set — message logged only.');
-            return true;
+        $payload = ['messaging_product' => 'whatsapp', 'to' => $to];
+        if ($template) {
+            $payload['type']     = 'template';
+            $payload['template'] = [
+                'name'       => $template,
+                'language'   => ['code' => 'fr'],
+                'components' => $components,
+            ];
+        } else {
+            $payload['type'] = 'text';
+            $payload['text'] = ['body' => $message, 'preview_url' => false];
         }
 
-        try {
-            $payload = ['messaging_product' => 'whatsapp', 'to' => $to];
-
-            if ($template) {
-                $payload['type']     = 'template';
-                $payload['template'] = [
-                    'name'       => $template,
-                    'language'   => ['code' => 'fr'],
-                    'components' => $components,
-                ];
-            } else {
-                $payload['type'] = 'text';
-                $payload['text'] = ['body' => $message, 'preview_url' => false];
-            }
-
-            $response = Http::withToken($token)
-                ->timeout(10)
-                ->post("https://graph.facebook.com/{$version}/{$phoneId}/messages", $payload);
-
-            if (!$response->successful()) {
-                Log::warning('[WhatsApp] API responded with error: ' . $response->body());
-            }
-        } catch (\Exception $e) {
-            Log::error('[WhatsApp] Exception: ' . $e->getMessage());
-        }
-
+        \App\Jobs\SendNotification::dispatch('whatsapp', $to, $message, $payload);
         return true;
     }
 
@@ -69,30 +46,9 @@ class NotificationService
     public function sendSms(string $to, string $message): bool
     {
         $to = $this->normalizePhone($to);
+        Log::info("[Queue] SMS → {$to}");
 
-        Log::info("[SMS] → {$to}: " . substr($message, 0, 80) . '…');
-
-        $sid   = config('services.twilio.sid');
-        $token = config('services.twilio.token');
-        $from  = config('services.twilio.from');
-
-        if (!$sid || !$token || !$from) {
-            Log::debug('[SMS] Twilio credentials not set — message logged only.');
-            return true;
-        }
-
-        try {
-            Http::withBasicAuth($sid, $token)
-                ->timeout(10)
-                ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
-                    'To'   => $to,
-                    'From' => $from,
-                    'Body' => $message,
-                ]);
-        } catch (\Exception $e) {
-            Log::error('[SMS] Exception: ' . $e->getMessage());
-        }
-
+        \App\Jobs\SendNotification::dispatch('sms', $to, $message);
         return true;
     }
 

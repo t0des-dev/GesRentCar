@@ -1,8 +1,10 @@
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCompare } from "@/hooks/useCompare";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface VehicleCardProps {
   id: number;
@@ -44,6 +46,7 @@ export default function VehicleCard({
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { selectedIds, addToCompare, removeFromCompare } = useCompare();
+  const { convert } = useCurrency();
   const isSelected = selectedIds.includes(id);
 
   const displayPrice = dynamicPrice || price;
@@ -73,10 +76,12 @@ export default function VehicleCard({
       {/* Image Container */}
       <div className="relative aspect-[16/10] bg-muted overflow-hidden">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl.startsWith('/storage') ? `http://localhost:8000${imageUrl}` : imageUrl}
             alt={`${brand} ${model}`}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s] ease-out"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-110 transition-transform duration-[2s] ease-out"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -143,11 +148,15 @@ export default function VehicleCard({
         <div className="flex items-center justify-between mt-auto">
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-black text-foreground tracking-tighter">{displayPrice.toLocaleString()}</span>
+              <span className="text-4xl font-black text-foreground tracking-tighter">
+                {convert(displayPrice).split(' ')[0]}
+              </span>
               {isPriceChanged && (
-                <span className="text-sm text-muted-foreground line-through opacity-40">{price}</span>
+                <span className="text-sm text-muted-foreground line-through opacity-40">{convert(price).split(' ')[0]}</span>
               )}
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">{t("currency_day")}</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+                {convert(displayPrice).split(' ')[1]} / {t("day").toLowerCase()}
+              </span>
             </div>
           </div>
           

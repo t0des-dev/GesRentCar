@@ -9,16 +9,18 @@ class PricingService
     /**
      * Calculate the dynamic daily rate based on occupancy.
      */
-    public function getDynamicRate(Vehicle $vehicle)
+    public function getDynamicRate(Vehicle $vehicle, $occupancyRate = null)
     {
         $basePrice = $vehicle->price_per_day;
         $reason = null;
         $price = $basePrice;
         
         // 1. Occupancy based adjustments
-        $totalVehicles = Vehicle::count();
-        $rentedVehicles = Vehicle::where('status', 'rented')->count();
-        $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
+        if ($occupancyRate === null) {
+            $totalVehicles = Vehicle::count();
+            $rentedVehicles = Vehicle::where('status', 'rented')->count();
+            $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
+        }
 
         if ($occupancyRate > 0.8) {
             $price = $basePrice * 1.20;

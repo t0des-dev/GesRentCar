@@ -15,6 +15,7 @@ return new class extends Migration
             $box->json('sections_order')->nullable();
             $box->json('testimonials')->nullable();
             $box->json('seo_config')->nullable();
+            $box->string('hero_video_url')->nullable();
             $box->json('social_hub')->nullable(); // For floating icons and links
         });
     }

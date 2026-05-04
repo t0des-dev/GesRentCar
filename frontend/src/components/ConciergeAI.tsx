@@ -20,14 +20,34 @@ export default function ConciergeAI() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [weather, setWeather] = useState<{ condition: string; temp: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // Simulated weather fetch for Morocco (Marrakech/Atlas focus)
+    setTimeout(() => {
+      const conditions = [
+        { condition: "Ensoleillé", temp: 28 },
+        { condition: "Pluvieux", temp: 18 },
+        { condition: "Neigeux (Atlas)", temp: 4 },
+        { condition: "Venteux", temp: 22 }
+      ];
+      setWeather(conditions[Math.floor(Math.random() * conditions.length)]);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("open-concierge", handleOpen);
+    return () => window.removeEventListener("open-concierge", handleOpen);
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -56,6 +76,16 @@ export default function ConciergeAI() {
       } else if (lowerMsg.includes("affaires") || lowerMsg.includes("business") || lowerMsg.includes("réunion")) {
         recommendation = { id: "4", brand: "Mercedes-Benz", model: "Classe S", price: 3800, reason: "Le bureau mobile le plus luxueux au monde." };
         response = "Pour vos rendez-vous d'affaires, la Classe S assure une présence discrète et imposante.";
+      }
+
+      // Weather-aware override
+      if ((lowerMsg.includes("météo") || lowerMsg.includes("temps") || lowerMsg.includes("atlas")) && weather) {
+        if (weather.condition.includes("Pluvieux") || weather.condition.includes("Neigeux")) {
+          response = `D'après mes capteurs, le temps est ${weather.condition.toLowerCase()} (${weather.temp}°C). Je vous recommande fortement un véhicule 4x4 pour une sécurité maximale sur les routes glissantes ou enneigées.`;
+          recommendation = { id: "2", brand: "Range Rover", model: "Autobiography", price: 4500, reason: "Suspension adaptative et transmission intégrale de pointe pour affronter les intempéries." };
+        } else {
+          response = `Il fait actuellement ${weather.temp}°C et le ciel est ${weather.condition.toLowerCase()}. C'est le moment idéal pour profiter d'un cabriolet ou d'un véhicule de luxe.`;
+        }
       }
 
       setMessages(prev => [...prev, { role: "bot", content: response, recommendation }]);

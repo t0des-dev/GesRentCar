@@ -31,6 +31,10 @@ COPY . /var/www
 # Install dependencies
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Expose port 9000 and start php-fpm server
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Expose port 9000 and start server
 EXPOSE 9000
-CMD ["php-fpm"]
+ENTRYPOINT ["docker-entrypoint.sh"]

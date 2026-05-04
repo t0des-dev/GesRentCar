@@ -7,15 +7,20 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\Cache;
+
 class VehicleController extends Controller
 {
     public function index(Request $request, \App\Services\PricingService $pricing)
     {
-        $query = Vehicle::query();
+        $cacheKey = 'vehicles_index_' . md5(json_encode($request->all()) . app()->getLocale());
 
-        if ($request->has(['start_date', 'end_date'])) {
-            $query->available($request->start_date, $request->end_date);
-        }
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $pricing) {
+            $query = Vehicle::query();
+
+            if ($request->has(['start_date', 'end_date'])) {
+                $query->available($request->start_date, $request->end_date);
+            }
 
         if ($request->has('ids')) {
             $ids = is_array($request->ids) ? $request->ids : explode(',', $request->ids);
@@ -44,35 +49,42 @@ class VehicleController extends Controller
         }
 
         $perPage = $request->query('per_page', 6);
-        $vehicles = $query->paginate($perPage);
+        
+        $vehicles = $query->withSum(['reservations as total_revenue' => function($q) {
+            $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
+        }], 'total_price')
+        ->withSum('maintenances as total_maintenance_cost', 'cost')
+        ->withExists(['reservations as is_currently_rented' => function($q) {
+            $q->whereIn('status', ['ongoing', 'confirmed'])
+              ->where('start_date', '<=', now())
+              ->where('end_date', '>=', now());
+        }])
+        ->paginate($perPage);
 
-        $vehicles->getCollection()->transform(function ($vehicle) use ($pricing) {
-            $dynamic = $pricing->getDynamicRate($vehicle);
+        $totalVehicles = Vehicle::count();
+        $rentedVehicles = Vehicle::where('status', 'rented')->count();
+        $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
+
+        $vehicles->getCollection()->transform(function ($vehicle) use ($pricing, $occupancyRate) {
+            $dynamic = $pricing->getDynamicRate($vehicle, $occupancyRate);
             $vehicle->dynamic_price = $dynamic['price'];
             $vehicle->dynamic_reason = $dynamic['reason'];
             
-            // Stats Financières (ROI)
-            $vehicle->total_revenue = $vehicle->reservations()->whereIn('status', ['completed', 'ongoing', 'confirmed'])->sum('total_price');
-            $vehicle->total_maintenance_cost = $vehicle->maintenances()->sum('cost');
-
             // Calcul Auto du Statut (si pas en maintenance forcée)
             if ($vehicle->status !== 'maintenance') {
-                $isCurrentlyRented = $vehicle->reservations()
-                    ->whereIn('status', ['ongoing', 'confirmed'])
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now())
-                    ->exists();
-                if ($isCurrentlyRented) {
-                    $vehicle->status = 'rented';
-                } else {
-                    $vehicle->status = 'available';
-                }
+                $vehicle->status = $vehicle->is_currently_rented ? 'rented' : 'available';
             }
             
             return $vehicle;
         });
 
         return response()->json($vehicles);
+      });
+    }
+
+    protected function clearCache()
+    {
+        Cache::flush(); // Simple for now, can be improved to specific keys
     }
 
     public function show(Vehicle $vehicle)
@@ -107,6 +119,7 @@ class VehicleController extends Controller
         ]);
 
         $vehicle = Vehicle::create($data);
+        $this->clearCache();
         return response()->json($vehicle, 201);
     }
 
@@ -136,40 +149,41 @@ class VehicleController extends Controller
         ]);
 
         $vehicle->update($data);
+        $this->clearCache();
         return response()->json($vehicle);
     }
 
-    public function uploadImage(Request $request, Vehicle $vehicle)
+    public function uploadImage(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120', // Higher max since we optimize
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('vehicles', 'public');
-            $url = Storage::url($path);
+            $url = $imageService->optimizeAndStore($request->file('image'), 'vehicles');
             $vehicle->update(['image_url' => $url]);
+            $this->clearCache();
             return response()->json(['url' => $url]);
         }
 
         return response()->json(['message' => 'Aucun fichier'], 400);
     }
 
-    public function uploadPhotos(Request $request, Vehicle $vehicle)
+    public function uploadPhotos(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
     {
         $request->validate([
             'photos' => 'required|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         $currentPhotos = $vehicle->photos ?? [];
         
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('vehicles/gallery', 'public');
-                $currentPhotos[] = Storage::url($path);
+                $currentPhotos[] = $imageService->optimizeAndStore($photo, 'vehicles/gallery');
             }
             $vehicle->update(['photos' => $currentPhotos]);
+            $this->clearCache();
             return response()->json(['photos' => $currentPhotos]);
         }
 
@@ -179,6 +193,7 @@ class VehicleController extends Controller
     public function destroy(Vehicle $vehicle)
     {
         $vehicle->delete();
+        $this->clearCache();
         return response()->json(null, 204);
     }
 }

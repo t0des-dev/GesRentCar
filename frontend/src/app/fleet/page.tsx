@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import VehicleCard from "@/components/VehicleCard";
-import FleetFilters, { FleetFilterState } from "@/components/FleetFilters";
-import { ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { useVehicles } from "@/hooks/useApi";
 import QuickViewModal from "@/components/QuickViewModal";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useCallback, useContext } from "react";
+import { FleetFilterState } from "@/components/FleetFilters";
+
+// Modular Components
+import FleetHeader from "@/components/fleet/FleetHeader";
+import FleetSidebar from "@/components/fleet/FleetSidebar";
+import FleetGrid from "@/components/fleet/FleetGrid";
 
 const PAGE_SIZE = 6;
 
 function FleetContent() {
-  const { t, lang } = useTranslation();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
@@ -28,10 +28,11 @@ function FleetContent() {
     transmission: "All",
     maxPrice: 3000,
     seats: "All",
+    lifestyle: "all",
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
 
-  const { data: apiData, isLoading, isError } = useVehicles({
+  const { data: apiData, isLoading } = useVehicles({
     page,
     per_page: PAGE_SIZE,
     max_price: filters.maxPrice < 3000 ? filters.maxPrice : undefined,
@@ -40,8 +41,7 @@ function FleetContent() {
     end_date: endDateParam,
   });
 
-  const allVehicles = apiData?.data ?? [];
-  const filtered = allVehicles.filter((v) => {
+  const filtered = (apiData?.data ?? []).filter((v) => {
     const matchSearch =
       v.brand.toLowerCase().includes(search.toLowerCase()) ||
       v.model.toLowerCase().includes(search.toLowerCase());
@@ -51,217 +51,52 @@ function FleetContent() {
     const matchSeats =
       filters.seats === "All" ||
       ((filters.seats === "7+" ? (v as any).seats >= 7 : (v as any).seats === Number(filters.seats)));
-    return matchSearch && matchTrans && matchSeats;
+
+    const matchLifestyle = filters.lifestyle === "all" || (function() {
+      const m = v.model.toLowerCase();
+      const b = v.brand.toLowerCase();
+      const t = v.type.toLowerCase();
+      const d = (v.description_fr || "").toLowerCase();
+      
+      if (filters.lifestyle === "business") return t.includes("luxury") || m.includes("mercedes") || b.includes("bmw") || b.includes("audi");
+      if (filters.lifestyle === "romance") return t.includes("sport") || t.includes("convertible") || m.includes("cabrio");
+      if (filters.lifestyle === "adventure") return t.includes("suv") || b.includes("jeep") || b.includes("range") || b.includes("land") || d.includes("atlas") || d.includes("aventure");
+      if (filters.lifestyle === "family") return ((v as any).seats >= 7) || t.includes("suv") || t.includes("van");
+      return true;
+    })();
+
+    return matchSearch && matchTrans && matchSeats && matchLifestyle;
   });
 
-  const totalPages = apiData?.last_page ?? 1;
+  const handleFilterChange = useCallback((f: FleetFilterState) => {
+    setFilters(f);
+    setPage(1);
+  }, []);
 
   return (
     <main className="min-h-screen pt-32 pb-24 bg-background relative selection:bg-primary/20 overflow-hidden">
-      {/* Dynamic Background Elements */}
       <div className="absolute top-0 inset-x-0 h-[1000px] pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
-        
-        {/* Premium Header */}
-        <div className="mb-24">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 mb-8"
-          >
-            <div className="w-12 h-px bg-primary" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">{t("fleet_tag")}</span>
-          </motion.div>
-
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
-            <div className="max-w-3xl">
-              <motion.h1 
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-7xl md:text-[120px] font-black text-foreground tracking-tighter leading-[0.85] mb-8"
-              >
-                {t("fleet_title_1")} <br />
-                <span className="text-gradient-gold">{t("fleet_title_2")}</span>.
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-slate-500 font-medium text-xl md:text-2xl max-w-xl leading-relaxed opacity-80"
-              >
-                {t("fleet_subtitle")}
-              </motion.p>
-            </div>
-            
-            {/* Search Glassmorphism */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="w-full lg:w-[400px] relative group"
-            >
-              <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-2xl transition-all group-focus-within:border-primary/50" />
-              <Search size={22} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
-              <input
-                type="text"
-                placeholder={t("search_placeholder")}
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full pl-20 pr-8 py-7 rounded-[32px] bg-transparent text-foreground font-black text-lg focus:outline-none relative z-10 placeholder:text-slate-600"
-              />
-            </motion.div>
-          </div>
-        </div>
+        <FleetHeader search={search} setSearch={(val) => { setSearch(val); setPage(1); }} />
 
         <div className="flex flex-col lg:flex-row gap-20">
+          <FleetSidebar onFilter={handleFilterChange} />
           
-          {/* Advanced Sidebar Filters */}
-          <aside className="w-full lg:w-80 shrink-0">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="sticky top-32 space-y-8"
-            >
-              <div className="p-8 rounded-[40px] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
-                <FleetFilters onFilter={(f) => { setFilters(f); setPage(1); }} />
-              </div>
-
-              {/* Promo Card */}
-              <div className="p-8 rounded-[40px] bg-primary relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                <h4 className="text-white font-black text-lg mb-2 relative z-10">{t("member_title")}</h4>
-                <p className="text-white/70 text-xs font-medium mb-6 relative z-10">{t("member_desc")}</p>
-                <button className="bg-white text-primary px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">{t("member_btn")}</button>
-              </div>
-            </motion.div>
-          </aside>
-
-          {/* Main Asymmetric Grid */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-12">
-              <div className="flex items-center gap-4">
-                <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                  {isLoading ? "Synchronisation en cours..." : `${filtered.length} ${t("fleet_count")}`}
-                </p>
-              </div>
-            </div>
-
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className={cn(
-                    "bg-slate-50/5 rounded-[48px] animate-pulse",
-                    i % 3 === 0 ? "aspect-[4/3] md:col-span-2" : "aspect-[3/4]"
-                  )} />
-                ))}
-              </div>
-            ) : filtered.length > 0 ? (
-              <div className="space-y-24">
-                {/* Dynamic Asymmetric Layout Logic */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-                  <AnimatePresence mode="popLayout">
-                    {filtered.map((v, idx) => (
-                      <motion.div
-                        key={v.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        className={cn(
-                          "relative",
-                          // Make every 3rd vehicle featured (wider)
-                          idx % 3 === 0 ? "md:col-span-2" : ""
-                        )}
-                      >
-                        <VehicleCard
-                          id={v.id}
-                          brand={v.brand}
-                          model={v.model}
-                          type={v.type}
-                          price={v.price_per_day}
-                          seats={(v as any).seats ?? 5}
-                          fuel={v.fuel_type || "Diesel"}
-                          transmission={v.transmission || "Automatic"}
-                          year={v.year}
-                          horsepower={v.horsepower}
-                          imageUrl={v.image_url ?? undefined}
-                          dynamicPrice={v.dynamic_price}
-                          dynamicReason={v.dynamic_reason}
-                          className={idx % 3 === 0 ? "min-h-[500px]" : "h-full"}
-                          onQuickView={() => setQuickViewVehicle({
-                            ...v,
-                            price: v.price_per_day,
-                            seats: (v as any).seats ?? 5,
-                            fuel: v.fuel_type || "Diesel",
-                            transmission: v.transmission || "Automatic",
-                            imageUrl: v.image_url ?? undefined
-                          })}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-6 pt-12 border-t border-white/5">
-                    <button
-                      onClick={() => setPage(Math.max(1, page - 1))}
-                      disabled={page === 1}
-                      className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-20 transition-all text-foreground"
-                    >
-                      <ChevronLeft size={24} />
-                    </button>
-                    <div className="flex items-center gap-3">
-                      {Array.from({ length: totalPages }).map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setPage(i + 1)}
-                          className={cn(
-                            "w-12 h-12 rounded-2xl text-xs font-black transition-all",
-                            page === i + 1
-                              ? "bg-primary text-white shadow-[0_0_30px_rgba(37,99,235,0.4)]"
-                              : "bg-white/5 text-slate-500 hover:bg-white/10"
-                          )}
-                        >
-                          {i + 1}
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => setPage(Math.min(totalPages, page + 1))}
-                      disabled={page === totalPages}
-                      className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 disabled:opacity-20 transition-all text-foreground"
-                    >
-                      <ChevronRight size={24} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="py-32 flex flex-col items-center justify-center text-center space-y-10">
-                <div className="w-32 h-32 bg-white/5 rounded-[40px] flex items-center justify-center border border-white/10">
-                  <Search size={48} className="text-slate-700" />
-                </div>
-                <div>
-                  <h3 className="text-3xl font-black text-foreground mb-4 tracking-tight">{t("fleet_empty_title")}</h3>
-                  <p className="text-slate-500 font-medium text-lg max-w-sm">{t("fleet_empty_desc")}</p>
-                </div>
-              </div>
-            )}
-          </div>
+          <FleetGrid 
+            vehicles={filtered}
+            loading={isLoading}
+            page={page}
+            totalPages={apiData?.last_page ?? 1}
+            onPageChange={setPage}
+            onQuickView={setQuickViewVehicle}
+          />
         </div>
       </div>
 
-      {/* Quick View Modal */}
       {quickViewVehicle && (
         <QuickViewModal 
           vehicle={quickViewVehicle} 

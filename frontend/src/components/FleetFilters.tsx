@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { SlidersHorizontal, Car, Gauge, Users, Wallet, RotateCcw } from "lucide-react";
+import { SlidersHorizontal, Car, Gauge, Users, Wallet, RotateCcw, Star, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/hooks/useTranslation";
 
-const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
-const TRANSMISSIONS = ["All", "Automatic", "Manual"];
-const SEATS = ["All", "2", "4", "5", "7+"];
-const MAX_PRICE_VAL = 3000;
+const MAX_PRICE_VAL = 5000;
 
 interface FleetFiltersProps {
   onFilter: (filters: FleetFilterState) => void;
@@ -21,15 +18,29 @@ export interface FleetFilterState {
   transmission: string;
   maxPrice: number;
   seats: string;
+  lifestyle: string;
 }
 
 export default function FleetFilters({ onFilter, className }: FleetFiltersProps) {
   const { t } = useTranslation();
+
+  const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
+  const TRANSMISSIONS = ["All", "Automatic", "Manual"];
+  const SEATS = ["All", "2", "4", "5", "7+"];
+  const LIFESTYLES = [
+    { id: "all", label: "Tous", icon: Car },
+    { id: "business", label: "Business", icon: Gauge },
+    { id: "romance", label: "Romance", icon: Star },
+    { id: "adventure", label: "Aventure", icon: MapPin },
+    { id: "family", label: "Famille", icon: Users },
+  ];
+
   const [filters, setFilters] = useState<FleetFilterState>({
     type: "All",
     transmission: "All",
     maxPrice: MAX_PRICE_VAL,
     seats: "All",
+    lifestyle: "all",
   });
 
   const update = (key: keyof FleetFilterState, value: string | number) => {
@@ -39,7 +50,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
   };
 
   const reset = () => {
-    const def = { type: "All", transmission: "All", maxPrice: MAX_PRICE_VAL, seats: "All" };
+    const def = { type: "All", transmission: "All", maxPrice: MAX_PRICE_VAL, seats: "All", lifestyle: "all" };
     setFilters(def);
     onFilter(def);
   };
@@ -69,6 +80,30 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
         >
           <RotateCcw size={10} /> {t("filter_clear")}
         </motion.button>
+      </div>
+
+      {/* Lifestyle Selection */}
+      <div className="space-y-6">
+        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
+          <Star size={14} className="text-primary" /> VOTRE VIBE
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          {LIFESTYLES.map((ls) => (
+            <button
+              key={ls.id}
+              onClick={() => update("lifestyle", ls.id)}
+              className={cn(
+                "flex flex-col items-center gap-3 p-6 rounded-[32px] border transition-all duration-300",
+                filters.lifestyle === ls.id
+                  ? "bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-[1.02]"
+                  : "bg-white/50 border-slate-200/60 text-slate-500 hover:border-primary/40 hover:bg-white"
+              )}
+            >
+              <ls.icon size={20} />
+              <span className="text-[9px] font-black uppercase tracking-widest">{ls.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Category: Vehicle Type */}

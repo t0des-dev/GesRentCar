@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import { Play, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAgency } from "@/hooks/useAgency";
 
-const MOMENTS = [
+const DEFAULT_MOMENTS = [
   { 
     id: 1, 
     user: "Elena G.", 
     role: "CEO Tech", 
     text: "Une expérience impeccable du début à la fin. La livraison à l'hôtel était ponctuelle et la voiture dans un état concours.",
     image: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?q=80&w=2400&auto=format&fit=crop",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-luxury-car-driving-in-the-city-at-night-42407-large.mp4"
   },
   { 
     id: 2, 
@@ -19,32 +19,39 @@ const MOMENTS = [
     role: "Entrepreneur", 
     text: "Louer chez Vectoria n'est pas une simple transaction, c'est accéder à un service de conciergerie automobile exceptionnel.",
     image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2400&auto=format&fit=crop",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-white-luxury-car-parked-at-the-beach-at-sunset-42358-large.mp4"
-  },
-  { 
-    id: 3, 
-    user: "Yasmine K.", 
-    role: "Influenceuse Luxe", 
-    text: "Le choix des modèles est tout simplement unique au Maroc. La discrétion et le luxe à l'état pur.",
-    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2400&auto=format&fit=crop",
-    video: "https://assets.mixkit.co/videos/preview/mixkit-luxury-car-speeding-on-the-road-42410-large.mp4"
   }
 ];
 
 export default function LifestyleSlider() {
+  const agency = useAgency();
   const [current, setCurrent] = useState(0);
 
+  const testimonials = (agency.testimonials && agency.testimonials.length > 0) 
+    ? agency.testimonials.map((t: any, i: number) => ({
+        id: i,
+        user: t.name || t.user,
+        role: t.role || "Client",
+        text: t.text || t.content,
+        image: t.image || "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2400&auto=format&fit=crop"
+      }))
+    : DEFAULT_MOMENTS;
+
   useEffect(() => {
+    if (testimonials.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % MOMENTS.length);
+      setCurrent(prev => (prev + 1) % testimonials.length);
     }, 8000);
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonials.length]);
+
+  if (testimonials.length === 0) return null;
+
+  const activeMoment = testimonials[current];
 
   return (
     <section className="h-[700px] relative overflow-hidden bg-black">
       {/* Background Slides */}
-      {MOMENTS.map((moment, i) => (
+      {testimonials.map((moment, i) => (
         <div 
           key={moment.id}
           className={cn(
@@ -63,55 +70,57 @@ export default function LifestyleSlider() {
         <div className="max-w-3xl space-y-8 animate-in fade-in slide-in-from-left-12 duration-1000" key={current}>
           <div className="inline-flex items-center gap-3 bg-primary text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
             <Play size={14} fill="currentColor" />
-            Vectoria Moments
+            Avis Clients & Moments
           </div>
 
           <Quote size={60} className="text-primary/40" />
           
           <h2 className="text-4xl md:text-6xl font-black text-white leading-tight italic">
-            "{MOMENTS[current].text}"
+            "{activeMoment.text}"
           </h2>
 
           <div className="flex items-center gap-6 pt-8">
             <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-1">
-              <img src={MOMENTS[current].image} className="w-full h-full object-cover rounded-xl" />
+              <img src={activeMoment.image} className="w-full h-full object-cover rounded-xl" />
             </div>
             <div>
-              <p className="text-xl font-black text-white">{MOMENTS[current].user}</p>
-              <p className="text-sm font-bold text-primary uppercase tracking-widest">{MOMENTS[current].role}</p>
+              <p className="text-xl font-black text-white">{activeMoment.user}</p>
+              <p className="text-sm font-bold text-primary uppercase tracking-widest">{activeMoment.role}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="absolute bottom-12 right-12 z-40 flex items-center gap-6">
-        <div className="flex gap-2">
-          {MOMENTS.map((_, i) => (
-            <div 
-              key={i} 
-              className={cn(
-                "h-1.5 transition-all duration-500 rounded-full bg-white",
-                i === current ? "w-12 bg-primary" : "w-2 opacity-30"
-              )}
-            />
-          ))}
+      {testimonials.length > 1 && (
+        <div className="absolute bottom-12 right-12 z-40 flex items-center gap-6">
+          <div className="flex gap-2">
+            {testimonials.map((_, i) => (
+              <div 
+                key={i} 
+                className={cn(
+                  "h-1.5 transition-all duration-500 rounded-full bg-white",
+                  i === current ? "w-12 bg-primary" : "w-2 opacity-30"
+                )}
+              />
+            ))}
+          </div>
+          <div className="flex gap-4">
+            <button 
+              onClick={() => setCurrent(prev => (prev - 1 + testimonials.length) % testimonials.length)}
+              className="w-14 h-14 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button 
+              onClick={() => setCurrent(prev => (prev + 1) % testimonials.length)}
+              className="w-14 h-14 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <button 
-            onClick={() => setCurrent(prev => (prev - 1 + MOMENTS.length) % MOMENTS.length)}
-            className="w-14 h-14 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button 
-            onClick={() => setCurrent(prev => (prev + 1) % MOMENTS.length)}
-            className="w-14 h-14 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
-      </div>
+      )}
     </section>
   );
 }
