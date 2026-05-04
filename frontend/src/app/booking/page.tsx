@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useVehicles } from "@/hooks/useApi";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 
 // Components
@@ -37,7 +37,7 @@ export default function BookingPage() {
   const [signature, setSignature] = useState<string | null>(null);
   
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
-  const { t, lang } = useTranslation();
+  const { t } = useTranslation();
 
   const [booking, setBooking] = useState<BookingState>({
     vehicleId: null, startDate: "", endDate: "", location: "", options: [],
@@ -113,53 +113,80 @@ export default function BookingPage() {
         <div className="mb-16 text-center">
           <p className="text-primary font-black text-xs uppercase tracking-[0.2em] mb-4">Votre Réservation</p>
           <h1 className="text-5xl md:text-6xl font-black tracking-tight text-foreground mb-4">Réservez <span className="text-gradient-gold">l'Exception</span></h1>
-          <p className="text-muted-foreground font-medium text-lg max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples. Notre conciergerie s'occupe du reste.</p>
+          <p className="text-muted-foreground font-medium text-lg max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="w-full lg:w-2/3">
             <StepIndicator currentStep={step} onStepClick={setStep} />
 
-            <div className="mb-8 min-h-[400px]">
-              {step === 0 && (
-                <VehicleStep 
-                  booking={booking} 
-                  update={update} 
-                  isLoading={isLoadingVehicles} 
-                  vehicles={displayVehicles} 
-                  onPreview={setPreviewVehicle} 
-                  onNext={() => setStep(1)} 
-                />
-              )}
-              {step === 1 && <PeriodStep booking={booking} update={update} />}
-              {step === 2 && <OptionsStep booking={booking} update={update} />}
-              {step === 3 && (
-                <IdentityStep 
-                  booking={booking} 
-                  update={update} 
-                  isScanning={isScanning} 
-                  setIsScanning={setIsScanning} 
-                />
-              )}
-              {step === 4 && <SignatureStep signature={signature} setSignature={setSignature} />}
-              {step === 5 && (
-                <PaymentStep 
-                  booking={booking} 
-                  deposit={deposit} 
-                  reservationId={reservationId} 
-                  signature={signature} 
-                  onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
-                  onPrev={() => setStep(4)}
-                />
-              )}
+            <div className="mb-8 min-h-[500px] relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {step === 0 && (
+                    <VehicleStep 
+                      booking={booking} 
+                      update={update} 
+                      isLoading={isLoadingVehicles} 
+                      vehicles={displayVehicles} 
+                      onPreview={setPreviewVehicle} 
+                      onNext={() => setStep(1)} 
+                    />
+                  )}
+                  {step === 1 && <PeriodStep booking={booking} update={update} />}
+                  {step === 2 && <OptionsStep booking={booking} update={update} />}
+                  {step === 3 && (
+                    <IdentityStep 
+                      booking={booking} 
+                      update={update} 
+                      isScanning={isScanning} 
+                      setIsScanning={setIsScanning} 
+                    />
+                  )}
+                  {step === 4 && (
+                    <SignatureStep 
+                      /* Force refresh props */
+                      onComplete={(sig) => { setSignature(sig); setStep(5); }} 
+                      onBack={() => setStep(3)} 
+                    />
+                  )}
+                  {step === 5 && (
+                    <PaymentStep 
+                      booking={booking} 
+                      deposit={deposit} 
+                      reservationId={reservationId} 
+                      signature={signature} 
+                      onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
+                      onPrev={() => setStep(4)}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {step < 5 && (
-              <div className="flex justify-between items-center pt-6 border-t-2 border-slate-100">
-                <button onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} className="px-8 py-4 rounded-2xl text-slate-400 font-black hover:bg-slate-100 disabled:opacity-0 transition-all">Retour</button>
+              <div className="flex justify-between items-center pt-10 border-t border-slate-100">
+                <button 
+                  onClick={() => setStep(Math.max(0, step - 1))} 
+                  disabled={step === 0} 
+                  className="px-10 py-5 rounded-[24px] text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 disabled:opacity-0 transition-all flex items-center gap-2"
+                >
+                  Précédent
+                </button>
                 {step > 0 && (
-                  <button onClick={() => setStep(step + 1)} disabled={!canNext()} className="px-10 py-4 rounded-2xl bg-primary text-white font-black hover:shadow-xl hover:shadow-primary/30 disabled:opacity-30 disabled:hover:shadow-none transition-all flex items-center gap-2">
-                    Étape Suivante
+                  <button 
+                    onClick={() => setStep(step + 1)} 
+                    disabled={!canNext()} 
+                    className="px-12 py-5 rounded-[24px] bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest hover:bg-primary shadow-2xl hover:shadow-primary/30 disabled:opacity-30 disabled:hover:shadow-none transition-all flex items-center gap-3 group/btn"
+                  >
+                    Continuer
+                    <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                   </button>
                 )}
               </div>

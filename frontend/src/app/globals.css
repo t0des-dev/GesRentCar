@@ -183,6 +183,22 @@
   100% { transform: translateY(12px); opacity: 0; }
 }
 
+/* ─────────────── Premium Animations ─────────────── */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes sheen {
+  0% { transform: translateX(-100%) rotate(35deg); }
+  100% { transform: translateX(200%) rotate(35deg); }
+}
+
+@keyframes text-mask-scroll {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
 /* ─────────────── Animation classes ─────────────── */
 .animate-fade-in-up  { animation: fade-in-up 0.65s ease both; }
 .animate-fade-in     { animation: fade-in 0.65s ease both; }
@@ -191,3 +207,12 @@
 .animate-pulse-ring  { animation: pulse-ring 2s infinite; }
 .animate-scan        { animation: scan 1.5s ease-in-out infinite; }
 .animate-scroll      { animation: scroll 1.8s ease-in-out infinite; }
+.animate-gradient-x  { animation: gradient-x 6s linear infinite; }
+.animate-sheen       { animation: sheen 3s infinite; }
+
+.premium-glass {
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}

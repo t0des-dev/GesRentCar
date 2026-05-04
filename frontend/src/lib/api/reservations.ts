@@ -9,9 +9,12 @@ export interface CreateReservationPayload {
     email: string;
     phone: string;
     cin: string;
-    license_number: string;
+    license_number?: string;
+    cin_image_url?: string;
+    license_image_url?: string;
   };
-  payment_method: "cash" | "cmi" | "transfer";
+  payment_method: "cash" | "cmi" | "transfer" | "stripe" | "on_site";
+  signature?: string;
 }
 
 export interface Reservation {

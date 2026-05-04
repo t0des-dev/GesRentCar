@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import styles from "./page.module.css";
 
 // Modular Components
 import AgentSidebar from "@/components/agent/AgentSidebar";
@@ -24,15 +23,25 @@ export default function AgentPortal() {
   );
 
   return (
-    <div className={styles.portal}>
-      <AgentSidebar activeTab={tab} setTab={setTab} />
-      
-      <div className={styles.content}>
-        {tab === "home"         && <AgentHome onNewRental={() => setTab("new")} />}
-        {tab === "new"          && <NewRental />}
-        {tab === "reservations" && <MyReservations />}
-        {tab === "inspection"   && <VehicleInspection />}
+    <main className="min-h-screen pt-32 pb-24 bg-slate-50/50">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-72">
+            <AgentSidebar activeTab={tab} setTab={setTab} />
+          </aside>
+          
+          {/* Main Content Area */}
+          <div className="flex-1 bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden min-h-[700px]">
+            <div className="p-8 md:p-12">
+              {tab === "home"         && <AgentHome onNewRental={() => setTab("new")} />}
+              {tab === "new"          && <NewRental />}
+              {tab === "reservations" && <MyReservations />}
+              {tab === "inspection"   && <VehicleInspection />}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

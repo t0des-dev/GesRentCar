@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Camera, Loader2, AlertTriangle, CheckCircle2, Wrench } from "lucide-react";
-import styles from "../sections.module.css";
+import { ShieldCheck, Camera, Loader2, AlertTriangle, CheckCircle2, Wrench, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const API = "http://localhost:8000/api";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
@@ -34,98 +35,195 @@ export default function VehicleInspection() {
     }
   };
 
-  const scoreColor = (s: number) => s >= 85 ? "#10b981" : s >= 60 ? "#f59e0b" : "#ef4444";
-  const severityColor: Record<string, string> = { None: "#10b981", Low: "#f59e0b", Medium: "#f97316", High: "#ef4444" };
+  const getScoreColor = (s: number) => {
+    if (s >= 85) return "text-emerald-500 border-emerald-500 bg-emerald-50";
+    if (s >= 60) return "text-amber-500 border-amber-500 bg-amber-50";
+    return "text-red-500 border-red-500 bg-red-50";
+  };
+
+  const getSeverityStyle = (severity: string) => {
+    const map: Record<string, string> = {
+      Low: "bg-emerald-50 text-emerald-600 border-emerald-100",
+      Medium: "bg-amber-50 text-amber-600 border-amber-100",
+      High: "bg-red-50 text-red-600 border-red-100",
+      None: "bg-slate-50 text-slate-400 border-slate-100"
+    };
+    return map[severity] || map.None;
+  };
 
   return (
-    <div>
-      <h2 className={styles.sectionTitle}><ShieldCheck size={18} /> Inspection Véhicule</h2>
-      <p className={styles.hint}>Analysez l'état du véhicule lors d'une prise en charge ou restitution.</p>
-
-      {/* Saisie plaque */}
-      <div className={styles.sectionCard}>
-        <label className={styles.label}>Numéro de plaque</label>
-        <input
-          type="text"
-          placeholder="ex: 1234-A-1"
-          value={plateInput}
-          onChange={(e) => setPlateInput(e.target.value)}
-          className={styles.input}
-        />
-      </div>
-
-      {/* Zone de capture simulée */}
-      <div className={styles.scanTarget} onClick={!analyzing ? handleAnalyze : undefined}>
-        {analyzing ? (
-          <div className={styles.scannerAnimate}>
-            <div className={styles.scannerLine} />
-            <Loader2 size={32} className={styles.spinIcon} />
-            <p>Analyse IA en cours...</p>
-          </div>
-        ) : report ? (
-          <div className={styles.scanDone}>
-            <CheckCircle2 size={40} color="#10b981" />
-            <p>Analyse terminée</p>
-          </div>
-        ) : (
-          <div className={styles.scanIdle}>
-            <Camera size={48} />
-            <p>Appuyer pour lancer l'inspection</p>
-          </div>
-        )}
-      </div>
-
-      <button className={styles.btnPrimary} onClick={handleAnalyze} disabled={analyzing}>
-        {analyzing
-          ? <><Loader2 size={16} className={styles.spinIcon} /> Analyse en cours...</>
-          : <><Camera size={16} /> Lancer l'Inspection IA</>}
-      </button>
-
-      {error && <div className={styles.errorBox}><AlertTriangle size={15} /> {error}</div>}
-
-      {/* Rapport */}
-      {report && (
-        <div className={styles.reportCard}>
-          {/* Score */}
-          <div className={styles.scoreCircleWrap}>
-            <div className={styles.scoreCircle} style={{ borderColor: scoreColor(report.integrity_score) }}>
-              <span style={{ color: scoreColor(report.integrity_score) }}>{report.integrity_score}</span>
-              <small>/100</small>
-            </div>
-            <div>
-              <p className={styles.scoreLabelMain}>Score d'Intégrité</p>
-              <p className={styles.scoreSub} style={{ color: scoreColor(report.integrity_score) }}>
-                {report.integrity_score >= 85 ? "Excellent" : report.integrity_score >= 60 ? "Correct" : "Dégradé"}
-              </p>
-            </div>
-          </div>
-
-          {/* Détections */}
-          <h4 className={styles.detectionTitle}><Wrench size={15} /> Détections</h4>
-          <div className={styles.detectionList}>
-            {report.detections.map((d, i) => (
-              <div key={i} className={styles.detectionRow}>
-                <div>
-                  <p className={styles.detPart}>{d.part}</p>
-                  <p className={styles.detIssue}>{d.issue}</p>
-                </div>
-                <span className={styles.severityBadge} style={{
-                  background: `${severityColor[d.severity]}18`,
-                  color: severityColor[d.severity],
-                }}>
-                  {d.severity}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Coût estimé */}
-          <div className={styles.costBox}>
-            <span>Coût de réparation estimé</span>
-            <strong>{report.estimated_repair_cost.toLocaleString("fr-FR")} DH</strong>
-          </div>
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="flex justify-between items-end border-b border-slate-100 pb-8">
+        <div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2 flex items-center gap-3">
+            <ShieldCheck className="text-primary" />
+            Inspection Véhicule
+          </h2>
+          <p className="text-slate-400 font-medium text-sm italic">Audit d'intégrité assisté par Vision IA.</p>
         </div>
-      )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Left Side: Setup & Scan */}
+        <div className="space-y-8">
+          <div className="bg-slate-50/50 p-8 rounded-[40px] border border-slate-100 space-y-6">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Numéro de plaque</label>
+              <input
+                type="text"
+                placeholder="ex: 1234-A-1"
+                value={plateInput}
+                onChange={(e) => setPlateInput(e.target.value)}
+                className="w-full bg-white border border-slate-100 px-6 py-4 rounded-2xl text-sm font-black text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all"
+              />
+            </div>
+            
+            <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 text-blue-600">
+              <Info size={18} />
+              <p className="text-[10px] font-bold uppercase tracking-wider">L'inspection IA analyse l'extérieur pour détecter rayures et chocs.</p>
+            </div>
+          </div>
+
+          <div 
+            onClick={!analyzing ? handleAnalyze : undefined}
+            className={cn(
+              "aspect-square max-w-sm mx-auto rounded-[56px] border-4 border-dashed transition-all duration-700 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden group",
+              analyzing ? "border-primary bg-primary/5" : "border-slate-100 bg-slate-50 hover:border-primary/30 hover:bg-white"
+            )}
+          >
+            <AnimatePresence mode="wait">
+              {analyzing ? (
+                <motion.div key="analyzing" className="flex flex-col items-center gap-4">
+                  <div className="absolute inset-0 pointer-events-none">
+                    <motion.div 
+                      animate={{ top: ["0%", "100%", "0%"] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent blur-[2px] z-20"
+                    />
+                  </div>
+                  <Loader2 size={48} className="text-primary animate-spin" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Analyse IA...</p>
+                </motion.div>
+              ) : report ? (
+                <motion.div key="done" className="text-center space-y-4">
+                  <CheckCircle2 size={64} className="text-emerald-500 mx-auto" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500">Audit Terminé</p>
+                </motion.div>
+              ) : (
+                <motion.div key="idle" className="text-center space-y-4">
+                  <Camera size={64} className="text-slate-200 group-hover:text-primary transition-colors" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Scanner le véhicule</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <button 
+            onClick={handleAnalyze} 
+            disabled={analyzing}
+            className="w-full py-6 rounded-[24px] bg-slate-900 text-white font-black uppercase text-[10px] tracking-[0.3em] hover:bg-primary shadow-2xl hover:shadow-primary/30 disabled:opacity-30 transition-all flex items-center justify-center gap-3"
+          >
+            {analyzing ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
+            {analyzing ? "Analyse en cours..." : "Lancer l'Inspection IA"}
+          </button>
+        </div>
+
+        {/* Right Side: Report */}
+        <div className="min-h-[500px]">
+          <AnimatePresence mode="wait">
+            {report ? (
+              <motion.div
+                key="report"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-[48px] border border-slate-100 shadow-[0_40px_100px_rgba(0,0,0,0.03)] p-10 space-y-10"
+              >
+                {/* Integrity Score */}
+                <div className="flex items-center gap-8 border-b border-slate-50 pb-8">
+                  <div className={cn(
+                    "w-32 h-32 rounded-full border-8 flex flex-col items-center justify-center transition-all duration-1000",
+                    getScoreColor(report.integrity_score)
+                  )}>
+                    <span className="text-4xl font-black">{report.integrity_score}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">/ 100</span>
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Score d'Intégrité</h4>
+                    <p className="text-2xl font-black text-slate-900 leading-tight">
+                      État global : <br />
+                      <span className={cn(getScoreColor(report.integrity_score).split(' ')[0])}>
+                        {report.integrity_score >= 85 ? "Excellent" : report.integrity_score >= 60 ? "Correct" : "Dégradé"}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Detections List */}
+                <div className="space-y-6">
+                  <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                    <Wrench size={12} className="text-primary" />
+                    Points d'attention
+                  </h4>
+                  <div className="space-y-3">
+                    {report.detections.length > 0 ? report.detections.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
+                        <div>
+                          <p className="font-black text-slate-900 text-sm">{d.part}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase">{d.issue}</p>
+                        </div>
+                        <div className={cn(
+                          "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                          getSeverityStyle(d.severity)
+                        )}>
+                          {d.severity}
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="py-8 text-center text-slate-300 italic text-sm">Aucun dommage détecté.</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Estimated Cost */}
+                <div className="pt-8 border-t border-slate-100 flex justify-between items-center">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Coût estimé des réparations</p>
+                    <p className="text-sm font-bold text-slate-500">Calculé via intelligence artificielle</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-black text-slate-900">
+                      {report.estimated_repair_cost.toLocaleString("fr-FR")} DH
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ) : error ? (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6"
+              >
+                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center">
+                  <AlertTriangle size={32} />
+                </div>
+                <p className="text-slate-500 font-bold max-w-xs">{error}</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="placeholder"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed border-slate-100 rounded-[48px]"
+              >
+                <ShieldCheck size={64} className="text-slate-100 mb-6" />
+                <p className="text-slate-300 font-black uppercase tracking-[0.2em] text-[10px]">En attente d'analyse...</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }

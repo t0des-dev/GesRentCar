@@ -119,6 +119,44 @@ MSG;
     }
 
     /**
+     * 📍 Special confirmation for "Pay on Site" reservations.
+     */
+    public function notifyOnSiteReservation(Reservation $reservation): void
+    {
+        $client  = $reservation->client;
+        $vehicle = $reservation->vehicle;
+        $refNum  = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $start   = $reservation->start_date?->format('d/m/Y') ?? '—';
+        $total   = number_format($reservation->total_price, 2);
+
+        $message = <<<MSG
+📍 *Vectoria Rent Car — Réservation Enregistrée*
+
+Bonjour *{$client->name}*,
+
+Votre réservation *{$refNum}* pour la *{$vehicle->brand} {$vehicle->model}* a bien été enregistrée.
+
+📅 Prise en charge : *{$start}*
+💰 À régler en agence : *{$total} MAD*
+
+Veuillez vous présenter à notre agence avec vos documents originaux. Nous avons hâte de vous accueillir !
+
+— _Vectoria Rent Car | Excellence & Prestige_
+MSG;
+
+        if ($client->phone) {
+            $this->sendWhatsApp($client->phone, $message);
+            $this->sendSms($client->phone, "VRC: Réservation {$refNum} enregistrée. Total: {$total} MAD à régler en agence le {$start}. Bienvenue chez Vectoria!");
+        }
+
+        if ($client->email) {
+            try { $client->notify(new ReservationConfirmed($reservation)); } catch (\Exception $e) {
+                Log::warning('[Email] failed: ' . $e->getMessage());
+            }
+        }
+    }
+
+    /**
      * ✅ Simple confirmation (for non-Stripe reservations or admin-created).
      */
     public function notifyReservationConfirmed(Reservation $reservation): void

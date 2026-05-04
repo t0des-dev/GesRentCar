@@ -85,7 +85,8 @@ class ReservationController extends Controller
             'client.license_number' => 'nullable|string',
             'client.cin_image_url' => 'nullable|string',
             'client.license_image_url' => 'nullable|string',
-            'payment_method' => 'required|string',
+            'payment_method' => 'required|string|in:cash,cmi,transfer,stripe,on_site',
+            'signature' => 'nullable|string',
         ]);
 
         $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
@@ -118,22 +119,43 @@ class ReservationController extends Controller
         $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle, $client) {
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
             
-            return Reservation::create([
+            // For on_site, we still mark as confirmed but with payment_method in metadata if needed, 
+            // or just rely on the fact that no payment was recorded yet.
+            
+            $res = Reservation::create([
                 'client_id' => $client->id,
                 'vehicle_id' => $vehicle->id,
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
                 'total_price' => $totalPrice,
-                'status' => $status
+                'status' => $status,
+                'payment_method' => $validated['payment_method'],
             ]);
+
+            if (isset($validated['signature'])) {
+                \App\Models\Contract::create([
+                    'reservation_id' => $res->id,
+                    'signature_data' => $validated['signature'],
+                    'signed_at' => now(),
+                    'file_path' => 'contracts/contract_' . $res->id . '.pdf',
+                ]);
+            }
+
+            return $res;
         });
 
         if ($reservation->status === 'confirmed') {
-            $this->notificationService->notifyReservationConfirmed($reservation);
+            if ($reservation->payment_method === 'on_site') {
+                $this->notificationService->notifyOnSiteReservation($reservation);
+            } else {
+                $this->notificationService->notifyReservationConfirmed($reservation);
+            }
             
-            // 📄 Automate contract generation
-            $contractCtrl = new \App\Http\Controllers\Api\ContractController($this->notificationService);
-            $contractCtrl->generate($reservation);
+            // 📄 Automate contract generation if signature exists
+            if ($reservation->contract) {
+                $contractCtrl = new \App\Http\Controllers\Api\ContractController($this->notificationService);
+                $contractCtrl->generate($reservation);
+            }
         }
 
         return response()->json($reservation, 201);

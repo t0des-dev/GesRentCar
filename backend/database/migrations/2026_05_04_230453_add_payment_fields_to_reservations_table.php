@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('settings', function (Blueprint $table) {
-            $table->string('hero_video_url')->nullable();
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->string('payment_method')->nullable()->after('status');
+            $table->text('signature')->nullable()->after('payment_method');
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn('hero_video_url');
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->dropColumn(['payment_method', 'signature']);
         });
     }
 };

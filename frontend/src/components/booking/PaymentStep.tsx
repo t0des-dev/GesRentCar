@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Lock, CreditCard, Globe } from "lucide-react";
+import { Lock, CreditCard, Globe, Banknote, Loader2, CheckCircle2 } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import { StripeCheckout } from "@/components/StripeCheckout";
 import { CmiCheckout } from "@/components/CmiCheckout";
+import { reservationService } from "@/lib/api/reservations";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PaymentStepProps {
   booking: BookingState;
@@ -17,81 +19,153 @@ interface PaymentStepProps {
 }
 
 export default function PaymentStep({ booking, deposit, reservationId, signature, onSuccess, onPrev }: PaymentStepProps) {
-  const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi">("stripe");
+  const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("stripe");
+  const [loading, setLoading] = useState(false);
+
+  const handleOnSiteReservation = async () => {
+    setLoading(true);
+    try {
+      const res = await reservationService.create({
+        vehicle_id: booking.vehicleId!,
+        start_date: booking.startDate,
+        end_date: booking.endDate,
+        signature: signature || undefined,
+        client: {
+          name: booking.client.name,
+          email: booking.client.email,
+          phone: booking.client.phone,
+          cin: booking.client.cin,
+          license_number: booking.client.licenseNumber,
+          cin_image_url: booking.client.cinImageUrl,
+          license_image_url: booking.client.licenseImageUrl,
+        },
+        payment_method: "on_site",
+      });
+      onSuccess(res.id);
+    } catch (err) {
+      console.error("OnSite Reservation Error", err);
+      alert("Une erreur est survenue lors de la réservation.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="animate-in fade-in">
-      <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-4">
-          <Lock className="text-green-500" size={24} />
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="bg-white p-12 rounded-[56px] border border-slate-100 shadow-[0_40px_100px_rgba(0,0,0,0.03)] relative overflow-hidden">
+        <div className="flex items-center gap-6 mb-10 border-b border-slate-50 pb-8">
+          <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shadow-inner">
+            <Lock size={32} />
+          </div>
           <div>
-            <h3 className="text-xl font-black text-slate-900">Garantie "Hold my Car"</h3>
-            <p className="text-sm text-slate-500 font-medium">Bloquez votre véhicule en réglant l'acompte de 10%.</p>
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Garantie & Paiement</h3>
+            <p className="text-sm text-slate-400 font-medium italic">Sécurisez votre réservation via nos passerelles certifiées.</p>
           </div>
         </div>
 
-        {/* Gateway Selector */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <button
-            onClick={() => setSelectedGateway("stripe")}
-            className={cn(
-              "flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all",
-              selectedGateway === "stripe" 
-                ? "border-slate-900 bg-slate-900 text-white shadow-xl shadow-slate-900/20" 
-                : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200"
-            )}
-          >
-            <CreditCard size={24} />
-            <span className="text-xs font-black uppercase tracking-widest">Stripe (International)</span>
-          </button>
-          <button
-            onClick={() => setSelectedGateway("cmi")}
-            className={cn(
-              "flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all",
-              selectedGateway === "cmi" 
-                ? "border-blue-600 bg-blue-600 text-white shadow-xl shadow-blue-600/20" 
-                : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200"
-            )}
-          >
-            <Globe size={24} />
-            <span className="text-xs font-black uppercase tracking-widest">CMI (Maroc Local)</span>
-          </button>
+        {/* Gateway Selector - Premium Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {[
+            { id: "stripe", label: "Stripe", sub: "International", icon: CreditCard, color: "slate-900" },
+            { id: "cmi", label: "CMI", sub: "Maroc Local", icon: Globe, color: "blue-600" },
+            { id: "on_site", label: "Sur Place", sub: "Agence", icon: Banknote, color: "emerald-600" },
+          ].map((gateway) => (
+            <button
+              key={gateway.id}
+              onClick={() => setSelectedGateway(gateway.id as any)}
+              className={cn(
+                "flex flex-col items-center gap-4 p-8 rounded-[32px] border-2 transition-all duration-500 group",
+                selectedGateway === gateway.id 
+                  ? `border-${gateway.color} bg-${gateway.color} text-white shadow-2xl scale-[1.05]` 
+                  : "border-slate-50 bg-slate-50/50 text-slate-400 hover:border-slate-200 hover:bg-white"
+              )}
+            >
+              <div className={cn(
+                "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors",
+                selectedGateway === gateway.id ? "bg-white/20" : "bg-white shadow-sm"
+              )}>
+                <gateway.icon size={24} className={cn(
+                  selectedGateway === gateway.id ? "text-white" : `text-${gateway.color}`
+                )} />
+              </div>
+              <div className="text-center">
+                <span className="block text-xs font-black uppercase tracking-[0.2em]">{gateway.label}</span>
+                <span className="text-[10px] opacity-60 font-bold">{gateway.sub}</span>
+              </div>
+            </button>
+          ))}
         </div>
 
-        {deposit > 0 && booking.vehicleId ? (
-          selectedGateway === "stripe" ? (
-            <StripeCheckout
-              deposit={deposit}
-              bookingPayload={{
-                vehicle_id: booking.vehicleId,
-                start_date: booking.startDate,
-                end_date: booking.endDate,
-                signature: signature || undefined,
-                client: {
-                  name: booking.client.name,
-                  email: booking.client.email,
-                  phone: booking.client.phone,
-                  cin: booking.client.cin,
-                  license_number: booking.client.licenseNumber,
-                  cin_image_url: booking.client.cinImageUrl,
-                  license_image_url: booking.client.licenseImageUrl,
-                },
-              }}
-              onSuccess={onSuccess}
-            />
+        <div className="min-h-[200px] flex flex-col items-center justify-center">
+          {deposit > 0 && booking.vehicleId ? (
+            <AnimatePresence mode="wait">
+              {selectedGateway === "stripe" && (
+                <motion.div key="stripe" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full">
+                  <StripeCheckout
+                    deposit={deposit}
+                    bookingPayload={{
+                      vehicle_id: booking.vehicleId,
+                      start_date: booking.startDate,
+                      end_date: booking.endDate,
+                      signature: signature || undefined,
+                      client: {
+                        name: booking.client.name,
+                        email: booking.client.email,
+                        phone: booking.client.phone,
+                        cin: booking.client.cin,
+                        license_number: booking.client.licenseNumber,
+                        cin_image_url: booking.client.cinImageUrl,
+                        license_image_url: booking.client.licenseImageUrl,
+                      },
+                    }}
+                    onSuccess={onSuccess}
+                  />
+                </motion.div>
+              )}
+              {selectedGateway === "cmi" && (
+                <motion.div key="cmi" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full">
+                  <CmiCheckout 
+                    reservationId={reservationId || 0}
+                    deposit={deposit}
+                  />
+                </motion.div>
+              )}
+              {selectedGateway === "on_site" && (
+                <motion.div key="on_site" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full text-center space-y-8">
+                  <div className="bg-emerald-50 p-8 rounded-[40px] border border-emerald-100/50">
+                    <p className="text-emerald-700 font-bold text-sm leading-relaxed max-w-sm mx-auto">
+                      Vous avez choisi de régler le montant total ou l'acompte directement en agence lors de la prise en charge. 
+                      <br/><br/>
+                      <span className="text-xs opacity-70">Votre réservation sera confirmée immédiatement après validation.</span>
+                    </p>
+                  </div>
+                  <button 
+                    onClick={handleOnSiteReservation}
+                    disabled={loading}
+                    className="w-full py-6 rounded-[24px] bg-emerald-600 text-white font-black uppercase text-[10px] tracking-[0.3em] hover:bg-emerald-700 shadow-2xl shadow-emerald-600/30 transition-all flex items-center justify-center gap-3"
+                  >
+                    {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle2 size={20} />}
+                    {loading ? "Confirmation en cours..." : "Confirmer ma réservation"}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           ) : (
-            <CmiCheckout 
-              reservationId={reservationId || 0}
-              deposit={deposit}
-            />
-          )
-        ) : (
-          <p className="text-slate-400 text-center py-8">Sélectionnez un véhicule et des dates pour continuer.</p>
-        )}
+            <div className="text-slate-300 flex flex-col items-center gap-4 py-12">
+              <CreditCard size={48} className="opacity-20" />
+              <p className="text-xs font-black uppercase tracking-widest">En attente de finalisation...</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="pt-6 border-t-2 border-slate-100 mt-6">
-        <button onClick={onPrev} className="px-8 py-4 rounded-2xl text-slate-400 font-black hover:bg-slate-100 transition-all">← Retour</button>
+      <div className="flex justify-start">
+        <button 
+          onClick={onPrev} 
+          className="px-10 py-5 rounded-[24px] text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
+        >
+          ← Retour aux options
+        </button>
       </div>
     </div>
   );

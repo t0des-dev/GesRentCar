@@ -28,6 +28,8 @@ const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"), { ssr: 
 const CtaBanner = dynamic(() => import("@/components/home/CtaBanner"), { ssr: false });
 const VehicleComparator = dynamic(() => import("@/components/VehicleComparator"), { ssr: false });
 
+const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"), { ssr: false });
+
 export default function HomeClient() {
   const router = useRouter();
   const { t, lang } = useTranslation();
@@ -52,7 +54,8 @@ export default function HomeClient() {
 
   const sections = agency.sections_config || { 
     featured: true, stats: true, why_us: true, testimonials: true, map: true,
-    vibe_selector: true, lifestyle_gallery: true, faq: true, concierge_banner: true
+    vibe_selector: true, lifestyle_gallery: true, faq: true, concierge_banner: true,
+    experience: true
   };
   
   const aboutText = lang === 'ar' ? agency.about_text_ar : (lang === 'en' ? agency.about_text_en : agency.about_text_fr);
@@ -81,6 +84,8 @@ export default function HomeClient() {
             onSearch={handleSearch} aboutText={aboutText} stats={STATS}
           />
         );
+      case "experience":
+        return <ExperienceSection key="experience" />;
       case "stats":
         return sections.stats && <StatsSection key="stats" stats={STATS} />;
       case "vibe_selector":
@@ -88,7 +93,7 @@ export default function HomeClient() {
       case "lifestyle_gallery":
         return sections.lifestyle_gallery && <LifestyleGallery key="lifestyle" config={content.lifestyle} />;
       case "why_us":
-        return sections.why_us && <WhyUsSection key="why_us" agency={agency} content={content.why_us} />;
+        return sections.why_us && <WhyUsSection key="why_us" agency={agency} content={content.why_us} aboutText={aboutText} />;
       case "featured":
         return sections.featured && <FeaturedVehicles key="featured" vehicles={featuredVehicles} loading={isLoading} />;
       case "testimonials":
@@ -110,10 +115,11 @@ export default function HomeClient() {
 
   const currentOrder = agency.sections_order || [
     { id: "hero", active: true },
+    { id: "experience", active: true },
     { id: "vibe_selector", active: true },
     { id: "lifestyle_gallery", active: true },
     { id: "stats", active: true },
-    { id: "why_us", active: true },
+    { id: "why_us", active: false },
     { id: "featured", active: true },
     { id: "testimonials", active: true },
     { id: "map", active: true },
@@ -126,9 +132,7 @@ export default function HomeClient() {
   return (
     <main className="min-h-screen overflow-x-hidden">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[100] origin-left" style={{ scaleX }} />
-      <AnimatePresence mode="wait">
-        {currentOrder.filter(s => s.active !== false).map(s => renderSection(s.id))}
-      </AnimatePresence>
+      {currentOrder.filter(s => s.active !== false).map(s => renderSection(s.id))}
       <PromotionBanner />
       <VehicleComparator />
     </main>

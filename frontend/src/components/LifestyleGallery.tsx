@@ -5,24 +5,24 @@ import { useRef } from "react";
 
 const images = [
   {
-    url: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800",
+    url: "/images/lifestyle/business.png",
     speed: 0.1,
-    className: "col-span-6 h-[400px] mt-20"
+    className: "col-span-6 h-[450px] mt-20"
   },
   {
-    url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800",
+    url: "/images/lifestyle/romance.png",
     speed: 0.2,
-    className: "col-span-6 h-[500px]"
+    className: "col-span-6 h-[550px]"
   },
   {
-    url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800",
+    url: "/images/lifestyle/adventure.png",
     speed: 0.15,
-    className: "col-span-4 h-[350px] -mt-10"
+    className: "col-span-4 h-[400px] -mt-10"
   },
   {
     url: "https://images.unsplash.com/photo-1525609002752-ad9d9b9b4125?auto=format&fit=crop&q=80&w=800",
     speed: 0.25,
-    className: "col-span-8 h-[450px]"
+    className: "col-span-8 h-[500px]"
   }
 ];
 

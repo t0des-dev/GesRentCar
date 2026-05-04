@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Star } from "lucide-react";
 import VehicleCard from "@/components/VehicleCard";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -27,14 +27,6 @@ export default function FleetGrid({
 
   return (
     <div className="flex-1">
-      <div className="flex items-center justify-between mb-12">
-        <div className="flex items-center gap-4">
-          <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-            {loading ? "Synchronisation en cours..." : `${vehicles.length} ${t("fleet_count")}`}
-          </p>
-        </div>
-      </div>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -128,13 +120,30 @@ export default function FleetGrid({
           )}
         </div>
       ) : (
-        <div className="py-32 flex flex-col items-center justify-center text-center space-y-10">
-          <div className="w-32 h-32 bg-white/5 rounded-[40px] flex items-center justify-center border border-white/10">
-            <Search size={48} className="text-slate-700" />
-          </div>
-          <div>
-            <h3 className="text-3xl font-black text-foreground mb-4 tracking-tight">{t("fleet_empty_title")}</h3>
-            <p className="text-slate-500 font-medium text-lg max-w-sm">{t("fleet_empty_desc")}</p>
+        <div className="py-48 flex flex-col items-center justify-center text-center space-y-12">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-40 h-40 bg-white/5 rounded-[56px] flex items-center justify-center border border-white/10 relative group"
+          >
+            <div className="absolute inset-0 bg-primary/10 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Star size={64} className="text-slate-800 relative z-10" strokeWidth={1} />
+          </motion.div>
+          <div className="space-y-6">
+            <h3 className="text-5xl font-black text-foreground tracking-tighter uppercase">
+              {t("fleet_empty_title")}
+            </h3>
+            <p className="text-slate-500 font-medium text-xl max-w-md leading-relaxed">
+              {t("fleet_empty_desc")}
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.reload()}
+              className="mt-8 text-[10px] font-black uppercase tracking-[0.4em] text-primary border-b border-primary/30 pb-2 hover:border-primary transition-all"
+            >
+              {t("filter_clear")}
+            </motion.button>
           </div>
         </div>
       )}

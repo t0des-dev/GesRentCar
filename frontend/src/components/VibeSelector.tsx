@@ -7,40 +7,40 @@ import { cn } from "@/lib/utils";
 
 const vibes = [
   {
-    id: "adrenaline",
-    title: "Adrénaline",
-    subtitle: "Puissance & Performance",
-    icon: Zap,
-    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
-    color: "from-orange-500 to-red-600",
-    category: "sport"
+    id: "business",
+    title: "Business Elite",
+    subtitle: "Prestige & Stratégie",
+    icon: ShieldCheck,
+    image: "/images/lifestyle/business.png",
+    color: "from-slate-800 to-slate-950",
+    lifestyle: "business"
   },
   {
-    id: "serenite",
-    title: "Sérénité",
-    subtitle: "Confort & Distinction",
-    icon: ShieldCheck,
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800",
-    color: "from-blue-500 to-indigo-600",
-    category: "luxury"
+    id: "romance",
+    title: "Grand Tourisme",
+    subtitle: "Émotion & Liberté",
+    icon: Wind,
+    image: "/images/lifestyle/romance.png",
+    color: "from-rose-500 to-orange-600",
+    lifestyle: "romance"
   },
   {
     id: "aventure",
-    title: "Aventure",
-    subtitle: "Espace & Liberté",
+    title: "Wild Adventure",
+    subtitle: "Puissance & Exploration",
     icon: Mountain,
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800",
-    color: "from-emerald-500 to-teal-600",
-    category: "suv"
+    image: "/images/lifestyle/adventure.png",
+    color: "from-emerald-600 to-teal-900",
+    lifestyle: "adventure"
   },
   {
-    id: "elegance",
-    title: "Élégance",
-    subtitle: "Style & Plaisir",
-    icon: Wind,
-    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=800",
-    color: "from-purple-500 to-pink-600",
-    category: "standard"
+    id: "family",
+    title: "Family First",
+    subtitle: "Confort & Partage",
+    icon: Zap,
+    image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800",
+    color: "from-blue-500 to-indigo-600",
+    lifestyle: "family"
   }
 ];
 
@@ -89,7 +89,7 @@ export default function VibeSelector({ config }: { config?: { title?: string, su
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -10 }}
               data-cursor="Explorer"
-              onClick={() => router.push(`/fleet?category=${vibe.category}`)}
+              onClick={() => router.push(`/fleet?lifestyle=${vibe.lifestyle}`)}
               className="group relative h-[500px] rounded-[40px] overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
             >
               {/* Background Image */}

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { getImageUrl } from "@/lib/utils/image";
 import Image from "next/image";
 import Link from "next/link";
 import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
@@ -77,7 +78,7 @@ export default function VehicleCard({
       <div className="relative aspect-[16/10] bg-muted overflow-hidden">
         {imageUrl ? (
           <Image
-            src={imageUrl.startsWith('/storage') ? `http://localhost:8000${imageUrl}` : imageUrl}
+            src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
             alt={`${brand} ${model}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

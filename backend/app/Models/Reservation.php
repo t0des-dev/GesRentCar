@@ -17,6 +17,8 @@ class Reservation extends Model
         'total_price',
         'deposit_amount',
         'documents',
+        'payment_method',
+        'signature',
     ];
 
     protected $casts = [
