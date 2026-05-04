@@ -132,3 +132,21 @@ Une fois les *seeders* exécutés, vous pouvez utiliser ces comptes :
 ---
 
 *Développé dans le cadre de la construction de l'écosystème ERP Premium Vectoria.*
+
+---
+
+## ❄️ Mises à jour Récentes (Arctic Luxury Transformation)
+
+La plateforme a subi une modernisation majeure pour atteindre un standard de luxe international.
+
+### 🎨 Design & Expérience Utilisateur
+- **Experience Section** : Nouvelle section immersive sur la page d'accueil utilisant des animations `framer-motion` complexes et une typographie cinématographique.
+- **Lifestyle Integration** : Intégration de 4 univers (Business Elite, Grand Tourisme, Wild Adventure, Family First) avec des images haute définition générées par IA.
+- **Vibe Selector** : Système de filtrage émotionnel permettant de choisir un véhicule en fonction de l'humeur du voyage.
+- **Agent Portal UI** : Refonte totale du tableau de bord agent avec un thème sombre premium et une gestion optimisée des réservations cash.
+
+### 🛠️ Stabilisation Technique
+- **Tunnel de Réservation 2.0** : Correction des erreurs d'importation de `framer-motion` et sécurisation des props de signature.
+- **Validation IA / OCR** : Système de scan intelligent des documents (CIN/Permis) avec badge de vérification animé.
+- **Evolution de la Base de Données** : Ajout de la gestion native des signatures numériques et des modes de paiement directement dans le cycle de vie des réservations.
+- **Optimisation du Build** : Nettoyage des fichiers de migration orphelins et synchronisation forcée des composants Next.js pour éviter les problèmes de cache.
