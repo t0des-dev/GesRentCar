@@ -2,13 +2,19 @@
 
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
-import { Globe, Menu, X, CarFront, User, Crown, ChevronDown, Check } from "lucide-react";
-import Link from "next/link";
+import { Menu, X, ChevronDown, Check } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/hooks/useCurrency";
+
+// Modular Sub-components
+import Logo from "./navbar/Logo";
+import NavLinks from "./navbar/NavLinks";
+import LanguageSwitcher from "./navbar/LanguageSwitcher";
+import UserActions from "./navbar/UserActions";
+import MobileMenu from "./navbar/MobileMenu";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -23,16 +29,10 @@ export default function Navbar() {
   const [currencyOpen, setCurrencyOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     const handleClickOutside = (event: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(event.target as Node)) {
-        setLangOpen(false);
-      }
-      if (currencyRef.current && !currencyRef.current.contains(event.target as Node)) {
-        setCurrencyOpen(false);
-      }
+      if (langRef.current && !langRef.current.contains(event.target as Node)) setLangOpen(false);
+      if (currencyRef.current && !currencyRef.current.contains(event.target as Node)) setCurrencyOpen(false);
     };
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("mousedown", handleClickOutside);
@@ -52,7 +52,6 @@ export default function Navbar() {
     { label: t("nav_contact"), url: "/contact" }
   ];
 
-  // Colors
   const textColor = (isScrolled || !transparentHero) ? "text-foreground" : "text-white";
   const hoverColor = (isScrolled || !transparentHero) ? "hover:text-primary" : "hover:text-secondary";
 
@@ -61,8 +60,6 @@ export default function Navbar() {
     { code: "en", label: "English" },
     { code: "ar", label: "العربية" }
   ];
-
-  const currentLangLabel = languages.find(l => l.code === lang)?.label || "Français";
 
   return (
     <header
@@ -75,28 +72,12 @@ export default function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-gradient-to-br from-primary to-blue-600 text-white p-2.5 rounded-xl group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/50 transition-all duration-300">
-            <CarFront size={22} className="group-hover:animate-pulse" />
-          </div>
-          <span className={cn("text-2xl font-black tracking-tight transition-colors", textColor)}>
-            {agency.agency_name?.split(' ')[0] || "Vectoria"}<span className="text-gradient-gold">{agency.agency_name?.split(' ')[1] || "Rent"}</span>
-          </span>
-        </Link>
+        <Logo agencyName={agency.agency_name} textColor={textColor} />
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 font-semibold">
-          {menuLinks.map((link: any, i: number) => (
-            <Link key={i} href={link.url} className={cn("text-sm transition-all hover:-translate-y-0.5", textColor, hoverColor)}>
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks links={menuLinks} textColor={textColor} hoverColor={hoverColor} />
 
-        {/* Actions */}
         <div className="hidden md:flex items-center gap-5">
-          {/* Currency Switcher */}
+          {/* Currency Switcher (Inline for brevity, or modularize if needed) */}
           <div className="relative" ref={currencyRef}>
             <button
               onClick={() => setCurrencyOpen(!currencyOpen)}
@@ -110,7 +91,6 @@ export default function Navbar() {
               {currency}
               <ChevronDown size={12} className={cn("transition-transform duration-300", currencyOpen ? "rotate-180" : "rotate-0")} />
             </button>
-
             <AnimatePresence>
               {currencyOpen && (
                 <motion.div
@@ -123,14 +103,8 @@ export default function Navbar() {
                     {["MAD", "EUR", "USD"].map((c) => (
                       <button
                         key={c}
-                        onClick={() => {
-                          setCurrency(c as any);
-                          setCurrencyOpen(false);
-                        }}
-                        className={cn(
-                          "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200",
-                          currency === c ? "bg-primary text-white" : "hover:bg-primary/10 text-foreground"
-                        )}
+                        onClick={() => { setCurrency(c as any); setCurrencyOpen(false); }}
+                        className={cn("flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200", currency === c ? "bg-primary text-white" : "hover:bg-primary/10 text-foreground")}
                       >
                         <span className="text-xs font-black">{c}</span>
                         {currency === c && <Check size={14} className="text-white" />}
@@ -142,91 +116,19 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          {/* Language Switcher */}
-          <div className="relative" ref={langRef}>
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 text-xs font-black uppercase tracking-widest",
-                (isScrolled || !transparentHero)
-                  ? "bg-muted/50 border-border/50 text-foreground hover:bg-muted"
-                  : "bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md"
-              )}
-            >
-              <Globe size={14} className={cn("transition-transform duration-500", langOpen ? "rotate-180" : "rotate-0")} />
-              {lang}
-              <ChevronDown size={12} className={cn("transition-transform duration-300", langOpen ? "rotate-180" : "rotate-0")} />
-            </button>
+          <LanguageSwitcher 
+            lang={lang} languages={languages} isOpen={langOpen} 
+            setIsOpen={setLangOpen} switchLang={switchLang}
+            isScrolled={isScrolled} transparentHero={transparentHero}
+            forwardRef={langRef}
+          />
 
-            <AnimatePresence>
-              {langOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-3 w-48 glass-card border border-border/50 shadow-2xl p-2 z-[60]"
-                >
-                  <div className="flex flex-col gap-1">
-                    {languages.map((l) => (
-                      <button
-                        key={l.code}
-                        onClick={() => {
-                          switchLang(l.code as any);
-                          setLangOpen(false);
-                        }}
-                        className={cn(
-                          "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group",
-                          lang === l.code ? "bg-primary text-white" : "hover:bg-primary/10 text-foreground"
-                        )}
-                      >
-                        <span className={cn("text-sm font-bold", lang === l.code ? "" : "text-muted-foreground group-hover:text-primary")}>
-                          {l.label}
-                        </span>
-                        {lang === l.code && <Check size={16} className="text-white" />}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {session ? (
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className={cn("text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2", textColor, hoverColor)}
-              >
-                <User size={16} className="text-primary" />
-                {t("nav_dashboard") || "Compte"}
-              </Link>
-              <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className={cn("text-xs font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity", textColor)}
-              >
-                {t("nav_logout") || "Déconnexion"}
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className={cn("text-sm font-bold transition-colors flex items-center gap-2", textColor, hoverColor)}
-            >
-              <User size={18} />
-              {t("nav_login")}
-            </Link>
-          )}
-
-          <Link
-            href="/booking"
-            className="bg-primary text-primary-foreground px-6 py-2.5 rounded-full text-sm font-bold hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:shadow-primary/40 hover:-translate-y-1 glow-primary flex items-center gap-2"
-          >
-            <Crown size={16} className="text-secondary" />
-            {t("nav_book")}
-          </Link>
+          <UserActions 
+            session={session} signOut={() => signOut({ callbackUrl: '/' })} 
+            t={t} textColor={textColor} hoverColor={hoverColor} 
+          />
         </div>
 
-        {/* Mobile Toggle */}
         <button
           className={cn("md:hidden p-2 rounded-xl transition-colors", (isScrolled || !transparentHero) ? "bg-muted/50 text-foreground" : "bg-black/20 text-white backdrop-blur-sm")}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -235,70 +137,12 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden absolute top-full left-0 w-full glass border-b border-border shadow-2xl overflow-hidden"
-          >
-            <div className="flex flex-col px-4 py-6 gap-2">
-              {menuLinks.map((link: any, i: number) => (
-                <Link key={i} href={link.url} className="text-foreground font-bold py-3 px-4 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  {link.label}
-                </Link>
-              ))}
-              
-              <div className="mt-4 p-4 glass rounded-3xl border border-white/10">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4 ml-2">Sélectionner la langue</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {languages.map((l) => (
-                    <button 
-                      key={l.code} 
-                      onClick={() => { switchLang(l.code as any); setMobileMenuOpen(false); }}
-                      className={cn(
-                        "flex flex-col items-center gap-1 py-4 rounded-2xl border transition-all", 
-                        lang === l.code 
-                          ? "bg-primary border-primary text-white shadow-lg shadow-primary/30" 
-                          : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
-                      )}
-                    >
-                      <span className="text-xs font-black uppercase">{l.code}</span>
-                      <span className="text-[9px] font-medium opacity-60">{l.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {session ? (
-                <div className="flex flex-col gap-2 mt-2">
-                  <Link href="/dashboard" className="text-primary font-black py-4 px-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
-                    <User size={20} />
-                    {t("nav_dashboard") || "MON COMPTE VIP"}
-                  </Link>
-                  <button 
-                    onClick={() => { signOut({ callbackUrl: '/' }); setMobileMenuOpen(false); }}
-                    className="text-muted-foreground font-bold py-3 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors text-left"
-                  >
-                    {t("nav_logout") || "Déconnexion"}
-                  </button>
-                </div>
-              ) : (
-                <Link href="/login" className="text-foreground font-bold py-3 px-4 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  {t("nav_login")}
-                </Link>
-              )}
-              
-              <Link href="/booking" className="bg-primary text-center text-white px-5 py-4 rounded-2xl font-black uppercase tracking-widest mt-6 shadow-xl glow-primary flex justify-center items-center gap-3 active:scale-95 transition-transform" onClick={() => setMobileMenuOpen(false)}>
-                <Crown size={20} className="text-secondary" />
-                {t("nav_book")}
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MobileMenu 
+        isOpen={mobileMenuOpen} setIsOpen={setMobileMenuOpen}
+        links={menuLinks} languages={languages} lang={lang}
+        switchLang={switchLang} session={session}
+        signOut={() => signOut({ callbackUrl: '/' })} t={t}
+      />
     </header>
   );
 }

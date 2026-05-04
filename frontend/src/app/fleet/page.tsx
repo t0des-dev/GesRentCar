@@ -3,7 +3,6 @@
 import { useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useVehicles } from "@/hooks/useApi";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FleetFilterState } from "@/components/FleetFilters";
@@ -12,6 +11,9 @@ import { FleetFilterState } from "@/components/FleetFilters";
 import FleetHeader from "@/components/fleet/FleetHeader";
 import FleetSidebar from "@/components/fleet/FleetSidebar";
 import FleetGrid from "@/components/fleet/FleetGrid";
+
+// Hooks
+import { useFleetData } from "@/hooks/useFleetData";
 
 const PAGE_SIZE = 6;
 
@@ -22,7 +24,7 @@ function FleetContent() {
   const endDateParam = searchParams.get("end_date") || undefined;
 
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
   const [filters, setFilters] = useState<FleetFilterState>({
     type: "All",
     transmission: "All",
@@ -32,64 +34,21 @@ function FleetContent() {
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
 
-  const { data: apiData, isLoading } = useVehicles({
-    page,
-    per_page: PAGE_SIZE,
-    max_price: filters.maxPrice < 3000 ? filters.maxPrice : undefined,
-    type: filters.type !== "All" ? filters.type.toLowerCase() : undefined,
-    start_date: startDateParam,
-    end_date: endDateParam,
-  });
-
-  const filtered = (apiData?.data ?? []).filter((v) => {
-    const matchSearch =
-      v.brand.toLowerCase().includes(search.toLowerCase()) ||
-      v.model.toLowerCase().includes(search.toLowerCase());
-    const matchTrans =
-      filters.transmission === "All" ||
-      (v as any).transmission === filters.transmission;
-    const matchSeats =
-      filters.seats === "All" ||
-      ((filters.seats === "7+" ? (v as any).seats >= 7 : (v as any).seats === Number(filters.seats)));
-
-    const matchLifestyle = filters.lifestyle === "all" || (function() {
-      const m = v.model.toLowerCase();
-      const b = v.brand.toLowerCase();
-      const t = v.type.toLowerCase();
-      const d = (v.description_fr || v.description || "").toLowerCase();
-      
-      if (filters.lifestyle === "business") {
-        return t.includes("luxury") || t.includes("sedan") || b.includes("mercedes") || b.includes("bmw") || b.includes("audi") || b.includes("range");
-      }
-      if (filters.lifestyle === "romance") {
-        return t.includes("sport") || t.includes("convertible") || m.includes("cabrio") || b.includes("porsche") || b.includes("ferrari") || t.includes("coupe");
-      }
-      if (filters.lifestyle === "adventure") {
-        return t.includes("suv") || b.includes("jeep") || b.includes("land") || b.includes("toyota") || d.includes("4x4") || d.includes("aventure") || d.includes("mountain");
-      }
-      if (filters.lifestyle === "family") {
-        return (v.seats >= 7) || t.includes("van") || t.includes("suv") || d.includes("famille") || d.includes("spacious");
-      }
-      return true;
-    })();
-
-    return matchSearch && matchTrans && matchSeats && matchLifestyle;
-  });
-
-  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "price_asc") return a.price_per_day - b.price_per_day;
-    if (sortBy === "price_desc") return b.price_per_day - a.price_per_day;
-    if (sortBy === "year_desc") return (b.year || 0) - (a.year || 0);
-    if (sortBy === "brand_asc") return a.brand.localeCompare(b.brand);
-    return 0;
+  const {
+    sorted, isLoading, page, setPage, totalPages
+  } = useFleetData({
+    pageSize: PAGE_SIZE,
+    search,
+    filters,
+    sortBy,
+    startDate: startDateParam,
+    endDate: endDateParam
   });
 
   const handleFilterChange = useCallback((f: FleetFilterState) => {
     setFilters(f);
     setPage(1);
-  }, []);
+  }, [setPage]);
 
   return (
     <main className="min-h-screen pt-32 pb-24 bg-background relative selection:bg-primary/20 overflow-hidden">
@@ -133,7 +92,7 @@ function FleetContent() {
               vehicles={sorted}
               loading={isLoading}
               page={page}
-              totalPages={apiData?.last_page ?? 1}
+              totalPages={totalPages}
               onPageChange={setPage}
               onQuickView={setQuickViewVehicle}
             />

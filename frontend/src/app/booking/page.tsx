@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useVehicles } from "@/hooks/useApi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,38 +18,13 @@ import SignatureStep from "@/components/booking/SignatureStep";
 import PaymentStep from "@/components/booking/PaymentStep";
 import { VehicleShowroom } from "@/components/booking/VehicleShowroom";
 
-// Types
-import { BookingState } from "@/types/booking";
-
-const MOCK_OPTIONS = [
-  { id: "chauffeur", price: 1500, type: "per_day" },
-  { id: "airport_vip", price: 500, type: "fixed" },
-  { id: "champagne", price: 1200, type: "fixed" },
-  { id: "vip_insure", price: 300, type: "per_day" },
-];
+// Hooks
+import { useBooking } from "@/hooks/useBooking";
 
 export default function BookingPage() {
-  const [step, setStep] = useState(0);
-  const [confirmed, setConfirmed] = useState(false);
-  const [reservationId, setReservationId] = useState<number | null>(null);
-  const [previewVehicle, setPreviewVehicle] = useState<any>(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [signature, setSignature] = useState<string | null>(null);
-  
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
   const { t } = useTranslation();
 
-  const [booking, setBooking] = useState<BookingState>({
-    vehicleId: null, startDate: "", endDate: "", location: "", options: [],
-    client: { 
-      name: "", email: "", phone: "", cin: "", licenseNumber: "",
-      cinImageUrl: "", licenseImageUrl: "", verified: false 
-    },
-    paymentMethod: "deposit_card",
-  });
-
-  const update = (key: keyof BookingState, val: any) => setBooking(prev => ({ ...prev, [key]: val }));
-  
   const displayVehicles = useMemo(() => {
     if (!vehiclesData?.data) return [];
     return vehiclesData.data.map(v => ({
@@ -64,33 +39,16 @@ export default function BookingPage() {
     }));
   }, [vehiclesData]);
 
-  const vehicle = displayVehicles.find(v => v.id === booking.vehicleId);
-  const days = useMemo(() => {
-    if (!booking.startDate || !booking.endDate) return 0;
-    const diff = new Date(booking.endDate).getTime() - new Date(booking.startDate).getTime();
-    return Math.max(1, Math.round(diff / 86400000));
-  }, [booking.startDate, booking.endDate]);
-
-  const basePrice = vehicle ? vehicle.price * days : 0;
-  const isHighSeason = booking.startDate && (new Date(booking.startDate).getMonth() === 6 || new Date(booking.startDate).getMonth() === 7);
-  const dynamicBasePrice = Math.round(basePrice * (isHighSeason ? 1.15 : 1));
-  
-  const optionsPrice = booking.options.reduce((sum, optId) => {
-    const opt = MOCK_OPTIONS.find(o => o.id === optId);
-    if (!opt) return sum;
-    return sum + (opt.type === "per_day" ? opt.price * days : opt.price);
-  }, 0);
-
-  const total = dynamicBasePrice + optionsPrice;
-  const deposit = Math.round(total * 0.1);
-
-  const canNext = () => {
-    if (step === 0) return booking.vehicleId !== null;
-    if (step === 1) return !!booking.startDate && !!booking.endDate && !!booking.location;
-    if (step === 3) return !!(booking.client.name && booking.client.phone && booking.client.cin);
-    if (step === 4) return !!signature;
-    return true;
-  };
+  const {
+    step, setStep, nextStep, prevStep, canNext,
+    confirmed, setConfirmed,
+    reservationId, setReservationId,
+    previewVehicle, setPreviewVehicle,
+    isScanning, setIsScanning,
+    signature, setSignature,
+    booking, update,
+    vehicle, days, total, deposit
+  } = useBooking(displayVehicles);
 
   if (confirmed) {
     return (
@@ -131,39 +89,30 @@ export default function BookingPage() {
                 >
                   {step === 0 && (
                     <VehicleStep 
-                      booking={booking} 
-                      update={update} 
-                      isLoading={isLoadingVehicles} 
-                      vehicles={displayVehicles} 
-                      onPreview={setPreviewVehicle} 
-                      onNext={() => setStep(1)} 
+                      booking={booking} update={update} isLoading={isLoadingVehicles} 
+                      vehicles={displayVehicles} onPreview={setPreviewVehicle} onNext={nextStep} 
                     />
                   )}
                   {step === 1 && <PeriodStep booking={booking} update={update} />}
                   {step === 2 && <OptionsStep booking={booking} update={update} />}
                   {step === 3 && (
                     <IdentityStep 
-                      booking={booking} 
-                      update={update} 
-                      isScanning={isScanning} 
-                      setIsScanning={setIsScanning} 
+                      booking={booking} update={update} 
+                      isScanning={isScanning} setIsScanning={setIsScanning} 
                     />
                   )}
                   {step === 4 && (
                     <SignatureStep 
-                      /* Force refresh props */
-                      onComplete={(sig) => { setSignature(sig); setStep(5); }} 
-                      onBack={() => setStep(3)} 
+                      onComplete={(sig) => { setSignature(sig); nextStep(); }} 
+                      onBack={prevStep} 
                     />
                   )}
                   {step === 5 && (
                     <PaymentStep 
-                      booking={booking} 
-                      deposit={deposit} 
-                      reservationId={reservationId} 
+                      booking={booking} deposit={deposit} reservationId={reservationId} 
                       signature={signature} 
                       onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
-                      onPrev={() => setStep(4)}
+                      onPrev={prevStep}
                     />
                   )}
                 </motion.div>
@@ -173,7 +122,7 @@ export default function BookingPage() {
             {step < 5 && (
               <div className="flex justify-between items-center pt-10 border-t border-slate-100">
                 <button 
-                  onClick={() => setStep(Math.max(0, step - 1))} 
+                  onClick={prevStep} 
                   disabled={step === 0} 
                   className="px-10 py-5 rounded-[24px] text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 disabled:opacity-0 transition-all flex items-center gap-2"
                 >
@@ -181,7 +130,7 @@ export default function BookingPage() {
                 </button>
                 {step > 0 && (
                   <button 
-                    onClick={() => setStep(step + 1)} 
+                    onClick={nextStep} 
                     disabled={!canNext()} 
                     className="px-12 py-5 rounded-[24px] bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest hover:bg-primary shadow-2xl hover:shadow-primary/30 disabled:opacity-30 disabled:hover:shadow-none transition-all flex items-center gap-3 group/btn"
                   >
@@ -194,11 +143,8 @@ export default function BookingPage() {
           </div>
 
           <BookingSummary 
-            booking={booking} 
-            days={days} 
-            total={total} 
-            deposit={deposit} 
-            vehicle={vehicle} 
+            booking={booking} days={days} total={total} 
+            deposit={deposit} vehicle={vehicle} 
           />
         </div>
       </div>
