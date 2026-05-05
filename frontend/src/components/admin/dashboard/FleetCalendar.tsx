@@ -83,24 +83,32 @@ export default function FleetCalendar({ reservations, onReservationClick }: Flee
       <div className="overflow-x-auto pb-4">
         <div className="min-w-[1000px]">
           {/* Header Row (Days) */}
-          <div className="flex border-b border-slate-100 pb-4 mb-4 ml-[250px]">
-            {days.map(day => {
-              const isToday = isCurrentMonth && day === todayDay;
-              return (
-                <div 
-                  key={day} 
-                  className={`flex-1 text-center text-xs font-black flex flex-col items-center justify-center
-                    ${isToday ? 'text-primary' : 'text-slate-400'}`}
-                >
-                  <span className="uppercase tracking-widest text-[9px] mb-1">
-                    {new Date(year, month, day).toLocaleDateString('fr-FR', { weekday: 'short' })}
-                  </span>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isToday ? 'bg-primary text-white shadow-md shadow-primary/30' : ''}`}>
-                    {day}
+          <div className="flex items-end border-b border-slate-100 pb-4 mb-4">
+            {/* Header Sidebar (Empty space to align with vehicles) */}
+            <div className="w-[250px] shrink-0 pr-4 bg-white z-10 sticky left-0">
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Véhicule</span>
+            </div>
+            
+            {/* Days Grid */}
+            <div className="flex flex-1">
+              {days.map(day => {
+                const isToday = isCurrentMonth && day === todayDay;
+                return (
+                  <div 
+                    key={day} 
+                    className={`flex-1 text-center text-xs font-black flex flex-col items-center justify-center
+                      ${isToday ? 'text-primary' : 'text-slate-400'}`}
+                  >
+                    <span className="uppercase tracking-widest text-[9px] mb-1">
+                      {new Date(year, month, day).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                    </span>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isToday ? 'bg-primary text-white shadow-md shadow-primary/30' : ''}`}>
+                      {day}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           {/* Vehicle Rows */}
