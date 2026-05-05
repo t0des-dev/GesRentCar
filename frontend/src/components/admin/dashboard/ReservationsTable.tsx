@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import styles from "@/app/admin/page.module.css";
-import ReservationDrawer from "./ReservationDrawer";
 
 interface ReservationsTableProps {
   reservations: Reservation[];
@@ -12,6 +11,7 @@ interface ReservationsTableProps {
   onGenerateContract: (id: number) => void;
   onPreviewDocs: (docs: { cin?: string; license?: string; name?: string }) => void;
   actionLoading: number | null;
+  onRowClick: (reservation: Reservation) => void;
 }
 
 export default function ReservationsTable({ 
@@ -19,9 +19,9 @@ export default function ReservationsTable({
   onAction, 
   onGenerateContract, 
   onPreviewDocs, 
-  actionLoading 
+  actionLoading,
+  onRowClick
 }: ReservationsTableProps) {
-  const [drawerReservation, setDrawerReservation] = useState<Reservation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredReservations = useMemo(() => {
@@ -76,7 +76,7 @@ export default function ReservationsTable({
             </thead>
             <tbody>
               {filteredReservations.map((r) => (
-                <tr key={r.id} onClick={() => setDrawerReservation(r)} className="cursor-pointer">
+                <tr key={r.id} onClick={() => onRowClick(r)} className="cursor-pointer">
                   <td className={styles.resId}>VC-{r.id.toString().padStart(4, "0")}</td>
                   <td>
                     <div className="flex items-center gap-2">
@@ -139,9 +139,9 @@ export default function ReservationsTable({
                       </button>
                     )}
                   </td>
-                  <td className={styles.actions}>
+                  <td className="text-right">
                     {r.status === "pending" ? (
-                      <>
+                      <div className={styles.actions}>
                         <button
                           className={styles.btnAccept}
                           onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }}
@@ -156,7 +156,7 @@ export default function ReservationsTable({
                         >
                           Rejeter
                         </button>
-                      </>
+                      </div>
                     ) : (
                       <div className="w-full text-right pr-4">
                          <span className="text-slate-300 font-bold uppercase text-[10px] tracking-widest">Traitée</span>
@@ -173,7 +173,7 @@ export default function ReservationsTable({
       {/* Mobile View */}
       <div className={styles.mobileResGrid}>
         {filteredReservations.map((r) => (
-          <div key={r.id} className={styles.mobileResCard} onClick={() => setDrawerReservation(r)}>
+          <div key={r.id} className={styles.mobileResCard} onClick={() => onRowClick(r)}>
             <div className={styles.cardHeader}>
               <span className={styles.resId}>VC-{r.id.toString().padStart(4, "0")}</span>
               <span className={`${styles.statusBadge} ${styles[`status_${r.status}`]}`} style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}>
@@ -200,15 +200,6 @@ export default function ReservationsTable({
           </div>
         ))}
       </div>
-
-      {drawerReservation && (
-        <ReservationDrawer 
-          reservation={drawerReservation} 
-          onClose={() => setDrawerReservation(null)}
-          onGenerateContract={onGenerateContract}
-          actionLoading={actionLoading}
-        />
-      )}
     </section>
   );
 }

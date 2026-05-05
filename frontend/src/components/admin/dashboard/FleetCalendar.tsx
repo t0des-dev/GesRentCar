@@ -1,21 +1,29 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import styles from "@/app/admin/page.module.css";
 
 interface FleetCalendarProps {
   reservations: Reservation[];
+  onReservationClick?: (reservation: Reservation) => void;
 }
 
-export default function FleetCalendar({ reservations }: FleetCalendarProps) {
-  // Generate days for the current month
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
+export default function FleetCalendar({ reservations, onReservationClick }: FleetCalendarProps) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const realNow = new Date();
+  const isCurrentMonth = realNow.getFullYear() === year && realNow.getMonth() === month;
+  const todayDay = realNow.getDate();
+
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
   // Group reservations by vehicle
   const vehiclesMap = useMemo(() => {
@@ -60,13 +68,13 @@ export default function FleetCalendar({ reservations }: FleetCalendarProps) {
           <h2 className="text-[1.75rem] font-black tracking-tight text-slate-900 m-0">Calendrier de Flotte</h2>
         </div>
         <div className="flex items-center gap-4">
-          <button className="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
+          <button onClick={prevMonth} className="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
             <ChevronLeft size={20} />
           </button>
-          <span className="font-bold text-slate-700 uppercase tracking-widest text-sm">
-            {now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+          <span className="font-bold text-slate-700 uppercase tracking-widest text-sm min-w-[140px] text-center">
+            {currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
           </span>
-          <button className="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
+          <button onClick={nextMonth} className="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors">
             <ChevronRight size={20} />
           </button>
         </div>
@@ -77,7 +85,7 @@ export default function FleetCalendar({ reservations }: FleetCalendarProps) {
           {/* Header Row (Days) */}
           <div className="flex border-b border-slate-100 pb-4 mb-4 ml-[250px]">
             {days.map(day => {
-              const isToday = day === now.getDate();
+              const isToday = isCurrentMonth && day === todayDay;
               return (
                 <div 
                   key={day} 
@@ -87,7 +95,7 @@ export default function FleetCalendar({ reservations }: FleetCalendarProps) {
                   <span className="uppercase tracking-widest text-[9px] mb-1">
                     {new Date(year, month, day).toLocaleDateString('fr-FR', { weekday: 'short' })}
                   </span>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isToday ? 'bg-primary text-white' : ''}`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isToday ? 'bg-primary text-white shadow-md shadow-primary/30' : ''}`}>
                     {day}
                   </div>
                 </div>
@@ -116,6 +124,14 @@ export default function FleetCalendar({ reservations }: FleetCalendarProps) {
                       <div key={day} className="flex-1 border-r border-slate-100/50 last:border-none" />
                     ))}
 
+                    {/* Today Line */}
+                    {isCurrentMonth && (
+                      <div 
+                        className="absolute top-0 bottom-0 w-0.5 bg-red-400/80 z-10 pointer-events-none shadow-[0_0_8px_rgba(248,113,113,0.6)]"
+                        style={{ left: `calc(${((todayDay - 1) / daysInMonth) * 100}% + (${100 / daysInMonth / 2}%))` }}
+                      />
+                    )}
+
                     {/* Reservation Blocks */}
                     {vehicle.reservations.map(res => {
                       const start = new Date(res.start_date);
@@ -136,17 +152,33 @@ export default function FleetCalendar({ reservations }: FleetCalendarProps) {
                       return (
                         <div 
                           key={res.id}
-                          className={`absolute top-1 bottom-1 rounded-lg border flex items-center px-3 shadow-sm hover:z-20 hover:scale-[1.02] transition-transform cursor-pointer ${getReservationStatusColor(res.status)}`}
+                          onClick={() => onReservationClick?.(res)}
+                          className={`absolute top-1 bottom-1 rounded-lg border flex items-center px-3 shadow-sm hover:z-30 hover:scale-[1.02] transition-transform cursor-pointer group ${getReservationStatusColor(res.status)}`}
                           style={{
                             left: `${leftPercent}%`,
                             width: `calc(${widthPercent}% - 4px)`,
                             marginLeft: '2px'
                           }}
-                          title={`${res.client?.name} - ${res.status}`}
                         >
                           <span className="text-[10px] font-black truncate">
                             {res.client?.name}
                           </span>
+
+                          {/* Custom Hover Tooltip */}
+                          <div className="absolute hidden group-hover:flex flex-col bottom-full mb-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white p-3 rounded-xl shadow-2xl w-52 z-50 pointer-events-none">
+                             <p className="text-xs font-black mb-1">{res.client?.name || "Client inconnu"}</p>
+                             <p className="text-[10px] text-slate-300 font-bold mb-1">{res.start_date} au {res.end_date}</p>
+                             <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-700">
+                               <span className="text-[9px] uppercase tracking-widest text-slate-400">Total</span>
+                               <span className="text-xs font-black text-emerald-400">{res.total_price.toLocaleString()} DH</span>
+                             </div>
+                             <div className="flex justify-between items-center mt-1">
+                               <span className="text-[9px] uppercase tracking-widest text-slate-400">Statut</span>
+                               <span className="text-[9px] font-black text-primary uppercase">{res.status}</span>
+                             </div>
+                             {/* Triangle pointer */}
+                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                          </div>
                         </div>
                       );
                     })}

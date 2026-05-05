@@ -13,6 +13,7 @@ import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
 import StatCards from "@/components/admin/dashboard/StatCards";
 import FleetCalendar from "@/components/admin/dashboard/FleetCalendar";
 import ReservationsTable from "@/components/admin/dashboard/ReservationsTable";
+import ReservationDrawer from "@/components/admin/dashboard/ReservationDrawer";
 import MaintenanceAlerts from "@/components/admin/dashboard/MaintenanceAlerts";
 import DocumentPreviewModal from "@/components/admin/dashboard/DocumentPreviewModal";
 import { PerformanceCharts, PopularModels } from "@/components/admin/dashboard/DashboardAnalytics";
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [previewDocs, setPreviewDocs] = useState<{cin?: string, license?: string, name?: string} | null>(null);
+  const [drawerReservation, setDrawerReservation] = useState<Reservation | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -80,7 +82,10 @@ export default function AdminDashboard() {
 
       {!loading && <div className="mb-12"><ProfitabilityTable /></div>}
 
-      <FleetCalendar reservations={reservations} />
+      <FleetCalendar 
+        reservations={reservations} 
+        onReservationClick={setDrawerReservation} 
+      />
 
       <ReservationsTable 
         reservations={reservations} 
@@ -88,10 +93,20 @@ export default function AdminDashboard() {
         onGenerateContract={handleGenerateContract}
         onPreviewDocs={setPreviewDocs}
         actionLoading={actionLoading}
+        onRowClick={setDrawerReservation}
       />
 
       <MaintenanceAlerts alerts={stats?.maintenance_alerts} />
       <DocumentPreviewModal docs={previewDocs} onClose={() => setPreviewDocs(null)} />
+
+      {drawerReservation && (
+        <ReservationDrawer 
+          reservation={drawerReservation} 
+          onClose={() => setDrawerReservation(null)}
+          onGenerateContract={handleGenerateContract}
+          actionLoading={actionLoading}
+        />
+      )}
     </div>
   );
 }
