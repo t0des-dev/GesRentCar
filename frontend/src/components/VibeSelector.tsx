@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Zap, ShieldCheck, Mountain, Wind, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { getImageUrl } from "@/lib/utils/image";
 
 const vibes = [
   {
@@ -94,7 +95,7 @@ export default function VibeSelector({ config }: { config?: { title?: string, su
             >
               {/* Background Image */}
               <img
-                src={vibe.image}
+                src={getImageUrl(vibe.image)}
                 alt={vibe.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />

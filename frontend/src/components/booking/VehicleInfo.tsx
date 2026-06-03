@@ -1,7 +1,7 @@
 "use client";
 
 import { Users, Fuel, Settings, ShieldCheck } from "lucide-react";
-import styles from "../../../app/search/[id]/page.module.css";
+import styles from "../../app/search/[id]/page.module.css";
 
 interface VehicleInfoProps {
   vehicle: any;

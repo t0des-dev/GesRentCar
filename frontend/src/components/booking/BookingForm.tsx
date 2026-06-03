@@ -1,7 +1,7 @@
 "use client";
 
 import { Mail, Phone, User, Fingerprint, Calendar as CalendarIcon, Loader2 } from "lucide-react";
-import styles from "../../../app/search/[id]/page.module.css";
+import styles from "../../app/search/[id]/page.module.css";
 
 interface BookingFormProps {
   form: any;

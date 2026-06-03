@@ -87,7 +87,7 @@ export default function AdminSettings() {
 
         <div className="bg-white rounded-[40px] border border-slate-200/60 shadow-sm p-10">
           {activeTab === "profile" && <ProfileSettings form={profileForm} setForm={setProfileForm} onSubmit={handleUpdateProfile} loading={loading} />}
-          {activeTab === "security" && <SecuritySettings form={passwordData} setForm={setPasswordForm} onSubmit={handleUpdatePassword} loading={loading} />}
+          {activeTab === "security" && <SecuritySettings form={passwordForm} setForm={setPasswordForm} onSubmit={handleUpdatePassword} loading={loading} />}
           {activeTab === "payments" && <PaymentSettings />}
           {activeTab === "notifications" && <NotificationSettings />}
           {activeTab === "audit" && <AuditLogSettings />}

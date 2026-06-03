@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getImageUrl } from "@/lib/utils/image";
 
 // Modular Sub-components
 import HeroBackground from "./hero/HeroBackground";
@@ -59,7 +60,7 @@ export default function HeroSection({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
 
-  const heroImage = agency.hero_image_url || "https://images.unsplash.com/photo-1503377215949-b98377627166?q=80&w=2400&auto=format&fit=crop";
+  const heroImage = getImageUrl(agency.hero_image_url) || "https://images.unsplash.com/photo-1503377215949-b98377627166?q=80&w=2400&auto=format&fit=crop";
   const heroVideo = agency.hero_video_url || "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4";
 
   return (

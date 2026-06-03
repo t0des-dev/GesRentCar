@@ -158,7 +158,7 @@ export default function StorefrontManager() {
               {activeTab === "navigation" && <MenuFooterSettings form={form} setForm={setForm} />}
               {activeTab === "cms" && <StructureManager form={form} setForm={setForm} />}
               {activeTab === "multilingual" && <MultilingualSettings form={form} setForm={setForm} />}
-              {activeTab === "seo" && <SEOManager seoConfig={form.seo_config} onChange={(seo) => setForm({ ...form, seo_config: seo })} />}
+              {activeTab === "seo" && <SEOManager config={form.seo_config} onChange={(seo) => setForm({ ...form, seo_config: seo })} />}
               {activeTab === "business" && <BusinessSettings form={form} setForm={setForm} />}
             </AnimatePresence>
             {activeTab === "cms" && <TestimonialsManager testimonials={form.testimonials} onChange={(t) => setForm({ ...form, testimonials: t })} />}

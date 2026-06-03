@@ -100,12 +100,12 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                   {t("qv_rent")}
                   <ArrowRight size={18} />
                 </Link>
-                <button 
-                  onClick={onClose}
-                  className="w-full bg-slate-100 text-slate-500 py-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all"
+                <Link 
+                  href={`/fleet/${vehicle.id}`}
+                  className="w-full bg-slate-100 text-slate-500 py-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all flex items-center justify-center"
                 >
-                  {t("qv_continue")}
-                </button>
+                  Plus de détails
+                </Link>
               </div>
             </div>
           </div>

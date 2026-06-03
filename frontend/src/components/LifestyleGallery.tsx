@@ -2,8 +2,9 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { getImageUrl } from "@/lib/utils/image";
 
-const images = [
+const DEFAULT_IMAGES = [
   {
     url: "/images/lifestyle/business.png",
     speed: 0.1,
@@ -39,7 +40,7 @@ function ParallaxImage({ url, speed, className }: { url: string; speed: number; 
     <div ref={ref} className={`relative overflow-hidden rounded-[48px] shadow-2xl ${className}`}>
       <motion.img
         style={{ y }}
-        src={url}
+        src={getImageUrl(url)}
         alt="Lifestyle"
         className="absolute inset-0 w-full h-[150%] object-cover scale-110"
       />
@@ -48,7 +49,9 @@ function ParallaxImage({ url, speed, className }: { url: string; speed: number; 
   );
 }
 
-export default function LifestyleGallery({ config }: { config?: { title?: string, subtitle?: string, text?: string } }) {
+export default function LifestyleGallery({ config }: { config?: { title?: string, subtitle?: string, text?: string, images?: any[] } }) {
+  const imagesToRender = (config?.images && config.images.length > 0) ? config.images : DEFAULT_IMAGES;
+
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       <div className="container mx-auto px-6">
@@ -92,7 +95,7 @@ export default function LifestyleGallery({ config }: { config?: { title?: string
         </div>
 
         <div className="grid grid-cols-12 gap-8">
-          {images.map((img, i) => (
+          {imagesToRender.map((img: any, i: number) => (
             <ParallaxImage key={i} {...img} />
           ))}
         </div>

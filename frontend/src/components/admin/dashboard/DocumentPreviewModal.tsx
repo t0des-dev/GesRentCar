@@ -1,6 +1,7 @@
 "use client";
 
 import { XCircle, AlertTriangle } from "lucide-react";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface DocumentPreviewModalProps {
   docs: { cin?: string; license?: string; name?: string } | null;
@@ -29,10 +30,10 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Carte d'Identité (CIN)</span>
-                <a href={`http://localhost:8000${docs.cin}`} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
+                <a href={getImageUrl(docs.cin)} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
               </div>
               <div className="aspect-video rounded-3xl overflow-hidden border-4 border-slate-100 shadow-inner group relative">
-                <img src={`http://localhost:8000${docs.cin}`} alt="CIN" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={getImageUrl(docs.cin)} alt="CIN" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
             </div>
           )}
@@ -40,10 +41,10 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Permis de Conduire</span>
-                <a href={`http://localhost:8000${docs.license}`} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
+                <a href={getImageUrl(docs.license)} target="_blank" rel="noopener noreferrer" className="text-primary font-black text-[10px] uppercase hover:underline">Ouvrir l'original</a>
               </div>
               <div className="aspect-video rounded-3xl overflow-hidden border-4 border-slate-100 shadow-inner group relative">
-                <img src={`http://localhost:8000${docs.license}`} alt="Permis" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={getImageUrl(docs.license)} alt="Permis" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
             </div>
           )}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Play, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAgency } from "@/hooks/useAgency";
+import { getImageUrl } from "@/lib/utils/image";
 
 const DEFAULT_MOMENTS = [
   { 
@@ -51,7 +52,7 @@ export default function LifestyleSlider() {
   return (
     <section className="h-[700px] relative overflow-hidden bg-black">
       {/* Background Slides */}
-      {testimonials.map((moment, i) => (
+      {testimonials.map((moment: any, i: number) => (
         <div 
           key={moment.id}
           className={cn(
@@ -61,7 +62,7 @@ export default function LifestyleSlider() {
         >
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-20" />
-          <img src={moment.image} className="w-full h-full object-cover scale-110 animate-slow-zoom" />
+          <img src={getImageUrl(moment.image)} className="w-full h-full object-cover scale-110 animate-slow-zoom" />
         </div>
       ))}
 
@@ -81,7 +82,7 @@ export default function LifestyleSlider() {
 
           <div className="flex items-center gap-6 pt-8">
             <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-1">
-              <img src={activeMoment.image} className="w-full h-full object-cover rounded-xl" />
+              <img src={getImageUrl(activeMoment.image)} className="w-full h-full object-cover rounded-xl" />
             </div>
             <div>
               <p className="text-xl font-black text-white">{activeMoment.user}</p>
@@ -95,7 +96,7 @@ export default function LifestyleSlider() {
       {testimonials.length > 1 && (
         <div className="absolute bottom-12 right-12 z-40 flex items-center gap-6">
           <div className="flex gap-2">
-            {testimonials.map((_, i) => (
+            {testimonials.map((_: any, i: number) => (
               <div 
                 key={i} 
                 className={cn(

@@ -41,7 +41,7 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
         const m = v.model.toLowerCase();
         const b = v.brand.toLowerCase();
         const t = v.type.toLowerCase();
-        const d = (v.description_fr || v.description || "").toLowerCase();
+        const d = ((v as any).description_fr || (v as any).description || "").toLowerCase();
         
         if (filters.lifestyle === "business") {
           return t.includes("luxury") || t.includes("sedan") || b.includes("mercedes") || b.includes("bmw") || b.includes("audi") || b.includes("range");
@@ -53,7 +53,7 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
           return t.includes("suv") || b.includes("jeep") || b.includes("land") || b.includes("toyota") || d.includes("4x4") || d.includes("aventure") || d.includes("mountain");
         }
         if (filters.lifestyle === "family") {
-          return (v.seats >= 7) || t.includes("van") || t.includes("suv") || d.includes("famille") || d.includes("spacious");
+          return ((v.seats || 0) >= 7) || t.includes("van") || t.includes("suv") || d.includes("famille") || d.includes("spacious");
         }
         return true;
       })();

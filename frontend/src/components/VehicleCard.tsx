@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { getImageUrl } from "@/lib/utils/image";
 import Image from "next/image";
 import Link from "next/link";
-import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
+import { Fuel, Users, Gauge, Star, ArrowRight, Eye, Car } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useCompare } from "@/hooks/useCompare";
 import { useCurrency } from "@/hooks/useCurrency";

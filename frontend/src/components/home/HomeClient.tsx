@@ -132,7 +132,7 @@ export default function HomeClient() {
   return (
     <main className="min-h-screen overflow-x-hidden">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-primary z-[100] origin-left" style={{ scaleX }} />
-      {currentOrder.filter(s => s.active !== false).map(s => renderSection(s.id))}
+      {currentOrder.filter((s: any) => s.active !== false).map((s: any) => renderSection(s.id))}
       <PromotionBanner />
       <VehicleComparator />
     </main>

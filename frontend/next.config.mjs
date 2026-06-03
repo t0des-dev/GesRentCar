@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [
@@ -13,6 +12,8 @@ const nextConfig: NextConfig = {
   // Experimental features for performance
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
+    cpus: 1,
+    workerThreads: false,
   },
 };
 
