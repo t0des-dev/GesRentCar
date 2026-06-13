@@ -13,7 +13,8 @@ class VehicleController extends Controller
 {
     public function index(Request $request, \App\Services\PricingService $pricing)
     {
-        $cacheKey = 'vehicles_index_' . md5(json_encode($request->all()) . app()->getLocale());
+        $version = Cache::get('vehicles_cache_version', 1);
+        $cacheKey = 'vehicles_index_v' . $version . '_' . md5(json_encode($request->all()) . app()->getLocale());
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $pricing) {
             $query = Vehicle::query();
@@ -84,7 +85,7 @@ class VehicleController extends Controller
 
     protected function clearCache()
     {
-        Cache::flush(); // Simple for now, can be improved to specific keys
+        Cache::increment('vehicles_cache_version');
     }
 
     public function show(Vehicle $vehicle)

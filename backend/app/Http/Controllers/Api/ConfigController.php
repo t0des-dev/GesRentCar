@@ -60,6 +60,7 @@ class ConfigController extends Controller
             'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
             'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
             'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
+            'logo_url' => $setting->logo_url,
             'hero_image_url' => $setting->hero_image_url,
             'hero_video_url' => $setting->hero_video_url,
             'about_text_fr' => $setting->about_text_fr,
@@ -92,6 +93,7 @@ class ConfigController extends Controller
         if (isset($data['name'])) $setting->value = $data['name'];
         if (isset($data['slogan'])) $setting->agency_slogan = $data['slogan'];
         if (isset($data['primary_color'])) $setting->agency_primary_color = $data['primary_color'];
+        if (isset($data['logo_url'])) $setting->logo_url = $data['logo_url'];
         if (isset($data['hero_image_url'])) $setting->hero_image_url = $data['hero_image_url'];
         if (isset($data['hero_video_url'])) $setting->hero_video_url = $data['hero_video_url'];
         if (isset($data['about_text_fr'])) $setting->about_text_fr = $data['about_text_fr'];

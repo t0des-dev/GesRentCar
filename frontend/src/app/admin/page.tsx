@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import PricingSimulator from "@/components/PricingSimulator";
 import ProfitabilityTable from "@/components/ProfitabilityTable";
-import styles from "./page.module.css";
 import api from "@/lib/api/client";
 import { Reservation, DashboardStats } from "@/types/admin";
 
@@ -48,7 +47,12 @@ export default function AdminDashboard() {
 
   useEffect(() => { if (!checking && user) fetchData(); }, [fetchData, checking, user]);
 
-  if (checking) return <div className="flex items-center justify-center h-[60vh] text-slate-400">Vérification de la session...</div>;
+  if (checking) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Vérification de la session...</p>
+    </div>
+  );
 
   const handleAction = async (id: number, action: "accept" | "reject") => {
     setActionLoading(id);
@@ -68,7 +72,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className={styles.page}>
+    <>
       <DashboardHeader loading={loading} onRefresh={fetchData} onExport={handleExport} />
       <StatCards stats={stats} loading={loading} />
 
@@ -107,6 +111,6 @@ export default function AdminDashboard() {
           actionLoading={actionLoading}
         />
       )}
-    </div>
+    </>
   );
 }

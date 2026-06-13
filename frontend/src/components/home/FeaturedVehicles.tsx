@@ -3,70 +3,91 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Car, Loader2 } from "lucide-react";
+import VehicleCardSkeleton from "@/components/VehicleCardSkeleton";
 import VehicleCard from "@/components/VehicleCard";
 import { useTranslation } from "@/hooks/useTranslation";
 
 interface FeaturedVehiclesProps {
   vehicles: any[];
   loading: boolean;
+  content?: {
+    eyebrow?: string;
+    title?: string;
+    cta_text?: string;
+    cta_link?: string;
+    loading_text?: string;
+    empty_heading?: string;
+    empty_description?: string;
+  };
 }
 
-export default function FeaturedVehicles({ vehicles, loading }: FeaturedVehiclesProps) {
+export default function FeaturedVehicles({ vehicles, loading, content = {} }: FeaturedVehiclesProps) {
   const { t } = useTranslation();
 
   return (
-    <section className="py-40 bg-white relative overflow-hidden">
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+    <section className="py-32 bg-surface-0 relative overflow-hidden">
+      {/* Subtle background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-gold/5 pointer-events-none" />
       
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
-          <div className="max-w-2xl">
-            <motion.p 
-              initial={{ opacity: 0, x: -20 }}
+          <div className="max-w-2xl space-y-4">
+            
+            {/* Eyebrow */}
+            <motion.p
+              initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-primary font-black text-xs uppercase tracking-[0.5em] mb-6"
+              className="section-eyebrow"
             >
-              Showroom Privé
+              {content.eyebrow || "Showroom"}
             </motion.p>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
+            
+            {/* Title — Instrument Serif */}
+            <motion.h2
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-5xl md:text-7xl font-black tracking-tight leading-[0.9] uppercase"
+              transition={{ delay: 0.08, duration: 0.6 }}
+              className="display-lg text-ink-1"
             >
-              {t("featured_vehicles") || "Notre Sélection Prestige"}
+              {content.title || t("featured_vehicles")}
             </motion.h2>
           </div>
+          
+          {/* CTA Link */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.16 }}
+            className="shrink-0"
           >
-            <Link href="/fleet" className="group inline-flex items-center gap-4 text-sm font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">
-              Voir tout le catalogue
-              <div className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-primary group-hover:bg-primary group-hover:text-white transition-all">
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </div>
+            <Link href={content.cta_link || "/fleet"} className="nav-link-gold font-bold uppercase text-sm tracking-wider">
+              {content.cta_text || "Voir le catalogue"}
+              <span className="ml-2">→</span>
             </Link>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {/* Vehicles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {loading ? (
-             <div className="col-span-3 flex flex-col items-center justify-center py-32 space-y-6">
-                <Loader2 size={48} className="animate-spin text-primary opacity-40" />
-                <p className="text-xs font-black uppercase tracking-widest text-slate-400">Préparation du showroom...</p>
-             </div>
+            <>
+              <VehicleCardSkeleton />
+              <VehicleCardSkeleton className="hidden md:flex" />
+              <VehicleCardSkeleton className="hidden lg:flex" />
+            </>
           ) : vehicles.length > 0 ? (
             vehicles.map((v, idx) => (
               <motion.div
                 key={v.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.15, duration: 0.8 }}
+                transition={{ delay: idx * 0.08, duration: 0.5 }}
               >
                 <VehicleCard
                   id={v.id}
@@ -80,16 +101,19 @@ export default function FeaturedVehicles({ vehicles, loading }: FeaturedVehicles
                   imageUrl={v.image_url ?? undefined}
                   dynamicPrice={v.dynamic_price}
                   dynamicReason={v.dynamic_reason}
+                  isPopular={idx === 0} // FOMO badge on the first vehicle
                 />
               </motion.div>
             ))
           ) : (
-            <div className="col-span-3 text-center py-32 bg-slate-50 rounded-[48px] border border-dashed border-slate-200">
-              <Car size={56} className="mx-auto mb-6 text-slate-300" />
-              <p className="font-black uppercase tracking-widest text-slate-400 text-sm">Aucun véhicule disponible pour le moment</p>
+            <div className="col-span-full text-center py-40 bg-surface-1 rounded-2xl border border-border">
+              <Car size={52} className="mx-auto mb-6 text-gold/30" />
+              <p className="font-semibold text-ink-2 text-base">{content.empty_heading || "Aucun véhicule disponible"}</p>
+              <p className="text-sm text-ink-3 mt-2">{content.empty_description || "Les véhicules vont bientôt être disponibles"}</p>
             </div>
           )}
         </div>
+
       </div>
     </section>
   );

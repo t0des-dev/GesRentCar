@@ -1,99 +1,105 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Crown, Sparkles } from "lucide-react";
+import { ArrowRight, Shield, Award } from "lucide-react";
 import Link from "next/link";
 
-export default function PromotionBanner() {
+interface PromotionBannerProps {
+  content?: {
+    badge?: string;
+    title_line1?: string;
+    title_line2?: string;
+    description?: string;
+    cta_text?: string;
+    cta_link?: string;
+    side_note?: string;
+    footer_items?: string[];
+  };
+}
+
+export default function PromotionBanner({ content = {} }: PromotionBannerProps) {
+  const badge = content?.badge || "Programme Privilège";
+  const title_line1 = content?.title_line1 || "L'exclusivité au";
+  const title_line2 = content?.title_line2 || "bout des doigts.";
+  const description = content?.description || "Accédez à des tarifs préférentiels, un service de livraison sur-mesure et des avantages réservés à notre cercle d'initiés.";
+  const cta_text = content?.cta_text || "Rejoindre le cercle";
+  const cta_link = content?.cta_link || "/register";
+  const side_note = content?.side_note || "Inscription gratuite";
+  const footer_items = content?.footer_items || ["Paiement sécurisé", "Conciergerie 24/7"];
+
   return (
-    <section className="py-20 relative overflow-hidden bg-slate-950">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-[-50%] left-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-50%] right-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[100px]" />
-      </div>
+    <section className="py-24 bg-slate-950 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-3xl border border-white/10 rounded-[60px] p-12 md:p-24 relative overflow-hidden group">
-          
-          {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Crown size={200} className="text-white" />
-          </div>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/5 rounded-full border border-white/10 mb-8"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+              {badge}
+            </span>
+          </motion.div>
 
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
-            <div className="max-w-2xl text-center lg:text-left">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-3 justify-center lg:justify-start mb-8"
-              >
-                <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
-                  <Sparkles size={20} className="text-primary" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Programme Privilège</span>
-              </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-[1.05] mb-6"
+          >
+            {title_line1}
+            <br /><span className="text-primary italic">{title_line2}</span>
+          </motion.h2>
 
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-4xl md:text-7xl font-black text-white tracking-tighter mb-8 leading-[0.9]"
-              >
-                ACCÉDEZ À <br />
-                <span className="text-gradient-gold">L'INACCESSIBLE</span>.
-              </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-base md:text-lg text-slate-400 leading-relaxed max-w-lg mx-auto mb-10"
+          >
+            {description}
+          </motion.p>
 
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="text-lg md:text-xl text-slate-400 font-medium mb-12 leading-relaxed"
-              >
-                Devenez membre Vectoria et bénéficiez de tarifs préférentiels, d'un accès prioritaire à nos nouveautés et d'un service de livraison sur-mesure.
-              </motion.p>
-
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap items-center gap-6 justify-center lg:justify-start"
-              >
-                <Link
-                  href="/register"
-                  className="bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-[24px] text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-primary/20 flex items-center gap-3 group/btn"
-                >
-                  REJOINDRE LE CERCLE
-                  <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                </Link>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  INSCRIPTION GRATUITE • OFFRE LIMITÉE
-                </span>
-              </motion.div>
-            </div>
-
-            {/* Visual Teaser */}
-            <motion.div 
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="relative"
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap items-center justify-center gap-6"
+          >
+            <Link
+              href={cta_link}
+              className="inline-flex items-center gap-2.5 px-8 py-4 bg-primary hover:bg-primary/90 text-white text-xs font-semibold uppercase tracking-widest rounded-full transition-all"
             >
-              <div className="relative z-10 w-full max-w-sm aspect-square rounded-[40px] overflow-hidden border border-white/10 shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-700">
-                <img 
-                  src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Membership"
-                  className="w-full h-full object-cover"
-                />
+              {cta_text}
+              <ArrowRight size={16} />
+            </Link>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              {side_note}
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center justify-center gap-8 mt-12 pt-12 border-t border-slate-800/50"
+          >
+            {footer_items.map((item, idx) => (
+              <div key={idx} className="flex items-center gap-3">
+                {idx === 0 ? <Shield size={18} className="text-slate-600" /> : <Award size={18} className="text-slate-600" />}
+                <span className="text-xs text-slate-500">{item}</span>
               </div>
-              <div className="absolute inset-0 bg-primary/20 blur-3xl -z-10 rounded-full" />
-            </motion.div>
-          </div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

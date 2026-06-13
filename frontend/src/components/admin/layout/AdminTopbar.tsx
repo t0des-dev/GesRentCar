@@ -1,47 +1,65 @@
 "use client";
 
-import { Bell, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Bell, Menu } from "lucide-react";
 
 interface AdminTopbarProps {
   pathname: string;
   activeGroupTitle: string;
   user: any;
+  onToggleMobile: () => void;
 }
 
-export default function AdminTopbar({ pathname, activeGroupTitle, user }: AdminTopbarProps) {
+export default function AdminTopbar({ pathname, activeGroupTitle, user, onToggleMobile }: AdminTopbarProps) {
   const currentPathLabel = pathname.split("/").pop() || "dashboard";
 
   return (
-    <header className="h-24 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-12 shrink-0">
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
-          <span className="hover:text-primary cursor-pointer transition-colors">Admin</span>
-          <ChevronRight size={10} className="text-slate-300" />
-          <span className="text-slate-900 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/50 lowercase first-letter:uppercase">
-            {activeGroupTitle}
-          </span>
-          <ChevronRight size={10} className="text-slate-300" />
-          <span className="text-primary font-black">{currentPathLabel}</span>
-        </div>
+    <motion.header 
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="h-16 bg-white/90 backdrop-blur-xl border-b-2 border-border flex items-center justify-between px-8 shrink-0"
+    >
+      <div className="flex items-center gap-4">
+        {/* Mobile Toggle */}
+        <button onClick={onToggleMobile} className="md:hidden p-2 -ml-4 text-ink-2 hover:text-ink-1">
+          <Menu size={24} />
+        </button>
+
+        {/* Breadcrumb */}
+        <div className="hidden sm:flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-ink-3">
+        <span className="text-ink-2">Admin</span>
+        <span className="text-ink-3">/</span>
+        <span className="text-ink-1">{activeGroupTitle}</span>
+        <span className="text-ink-3">/</span>
+        <span className="text-gold">{currentPathLabel}</span>
+      </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4 bg-slate-50 p-1.5 rounded-2xl border border-slate-200/60">
-          <button className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-sm relative">
-            <Bell size={18} /><span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-          </button>
-          <div className="h-8 w-px bg-slate-200 mx-1" />
-          <div className="flex items-center gap-3 pr-2">
-            <div className="text-right hidden md:block">
-              <p className="text-[11px] font-black text-slate-900 leading-none mb-1">{user?.name || "Admin"}</p>
-              <p className="text-[8px] text-green-500 font-bold uppercase tracking-widest">En ligne</p>
+      {/* User Area */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 bg-surface-1 rounded-xl px-3 py-2 border-2 border-border">
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="w-9 h-9 rounded-lg bg-white border-2 border-border flex items-center justify-center text-ink-2 hover:text-gold hover:border-gold transition-all relative"
+          >
+            <Bell size={16} strokeWidth={2} />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-gold rounded-full border-2 border-white" />
+          </motion.button>
+
+          <div className="h-6 w-px bg-border" />
+
+          <div className="flex items-center gap-2.5 pr-1">
+            <div className="text-right">
+              <p className="text-sm font-bold text-ink-1 leading-tight">{user?.name || "Admin"}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500">En ligne</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-md">
-              <img className="w-full h-full rounded-[9px] object-cover" src={`https://ui-avatars.com/api/?name=${user?.name || "Admin"}&background=6366f1&color=fff`} alt="Avatar" />
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gold/30 to-gold/10 border-2 border-gold/40 flex items-center justify-center text-sm font-bold text-gold">
+              {user?.name?.charAt(0) || "A"}
             </div>
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

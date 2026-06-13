@@ -4,6 +4,8 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\Vehicle;
+use App\Models\Reservation;
 
 class StatsOverview extends StatsOverviewWidget
 {
@@ -11,23 +13,21 @@ class StatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $maintenanceCount = \App\Models\Vehicle::where('status', 'maintenance')->count();
-        $revenue = \App\Models\Reservation::whereMonth('created_at', now()->month)->sum('total_price');
+        $totalVehicles = Vehicle::count();
+        $rentedVehicles = Vehicle::where('status', 'rented')->count();
+        $maintenanceCount = Vehicle::where('status', 'maintenance')->count();
+        $revenue = Reservation::whereMonth('created_at', now()->month)->whereIn('status', ['confirmed', 'completed'])->sum('total_price');
+
+        $utilizationRate = $totalVehicles > 0 ? round(($rentedVehicles / $totalVehicles) * 100, 1) : 0;
 
         return [
-            Stat::make('Total Véhicules', \App\Models\Vehicle::count())
-                ->description('Flotte globale')
-                ->descriptionIcon('heroicon-m-truck')
-                ->color('success')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+            Stat::make('Taux de Rotation', $utilizationRate . '%')
+                ->description($rentedVehicles . ' véhicules loués sur ' . $totalVehicles)
+                ->descriptionIcon('heroicon-m-arrow-path-rounded-square')
+                ->color($utilizationRate > 70 ? 'success' : 'warning')
+                ->chart([30, 40, 50, 60, $utilizationRate]),
 
-            Stat::make('En Location', \App\Models\Reservation::where('status', 'active')->count())
-                ->description('Sur la route')
-                ->descriptionIcon('heroicon-m-key')
-                ->color('primary')
-                ->chart([1, 4, 2, 8, 5, 9, 12]),
-
-            Stat::make('Véhicules en Maintenance', $maintenanceCount)
+            Stat::make('En Maintenance', $maintenanceCount)
                 ->description($maintenanceCount > 0 ? 'Action requise' : 'Flotte saine')
                 ->descriptionIcon('heroicon-m-wrench-screwdriver')
                 ->color($maintenanceCount > 0 ? 'danger' : 'success'),
@@ -35,7 +35,7 @@ class StatsOverview extends StatsOverviewWidget
             Stat::make('Chiffre d\'Affaires (Mois)', number_format($revenue, 2, ',', ' ') . ' DH')
                 ->description('Total généré ce mois')
                 ->descriptionIcon('heroicon-m-banknotes')
-                ->color('warning')
+                ->color('primary')
                 ->chart([1500, 2300, 1800, 3200, 2900, 4100, 4500]),
         ];
     }

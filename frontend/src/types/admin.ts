@@ -47,10 +47,28 @@ export interface Vehicle {
 export interface Maintenance {
   id: number;
   vehicle_id: number;
-  type: string;
+  title: string;
+  description?: string;
   cost: number;
-  maintenance_date: string;
-  description: string;
+  date: string;
+  status: "pending" | "in_progress" | "completed";
+  vehicle?: Vehicle;
+  created_at: string;
+}
+
+export interface Expense {
+  id: number;
+  title: string;
+  amount: number;
+  expense_date: string;
+  category: string;
+  vehicle_id?: number | null;
+  payment_method?: string;
+  receipt_url?: string;
+  notes?: string;
+  vehicle?: Vehicle;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DashboardStats {

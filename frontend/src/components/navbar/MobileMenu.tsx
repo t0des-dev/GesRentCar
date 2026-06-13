@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { User, Crown, X, Menu } from "lucide-react";
+import { User, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -23,64 +24,93 @@ export default function MobileMenu({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden absolute top-full left-0 w-full glass border-b border-border shadow-2xl overflow-hidden"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="md:hidden fixed inset-0 top-0 z-40"
         >
-          <div className="flex flex-col px-4 py-6 gap-2">
-            {links.map((link: any, i: number) => (
-              <Link key={i} href={link.url} className="text-foreground font-bold py-3 px-4 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => setIsOpen(false)}>
-                {link.label}
-              </Link>
-            ))}
-            
-            <div className="mt-4 p-4 glass rounded-3xl border border-white/10">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4 ml-2">Sélectionner la langue</p>
-              <div className="grid grid-cols-3 gap-2">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl overflow-y-auto"
+          >
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <span className="font-bold text-lg">Menu</span>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-1">
+              {links.map((link: any, i: number) => (
+                <Link
+                  key={i}
+                  href={link.url}
+                  onClick={() => setIsOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="px-6 pb-6 space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-4">Langue</p>
+              <div className="flex gap-2 px-4">
                 {languages.map((l) => (
-                  <button 
-                    key={l.code} 
+                  <button
+                    key={l.code}
                     onClick={() => { switchLang(l.code); setIsOpen(false); }}
                     className={cn(
-                      "flex flex-col items-center gap-1 py-4 rounded-2xl border transition-all", 
-                      lang === l.code 
-                        ? "bg-primary border-primary text-white shadow-lg shadow-primary/30" 
-                        : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
+                      "flex-1 py-3 rounded-xl text-sm font-semibold border transition-all",
+                      lang === l.code
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
                     )}
                   >
-                    <span className="text-xs font-black uppercase">{l.code}</span>
-                    <span className="text-[9px] font-medium opacity-60">{l.label}</span>
+                    {l.label}
                   </button>
                 ))}
               </div>
             </div>
 
             {session ? (
-              <div className="flex flex-col gap-2 mt-2">
-                <Link href="/dashboard" className="text-primary font-black py-4 px-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center gap-3" onClick={() => setIsOpen(false)}>
-                  <User size={20} />
+              <div className="px-6 pb-6 space-y-2">
+                <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-4 rounded-xl bg-primary/5 border border-primary/10 text-primary font-semibold">
+                  <User size={18} />
                   {t("nav_dashboard") || "MON COMPTE VIP"}
                 </Link>
-                <button 
-                  onClick={() => { signOut(); setIsOpen(false); }}
-                  className="text-muted-foreground font-bold py-3 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors text-left"
-                >
+                <button onClick={() => { signOut(); setIsOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium">
                   {t("nav_logout") || "Déconnexion"}
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="text-foreground font-bold py-3 px-4 rounded-xl hover:bg-primary/10 transition-colors" onClick={() => setIsOpen(false)}>
-                {t("nav_login")}
-              </Link>
+              <div className="px-6 pb-4">
+                <Button asChild variant="ghost" className="w-full justify-start text-slate-700 font-medium py-6 rounded-xl">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    {t("nav_login")}
+                  </Link>
+                </Button>
+              </div>
             )}
-            
-            <Link href="/booking" className="bg-primary text-center text-white px-5 py-4 rounded-2xl font-black uppercase tracking-widest mt-6 shadow-xl glow-primary flex justify-center items-center gap-3 active:scale-95 transition-transform" onClick={() => setIsOpen(false)}>
-              <Crown size={20} className="text-secondary" />
-              {t("nav_book")}
-            </Link>
-          </div>
+
+            <div className="px-6 pb-8">
+              <Button asChild variant="default" size="lg" className="w-full rounded-2xl shadow-lg">
+                <Link href="/booking" onClick={() => setIsOpen(false)}>
+                  <Crown size={18} />
+                  {t("nav_book")}
+                </Link>
+              </Button>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

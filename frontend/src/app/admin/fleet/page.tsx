@@ -3,8 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useAgency } from "@/hooks/useAgency";
-import { Plus, X } from "lucide-react";
-import styles from "./page.module.css";
+import { Plus } from "lucide-react";
 import api from "@/lib/api/client";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,28 +13,41 @@ import { Vehicle, Maintenance } from "@/types/admin";
 // Modular Components
 import FleetToolbar from "@/components/admin/fleet/FleetToolbar";
 import VehicleCardAdmin from "@/components/admin/fleet/VehicleCardAdmin";
-import VehicleFormModal from "@/components/admin/fleet/VehicleFormModal";
+import VehicleFormDrawer from "@/components/admin/fleet/VehicleFormDrawer";
 import MaintenanceModal from "@/components/admin/fleet/MaintenanceModal";
+import FleetKPIs from "@/components/admin/fleet/FleetKPIs";
 
 export default function FleetPage() {
   const { user, checking } = useAuthGuard("admin");
   const agency = useAgency();
+  
+  // Data States
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [maintenances, setMaintenances] = useState<Maintenance[]>([]);
+  
+  // UI States
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [currentVehicle, setCurrentVehicle] = useState<any>(null);
-  const [maintenances, setMaintenances] = useState<Maintenance[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  
+  // Filter States
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  
+  // Notification States
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
   const fetchVehicles = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get('/vehicles');
+      // Fetch more to handle frontend filtering efficiently for medium-sized fleets
+      const res = await api.get('/vehicles?per_page=100');
       const data = res.data;
       setVehicles(Array.isArray(data) ? data : data.data ?? []);
     } catch {
@@ -49,9 +61,14 @@ export default function FleetPage() {
     if (!checking && user) fetchVehicles(); 
   }, [fetchVehicles, checking, user]);
 
+  const showSuccess = (msg: string) => {
+    setSuccessMsg(msg);
+    setTimeout(() => setSuccessMsg(""), 3000);
+  };
+
   const handleEdit = (v: Vehicle) => {
     setCurrentVehicle({ ...v, new_image: null });
-    setShowModal(true);
+    setShowDrawer(true);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, vehicleId: number) => {
@@ -65,8 +82,7 @@ export default function FleetPage() {
       await api.post(`/vehicles/${vehicleId}/image`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      setSuccessMsg("Image mise à jour avec succès !");
-      setTimeout(() => setSuccessMsg(""), 3000);
+      showSuccess("Image mise à jour avec succès !");
       fetchVehicles();
     } catch {
       setErrorMsg("Erreur lors de l'upload de l'image.");
@@ -77,6 +93,7 @@ export default function FleetPage() {
     try {
       const res = await api.get(`/maintenances?vehicle_id=${vehicleId}`);
       setMaintenances(res.data);
+      setCurrentVehicle(vehicles.find(v => v.id === vehicleId));
       setShowMaintenanceModal(true);
     } catch {
       setErrorMsg("Erreur lors de la récupération de la maintenance.");
@@ -88,13 +105,40 @@ export default function FleetPage() {
     setDeletingId(id);
     try {
       await api.delete(`/vehicles/${id}`);
-      setSuccessMsg("Véhicule supprimé.");
-      setTimeout(() => setSuccessMsg(""), 3000);
+      showSuccess("Véhicule supprimé.");
       fetchVehicles();
     } catch {
       setErrorMsg("Erreur lors de la suppression.");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Supprimer définitivement ${selectedIds.length} véhicule(s) ?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(selectedIds.map(id => api.delete(`/vehicles/${id}`)));
+      showSuccess(`${selectedIds.length} véhicule(s) supprimé(s).`);
+      setSelectedIds([]);
+      fetchVehicles();
+    } catch {
+      setErrorMsg("Erreur lors de la suppression de groupe.");
+      setLoading(false);
+    }
+  };
+
+  const handleBulkStatusChange = async (newStatus: string) => {
+    if (!confirm(`Changer le statut de ${selectedIds.length} véhicule(s) en ${newStatus} ?`)) return;
+    setLoading(true);
+    try {
+      await Promise.all(selectedIds.map(id => api.put(`/vehicles/${id}`, { status: newStatus })));
+      showSuccess(`Statut mis à jour pour ${selectedIds.length} véhicule(s).`);
+      setSelectedIds([]);
+      fetchVehicles();
+    } catch {
+      setErrorMsg("Erreur lors de la mise à jour de groupe.");
+      setLoading(false);
     }
   };
 
@@ -143,9 +187,8 @@ export default function FleetPage() {
         });
       }
 
-      setSuccessMsg("Véhicule mis à jour !");
-      setTimeout(() => setSuccessMsg(""), 3000);
-      setShowModal(false);
+      showSuccess("Véhicule sauvegardé !");
+      setShowDrawer(false);
       fetchVehicles();
     } catch (err: any) {
       setErrorMsg(`Erreur: ${err.response?.data?.message || err.message}`);
@@ -154,41 +197,90 @@ export default function FleetPage() {
     }
   };
 
-  const filtered = useMemo(() => vehicles.filter(v => 
-    v.brand.toLowerCase().includes(search.toLowerCase()) || 
-    v.model.toLowerCase().includes(search.toLowerCase()) ||
-    v.plate.toLowerCase().includes(search.toLowerCase())
-  ), [vehicles, search]);
+  const handleExportCSV = () => {
+    const headers = ["ID", "Marque", "Modèle", "Plaque", "Catégorie", "Statut", "Prix", "Année", "KMs"];
+    const rows = filtered.map(v => [
+      v.id, v.brand, v.model, v.plate, v.category, v.status, v.price_per_day, v.year, v.mileage
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `inventaire_flotte_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const filtered = useMemo(() => vehicles.filter(v => {
+    const matchSearch = v.brand.toLowerCase().includes(search.toLowerCase()) || 
+                        v.model.toLowerCase().includes(search.toLowerCase()) ||
+                        v.plate.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'all' || v.status === statusFilter;
+    const matchCategory = categoryFilter === 'all' || v.category === categoryFilter;
+    return matchSearch && matchStatus && matchCategory;
+  }), [vehicles, search, statusFilter, categoryFilter]);
+
+  const toggleSelection = (id: number) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  // KPIs Calculations
+  const checkExpiry = (dateStr?: string) => {
+    if (!dateStr) return false;
+    const days = (new Date(dateStr).getTime() - new Date().getTime()) / (1000 * 3600 * 24);
+    return days < 30; // expired or expiring in < 30 days
+  };
+
+  const alertCount = vehicles.filter(v => checkExpiry(v.insurance_date) || checkExpiry(v.tech_inspection_date) || checkExpiry(v.vignette_date)).length;
 
   if (checking) return null;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.titleArea}>
-          <p className={styles.subtitle}>Gestion d'Actifs</p>
-          <h1 className={styles.title}>Showroom <span className="italic text-[#C5A059]">Privé</span></h1>
+    <>
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary mb-2">Gestion d'Actifs</p>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Showroom <span className="italic text-primary">Privé</span></h1>
         </div>
         <div className="flex flex-col items-end gap-2">
           <AnimatePresence>
-            {successMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-green-500 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">{successMsg}</motion.div>}
-            {errorMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-red-500 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">{errorMsg}</motion.div>}
+            {successMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-emerald-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{successMsg}</motion.div>}
+            {errorMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-red-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{errorMsg}</motion.div>}
           </AnimatePresence>
-          <button className={styles.addBtn} onClick={() => { setCurrentVehicle({ brand: "", model: "", plate: "", price_per_day: 0, year: 2024, fuel_type: "Diesel", status: "available", type: "internal" }); setShowModal(true); }}>
-            <Plus size={18} strokeWidth={3} /> Nouveau Véhicule
+          <button className="btn-primary" onClick={() => { setCurrentVehicle({ brand: "", model: "", plate: "", price_per_day: 0, year: 2024, fuel_type: "Diesel", status: "available", type: "internal" }); setShowDrawer(true); }}>
+            <Plus size={16} /> Nouveau Véhicule
           </button>
         </div>
       </header>
 
-      <FleetToolbar search={search} setSearch={setSearch} onAdd={() => setShowModal(true)} count={filtered.length} />
+      <FleetKPIs 
+        total={vehicles.length}
+        available={vehicles.filter(v => v.status === 'available').length}
+        maintenance={vehicles.filter(v => v.status === 'maintenance').length}
+        alerts={alertCount}
+      />
 
-      {loading ? (
-        <div className={styles.loader}>
-          <div className={styles.spin} />
-          <p className="text-[11px] font-black uppercase tracking-[0.5em] text-[#C5A059]">Synchronisation de la flotte...</p>
+      <FleetToolbar 
+        search={search} setSearch={setSearch} 
+        statusFilter={statusFilter} setStatusFilter={setStatusFilter}
+        categoryFilter={categoryFilter} setCategoryFilter={setCategoryFilter}
+        onAdd={() => setShowDrawer(true)} 
+        count={filtered.length} 
+        onExport={handleExportCSV}
+        selectedIds={selectedIds}
+        onClearSelection={() => setSelectedIds([])}
+        onBulkDelete={handleBulkDelete}
+        onBulkStatusChange={handleBulkStatusChange}
+      />
+
+      {loading && vehicles.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Synchronisation de la flotte...</p>
         </div>
       ) : (
-        <div className={styles.showroomGrid}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((v, idx) => (
               <VehicleCardAdmin 
@@ -200,22 +292,31 @@ export default function FleetPage() {
                 onHistory={fetchMaintenances} 
                 onImageUpload={handleImageUpload}
                 deletingId={deletingId}
+                isSelected={selectedIds.includes(v.id!)}
+                onSelect={toggleSelection}
               />
             ))}
           </AnimatePresence>
+          {filtered.length === 0 && (
+            <div className="col-span-full py-12 text-center text-slate-400 italic">
+              Aucun véhicule trouvé pour ces critères.
+            </div>
+          )}
         </div>
       )}
 
-      {showModal && (
-        <VehicleFormModal 
-          vehicle={currentVehicle} 
-          setVehicle={setCurrentVehicle} 
-          onClose={() => setShowModal(false)} 
-          onSubmit={handleSubmit} 
-          submitting={submitting}
-          categoryPrices={agency.category_prices || {}}
-        />
-      )}
+      <AnimatePresence>
+        {showDrawer && (
+          <VehicleFormDrawer 
+            vehicle={currentVehicle} 
+            setVehicle={setCurrentVehicle} 
+            onClose={() => setShowDrawer(false)} 
+            onSubmit={handleSubmit} 
+            submitting={submitting}
+            categoryPrices={agency.category_prices || {}}
+          />
+        )}
+      </AnimatePresence>
 
       {showMaintenanceModal && (
         <MaintenanceModal 
@@ -225,6 +326,6 @@ export default function FleetPage() {
           onRefresh={() => { fetchMaintenances(currentVehicle.id); fetchVehicles(); }} 
         />
       )}
-    </div>
+    </>
   );
 }

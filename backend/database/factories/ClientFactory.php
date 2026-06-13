@@ -13,7 +13,7 @@ class ClientFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'cin' => $this->faker->unique()->bothify('??######'),
-            'license' => $this->faker->unique()->bothify('LC-########'),
+            'license_number' => $this->faker->unique()->bothify('LC-########'),
         ];
     }
 }

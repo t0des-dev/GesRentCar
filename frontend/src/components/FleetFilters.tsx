@@ -24,9 +24,26 @@ export interface FleetFilterState {
 export default function FleetFilters({ onFilter, className }: FleetFiltersProps) {
   const { t } = useTranslation();
 
-  const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
-  const TRANSMISSIONS = ["All", "Automatic", "Manual"];
-  const SEATS = ["All", "2", "4", "5", "7+"];
+  const TYPES = [
+    { id: "All", count: null },
+    { id: "Sedan", count: 24 },
+    { id: "SUV", count: 18 },
+    { id: "Sport", count: 8 },
+    { id: "Compact", count: 15 },
+    { id: "Luxury", count: 12 }
+  ];
+  const TRANSMISSIONS = [
+    { id: "All", count: null },
+    { id: "Automatic", count: 68 },
+    { id: "Manual", count: 9 }
+  ];
+  const SEATS = [
+    { id: "All", count: null },
+    { id: "2", count: 12 },
+    { id: "4", count: 28 },
+    { id: "5", count: 31 },
+    { id: "7+", count: 6 }
+  ];
   const LIFESTYLES = [
     { id: "all", label: "Tous", icon: Car },
     { id: "business", label: "Business", icon: Gauge },
@@ -65,116 +82,155 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
   };
 
   return (
-    <div className={cn("flex flex-col gap-12", className)}>
+    <div className={cn("flex flex-col gap-10", className)}>
       {/* Title & Reset */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-black text-foreground tracking-tighter flex items-center gap-3">
-          <SlidersHorizontal size={20} className="text-primary" />
-          {t("filter_title")}
-        </h3>
+      <div className="flex items-center justify-between border-b border-border pb-6">
+        <div className="flex items-center gap-3">
+          <SlidersHorizontal size={22} className="text-gold" />
+          <h3 className="text-lg font-bold text-ink-1 uppercase tracking-wider">
+            {t("filter_title")}
+          </h3>
+        </div>
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={reset}
-          className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 hover:text-primary flex items-center gap-2 transition-all bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
+          className="text-xs font-bold uppercase tracking-wider text-ink-3 hover:text-gold flex items-center gap-2 transition-all hover:bg-gold/5 px-4 py-2 rounded-lg border border-gold/20 hover:border-gold/40"
         >
-          <RotateCcw size={10} /> {t("filter_clear")}
+          <RotateCcw size={12} /> Réinitialiser
         </motion.button>
       </div>
 
       {/* Lifestyle Selection */}
-      <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Star size={14} className="text-primary" /> VOTRE VIBE
+      <div className="space-y-5">
+        <label className="text-xs font-bold uppercase text-ink-3 tracking-widest flex items-center gap-2">
+          <Star size={14} className="text-gold" /> Votre Vibe
         </label>
         <div className="grid grid-cols-2 gap-3">
           {LIFESTYLES.map((ls) => (
-            <button
+            <motion.button
               key={ls.id}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => update("lifestyle", ls.id)}
               className={cn(
-                "flex flex-col items-center gap-3 p-6 rounded-[32px] border transition-all duration-300",
+                "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all duration-300 group",
                 filters.lifestyle === ls.id
-                  ? "bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-[1.02]"
-                  : "bg-white/50 border-slate-200/60 text-slate-500 hover:border-primary/40 hover:bg-white"
+                  ? "bg-gradient-to-br from-gold/20 to-gold/10 border-gold/60 shadow-lg shadow-gold/20 scale-[1.02]"
+                  : "bg-surface-1 border-border hover:border-gold/40 hover:bg-surface-2"
               )}
             >
-              <ls.icon size={20} />
-              <span className="text-[9px] font-black uppercase tracking-widest">{ls.label}</span>
-            </button>
+              <ls.icon size={18} className={cn(
+                "transition-colors",
+                filters.lifestyle === ls.id ? "text-gold" : "text-ink-3 group-hover:text-gold"
+              )} />
+              <span className="text-[9px] font-bold uppercase tracking-widest text-ink-2">{ls.label}</span>
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Category: Vehicle Type */}
-      <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Car size={14} /> {t("filter_category")}
+      <div className="space-y-5">
+        <label className="text-xs font-bold uppercase text-ink-3 tracking-widest flex items-center gap-2">
+          <Car size={14} className="text-gold" /> {t("filter_category")}
         </label>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {TYPES.map((t) => (
-            <button
-              key={t}
-              onClick={() => update("type", t)}
+            <motion.button
+              key={t.id}
+              whileHover={{ x: 4 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => update("type", t.id)}
               className={cn(
-                "group flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black transition-all border",
-                filters.type === t
-                  ? "bg-slate-900 text-white border-slate-900 shadow-xl"
-                  : "bg-transparent border-white/10 text-slate-400 hover:border-primary/40 hover:bg-white/5"
+                "group flex items-center justify-between px-5 py-3 rounded-lg text-sm font-bold transition-all border-2",
+                filters.type === t.id
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                  : "bg-surface-1 border-border text-ink-2 hover:border-gold/40 hover:bg-surface-2"
               )}
             >
-              {getCategoryLabel(t).toUpperCase()}
+              <div className="flex items-center gap-2">
+                <span>{getCategoryLabel(t.id).toUpperCase()}</span>
+                {t.count !== null && (
+                  <span className={cn(
+                    "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                    filters.type === t.id ? "bg-white/20 text-white" : "bg-border text-ink-3 group-hover:bg-gold/10 group-hover:text-gold"
+                  )}>
+                    {t.count}
+                  </span>
+                )}
+              </div>
               <div className={cn(
-                "w-1.5 h-1.5 rounded-full transition-all",
-                filters.type === t ? "bg-primary scale-150" : "bg-slate-700 group-hover:bg-primary/40"
+                "w-2 h-2 rounded-full transition-all",
+                filters.type === t.id ? "bg-white scale-125" : "bg-gold/40 group-hover:bg-gold/60"
               )} />
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Category: Transmission */}
-      <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Gauge size={14} /> {t("filter_transmission")}
+      <div className="space-y-5">
+        <label className="text-xs font-bold uppercase text-ink-3 tracking-widest flex items-center gap-2">
+          <Gauge size={14} className="text-gold" /> {t("filter_transmission")}
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           {TRANSMISSIONS.map((tr) => (
-            <button
-              key={tr}
-              onClick={() => update("transmission", tr)}
+            <motion.button
+              key={tr.id}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => update("transmission", tr.id)}
               className={cn(
-                "flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black transition-all border uppercase tracking-widest",
-                filters.transmission === tr
-                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                  : "bg-transparent border-white/10 text-slate-500 hover:border-white/20"
+                "flex flex-col items-center justify-center p-3 rounded-lg text-[10px] font-bold transition-all border-2 tracking-widest gap-1",
+                filters.transmission === tr.id
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                  : "bg-surface-1 border-border text-ink-3 hover:border-gold/40 hover:bg-surface-2"
               )}
             >
-              {getTransmissionLabel(tr).toUpperCase()}
-            </button>
+              <span className="uppercase">{getTransmissionLabel(tr.id).toUpperCase()}</span>
+              {tr.count !== null && (
+                <span className={cn(
+                  "text-[9px] font-bold px-2 rounded-full",
+                  filters.transmission === tr.id ? "bg-white/20 text-white" : "bg-border text-ink-4 group-hover:text-gold"
+                )}>
+                  {tr.count}
+                </span>
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
 
       {/* Category: Seats */}
-      <div className="space-y-6">
-        <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-          <Users size={14} /> {t("filter_capacity")}
+      <div className="space-y-5">
+        <label className="text-xs font-bold uppercase text-ink-3 tracking-widest flex items-center gap-2">
+          <Users size={14} className="text-gold" /> {t("filter_capacity")}
         </label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {SEATS.map((s) => (
-            <button
-              key={s}
-              onClick={() => update("seats", s)}
+            <motion.button
+              key={s.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => update("seats", s.id)}
               className={cn(
-                "w-12 h-12 flex items-center justify-center rounded-2xl text-xs font-black border transition-all",
-                filters.seats === s
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-transparent border-white/10 text-slate-500 hover:border-primary/40"
+                "relative w-14 h-14 flex items-center justify-center rounded-lg text-xs font-bold border-2 transition-all",
+                filters.seats === s.id
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                  : "bg-surface-1 border-border text-ink-2 hover:border-gold/40 hover:bg-surface-2"
               )}
             >
-              {s === "All" ? t("all").toUpperCase() : s}
-            </button>
+              {s.id === "All" ? t("all").toUpperCase() : s.id}
+              {s.count !== null && (
+                <span className={cn(
+                  "absolute -top-2 -right-2 text-[8px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white",
+                  filters.seats === s.id ? "bg-gold text-white" : "bg-border text-ink-3"
+                )}>
+                  {s.count}
+                </span>
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
@@ -182,12 +238,12 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
       {/* Category: Price Range */}
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] flex items-center gap-2">
-            <Wallet size={14} /> {t("filter_price_max")}
+          <label className="text-xs font-bold uppercase text-ink-3 tracking-widest flex items-center gap-2">
+            <Wallet size={14} className="text-gold" /> {t("filter_price_max")}
           </label>
-          <span className="text-sm font-black text-foreground">{filters.maxPrice} {t("currency_day")}</span>
+          <span className="text-base font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg">{filters.maxPrice} {t("currency_day")}</span>
         </div>
-        <div className="relative pt-2">
+        <div className="relative pt-4">
           <input
             type="range"
             min="200"
@@ -195,11 +251,11 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
             step="50"
             value={filters.maxPrice}
             onChange={(e) => update("maxPrice", Number(e.target.value))}
-            className="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer accent-primary"
+            className="w-full h-2 bg-gradient-to-r from-primary to-gold rounded-full appearance-none cursor-pointer accent-gold slider-thumb"
           />
-          <div className="flex justify-between mt-4">
-            <span className="text-[9px] font-black text-slate-600 tracking-tighter">200 DH</span>
-            <span className="text-[9px] font-black text-slate-600 tracking-tighter">3000+ DH</span>
+          <div className="flex justify-between mt-5">
+            <span className="text-xs font-bold text-ink-3 tracking-tighter">200 DH</span>
+            <span className="text-xs font-bold text-ink-3 tracking-tighter">3000+ DH</span>
           </div>
         </div>
       </div>

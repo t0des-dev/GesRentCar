@@ -6,6 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getImageUrl } from "@/lib/utils/image";
+import { Button } from "@/components/ui/button";
 
 interface QuickViewModalProps {
   vehicle: {
@@ -93,19 +94,17 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
               </div>
 
               <div className="grid grid-cols-1 gap-4">
-                <Link 
-                  href={`/booking?vehicle=${vehicle.id}`}
-                  className="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:bg-blue-600 transition-all flex items-center justify-center gap-3"
-                >
-                  {t("qv_rent")}
-                  <ArrowRight size={18} />
-                </Link>
-                <Link 
-                  href={`/fleet/${vehicle.id}`}
-                  className="w-full bg-slate-100 text-slate-500 py-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all flex items-center justify-center"
-                >
-                  Plus de détails
-                </Link>
+                <Button asChild variant="default" size="lg" className="w-full rounded-[24px] py-7 text-xs shadow-xl shadow-primary/20">
+                  <Link href={`/booking?vehicle=${vehicle.id}`}>
+                    {t("qv_rent")}
+                    <ArrowRight size={18} />
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg" className="w-full rounded-[24px] py-6 text-[10px]">
+                  <Link href={`/fleet/${vehicle.id}`}>
+                    Plus de détails
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

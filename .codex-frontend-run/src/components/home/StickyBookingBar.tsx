@@ -1,0 +1,129 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { MapPin, Calendar, Search, ChevronUp } from "lucide-react";
+
+interface StickyBookingBarProps {
+  location: string;
+  setLocation: (v: string) => void;
+  startDate: string;
+  setStartDate: (v: string) => void;
+  endDate: string;
+  setEndDate: (v: string) => void;
+  onSearch: () => void;
+}
+
+export default function StickyBookingBar({
+  location, setLocation, startDate, setStartDate, endDate, setEndDate, onSearch
+}: StickyBookingBarProps) {
+  const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    const unsubscribe = scrollY.on("change", (latest) => {
+      setVisible(latest > window.innerHeight * 0.8);
+    });
+    return () => unsubscribe();
+  }, [scrollY]);
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ y: 120, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 120, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+        >
+          <div className="bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex-1 flex items-center gap-2.5 bg-slate-800 rounded-xl px-4 py-3 text-slate-400 text-sm"
+              >
+                <MapPin size={16} className="text-primary shrink-0" />
+                <span className="truncate text-white/70">{location || "Destination"}</span>
+                {startDate && (
+                  <>
+                    <span className="text-slate-600">|</span>
+                    <Calendar size={14} className="text-primary/60 shrink-0" />
+                    <span className="truncate text-xs text-slate-400">
+                      {new Date(startDate).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                      {endDate && ` - ${new Date(endDate).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`}
+                    </span>
+                  </>
+                )}
+              </button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={onSearch}
+                className="bg-primary text-white p-3.5 rounded-xl shadow-lg shadow-primary/20 shrink-0"
+                aria-label="Rechercher"
+              >
+                <Search size={18} />
+              </motion.button>
+            </div>
+
+            <AnimatePresence>
+              {expanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-4 pb-2 space-y-3">
+                    <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                      <MapPin size={16} className="text-primary shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Destination"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        className="bg-transparent text-white text-sm w-full focus:outline-none placeholder:text-slate-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                        <Calendar size={16} className="text-primary/60 shrink-0" />
+                        <input
+                          type="date"
+                          value={startDate}
+                          min={today}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                        <Calendar size={16} className="text-primary/60 shrink-0" />
+                        <input
+                          type="date"
+                          value={endDate}
+                          min={startDate || today}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={onSearch}
+                      className="w-full bg-primary text-white font-semibold uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-primary/90 transition-all"
+                    >
+                      Rechercher
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

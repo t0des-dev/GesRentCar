@@ -1,27 +1,17 @@
 import axios from "axios";
 
-/**
- * Configured Axios instance pointing to the Laravel API.
- * - Base URL is set via NEXT_PUBLIC_API_URL environment variable.
- * - Automatically sends cookies (for Sanctum/CSRF authentication).
- * - Sets JSON headers by default.
- */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
-  withCredentials: true, // Required for Laravel Sanctum cookie auth
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
-import { getSession } from "next-auth/react";
-
-// Request interceptor: attach Bearer token if stored (fallback for token-based auth)
 api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const session = await getSession();
-    const token = (session as any)?.accessToken;
+    const token = localStorage.getItem("vectoria_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,15 +19,15 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-import { signOut } from "next-auth/react";
-
-// Response interceptor: handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== "undefined") {
-        signOut({ callbackUrl: "/login" });
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+      const hadToken = !!localStorage.getItem("vectoria_token");
+      if (hadToken) {
+        localStorage.removeItem("vectoria_user");
+        localStorage.removeItem("vectoria_token");
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);

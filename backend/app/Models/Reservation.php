@@ -21,13 +21,16 @@ class Reservation extends Model
         'signature',
     ];
 
-    protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'documents' => 'array',
-        'total_price' => 'decimal:2',
-        'deposit_amount' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'start_date'     => 'datetime',
+            'end_date'       => 'datetime',
+            'documents'      => 'array',
+            'total_price'    => 'decimal:2',
+            'deposit_amount' => 'decimal:2',
+        ];
+    }
 
     public function client()
     {

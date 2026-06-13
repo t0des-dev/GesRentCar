@@ -85,6 +85,9 @@ class PaymentService
         $transactionId = null;
         if ($payment->payment_method === 'cmi') {
             $result = $this->gateway->refund($payment->transaction_id, $amount);
+            if (!($result['success'] ?? false)) {
+                throw new Exception($result['message'] ?? 'CMI refund failed.');
+            }
             $transactionId = $result['transaction_id'];
         }
 

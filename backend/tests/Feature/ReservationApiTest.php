@@ -21,7 +21,7 @@ class ReservationApiTest extends TestCase
         $response = $this->getJson('/api/vehicles');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(2);
+                 ->assertJsonCount(2, 'data');
     }
 
     public function test_authenticated_user_can_create_reservation()
@@ -40,7 +40,7 @@ class ReservationApiTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonPath('total_price', 2000); // 2 days * 1000
+                 ->assertJsonPath('total_price', '2000.00');
     }
 
     public function test_cannot_reserve_already_booked_vehicle()

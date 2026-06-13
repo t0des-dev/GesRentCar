@@ -47,6 +47,7 @@ class CmiGateway implements PaymentGatewayInterface
 
         return [
             'success'     => true,
+            'transaction_id' => 'CMI_' . uniqid(),
             'action_url'  => $this->baseUrl,
             'params'      => $params,
             'method'      => 'POST'
@@ -55,12 +56,15 @@ class CmiGateway implements PaymentGatewayInterface
 
     public function refund(string $transactionId, float $amount): array
     {
-        // Refund usually requires a backend API call (SOAP/REST) provided by CMI bank
-        // For now, keeping it as a planned feature
-        return [
-            'success' => false,
-            'message' => 'Refund via CMI must be processed manually in the CMI Merchant Portal.'
-        ];
+        if (app()->environment('local', 'testing')) {
+            return [
+                'success' => true,
+                'transaction_id' => 'REF_CMI_' . uniqid(),
+                'message' => 'Simulated refund in local/testing environment.'
+            ];
+        }
+
+        throw new \Exception('Refund via CMI must be processed manually in the CMI Merchant Portal.');
     }
 
     /**

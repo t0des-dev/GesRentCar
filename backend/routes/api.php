@@ -88,6 +88,10 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
 
     Route::apiResource('maintenances', \App\Http\Controllers\Api\MaintenanceController::class);
 
+    // Expenses
+    Route::apiResource('expenses', \App\Http\Controllers\Api\ExpenseController::class);
+    Route::post('expenses/{expense}/receipt', [\App\Http\Controllers\Api\ExpenseController::class, 'uploadReceipt']);
+
     // User Profile
     Route::get('/user/profile', function (Request $request) {
         return $request->user();

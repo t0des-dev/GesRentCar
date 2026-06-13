@@ -1,0 +1,480 @@
+"use client";
+
+import { useState } from "react";
+import { motion, Reorder } from "framer-motion";
+import { Plus, Trash2, GripVertical, Upload } from "lucide-react";
+import AssetUpload from "@/components/AssetUpload";
+
+interface FieldDef {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "image" | "color";
+  placeholder?: string;
+}
+
+interface ArrayFieldDef {
+  key: string;
+  label: string;
+  type: "array";
+  fields: FieldDef[];
+  defaultItem: Record<string, string>;
+}
+
+type SectionFieldDef = FieldDef | ArrayFieldDef;
+
+const sectionFields: Record<string, SectionFieldDef[]> = {
+  hero: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+  ],
+  why_us: [
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+  ],
+  vibe: [
+    { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+  ],
+  lifestyle: [
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "text" },
+    { key: "text", label: "Texte", type: "textarea" },
+  ],
+  faq: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+    { key: "contact_text", label: "Texte de contact", type: "text" },
+    { key: "contact_link", label: "Lien de contact", type: "text" },
+  ],
+  experience: [
+    { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "title_line1", label: "Ligne 1 du titre", type: "text" },
+    { key: "title_line2", label: "Ligne 2 du titre", type: "text" },
+    { key: "description", label: "Description", type: "textarea" },
+    { key: "cta_text", label: "Texte du bouton", type: "text" },
+    { key: "cta_link", label: "Lien du bouton", type: "text" },
+    { key: "right_label", label: "Étiquette droite", type: "text" },
+  ],
+  how_it_works: [
+    { key: "badge", label: "Badge", type: "text" },
+  ],
+  cta_banner: [
+    { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "button_text", label: "Texte du bouton", type: "text" },
+    { key: "button_link", label: "Lien du bouton", type: "text" },
+  ],
+  promotion_banner: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "title_line1", label: "Ligne 1 du titre", type: "text" },
+    { key: "title_line2", label: "Ligne 2 du titre", type: "text" },
+    { key: "description", label: "Description", type: "textarea" },
+    { key: "cta_text", label: "Texte du bouton", type: "text" },
+    { key: "cta_link", label: "Lien du bouton", type: "text" },
+    { key: "side_note", label: "Note latérale", type: "text" },
+  ],
+  testimonials: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "heading", label: "Titre", type: "text" },
+    { key: "description", label: "Description", type: "textarea" },
+  ],
+  map: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "slogan", label: "Slogan", type: "textarea" },
+  ],
+  comparator: [
+    { key: "badge", label: "Badge", type: "text" },
+    { key: "title", label: "Titre", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+    { key: "vs_label", label: "Étiquette VS", type: "text" },
+  ],
+  sticky_booking: [
+    { key: "placeholder", label: "Placeholder", type: "text" },
+    { key: "search_label", label: "Texte recherche", type: "text" },
+  ],
+  featured_vehicles: [
+    { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "cta_text", label: "Texte du bouton", type: "text" },
+    { key: "cta_link", label: "Lien du bouton", type: "text" },
+    { key: "loading_text", label: "Texte chargement", type: "text" },
+    { key: "empty_heading", label: "Titre vide", type: "text" },
+    { key: "empty_description", label: "Description vide", type: "textarea" },
+  ],
+  search_form: [
+    { key: "location_label", label: "Étiquette destination", type: "text" },
+    { key: "location_placeholder", label: "Placeholder destination", type: "text" },
+    { key: "start_label", label: "Étiquette début", type: "text" },
+    { key: "end_label", label: "Étiquette retour", type: "text" },
+    { key: "search_button", label: "Texte bouton", type: "text" },
+    { key: "fleet_link_text", label: "Texte lien flotte", type: "text" },
+    { key: "fleet_link_href", label: "Lien flotte", type: "text" },
+  ],
+  concierge: [
+    { key: "title", label: "Titre", type: "text" },
+    { key: "text", label: "Texte", type: "textarea" },
+    { key: "badge", label: "Badge", type: "text" },
+  ],
+  stats: [
+    { key: "label_1", label: "Étiquette 1", type: "text" },
+    { key: "value_1", label: "Valeur 1", type: "text" },
+    { key: "label_2", label: "Étiquette 2", type: "text" },
+    { key: "value_2", label: "Valeur 2", type: "text" },
+    { key: "label_3", label: "Étiquette 3", type: "text" },
+    { key: "value_3", label: "Valeur 3", type: "text" },
+    { key: "label_4", label: "Étiquette 4", type: "text" },
+    { key: "value_4", label: "Valeur 4", type: "text" },
+  ],
+};
+
+interface SectionContentEditorProps {
+  sectionId: string;
+  content: Record<string, any>;
+  onChange: (content: Record<string, any>) => void;
+  extraFields?: { key: string; label: string; value: string; onChange: (v: string) => void }[];
+}
+
+function StringField({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: FieldDef }) {
+  if (field.type === "color") {
+    return (
+      <div className="flex gap-3">
+        <div className="w-10 h-10 rounded-xl border-2 border-white shadow-sm shrink-0 overflow-hidden relative">
+          <input
+            type="color"
+            value={value || "#000000"}
+            onChange={(e) => onChange(e.target.value)}
+            className="absolute inset-[-5px] w-[150%] h-[150%] cursor-pointer"
+          />
+        </div>
+        <input
+          type="text"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all uppercase"
+        />
+      </div>
+    );
+  }
+  if (field.type === "textarea") {
+    return (
+      <textarea
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-medium text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all resize-y min-h-[80px]"
+        placeholder={field.placeholder ?? field.label}
+      />
+    );
+  }
+  return (
+    <input
+      type="text"
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-medium text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+      placeholder={field.placeholder ?? field.label}
+    />
+  );
+}
+
+function ReorderableArrayEditor({
+  items,
+  onChange,
+  fields,
+  defaultItem,
+  thumbnailKey,
+}: {
+  items: Record<string, string>[];
+  onChange: (items: Record<string, string>[]) => void;
+  fields: FieldDef[];
+  defaultItem: Record<string, string>;
+  thumbnailKey?: string;
+}) {
+  return (
+    <div className="space-y-3">
+      <Reorder.Group axis="y" values={items} onReorder={onChange} className="space-y-3">
+        {items.map((item, idx) => (
+          <Reorder.Item key={idx} value={item} className="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 space-y-3 relative cursor-grab active:cursor-grabbing">
+            <div className="flex items-center gap-2 mb-2">
+              <GripVertical size={16} className="text-slate-300 shrink-0" />
+              {thumbnailKey && item[thumbnailKey] && (
+                <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                  <img src={item[thumbnailKey]} className="w-full h-full object-cover" alt="" />
+                </div>
+              )}
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">#{idx + 1}</span>
+              <button
+                onClick={() => onChange(items.filter((_, i) => i !== idx))}
+                className="ml-auto p-1.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-all"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+            {fields.map((f) => (
+              <div key={f.key}>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">{f.label}</label>
+                <StringField
+                  field={f}
+                  value={item[f.key] ?? ""}
+                  onChange={(v) => {
+                    const next = [...items];
+                    next[idx] = { ...next[idx], [f.key]: v };
+                    onChange(next);
+                  }}
+                />
+              </div>
+            ))}
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+      <button
+        onClick={() => onChange([...items, { ...defaultItem }])}
+        className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-dashed border-slate-300 text-slate-500 hover:border-primary/40 hover:text-primary transition-all text-xs font-black uppercase tracking-widest"
+      >
+        <Plus size={14} /> Ajouter
+      </button>
+    </div>
+  );
+}
+
+const sectionLabels: Record<string, string> = {
+  hero: "Bannière Hero",
+  why_us: "Nos Avantages",
+  vibe: "Sélecteur d'Expérience",
+  lifestyle: "Galerie Lifestyle",
+  faq: "FAQ",
+  experience: "Expérience Premium",
+  how_it_works: "Comment ça marche",
+  cta_banner: "Bannière CTA",
+  promotion_banner: "Bannière Promotion",
+  testimonials: "Témoignages",
+  map: "Localisation",
+  comparator: "Comparateur",
+  sticky_booking: "Réservation rapide",
+  featured_vehicles: "Véhicules Vedettes",
+  search_form: "Formulaire de recherche",
+  concierge: "Bannière Concierge IA",
+  stats: "Statistiques Clés",
+};
+
+export default function SectionContentEditor({ sectionId, content, onChange, extraFields }: SectionContentEditorProps) {
+  const fields = sectionFields[sectionId];
+  if (!fields) return <p className="text-sm text-slate-400 italic">Aucun champ éditable pour cette section.</p>;
+
+  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-black text-slate-900 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          {sectionLabels[sectionId] ?? sectionId}
+        </h4>
+        <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
+          {(["fr", "en", "ar"] as const).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                lang === l ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              {l === "fr" ? "FR" : l === "en" ? "EN" : "AR"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {extraFields?.map((ef) => (
+        <div key={ef.key}>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">{ef.label}</label>
+          {ef.key.includes("video") ? (
+            <input
+              type="text"
+              value={ef.value ?? ""}
+              onChange={(e) => ef.onChange(e.target.value)}
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-medium text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+              placeholder="URL directe .mp4"
+            />
+          ) : ef.key === "hero_image" ? (
+            <AssetUpload type="hero" label="" currentUrl={ef.value} onUploadComplete={ef.onChange} />
+          ) : (
+            <input
+              type="text"
+              value={ef.value ?? ""}
+              onChange={(e) => ef.onChange(e.target.value)}
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-medium text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+            />
+          )}
+        </div>
+      ))}
+
+      {fields.map((field) => {
+        if (field.type === "array") return null;
+        const val = content?.[field.key];
+        const displayValue = typeof val === "object" && val !== null ? val[lang] ?? "" : val ?? "";
+        return (
+          <div key={field.key}>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">
+              {field.label}
+            </label>
+            <StringField
+              field={field}
+              value={displayValue}
+              onChange={(v) => {
+                if (typeof val === "object" && val !== null) {
+                  onChange({ ...content, [field.key]: { ...val, [lang]: v } });
+                } else {
+                  onChange({ ...content, [field.key]: v });
+                }
+              }}
+            />
+          </div>
+        );
+      })}
+
+      {/* Hero — benefits array */}
+      {sectionId === "hero" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Avantages</label>
+          <ReorderableArrayEditor
+            items={(content?.benefits ?? []).map((b: any, i: number) => ({ ...b, _idx: String(i) }))}
+            onChange={(items) => onChange({ ...content, benefits: items })}
+            fields={[
+              { key: "icon", label: "Icône", type: "text" },
+              { key: "text", label: "Texte", type: "text" },
+            ]}
+            defaultItem={{ icon: "", text: "" }}
+          />
+        </div>
+      )}
+
+      {/* Why Us — features array */}
+      {sectionId === "why_us" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Cartes d'avantages</label>
+          <ReorderableArrayEditor
+            items={content?.features ?? []}
+            onChange={(items) => onChange({ ...content, features: items })}
+            fields={[
+              { key: "icon", label: "Icône (ex: Crown, Star, Shield...)", type: "text" },
+              { key: "image", label: "Ou Image (URL de l'image)", type: "text" },
+              { key: "title", label: "Titre", type: "text" },
+              { key: "desc", label: "Description", type: "textarea" },
+            ]}
+            defaultItem={{ icon: "Star", image: "", title: "", desc: "" }}
+          />
+        </div>
+      )}
+
+      {/* Experience — stats array */}
+      {sectionId === "experience" && (
+        <>
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Statistiques</label>
+            <ReorderableArrayEditor
+              items={content?.stats ?? []}
+              onChange={(items) => onChange({ ...content, stats: items })}
+              fields={[
+                { key: "value", label: "Valeur", type: "text" },
+                { key: "label", label: "Étiquette", type: "text" },
+              ]}
+              defaultItem={{ value: "", label: "" }}
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">
+              Cartes d'expérience <span className="text-slate-300 normal-case">(Lifestyle Items)</span>
+            </label>
+            <ReorderableArrayEditor
+              items={content?.lifestyles ?? []}
+              onChange={(items) => onChange({ ...content, lifestyles: items })}
+              fields={[
+                { key: "id", label: "ID", type: "text" },
+                { key: "title", label: "Titre", type: "text" },
+                { key: "subtitle", label: "Sous-titre", type: "text" },
+                { key: "icon", label: "Icône", type: "text" },
+                { key: "image", label: "URL image", type: "text" },
+                { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
+                { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
+                { key: "lifestyle", label: "Type lifestyle", type: "text" },
+                { key: "cta_text", label: "Texte CTA", type: "text" },
+              ]}
+              defaultItem={{
+                id: "", title: "", subtitle: "", icon: "Shield",
+                image: "", color_from: "blue-400", color_via: "blue-600",
+                lifestyle: "", cta_text: "",
+              }}
+              thumbnailKey="image"
+            />
+          </div>
+        </>
+      )}
+
+      {/* How it works — steps array */}
+      {sectionId === "how_it_works" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Étapes</label>
+          <ReorderableArrayEditor
+            items={content?.steps ?? []}
+            onChange={(items) => onChange({ ...content, steps: items })}
+            fields={[
+              { key: "num", label: "Numéro", type: "text" },
+              { key: "title", label: "Titre", type: "text" },
+              { key: "desc", label: "Description", type: "textarea" },
+            ]}
+            defaultItem={{ num: "", title: "", desc: "" }}
+          />
+        </div>
+      )}
+
+      {/* Map — locations array */}
+      {sectionId === "map" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Localisations</label>
+          <ReorderableArrayEditor
+            items={content?.locations ?? []}
+            onChange={(items) => onChange({ ...content, locations: items })}
+            fields={[
+              { key: "city", label: "Ville", type: "text" },
+              { key: "car", label: "Véhicule", type: "text" },
+              { key: "user", label: "Utilisateur", type: "text" },
+            ]}
+            defaultItem={{ city: "", car: "", user: "" }}
+          />
+        </div>
+      )}
+
+      {/* Promotion banner — footer_items array */}
+      {sectionId === "promotion_banner" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Éléments de pied</label>
+          <ReorderableArrayEditor
+            items={(content?.footer_items ?? []).map((s: string, i: number) => ({ _val: s, _idx: String(i) }))}
+            onChange={(items) => onChange({ ...content, footer_items: items.map((i: any) => i._val) })}
+            fields={[{ key: "_val", label: "Élément", type: "text" }]}
+            defaultItem={{ _val: "" }}
+          />
+        </div>
+      )}
+
+      {/* Lifestyle gallery — images array with reorder + thumbnails */}
+      {sectionId === "lifestyle" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Images</label>
+          <ReorderableArrayEditor
+            items={content?.images ?? []}
+            onChange={(items) => onChange({ ...content, images: items })}
+            fields={[
+              { key: "url", label: "URL image", type: "text" },
+              { key: "speed", label: "Vitesse défilement", type: "text" },
+              { key: "className", label: "Classe CSS", type: "text" },
+            ]}
+            defaultItem={{ url: "", speed: "0", className: "" }}
+            thumbnailKey="url"
+          />
+        </div>
+      )}
+    </motion.div>
+  );
+}

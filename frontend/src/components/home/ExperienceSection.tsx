@@ -1,139 +1,188 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Star, Shield, Clock, Compass } from "lucide-react";
+import { ArrowRight, Star, Shield, Compass, Zap } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import type { LifestyleItem } from "@/types/storefront";
 
-const LIFESTYLES = [
-  { id: "business", label: "Business Elite", desc: "La ponctualité et le prestige pour vos enjeux stratégiques.", icon: Shield },
-  { id: "romance", label: "Grand Tourisme", desc: "L'élégance à ciel ouvert pour vos moments d'exception.", icon: Star },
-  { id: "adventure", label: "Wild Adventure", desc: "La puissance sans limite pour explorer de nouveaux horizons.", icon: Compass },
+const ICON_MAP: Record<string, any> = {
+  Shield, Star, Compass, Zap
+};
+
+interface ExperienceSectionProps {
+  content?: {
+    eyebrow?: string;
+    title_line1?: string;
+    title_line2?: string;
+    description?: string;
+    stats?: { value: string; label: string }[];
+    lifestyles?: LifestyleItem[];
+    cta_text?: string;
+    cta_link?: string;
+    right_label?: string;
+  };
+}
+
+const DEFAULT_LIFESTYLES: (LifestyleItem & { color: string })[] = [
+  { id: "business", title: "Business Elite", subtitle: "Ponctualité et prestige pour vos déplacements professionnels.", icon: "Shield", image: "", color_from: "blue-400", color_via: "blue-600", lifestyle: "business", color: "from-blue-400/20 to-blue-600/20" },
+  { id: "romance", title: "Grand Tourisme", subtitle: "L'élégance à ciel ouvert pour vos moments d'exception.", icon: "Star", image: "", color_from: "pink-400", color_via: "rose-600", lifestyle: "romance", color: "from-pink-400/20 to-rose-600/20" },
+  { id: "adventure", title: "Wild Adventure", subtitle: "Puissance et liberté pour explorer de nouveaux horizons.", icon: "Compass", image: "", color_from: "orange-400", color_via: "red-600", lifestyle: "adventure", color: "from-orange-400/20 to-red-600/20" },
 ];
 
-export default function ExperienceSection() {
+export default function ExperienceSection({ content = {} }: ExperienceSectionProps) {
+  const lifestyles = content?.lifestyles?.length
+    ? content.lifestyles.map(item => ({
+        ...item,
+        Icon: ICON_MAP[item.icon] || Shield,
+        color: `from-${item.color_from}/20 to-${item.color_via}/20` || "from-blue-400/20 to-blue-600/20"
+      }))
+    : DEFAULT_LIFESTYLES.map(item => ({
+        ...item,
+        Icon: ICON_MAP[item.icon] || Shield
+      }));
+
+  const stats = content?.stats || [
+    { value: "98%", label: "Recommandation" },
+    { value: "24/7", label: "Support VIP" },
+  ];
+
   return (
-    <section className="py-40 bg-white relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50/50 -z-10" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-10" />
+    <section className="py-28 bg-surface-0 relative overflow-hidden">
+      {/* Subtle gradient BG */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-primary/5 pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+          
+          {/* Left Content */}
+          <div className="space-y-10">
+            
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="section-eyebrow"
+            >
+              {content?.eyebrow || "L'Expérience Premium"}
+            </motion.div>
 
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-24 items-center">
-          {/* Left Side: Visual & Content */}
-          <div className="lg:w-1/2 space-y-12">
-            <div className="space-y-6">
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="inline-flex items-center gap-3 px-4 py-2 bg-slate-900 rounded-full text-white"
-              >
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em]">L'Expérience Premium</span>
-              </motion.div>
-              
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] uppercase"
-              >
-                Bien plus qu'un <br />
-                <span className="text-primary italic">simple trajet.</span>
-              </motion.h2>
-              
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-xl text-slate-500 font-medium leading-relaxed max-w-xl"
-              >
-                Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception. De la précision mécanique au confort absolu, chaque détail est une invitation à l'évasion.
-              </motion.p>
-            </div>
+            {/* Title — Instrument Serif */}
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+              className="display-lg leading-[1.1] text-ink-1"
+            >
+              {content?.title_line1 || "Bien plus qu'un"}
+              <br />
+              <span className="bg-gradient-to-r from-gold via-gold/80 to-gold/60 bg-clip-text text-transparent">
+                {content?.title_line2 || "simple trajet."}
+              </span>
+            </motion.h2>
 
-            {/* Micro-Stats */}
-            <div className="flex gap-16 pt-6">
-              {[
-                { value: "98%", label: "Recommandation", sub: "Satisfaction Client" },
-                { value: "24h", label: "Service VIP", sub: "Support Dédié" },
-              ].map((s, i) => (
-                <motion.div 
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="body-feature text-ink-2 leading-relaxed max-w-xl"
+            >
+              {content?.description || "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception. Du confort absolu à la performance, chaque détail est pensé pour vous."}
+            </motion.p>
+
+            {/* Stats Display */}
+            <div className="flex gap-12 pt-6">
+              {stats.map((s, i) => (
+                <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 + i * 0.1 }}
+                  className="stat-display"
                 >
-                  <p className="text-5xl font-black text-slate-900 mb-1">{s.value}</p>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-widest">{s.label}</p>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">{s.sub}</p>
+                  <div className="number text-gold">{s.value}</div>
+                  <p className="label">{s.label}</p>
                 </motion.div>
               ))}
             </div>
           </div>
 
-          {/* Right Side: Lifestyle Selection Cards */}
-          <div className="lg:w-1/2 space-y-6">
-            <motion.p 
+          {/* Right — Lifestyle Cards */}
+          <div className="space-y-5">
+            
+            {/* Label */}
+            <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] mb-4 ml-4"
+              className="section-eyebrow"
             >
-              Explorez par Style de Vie
+              {content?.right_label || "Explorer par style"}
             </motion.p>
-            
-            <div className="grid gap-6">
-              {LIFESTYLES.map((ls, i) => (
+
+            {/* Cards Grid */}
+            <div className="space-y-4">
+              {lifestyles.map((ls, i) => (
                 <motion.div
                   key={ls.id}
-                  initial={{ opacity: 0, x: 50 }}
+                  initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
                 >
-                  <Link 
-                    href={`/fleet?lifestyle=${ls.id}`}
-                    className="group block relative bg-white p-8 rounded-[40px] border border-slate-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden"
+                  <Link
+                    href={`/fleet?lifestyle=${ls.id || ls.lifestyle}`}
+                    className="group flex items-center gap-5 p-6 bg-white rounded-xl border border-border hover:border-gold/40 hover:shadow-xl hover:shadow-gold/10 transition-all duration-500 card-premium"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    <div className="flex items-center gap-8 relative z-10">
-                      <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white group-hover:rotate-6 transition-all duration-500">
-                        <ls.icon size={28} />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-black text-slate-900 uppercase tracking-tight group-hover:text-primary transition-colors">{ls.label}</h4>
-                        <p className="text-sm text-slate-500 font-medium line-clamp-1">{ls.desc}</p>
-                      </div>
-                      <div className="w-12 h-12 rounded-full border border-slate-100 flex items-center justify-center text-slate-300 group-hover:border-primary group-hover:text-primary transition-all group-hover:translate-x-2">
-                        <ArrowRight size={20} />
-                      </div>
+                    {/* Icon Container */}
+                    <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${ls.color} flex items-center justify-center text-gold group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold/20 transition-all duration-500 shrink-0`}>
+                      <ls.Icon size={24} className="group-hover:rotate-12 transition-transform" />
                     </div>
+
+                    {/* Text Content */}
+                    <div className="flex-1">
+                      <h4 className="font-bold text-ink-1 text-lg group-hover:text-gold transition-colors duration-300 mb-1">
+                        {ls.title}
+                      </h4>
+                      <p className="text-sm text-ink-3 group-hover:text-ink-2 transition-colors">
+                        {ls.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Arrow */}
+                    <ArrowRight 
+                      size={20} 
+                      className="text-gold/60 group-hover:text-gold group-hover:translate-x-1 transition-all duration-300 shrink-0" 
+                    />
                   </Link>
                 </motion.div>
               ))}
             </div>
 
+            {/* View All Link */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className="pt-8"
+              transition={{ delay: 0.4 }}
+              className="pt-6"
             >
               <Link 
-                href="/fleet"
-                className="inline-flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-slate-400 hover:text-primary transition-colors group"
+                href={content?.cta_link || "/fleet"} 
+                className="nav-link-gold text-sm font-bold uppercase tracking-wider"
               >
-                Découvrir l'intégralité de la collection
-                <div className="w-10 h-px bg-slate-200 group-hover:w-20 group-hover:bg-primary transition-all" />
+                {content?.cta_text || "Voir toute la collection"}
+                <span className="ml-2">→</span>
               </Link>
             </motion.div>
+
           </div>
+
         </div>
       </div>
     </section>

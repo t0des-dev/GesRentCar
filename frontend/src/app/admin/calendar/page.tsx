@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import { Loader2 } from "lucide-react";
-import styles from "./page.module.css";
 import api from "@/lib/api/client";
 
 // Modular Components
@@ -70,13 +68,13 @@ export default function CalendarPage() {
 
   if (checking || loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <Loader2 className="animate-spin text-primary" size={32} />
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
       <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Chargement du planning...</p>
     </div>
   );
 
   return (
-    <div className={styles.container}>
+    <>
       <CalendarHeader 
         currentMonth={currentMonth} 
         onPrev={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))} 
@@ -97,6 +95,6 @@ export default function CalendarPage() {
         onClose={() => setSelectedRes(null)} 
         apiUrl={API} 
       />
-    </div>
+    </>
   );
 }

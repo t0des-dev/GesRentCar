@@ -8,9 +8,13 @@ import ReactQueryProvider from "@/lib/QueryProvider";
 import CompareFloatingBar from "@/components/CompareFloatingBar";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SessionProvider } from "next-auth/react";
+import { AuthProvider } from "@/lib/auth/context";
+import { CurrencyProvider } from "@/hooks/useCurrency";
+import { Toaster } from "react-hot-toast";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ConciergeAI from "@/components/ConciergeAI";
 import CustomCursor from "@/components/CustomCursor";
-import { Toaster } from "react-hot-toast";
+import SkipNav from "@/components/SkipNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +52,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { CurrencyProvider } from "@/hooks/useCurrency";
 
 export default function RootLayout({
   children,
@@ -58,18 +61,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SessionProvider>
+        <SkipNav />
+        <AuthProvider>
           <ReactQueryProvider>
             <LanguageProvider>
               <CurrencyProvider>
                 <CustomCursor />
                 <ServiceWorkerRegister />
                 <LayoutWrapper>
-                  {children}
+                  <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
                   <ConciergeAI />
                 </LayoutWrapper>
                 <CompareFloatingBar />
-                <Toaster position="bottom-right" toastOptions={{
+                <WhatsAppFloat />
+                <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
                   duration: 4000,
                   style: {
                     background: '#0f172a',
@@ -84,7 +89,7 @@ export default function RootLayout({
               </CurrencyProvider>
             </LanguageProvider>
           </ReactQueryProvider>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

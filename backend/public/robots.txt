@@ -1,2 +1,7 @@
-User-agent: *
-Disallow:
+User-Agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /agent/
+Disallow: /dashboard/
+
+Sitemap: https://vectoria-rent.com/sitemap.xml

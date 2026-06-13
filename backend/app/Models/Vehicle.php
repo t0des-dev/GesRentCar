@@ -40,10 +40,16 @@ class Vehicle extends Model
         'og_image_url',
     ];
 
-    protected $casts = [
-        'photos' => 'array',
-        'price_per_day' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'photos'        => 'array',
+            'price_per_day' => 'decimal:2',
+            'insurance_date'       => 'date',
+            'tech_inspection_date' => 'date',
+            'vignette_date'        => 'date',
+        ];
+    }
 
     public function reservations()
     {

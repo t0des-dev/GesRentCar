@@ -3,14 +3,9 @@
 import { useState } from "react";
 import { Scale, X, Zap, Shield, Crown, Star, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { ComparatorVehicle } from "@/types/storefront";
 
-interface VehicleSpec {
-  name: string;
-  value: number; // 0-100
-  label: string;
-}
-
-const VEHICLES = [
+const DEFAULT_VEHICLES: ComparatorVehicle[] = [
   { id: "1", brand: "Rolls-Royce", model: "Ghost", image: "https://images.unsplash.com/photo-1631214524020-5e1839762691?q=80&w=800&auto=format&fit=crop", specs: [
     { name: "prestige", value: 100, label: "Luxe Absolu" },
     { name: "comfort", value: 98, label: "Confort Royal" },
@@ -28,8 +23,10 @@ const VEHICLES = [
   ]},
 ];
 
-export default function VehicleComparator() {
+export default function VehicleComparator({ content = {} }: { content?: { badge?: string; title?: string; subtitle?: string; vs_label?: string; vehicles?: ComparatorVehicle[]; selected_label?: string; default_label?: string; empty_text?: string } }) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const vehicles = (content?.vehicles && content.vehicles.length > 0) ? content.vehicles : DEFAULT_VEHICLES;
 
   const toggleVehicle = (id: string) => {
     if (selectedIds.includes(id)) {
@@ -39,7 +36,7 @@ export default function VehicleComparator() {
     }
   };
 
-  const vehiclesToCompare = VEHICLES.filter(v => selectedIds.includes(v.id));
+  const vehiclesToCompare = vehicles.filter(v => selectedIds.includes(v.id));
 
   return (
     <section className="py-32 bg-slate-50 relative overflow-hidden">
@@ -47,16 +44,15 @@ export default function VehicleComparator() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
             <Scale size={14} />
-            Le Garage Comparateur
+            {content?.badge || "Le Garage Comparateur"}
           </div>
-          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6">Confrontez l'Excellence.</h2>
-          <p className="text-slate-500 max-w-2xl mx-auto">Choisissez deux modèles pour comparer leur ADN et trouver celui qui correspond à votre prochain voyage.</p>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6">{content?.title || "Confrontez l'Excellence."}</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto">{content?.subtitle || "Choisissez deux modèles pour comparer leur ADN et trouver celui qui correspond à votre prochain voyage."}</p>
         </div>
 
-        {/* Selection Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {VEHICLES.map((v) => (
-            <button 
+          {vehicles.map((v) => (
+            <button
               key={v.id}
               onClick={() => toggleVehicle(v.id)}
               className={cn(
@@ -69,19 +65,17 @@ export default function VehicleComparator() {
               <div className="absolute bottom-6 left-6 text-left">
                 <p className="text-white font-black text-xl">{v.brand} {v.model}</p>
                 <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
-                  {selectedIds.includes(v.id) ? "Sélectionné" : "Comparer"}
+                  {selectedIds.includes(v.id) ? (content?.selected_label || "Sélectionné") : (content?.default_label || "Comparer")}
                 </p>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Comparison Result */}
         {selectedIds.length === 2 ? (
           <div className="bg-white rounded-[48px] p-8 md:p-16 shadow-2xl animate-in fade-in slide-in-from-bottom-12 duration-700">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
-              
-              {/* Vehicle A */}
+
               <div className="text-center md:text-right space-y-8">
                 <h3 className="text-3xl font-black text-slate-900">{vehiclesToCompare[0].brand}</h3>
                 <div className="space-y-6">
@@ -99,15 +93,13 @@ export default function VehicleComparator() {
                 </div>
               </div>
 
-              {/* VS Divider */}
               <div className="flex flex-col items-center justify-center">
                 <div className="w-20 h-20 rounded-full bg-slate-900 text-white flex items-center justify-center font-black text-2xl shadow-xl border-4 border-slate-50 relative z-10">
-                  VS
+                  {content?.vs_label || "VS"}
                 </div>
                 <div className="w-px h-full bg-slate-100 absolute" />
               </div>
 
-              {/* Vehicle B */}
               <div className="text-center md:text-left space-y-8">
                 <h3 className="text-3xl font-black text-slate-900">{vehiclesToCompare[1].brand}</h3>
                 <div className="space-y-6">
@@ -129,7 +121,7 @@ export default function VehicleComparator() {
           </div>
         ) : (
           <div className="bg-slate-100 border-2 border-dashed border-slate-200 rounded-[48px] py-20 text-center">
-            <p className="text-slate-400 font-bold uppercase tracking-[0.2em]">Sélectionnez deux véhicules pour lancer le duel</p>
+            <p className="text-slate-400 font-bold uppercase tracking-[0.2em]">{content?.empty_text || "Sélectionnez deux véhicules pour lancer le duel"}</p>
           </div>
         )}
       </div>

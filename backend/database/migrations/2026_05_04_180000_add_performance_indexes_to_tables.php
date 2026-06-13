@@ -23,7 +23,7 @@ return new class extends Migration
 
         Schema::table('maintenances', function (Blueprint $table) {
             $table->index('status');
-            $table->index('date');
+            $table->index('next_due');
         });
     }
 
@@ -44,7 +44,7 @@ return new class extends Migration
 
         Schema::table('maintenances', function (Blueprint $table) {
             $table->dropIndex(['status']);
-            $table->dropIndex(['date']);
+            $table->dropIndex(['next_due']);
         });
     }
 };

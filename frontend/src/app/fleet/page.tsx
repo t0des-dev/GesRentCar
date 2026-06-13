@@ -2,10 +2,12 @@
 
 import { useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUpDown } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FleetFilterState } from "@/components/FleetFilters";
+import RecentBookingPopup from "@/components/RecentBookingPopup";
+import { LayoutGrid, List } from "lucide-react";
 
 // Modular Components
 import FleetHeader from "@/components/fleet/FleetHeader";
@@ -14,6 +16,8 @@ import FleetGrid from "@/components/fleet/FleetGrid";
 
 // Hooks
 import { useFleetData } from "@/hooks/useFleetData";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 6;
 
@@ -25,6 +29,7 @@ function FleetContent() {
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
+  const [layoutView, setLayoutView] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FleetFilterState>({
     type: "All",
     transmission: "All",
@@ -50,44 +55,99 @@ function FleetContent() {
     setPage(1);
   }, [setPage]);
 
-  return (
-    <main className="min-h-screen pt-32 pb-24 bg-background relative selection:bg-primary/20 overflow-hidden">
-      <div className="absolute top-0 inset-x-0 h-[1000px] pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]" />
-      </div>
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <FleetHeader search={search} setSearch={(val) => { setSearch(val); setPage(1); }} />
+  const sortOptions = [
+    { value: "price_asc", label: "Prix: Croissant" },
+    { value: "price_desc", label: "Prix: Décroissant" },
+    { value: "year_desc", label: "Plus Récents" },
+    { value: "brand_asc", label: "Marque (A-Z)" },
+  ];
 
-        <div className="flex flex-col lg:flex-row gap-20">
+  return (
+    <main className="min-h-screen pt-36 pb-24 bg-surface-0 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+        
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <FleetHeader search={search} setSearch={(val) => { setSearch(val); setPage(1); }} />
+        </motion.div>
+
+        {/* Main Content — Sidebar + Grid */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+          
+          {/* Left Sidebar */}
           <FleetSidebar onFilter={handleFilterChange} />
           
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-12">
-              <div className="flex items-center gap-4">
-                <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                  {isLoading ? "Synchronisation en cours..." : `${sorted.length} ${t("fleet_count")}`}
+          {/* Right Content */}
+          <div className="flex-1 min-w-0">
+            
+            {/* Controls Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="flex items-center justify-between mb-12 pb-6 border-b border-border flex-wrap gap-4"
+            >
+              <div className="flex items-center gap-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-ink-3">
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={14} className="animate-spin" />
+                      Synchronisation...
+                    </span>
+                  ) : (
+                    `${sorted.length} ${t("fleet_count")}`
+                  )}
                 </p>
               </div>
 
-              {/* Advanced Sorting */}
-              <div className="flex items-center gap-4">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Trier par:</span>
-                <select 
-                  value={sortBy} 
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
-                >
-                  <option value="price_asc" className="bg-slate-900">Prix: Croissant</option>
-                  <option value="price_desc" className="bg-slate-900">Prix: Décroissant</option>
-                  <option value="year_desc" className="bg-slate-900">Plus Récents</option>
-                  <option value="brand_asc" className="bg-slate-900">Marque (A-Z)</option>
-                </select>
-              </div>
-            </div>
+              <div className="flex items-center gap-6">
+                {/* View Toggle */}
+                <div className="hidden md:flex items-center gap-1 bg-surface-1 p-1 rounded-lg border border-border">
+                  <button
+                    onClick={() => setLayoutView("grid")}
+                    className={cn("p-1.5 rounded-md transition-all", layoutView === "grid" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
+                    aria-label="Vue Grille"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button
+                    onClick={() => setLayoutView("list")}
+                    className={cn("p-1.5 rounded-md transition-all", layoutView === "list" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
+                    aria-label="Vue Liste"
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
 
+                {/* Sorting Dropdown */}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold uppercase tracking-widest text-ink-3 hidden sm:inline">Trier:</span>
+                  <div className="relative group">
+                    <select 
+                      value={sortBy} 
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      className="appearance-none bg-white border-2 border-border rounded-lg px-4 py-2.5 text-xs font-bold text-ink-1 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all cursor-pointer pr-9"
+                    >
+                      {sortOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value} className="bg-white text-ink-1">
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ArrowUpDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gold pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Fleet Grid */}
             <FleetGrid 
               vehicles={sorted}
               loading={isLoading}
@@ -95,24 +155,36 @@ function FleetContent() {
               totalPages={totalPages}
               onPageChange={setPage}
               onQuickView={setQuickViewVehicle}
+              layoutView={layoutView}
             />
           </div>
         </div>
       </div>
 
+      {/* Quick View Modal */}
       {quickViewVehicle && (
         <QuickViewModal 
           vehicle={quickViewVehicle} 
           onClose={() => setQuickViewVehicle(null)} 
         />
       )}
+
+      {/* Social Proof */}
+      <RecentBookingPopup />
     </main>
   );
 }
 
 export default function FleetPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen pt-28 flex justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen pt-28 flex justify-center items-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-gold" size={36} />
+          <p className="text-ink-3 text-sm font-medium">Chargement de la flotte...</p>
+        </div>
+      </div>
+    }>
       <FleetContent />
     </Suspense>
   );

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MaintenanceAlertsWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Alertes de Maintenance';
+    protected static ?string $heading = 'Alertes de Maintenance & Conformité';
     protected int | string | array $columnSpan = 'full';
     protected static ?int $sort = 3;
 
@@ -19,7 +19,9 @@ class MaintenanceAlertsWidget extends BaseWidget
         return $table
             ->query(
                 Vehicle::query()->where('status', 'maintenance')
-                    ->orWhere('mileage', '>=', 50000) // Dummy threshold for alert
+                    ->orWhere('mileage', '>=', 50000)
+                    ->orWhere('insurance_date', '<=', now()->addDays(15))
+                    ->orWhere('tech_inspection_date', '<=', now()->addDays(15))
             )
             ->columns([
                 Tables\Columns\TextColumn::make('plate')
@@ -27,17 +29,23 @@ class MaintenanceAlertsWidget extends BaseWidget
                     ->searchable(),
                 Tables\Columns\TextColumn::make('brand')
                     ->label('Marque'),
-                Tables\Columns\TextColumn::make('model')
-                    ->label('Modèle'),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'danger' => 'maintenance',
-                        'warning' => fn ($state) => $state !== 'maintenance', // Needs check
+                        'warning' => fn ($state) => $state !== 'maintenance',
                     ])
                     ->formatStateUsing(fn ($state) => $state === 'maintenance' ? 'En Maintenance' : 'Révision Conseillée'),
                 Tables\Columns\TextColumn::make('mileage')
                     ->label('Kilométrage')
                     ->suffix(' km'),
+                Tables\Columns\TextColumn::make('insurance_date')
+                    ->label('Assurance')
+                    ->date('d/m/Y')
+                    ->color(fn ($record) => $record->insurance_date && $record->insurance_date <= now() ? 'danger' : ($record->insurance_date && $record->insurance_date <= now()->addDays(15) ? 'warning' : 'success')),
+                Tables\Columns\TextColumn::make('tech_inspection_date')
+                    ->label('Visite Tech.')
+                    ->date('d/m/Y')
+                    ->color(fn ($record) => $record->tech_inspection_date && $record->tech_inspection_date <= now() ? 'danger' : ($record->tech_inspection_date && $record->tech_inspection_date <= now()->addDays(15) ? 'warning' : 'success')),
             ])
             ->actions([
                 Tables\Actions\Action::make('mark_active')
