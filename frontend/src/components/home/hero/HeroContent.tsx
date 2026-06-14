@@ -60,7 +60,7 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
         className="display-title leading-[1.08] mb-8"
       >
         <div className="block text-white overflow-hidden">
-          {words.slice(0, -1).map((word, i) => (
+          {words.slice(0, -1).map((word: string, i: number) => (
             <motion.span 
               key={i} 
               variants={{ hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } }}

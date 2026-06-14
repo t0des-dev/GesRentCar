@@ -111,9 +111,9 @@ export interface ConciergeConfig {
 
 export interface SectionsContent {
   hero: { badge: string; title: string; subtitle: string; benefits?: { icon: string; text: string }[] };
-  why_us: { title: string; subtitle: string };
+  why_us: { title: string; subtitle: string; features?: { icon: string; image?: string; title: string; desc: string }[] };
   vibe: { title: string; subtitle: string; eyebrow?: string; columns?: string; items?: LifestyleItem[] };
-  lifestyle: { title: string; subtitle: string; text: string; images?: LifestyleImage[] };
+  lifestyle: { title: string; subtitle: string; text: string; stats?: { value: string; label: string }[]; images?: LifestyleImage[] };
   faq: { title: string; subtitle: string; badge?: string; contact_text?: string; contact_link?: string };
   experience: {
     eyebrow: string;
@@ -149,6 +149,7 @@ export interface SectionsContent {
     badge: string;
     heading: string;
     description: string;
+    items?: { name: string; role: string; content: string; image?: string }[];
   };
   map: {
     badge: string;

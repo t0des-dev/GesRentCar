@@ -90,7 +90,7 @@ export default function HomeClient() {
     lifestyle_gallery: () => <LifestyleGallery content={storefront.sections_content.lifestyle} />,
     why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,
     featured: () => <FeaturedVehicles vehicles={featuredVehicles} loading={isLoading} content={storefront.sections_content.featured_vehicles} />,
-    testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials} />,
+    testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
     map: () => <ExperienceMap content={storefront.sections_content.map} />,
     concierge_banner: () => <ConciergeBanner content={storefront.concierge_config} />,
     faq: () => <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />,
@@ -120,7 +120,7 @@ export default function HomeClient() {
 
   return (
     <main className="min-h-screen overflow-x-hidden">
-      <JsonLd agency={storefront} />
+      <JsonLd agency={storefront as any} />
       <motion.div
         className="fixed top-0 left-0 right-0 h-0.5 bg-primary z-[100] origin-left"
         style={{ scaleX }}

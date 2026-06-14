@@ -192,7 +192,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                   <div 
                     key={v.id} 
                     className="w-[85vw] md:w-[400px] shrink-0 snap-start"
-                    onMouseEnter={() => setHoveredImage(getImageUrl(v.image_url))}
+                    onMouseEnter={() => setHoveredImage(getImageUrl(v.image_url) ?? null)}
                     onMouseLeave={() => setHoveredImage(null)}
                   >
                     <VehicleCard
@@ -232,7 +232,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.4 }}
-                    onMouseEnter={() => setHoveredImage(getImageUrl(v.image_url))}
+                    onMouseEnter={() => setHoveredImage(getImageUrl(v.image_url) ?? null)}
                     onMouseLeave={() => setHoveredImage(null)}
                   >
                     <VehicleCard

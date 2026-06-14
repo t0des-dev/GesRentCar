@@ -103,7 +103,7 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "cta_link", label: "Lien du bouton", type: "text" },
     { key: "layout", label: "Mise en page (grid ou carousel)", type: "text", placeholder: "grid" },
     { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text", placeholder: "3" },
-    { key: "limit", label: "Nombre max de véhicules", type: "number", placeholder: "6" },
+    { key: "limit", label: "Nombre max de véhicules", type: "text", placeholder: "6" },
     { key: "show_filters", label: "Afficher les filtres par catégorie (true/false)", type: "text", placeholder: "true" },
     { key: "filter_color", label: "Couleur des filtres actifs (optionnel)", type: "color" },
     { key: "dynamic_bg", label: "Fond dynamique au survol (true/false)", type: "text", placeholder: "true" },

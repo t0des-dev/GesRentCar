@@ -20,7 +20,7 @@ const ICON_MAP: Record<string, any> = {
 export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
   const { t } = useTranslation();
 
-  const defaultFeatures = [
+  const defaultFeatures: { icon: string; image?: string; title: string; desc: string }[] = [
     { icon: "Crown", title: t("feat_fleet_title"), desc: t("feat_fleet_desc") },
     { icon: "HeadphonesIcon", title: t("feat_support_title"), desc: t("feat_support_desc") },
     { icon: "ShieldCheck", title: t("feat_chauffeur_title"), desc: t("feat_chauffeur_desc") },

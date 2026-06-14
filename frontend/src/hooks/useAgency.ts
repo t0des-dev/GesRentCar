@@ -132,22 +132,22 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
     images: [
       {
         url: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
-        speed: "0.1",
+        speed: 0.1,
         className: "col-span-6 h-[450px] mt-20"
       },
       {
         url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800",
-        speed: "0.2",
+        speed: 0.2,
         className: "col-span-6 h-[550px]"
       },
       {
         url: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800",
-        speed: "0.15",
+        speed: 0.15,
         className: "col-span-4 h-[400px] -mt-10"
       },
       {
         url: "https://images.unsplash.com/photo-1525609002752-ad9d9b9b4125?auto=format&fit=crop&q=80&w=800",
-        speed: "0.25",
+        speed: 0.25,
         className: "col-span-8 h-[500px]"
       }
     ]
@@ -327,41 +327,41 @@ export function useAgency() {
       merged.sections_content = {
         ...DEFAULT_SECTIONS_CONTENT,
         ...data.sections_content,
-      };
+      } as any;
       
       // Ensure why_us is merged properly
-      merged.sections_content.why_us = {
+      merged.sections_content!.why_us = {
         ...(DEFAULT_SECTIONS_CONTENT.why_us || {}),
         ...(data.sections_content.why_us || {})
-      };
+      } as any;
 
       // Ensure testimonials is merged properly
-      merged.sections_content.testimonials = {
+      merged.sections_content!.testimonials = {
         ...(DEFAULT_SECTIONS_CONTENT.testimonials || {}),
         ...(data.sections_content.testimonials || {})
-      };
+      } as any;
 
       // Recover legacy features_config into why_us if it doesn't exist yet
       if ((!data.sections_content.why_us?.features || data.sections_content.why_us.features.length === 0) && merged.features_config && merged.features_config.length > 0) {
-        merged.sections_content.why_us.features = merged.features_config;
+        merged.sections_content!.why_us!.features = merged.features_config as any;
       }
 
       // Recover legacy testimonials into sections_content.testimonials.items
       if ((!data.sections_content.testimonials?.items || data.sections_content.testimonials.items.length === 0) && merged.testimonials && merged.testimonials.length > 0) {
-        merged.sections_content.testimonials.items = merged.testimonials;
+        merged.sections_content!.testimonials!.items = merged.testimonials;
       }
     } else {
       if (merged.features_config && merged.features_config.length > 0 && merged.sections_content) {
         merged.sections_content.why_us = {
           ...(merged.sections_content.why_us || {}),
-          features: merged.features_config
-        };
+          features: merged.features_config as any
+        } as any;
       }
       if (merged.testimonials && merged.testimonials.length > 0 && merged.sections_content) {
         merged.sections_content.testimonials = {
           ...(merged.sections_content.testimonials || {}),
           items: merged.testimonials
-        };
+        } as any;
       }
     }
     return merged;
