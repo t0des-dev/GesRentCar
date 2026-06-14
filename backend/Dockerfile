@@ -31,7 +31,7 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install dependencies
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
