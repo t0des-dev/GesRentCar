@@ -15,7 +15,6 @@ import { defaultStorefrontForm } from "@/constants/storefrontDefaults";
 
 // Modular Components
 import StorefrontPreview from "./StorefrontPreview";
-import TestimonialsManager from "./cms/TestimonialsManager";
 import SEOManager from "./cms/SEOManager";
 
 // New Modular Sub-components
@@ -128,7 +127,6 @@ export default function StorefrontManager() {
             {activeTab === "seo" && <SEOManager config={form.seo_config} onChange={(seo) => setForm({ ...form, seo_config: seo })} />}
             {activeTab === "business" && <BusinessSettings form={form} setForm={setForm} />}
           </AnimatePresence>
-          {activeTab === "cms" && <TestimonialsManager testimonials={form.testimonials} onChange={(t) => setForm({ ...form, testimonials: t })} />}
         </div>
 
         {showPreview && (

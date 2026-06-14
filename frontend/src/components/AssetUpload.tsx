@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Upload, ImageIcon, Loader2, CheckCircle2, X } from "lucide-react";
 import api from "@/lib/api/client";
 import { cn } from "@/lib/utils";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface AssetUploadProps {
   type: "logo" | "hero" | "favicon";
@@ -78,7 +79,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
 
         {currentUrl ? (
           <div className="absolute inset-0 w-full h-full">
-            <img src={currentUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Asset" />
+            <img src={getImageUrl(currentUrl)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Asset" />
             <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                <Upload className="text-white" size={24} />
                <span className="text-white text-[10px] font-black uppercase tracking-widest">Changer l'image</span>

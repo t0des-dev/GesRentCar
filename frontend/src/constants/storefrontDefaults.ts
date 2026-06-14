@@ -49,10 +49,17 @@ export const defaultStorefrontForm: StorefrontForm = {
   footer_config: { address: "", phone: "", email: "", social_links: { facebook: "", instagram: "", whatsapp: "" } },
   theme_config: { border_radius: "24px", button_style: "pill", glassmorphism: true, font_family: "Inter" },
   stats_config: {
-    label_1: "Clients Satisfaits", value_1: "2,400+",
-    label_2: "Véhicules Premium", value_2: "80+",
-    label_3: "Années d'Excellence", value_3: "15",
-    label_4: "Support VIP", value_4: "24/7",
+    columns: "4",
+    theme: "dark",
+    height: "normal",
+    text_size: "normal",
+    text_color: "",
+    items: [
+      { id: "s1", label: "Clients satisfaits", value: "2,400+", icon: "Users", color: "primary" },
+      { id: "s2", label: "Véhicules premium", value: "80+", icon: "Car", color: "indigo" },
+      { id: "s3", label: "Années d'expérience", value: "15", icon: "Clock", color: "emerald" },
+      { id: "s4", label: "Support disponible", value: "24/7", icon: "Phone", color: "rose" }
+    ]
   },
   faq_config: [
     { q: "Quelles sont les conditions de location ?", a: "Vous devez être âgé de 21 ans minimum et posséder un permis de conduire valide depuis au moins 2 ans." },
@@ -75,7 +82,18 @@ export const defaultStorefrontForm: StorefrontForm = {
         { icon: "HeadphonesIcon", title: "Service Conciergerie", desc: "Une assistance personnalisée disponible 24h/7j pour tous vos besoins." },
       ]
     },
-    vibe: { title: "Quelle est votre vibe aujourd'hui ?", subtitle: "Choisissez l'émotion qui guidera votre prochain voyage.", eyebrow: "Expérience Sur Mesure" },
+    vibe: { 
+      title: "Quelle est votre vibe aujourd'hui ?", 
+      subtitle: "Choisissez l'émotion qui guidera votre prochain voyage.", 
+      eyebrow: "Expérience Sur Mesure",
+      columns: "4",
+      items: [
+        { id: "business", title: "Business Elite", subtitle: "Prestige & Stratégie", icon: "ShieldCheck", image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800", color_from: "primary", color_via: "primary", lifestyle: "business" },
+        { id: "romance", title: "Grand Tourisme", subtitle: "Émotion & Liberté", icon: "Wind", image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800", color_from: "rose-500", color_via: "orange-500", lifestyle: "romance" },
+        { id: "aventure", title: "Wild Adventure", subtitle: "Puissance & Exploration", icon: "Mountain", image: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800", color_from: "emerald-600", color_via: "teal-600", lifestyle: "adventure" },
+        { id: "family", title: "Family First", subtitle: "Confort & Partage", icon: "Zap", image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800", color_from: "gold", color_via: "gold", lifestyle: "family" }
+      ]
+    },
     lifestyle: { title: "Bien plus qu'un simple trajet.", subtitle: "L'Expérience", text: "Nous intégrons chaque voyage dans un style de vie d'exception." },
     faq: { title: "Questions Fréquentes", subtitle: "Tout ce que vous devez savoir pour votre location.", badge: "Support Client", contact_text: "Vous avez encore des questions ?", contact_link: "/contact" },
     experience: { eyebrow: "L'Expérience Premium", title_line1: "Bien plus qu'un", title_line2: "simple trajet.", description: "Nous redéfinissons la mobilité de luxe.", cta_text: "Voir toute la collection", cta_link: "/fleet", stats: [{ value: "98%", label: "Recommandation" }, { value: "24/7", label: "Support VIP" }], lifestyles: [{ id: "business", title: "Business Elite", subtitle: "Ponctualité et prestige", icon: "Shield", image: "", color_from: "blue-400", color_via: "blue-600", lifestyle: "business" }] },

@@ -102,12 +102,13 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                 );
 
               case "stats":
+                const items = form.stats_config?.items || [];
                 return (
                   <section id="preview-section-stats" key="stats" className="py-10 px-5 bg-white grid grid-cols-2 gap-4">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="text-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <p className="text-xl font-bold text-slate-900">{(form.stats_config as any)[`value_${i}`]}</p>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{(form.stats_config as any)[`label_${i}`]}</p>
+                    {items.slice(0, 4).map((s: any, idx: number) => (
+                      <div key={idx} className="text-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <p className="text-xl font-bold text-slate-900">{s.value}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{s.label}</p>
                       </div>
                     ))}
                   </section>

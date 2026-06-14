@@ -64,11 +64,15 @@ interface VibeSelectorProps {
     eyebrow?: string;
     items?: LifestyleItem[];
     cta_text?: string;
+    columns?: string;
   };
 }
 
 export default function VibeSelector({ content }: VibeSelectorProps) {
   const router = useRouter();
+
+  const cols = content?.columns ? parseInt(content.columns) : 4;
+  const gridColsClass = cols === 2 ? "lg:grid-cols-2" : cols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4";
 
   const vibes = content?.items?.length
     ? content.items.map((item) => ({
@@ -119,7 +123,7 @@ export default function VibeSelector({ content }: VibeSelectorProps) {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-8", gridColsClass)}>
           {vibes.map((vibe, index) => (
             <motion.div
               key={vibe.id}
@@ -128,7 +132,17 @@ export default function VibeSelector({ content }: VibeSelectorProps) {
               viewport={{ once: true }}
               transition={{ delay: index * 0.08, duration: 0.5 }}
               whileHover={{ y: -8 }}
-              onClick={() => router.push(`/fleet?lifestyle=${vibe.lifestyle}`)}
+              onClick={() => {
+                if (vibe.link) {
+                  if (vibe.link.startsWith("http")) {
+                    window.open(vibe.link, "_blank");
+                  } else {
+                    router.push(vibe.link);
+                  }
+                } else {
+                  router.push(`/fleet?lifestyle=${vibe.lifestyle}`);
+                }
+              }}
               className="group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-gold/20 transition-all duration-500 border-2 border-transparent hover:border-gold/40"
             >
               <img

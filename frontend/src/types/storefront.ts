@@ -75,15 +75,21 @@ export interface SpecialOffer {
   active: boolean;
 }
 
+export interface StatItem {
+  id: string;
+  value: string;
+  label: string;
+  icon?: string;
+  color?: string;
+}
+
 export interface StatsConfig {
-  label_1: string;
-  value_1: string;
-  label_2: string;
-  value_2: string;
-  label_3: string;
-  value_3: string;
-  label_4: string;
-  value_4: string;
+  columns?: string;
+  theme?: string;
+  height?: string;
+  text_size?: string;
+  text_color?: string;
+  items: StatItem[];
 }
 
 export interface FAQItem {
@@ -106,7 +112,7 @@ export interface ConciergeConfig {
 export interface SectionsContent {
   hero: { badge: string; title: string; subtitle: string; benefits?: { icon: string; text: string }[] };
   why_us: { title: string; subtitle: string };
-  vibe: { title: string; subtitle: string; eyebrow?: string };
+  vibe: { title: string; subtitle: string; eyebrow?: string; columns?: string; items?: LifestyleItem[] };
   lifestyle: { title: string; subtitle: string; text: string; images?: LifestyleImage[] };
   faq: { title: string; subtitle: string; badge?: string; contact_text?: string; contact_link?: string };
   experience: {
@@ -197,6 +203,7 @@ export interface LifestyleItem {
   color_via: string;
   lifestyle: string;
   cta_text?: string;
+  link?: string;
 }
 
 export interface LifestyleImage {

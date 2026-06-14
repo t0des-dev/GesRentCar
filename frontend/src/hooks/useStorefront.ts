@@ -17,7 +17,7 @@ export interface StorefrontData {
   features_config: { icon: string; title: string; desc: string }[];
   concierge_config: { title: string; text: string; badge: string };
   testimonials: any[];
-  stats_config: { label_1: string; value_1: string; label_2: string; value_2: string; label_3: string; value_3: string; label_4: string; value_4: string };
+  stats_config: { columns?: string; theme?: string; height?: string; text_size?: string; text_color?: string; items: any[] };
   sections_config: Record<string, boolean | undefined>;
   sections_order?: any[];
 }
@@ -66,6 +66,26 @@ export function useStorefront(): StorefrontData {
     }
   }
 
+  // Recover legacy stats_config
+  let statsItems = agency.stats_config?.items;
+  if (!statsItems || statsItems.length === 0) {
+    if (agency.stats_config && ('label_1' in agency.stats_config || 'value_1' in agency.stats_config)) {
+      const legacy = agency.stats_config as any;
+      statsItems = [];
+      if (legacy.label_1 || legacy.value_1) statsItems.push({ id: "s1", label: legacy.label_1 || "Clients", value: legacy.value_1 || "-", icon: "Users", color: "primary" });
+      if (legacy.label_2 || legacy.value_2) statsItems.push({ id: "s2", label: legacy.label_2 || "Véhicules", value: legacy.value_2 || "-", icon: "Car", color: "indigo" });
+      if (legacy.label_3 || legacy.value_3) statsItems.push({ id: "s3", label: legacy.label_3 || "Expérience", value: legacy.value_3 || "-", icon: "Clock", color: "emerald" });
+      if (legacy.label_4 || legacy.value_4) statsItems.push({ id: "s4", label: legacy.label_4 || "Support", value: legacy.value_4 || "-", icon: "Phone", color: "rose" });
+    } else {
+      statsItems = [
+        { id: "s1", label: "Clients satisfaits", value: "2,400+", icon: "Users", color: "primary" },
+        { id: "s2", label: "Véhicules premium", value: "80+", icon: "Car", color: "indigo" },
+        { id: "s3", label: "Années d'expérience", value: "15", icon: "Clock", color: "emerald" },
+        { id: "s4", label: "Support disponible", value: "24/7", icon: "Phone", color: "rose" }
+      ];
+    }
+  }
+
   return {
     agency_name: agency.agency_name || "Vectoria Rent Car",
     agency_slogan: agency.agency_slogan || "Premium Car Rental Experience",
@@ -84,14 +104,12 @@ export function useStorefront(): StorefrontData {
     },
     testimonials: agency.testimonials || [],
     stats_config: {
-      label_1: agency.stats_config?.label_1 || "Clients satisfaits",
-      value_1: agency.stats_config?.value_1 || "2,400+",
-      label_2: agency.stats_config?.label_2 || "Véhicules premium",
-      value_2: agency.stats_config?.value_2 || "80+",
-      label_3: agency.stats_config?.label_3 || "Années d'expérience",
-      value_3: agency.stats_config?.value_3 || "15",
-      label_4: agency.stats_config?.label_4 || "Support disponible",
-      value_4: agency.stats_config?.value_4 || "24/7",
+      columns: agency.stats_config?.columns || "4",
+      theme: agency.stats_config?.theme || "dark",
+      height: agency.stats_config?.height || "normal",
+      text_size: agency.stats_config?.text_size || "normal",
+      text_color: agency.stats_config?.text_color || "",
+      items: statsItems
     },
     sections_config: agency.sections_config || {},
     sections_order: agency.sections_order || [],

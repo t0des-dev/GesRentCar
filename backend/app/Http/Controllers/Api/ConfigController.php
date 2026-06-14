@@ -24,7 +24,7 @@ class ConfigController extends Controller
             $type = $request->input('type');
             
             $filename = time() . '_' . $type . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/branding', $filename);
+            $path = $file->storeAs('branding', $filename, 'public');
             
             $url = asset('storage/branding/' . $filename);
 

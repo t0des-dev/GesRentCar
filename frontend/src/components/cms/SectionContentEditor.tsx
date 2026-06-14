@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, Reorder } from "framer-motion";
 import { Plus, Trash2, GripVertical, Upload } from "lucide-react";
 import AssetUpload from "@/components/AssetUpload";
+import { getImageUrl } from "@/lib/utils/image";
 
 interface FieldDef {
   key: string;
@@ -34,6 +35,7 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
   ],
   vibe: [
     { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text" },
     { key: "title", label: "Titre", type: "text" },
     { key: "subtitle", label: "Sous-titre", type: "textarea" },
   ],
@@ -96,8 +98,15 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
   ],
   featured_vehicles: [
     { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "title", label: "Titre", type: "text" },
     { key: "cta_text", label: "Texte du bouton", type: "text" },
     { key: "cta_link", label: "Lien du bouton", type: "text" },
+    { key: "layout", label: "Mise en page (grid ou carousel)", type: "text", placeholder: "grid" },
+    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text", placeholder: "3" },
+    { key: "limit", label: "Nombre max de véhicules", type: "number", placeholder: "6" },
+    { key: "show_filters", label: "Afficher les filtres par catégorie (true/false)", type: "text", placeholder: "true" },
+    { key: "filter_color", label: "Couleur des filtres actifs (optionnel)", type: "color" },
+    { key: "dynamic_bg", label: "Fond dynamique au survol (true/false)", type: "text", placeholder: "true" },
     { key: "loading_text", label: "Texte chargement", type: "text" },
     { key: "empty_heading", label: "Titre vide", type: "text" },
     { key: "empty_description", label: "Description vide", type: "textarea" },
@@ -117,14 +126,11 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "badge", label: "Badge", type: "text" },
   ],
   stats: [
-    { key: "label_1", label: "Étiquette 1", type: "text" },
-    { key: "value_1", label: "Valeur 1", type: "text" },
-    { key: "label_2", label: "Étiquette 2", type: "text" },
-    { key: "value_2", label: "Valeur 2", type: "text" },
-    { key: "label_3", label: "Étiquette 3", type: "text" },
-    { key: "value_3", label: "Valeur 3", type: "text" },
-    { key: "label_4", label: "Étiquette 4", type: "text" },
-    { key: "value_4", label: "Valeur 4", type: "text" },
+    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text" },
+    { key: "theme", label: "Thème (dark ou light)", type: "text" },
+    { key: "height", label: "Hauteur (small, normal, large)", type: "text" },
+    { key: "text_size", label: "Taille texte (small, normal, large, xl)", type: "text" },
+    { key: "text_color", label: "Couleur personnalisée (optionnel)", type: "color" },
   ],
 };
 
@@ -154,6 +160,16 @@ function StringField({ value, onChange, field }: { value: string; onChange: (v: 
           className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all uppercase"
         />
       </div>
+    );
+  }
+  if (field.type === "image") {
+    return (
+      <AssetUpload
+        type="hero"
+        label=""
+        currentUrl={value}
+        onUploadComplete={onChange}
+      />
     );
   }
   if (field.type === "textarea") {
@@ -198,8 +214,8 @@ function ReorderableArrayEditor({
             <div className="flex items-center gap-2 mb-2">
               <GripVertical size={16} className="text-slate-300 shrink-0" />
               {thumbnailKey && item[thumbnailKey] && (
-                <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 shrink-0">
-                  <img src={item[thumbnailKey]} className="w-full h-full object-cover" alt="" />
+                <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100">
+                  <img src={getImageUrl(item[thumbnailKey])} className="w-full h-full object-cover" alt="" />
                 </div>
               )}
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">#{idx + 1}</span>
@@ -333,6 +349,30 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
         );
       })}
 
+      {/* Vibe — items array */}
+      {sectionId === "vibe" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Expériences (Vibes)</label>
+          <ReorderableArrayEditor
+            items={content?.items ?? []}
+            onChange={(items) => onChange({ ...content, items })}
+            fields={[
+              { key: "id", label: "ID (unique)", type: "text" },
+              { key: "title", label: "Titre", type: "text" },
+              { key: "subtitle", label: "Sous-titre", type: "text" },
+              { key: "icon", label: "Icône", type: "text" },
+              { key: "image", label: "Image", type: "image" },
+              { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
+              { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
+              { key: "lifestyle", label: "Lifestyle (ex: business)", type: "text" },
+              { key: "link", label: "Lien personnalisé", type: "text" },
+            ]}
+            defaultItem={{ id: "", title: "", subtitle: "", icon: "ShieldCheck", image: "", color_from: "primary", color_via: "primary", lifestyle: "", link: "" }}
+            thumbnailKey="image"
+          />
+        </div>
+      )}
+
       {/* Hero — benefits array */}
       {sectionId === "hero" && (
         <div>
@@ -358,7 +398,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
             onChange={(items) => onChange({ ...content, features: items })}
             fields={[
               { key: "icon", label: "Icône (ex: Crown, Star, Shield...)", type: "text" },
-              { key: "image", label: "Ou Image (URL de l'image)", type: "text" },
+              { key: "image", label: "Ou Image (URL de l'image)", type: "image" },
               { key: "title", label: "Titre", type: "text" },
               { key: "desc", label: "Description", type: "textarea" },
             ]}
@@ -466,12 +506,62 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
             items={content?.images ?? []}
             onChange={(items) => onChange({ ...content, images: items })}
             fields={[
-              { key: "url", label: "URL image", type: "text" },
-              { key: "speed", label: "Vitesse défilement", type: "text" },
-              { key: "className", label: "Classe CSS", type: "text" },
+              { key: "url", label: "URL image", type: "image" },
+              { key: "speed", label: "Vitesse défilement (ex: 0.15)", type: "text" },
+              { key: "className", label: "Classe CSS (taille et grille)", type: "text" },
             ]}
-            defaultItem={{ url: "", speed: "0", className: "" }}
+            defaultItem={{ url: "", speed: "0.1", className: "col-span-6 h-[400px]" }}
             thumbnailKey="url"
+          />
+          <div className="mt-6">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Statistiques du bloc</label>
+            <ReorderableArrayEditor
+              items={content?.stats ?? []}
+              onChange={(items) => onChange({ ...content, stats: items })}
+              fields={[
+                { key: "value", label: "Valeur (ex: 98%)", type: "text" },
+                { key: "label", label: "Libellé (ex: Recommandation)", type: "text" },
+              ]}
+              defaultItem={{ value: "", label: "" }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Testimonials — items array */}
+      {sectionId === "testimonials" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Avis Clients</label>
+          <ReorderableArrayEditor
+            items={content?.items ?? []}
+            onChange={(items) => onChange({ ...content, items })}
+            fields={[
+              { key: "name", label: "Nom du client", type: "text" },
+              { key: "role", label: "Rôle / Titre", type: "text" },
+              { key: "content", label: "Témoignage", type: "textarea" },
+              { key: "image", label: "Image (URL)", type: "image" },
+            ]}
+            defaultItem={{ name: "", role: "Client", content: "", image: "" }}
+            thumbnailKey="image"
+          />
+        </div>
+      )}
+
+      {/* Stats — items array */}
+      {sectionId === "stats" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Statistiques</label>
+          <ReorderableArrayEditor
+            items={content?.items ?? []}
+            onChange={(items) => onChange({ ...content, items })}
+            fields={[
+              { key: "id", label: "ID (unique)", type: "text" },
+              { key: "value", label: "Valeur (ex: 2400+)", type: "text" },
+              { key: "label", label: "Étiquette (ex: Clients satisfaits)", type: "text" },
+              { key: "icon", label: "Icône (optionnel)", type: "text" },
+              { key: "color", label: "Couleur (ex: primary)", type: "text" },
+            ]}
+            defaultItem={{ id: "", label: "", value: "", icon: "Star", color: "primary" }}
           />
         </div>
       )}

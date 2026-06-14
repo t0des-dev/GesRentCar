@@ -75,17 +75,24 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08, duration: 0.5 }}
-                className="group bg-white rounded-2xl p-8 border border-slate-100 hover:border-primary/20 transition-all duration-500"
+                className="group bg-white rounded-2xl border border-slate-100 hover:border-primary/20 transition-all duration-500 overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5"
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 mb-6 group-hover:bg-primary/5 group-hover:text-primary transition-all duration-500 overflow-hidden">
-                  {feature.image ? (
-                    <img src={feature.image} alt={feature.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <Icon size={24} strokeWidth={1.5} />
-                  )}
+                {feature.image ? (
+                  <div className="w-full h-48 relative overflow-hidden shrink-0 bg-slate-100">
+                    <img src={feature.image} alt={feature.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                ) : (
+                  <div className="px-8 pt-8 pb-2">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500">
+                      <Icon size={24} strokeWidth={1.5} />
+                    </div>
+                  </div>
+                )}
+                <div className="p-8 flex-1 flex flex-col">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors">{feature.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
               </motion.div>
             );
           })}

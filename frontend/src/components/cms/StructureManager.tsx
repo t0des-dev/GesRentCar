@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { Layers, Settings, Bot, Quote, ChevronRight, Edit3, ArrowLeft } from "lucide-react";
+import { Layers, Settings, Bot, Quote, ChevronRight, Edit3, ArrowLeft, Search } from "lucide-react";
 import SectionReorder from "./SectionReorder";
 import SectionContentEditor from "./SectionContentEditor";
 import type { StorefrontForm } from "@/types/storefront";
@@ -165,8 +165,8 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
                    <div className="flex justify-end"><ChevronRight size={16} className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" /></div>
                 </div>
                 <div onClick={() => onNavigate?.("seo")} className="p-8 rounded-[32px] bg-emerald-50/30 border border-emerald-100/50 group hover:bg-emerald-50 transition-all cursor-pointer">
-                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600"><Quote size={20} /></div><span className="text-sm font-black text-slate-900">Social & Témoignages</span></div>
-                   <p className="text-[11px] text-slate-500 font-medium">Mettez en avant les avis clients et la galerie lifestyle.</p>
+                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600"><Search size={20} /></div><span className="text-sm font-black text-slate-900">SEO & Visibilité</span></div>
+                   <p className="text-[11px] text-slate-500 font-medium">Gérez le référencement de votre agence sur Google et les réseaux sociaux.</p>
                    <div className="flex justify-end"><ChevronRight size={16} className="text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" /></div>
                 </div>
               </div>

@@ -54,7 +54,7 @@ export default function HomeClient() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
 
-  const { data: apiData, isLoading } = useVehicles({ per_page: 3 });
+  const { data: apiData, isLoading } = useVehicles({ per_page: 24 });
   const featuredVehicles = apiData?.data ?? [];
 
   const handleSearch = () => {
@@ -72,12 +72,7 @@ export default function HomeClient() {
   const sections = storefront.sections_config;
   const aboutText = lang === 'ar' ? storefront.about_text_ar : (lang === 'en' ? storefront.about_text_en : storefront.about_text_fr);
 
-  const STATS = useMemo(() => [
-    { value: storefront.stats_config.value_1, label: storefront.stats_config.label_1 },
-    { value: storefront.stats_config.value_2, label: storefront.stats_config.label_2 },
-    { value: storefront.stats_config.value_3, label: storefront.stats_config.label_3 },
-    { value: storefront.stats_config.value_4, label: storefront.stats_config.label_4 },
-  ], [storefront.stats_config]);
+  const STATS = storefront.stats_config.items || [];
 
   const SECTION_MAP: Record<string, () => ReactNode> = {
     hero: () => (
@@ -90,7 +85,7 @@ export default function HomeClient() {
       />
     ),
     experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
-    stats: () => <StatsSection stats={STATS} />,
+    stats: () => <StatsSection content={storefront.stats_config} />,
     vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
     lifestyle_gallery: () => <LifestyleGallery content={storefront.sections_content.lifestyle} />,
     why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,

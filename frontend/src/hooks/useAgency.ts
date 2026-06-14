@@ -61,10 +61,18 @@ export interface AgencyConfig {
     font_family?: string;
   };
   stats_config?: {
-    label_1?: string; value_1?: string;
-    label_2?: string; value_2?: string;
-    label_3?: string; value_3?: string;
-    label_4?: string; value_4?: string;
+    columns?: string;
+    theme?: string;
+    height?: string;
+    text_size?: string;
+    text_color?: string;
+    items?: Array<{
+      id: string;
+      value: string;
+      label: string;
+      icon?: string;
+      color?: string;
+    }>;
   };
   category_prices?: any;
   special_offers?: any[];
@@ -92,9 +100,58 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
       { icon: "Clock", text: "Support VIP 24/7" },
     ],
   },
-  why_us: { title: "Pourquoi nous choisir ?", subtitle: "L'excellence à chaque étape" },
-  vibe: { title: "Quelle est votre vibe aujourd'hui ?", subtitle: "Choisissez l'émotion qui guidera votre voyage", eyebrow: "Expérience Sur Mesure" },
-  lifestyle: { title: "Bien plus qu'un simple trajet", subtitle: "L'Expérience", text: "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception" },
+  why_us: { 
+    title: "Pourquoi nous choisir ?", 
+    subtitle: "L'excellence à chaque étape",
+    features: [
+      { icon: "Crown", title: "Flotte d'Exception", desc: "Une sélection rigoureuse des modèles les plus prestigieux du marché." },
+      { icon: "ShieldCheck", title: "Assurance Premium", desc: "Roulez en toute sérénité avec nos couvertures tous risques incluses." },
+      { icon: "HeadphonesIcon", title: "Service Conciergerie", desc: "Une assistance personnalisée disponible 24h/7j pour tous vos besoins." }
+    ]
+  },
+  vibe: { 
+    title: "Quelle est votre vibe aujourd'hui ?", 
+    subtitle: "Choisissez l'émotion qui guidera votre voyage", 
+    eyebrow: "Expérience Sur Mesure",
+    columns: "4",
+    items: [
+      { id: "business", title: "Business Elite", subtitle: "Prestige & Stratégie", icon: "ShieldCheck", image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800", color_from: "primary", color_via: "primary", lifestyle: "business" },
+      { id: "romance", title: "Grand Tourisme", subtitle: "Émotion & Liberté", icon: "Wind", image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800", color_from: "rose-500", color_via: "orange-500", lifestyle: "romance" },
+      { id: "aventure", title: "Wild Adventure", subtitle: "Puissance & Exploration", icon: "Mountain", image: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800", color_from: "emerald-600", color_via: "teal-600", lifestyle: "adventure" },
+      { id: "family", title: "Family First", subtitle: "Confort & Partage", icon: "Zap", image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800", color_from: "gold", color_via: "gold", lifestyle: "family" }
+    ]
+  },
+  lifestyle: { 
+    title: "Bien plus qu'un simple trajet", 
+    subtitle: "L'Expérience", 
+    text: "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception",
+    stats: [
+      { value: "98%", label: "Recommandation" },
+      { value: "24h", label: "Service VIP" }
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
+        speed: "0.1",
+        className: "col-span-6 h-[450px] mt-20"
+      },
+      {
+        url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800",
+        speed: "0.2",
+        className: "col-span-6 h-[550px]"
+      },
+      {
+        url: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800",
+        speed: "0.15",
+        className: "col-span-4 h-[400px] -mt-10"
+      },
+      {
+        url: "https://images.unsplash.com/photo-1525609002752-ad9d9b9b4125?auto=format&fit=crop&q=80&w=800",
+        speed: "0.25",
+        className: "col-span-8 h-[500px]"
+      }
+    ]
+  },
   faq: { title: "Questions fréquentes", subtitle: "Tout ce que vous devez savoir", badge: "Support Client", contact_text: "Vous avez encore des questions ?", contact_link: "/contact" },
   experience: {
     eyebrow: "L'Expérience Premium",
@@ -223,10 +280,17 @@ const DEFAULT_CONFIG: AgencyConfig = {
     glassmorphism: true,
   },
   stats_config: {
-    label_1: "Clients satisfaits", value_1: "2,400+",
-    label_2: "Véhicules premium", value_2: "80+",
-    label_3: "Années d'expérience", value_3: "15",
-    label_4: "Support disponible", value_4: "24/7",
+    columns: "4",
+    theme: "dark",
+    height: "normal",
+    text_size: "normal",
+    text_color: "",
+    items: [
+      { id: "s1", label: "Clients satisfaits", value: "2,400+", icon: "Users", color: "primary" },
+      { id: "s2", label: "Véhicules premium", value: "80+", icon: "Car", color: "indigo" },
+      { id: "s3", label: "Années d'expérience", value: "15", icon: "Clock", color: "emerald" },
+      { id: "s4", label: "Support disponible", value: "24/7", icon: "Phone", color: "rose" }
+    ]
   },
   faq_config: [
     { q: "Comment réserver un véhicule ?", a: "Sélectionnez votre véhicule, choisissez vos dates et complétez le paiement en ligne." },
@@ -264,6 +328,41 @@ export function useAgency() {
         ...DEFAULT_SECTIONS_CONTENT,
         ...data.sections_content,
       };
+      
+      // Ensure why_us is merged properly
+      merged.sections_content.why_us = {
+        ...(DEFAULT_SECTIONS_CONTENT.why_us || {}),
+        ...(data.sections_content.why_us || {})
+      };
+
+      // Ensure testimonials is merged properly
+      merged.sections_content.testimonials = {
+        ...(DEFAULT_SECTIONS_CONTENT.testimonials || {}),
+        ...(data.sections_content.testimonials || {})
+      };
+
+      // Recover legacy features_config into why_us if it doesn't exist yet
+      if ((!data.sections_content.why_us?.features || data.sections_content.why_us.features.length === 0) && merged.features_config && merged.features_config.length > 0) {
+        merged.sections_content.why_us.features = merged.features_config;
+      }
+
+      // Recover legacy testimonials into sections_content.testimonials.items
+      if ((!data.sections_content.testimonials?.items || data.sections_content.testimonials.items.length === 0) && merged.testimonials && merged.testimonials.length > 0) {
+        merged.sections_content.testimonials.items = merged.testimonials;
+      }
+    } else {
+      if (merged.features_config && merged.features_config.length > 0 && merged.sections_content) {
+        merged.sections_content.why_us = {
+          ...(merged.sections_content.why_us || {}),
+          features: merged.features_config
+        };
+      }
+      if (merged.testimonials && merged.testimonials.length > 0 && merged.sections_content) {
+        merged.sections_content.testimonials = {
+          ...(merged.sections_content.testimonials || {}),
+          items: merged.testimonials
+        };
+      }
     }
     return merged;
   }, [data]);
