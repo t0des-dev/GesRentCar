@@ -218,7 +218,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                         <option value="">-- Aucun véhicule spécifique --</option>
                         {vehicles.map(v => (
                           <option key={v.id} value={v.id}>
-                            {v.brand} {v.model} ({v.registration_number})
+                            {v.brand} {v.model} ({v.plate})
                           </option>
                         ))}
                       </select>

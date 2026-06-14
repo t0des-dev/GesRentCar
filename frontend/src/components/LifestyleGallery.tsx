@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import type { LifestyleImage } from "@/types/storefront";
 import { ArrowRight } from "lucide-react";
 
