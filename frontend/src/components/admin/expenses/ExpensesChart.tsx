@@ -80,7 +80,7 @@ export default function ExpensesChart({ expenses }: ExpensesChartProps) {
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value: number) => [`${value.toLocaleString()} DH`, "Montant"]}
+              formatter={(value: any) => [`${Number(value).toLocaleString()} DH`, "Montant"]}
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
             <Legend 
