@@ -47,13 +47,15 @@ export interface Vehicle {
 export interface Maintenance {
   id: number;
   vehicle_id: number;
-  title: string;
+  title?: string;
+  type?: string;
   description?: string;
   cost: number;
-  date: string;
-  status: "pending" | "in_progress" | "completed";
+  date?: string;
+  maintenance_date?: string;
+  status?: "pending" | "in_progress" | "completed";
   vehicle?: Vehicle;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface Expense {
