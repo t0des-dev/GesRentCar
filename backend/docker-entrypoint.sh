@@ -4,6 +4,11 @@ set -e
 # Wait for database to be ready (optional but recommended)
 # sleep 5
 
+if [ ! -f .env ]; then
+    cp .env.example .env
+    php artisan key:generate --force
+fi
+
 # Run migrations
 php artisan migrate --force
 
