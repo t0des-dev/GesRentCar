@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import UserManager from "@/components/UserManager";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import UserManager from "@/modules/admin/components/UserManager";
+import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { Users } from "lucide-react";
 import { motion } from "framer-motion";
 

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Crown, HeadphonesIcon, ShieldCheck, Star, Car, LayoutDashboard, Settings, Users } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface WhyUsSectionProps {
   content?: {

@@ -1,25 +1,25 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslation } from "@/hooks/useTranslation";
-import { useVehicles } from "@/hooks/useApi";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { useVehicles } from "@/shared/hooks/useApi";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 
 // Components
-import StepIndicator from "@/components/booking/StepIndicator";
-import BookingSummary from "@/components/booking/BookingSummary";
-import ConfirmationView from "@/components/booking/ConfirmationView";
-import VehicleStep from "@/components/booking/VehicleStep";
-import PeriodStep from "@/components/booking/PeriodStep";
-import OptionsStep from "@/components/booking/OptionsStep";
-import IdentityStep from "@/components/booking/IdentityStep";
-import SignatureStep from "@/components/booking/SignatureStep";
-import PaymentStep from "@/components/booking/PaymentStep";
-import { VehicleShowroom } from "@/components/booking/VehicleShowroom";
+import StepIndicator from "@/modules/booking/components/StepIndicator";
+import BookingSummary from "@/modules/booking/components/BookingSummary";
+import ConfirmationView from "@/modules/booking/components/ConfirmationView";
+import VehicleStep from "@/modules/booking/components/VehicleStep";
+import PeriodStep from "@/modules/booking/components/PeriodStep";
+import OptionsStep from "@/modules/booking/components/OptionsStep";
+import IdentityStep from "@/modules/booking/components/IdentityStep";
+import SignatureStep from "@/modules/booking/components/SignatureStep";
+import PaymentStep from "@/modules/booking/components/PaymentStep";
+import { VehicleShowroom } from "@/modules/booking/components/VehicleShowroom";
 
 // Hooks
-import { useBooking } from "@/hooks/useBooking";
+import { useBooking } from "@/modules/booking/hooks/useBooking";
 
 export default function BookingPage() {
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });

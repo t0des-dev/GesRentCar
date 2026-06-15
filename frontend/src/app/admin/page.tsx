@@ -1,21 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import PricingSimulator from "@/components/PricingSimulator";
 import ProfitabilityTable from "@/components/ProfitabilityTable";
-import api from "@/lib/api/client";
+import api from "@/shared/services/client";
 import { Reservation, DashboardStats } from "@/types/admin";
 
 // Modular Components
-import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
-import StatCards from "@/components/admin/dashboard/StatCards";
-import FleetCalendar from "@/components/admin/dashboard/FleetCalendar";
-import ReservationsTable from "@/components/admin/dashboard/ReservationsTable";
-import ReservationDrawer from "@/components/admin/dashboard/ReservationDrawer";
-import MaintenanceAlerts from "@/components/admin/dashboard/MaintenanceAlerts";
-import DocumentPreviewModal from "@/components/admin/dashboard/DocumentPreviewModal";
-import { PerformanceCharts, PopularModels } from "@/components/admin/dashboard/DashboardAnalytics";
+import DashboardHeader from "@/modules/admin/components/dashboard/DashboardHeader";
+import StatCards from "@/modules/admin/components/dashboard/StatCards";
+import FleetCalendar from "@/modules/admin/components/dashboard/FleetCalendar";
+import ReservationsTable from "@/modules/admin/components/dashboard/ReservationsTable";
+import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationDrawer";
+import MaintenanceAlerts from "@/modules/admin/components/dashboard/MaintenanceAlerts";
+import DocumentPreviewModal from "@/modules/admin/components/dashboard/DocumentPreviewModal";
+import { PerformanceCharts, PopularModels } from "@/modules/admin/components/dashboard/DashboardAnalytics";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 

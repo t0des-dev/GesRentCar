@@ -1,9 +1,9 @@
 "use client";
 
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useState, useEffect } from "react";
 import { Search, Calendar, Filter, Loader2, AlertCircle, Car } from "lucide-react";
-import VehicleCard from "@/components/VehicleCard";
+import VehicleCard from "@/modules/fleet/components/VehicleCard";
 import styles from "./page.module.css";
 
 const API = "http://localhost:8000/api";

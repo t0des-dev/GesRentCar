@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Award, Shield, Heart, Users, Sparkles, Crown, Zap, Globe } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 export default function AboutPage() {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { motion } from "framer-motion";
 
 interface HowItWorksStep { num?: string; title?: string; desc?: string; }

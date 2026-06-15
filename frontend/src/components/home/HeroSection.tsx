@@ -2,8 +2,8 @@
 
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { useTranslation } from "@/hooks/useTranslation";
-import { getImageUrl } from "@/lib/utils/image";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { getImageUrl } from "@/shared/utils/image";
 
 import HeroBackground from "./hero/HeroBackground";
 import HeroContent from "./hero/HeroContent";

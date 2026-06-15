@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 export default function Logo({ className }: { className?: string }) {
   return (

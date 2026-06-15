@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth/context";
+import { useAuth } from "@/modules/auth/context/context";
 
 export default function DashboardGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

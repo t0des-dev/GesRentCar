@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import StorefrontManager from "@/components/StorefrontManager";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import StorefrontManager from "@/modules/storefront/components/StorefrontManager";
+import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { Palette } from "lucide-react";
 
 export default function StorefrontPage() {

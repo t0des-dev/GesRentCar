@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import AnalyticsDashboard from "@/components/AnalyticsDashboard";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import AnalyticsDashboard from "@/modules/admin/components/AnalyticsDashboard";
+import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 

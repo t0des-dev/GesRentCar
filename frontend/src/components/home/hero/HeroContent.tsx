@@ -3,8 +3,8 @@
 import React from "react";
 import { motion, MotionValue } from "framer-motion";
 import { Shield, Zap, Clock, Star, Compass, Mountain, Wind, HeadphonesIcon, ShieldCheck, Car, LayoutDashboard, Settings, Users } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
-import MagneticWrapper from "@/components/ui/MagneticWrapper";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import MagneticWrapper from "@/shared/ui/MagneticWrapper";
 
 const ICON_MAP: Record<string, any> = {
   Shield, Zap, Clock, Star, Compass, Mountain, Wind,

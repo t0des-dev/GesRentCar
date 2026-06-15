@@ -1,12 +1,12 @@
 "use client";
 
 import { X, Star, ShieldCheck, Gauge, Fuel, Users, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 import { useState } from "react";
 import Link from "next/link";
-import { useTranslation } from "@/hooks/useTranslation";
-import { getImageUrl } from "@/lib/utils/image";
-import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { getImageUrl } from "@/shared/utils/image";
+import { Button } from "@/shared/ui/button";
 
 interface QuickViewModalProps {
   vehicle: {

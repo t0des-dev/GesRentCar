@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import AdminSettings from "@/components/AdminSettings";
-import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import AdminSettings from "@/modules/admin/components/AdminSettings";
+import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 

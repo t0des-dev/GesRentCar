@@ -1,7 +1,7 @@
 "use client";
 
 import { useCompare } from "@/hooks/useCompare";
-import { useVehicles } from "@/hooks/useApi";
+import { useVehicles } from "@/shared/hooks/useApi";
 import { ArrowLeft, Check, X, Shield, Zap, Info, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";

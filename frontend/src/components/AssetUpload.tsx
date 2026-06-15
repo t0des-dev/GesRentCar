@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { Upload, ImageIcon, Loader2, CheckCircle2, X } from "lucide-react";
-import api from "@/lib/api/client";
-import { cn } from "@/lib/utils";
-import { getImageUrl } from "@/lib/utils/image";
+import api from "@/shared/services/client";
+import { cn } from "@/shared/utils";
+import { getImageUrl } from "@/shared/utils/image";
 
 interface AssetUploadProps {
   type: "logo" | "hero" | "favicon";

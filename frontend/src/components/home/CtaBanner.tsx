@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 interface CtaBannerProps {
   content?: {

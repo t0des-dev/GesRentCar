@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Check, Download, Loader2, AlertCircle, FileText, Calendar, Wallet, Car, ArrowLeft, ShieldCheck } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { reservationService } from "@/lib/api/reservations";
-import { useSignContract } from "@/hooks/useApi";
+import { useSignContract } from "@/shared/hooks/useApi";
 import { useQuery } from "@tanstack/react-query";
 import SignaturePad from "@/components/SignaturePad";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 export default function ContractSignClient() {
   const { id } = useParams();

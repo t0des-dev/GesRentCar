@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAgency } from "@/hooks/useAgency";
 import { Plus } from "lucide-react";
-import api from "@/lib/api/client";
+import api from "@/shared/services/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -12,11 +12,11 @@ import { toast } from "react-hot-toast";
 import { Vehicle, Maintenance } from "@/types/admin";
 
 // Modular Components
-import FleetToolbar from "@/components/admin/fleet/FleetToolbar";
-import VehicleCardAdmin from "@/components/admin/fleet/VehicleCardAdmin";
-import VehicleFormDrawer from "@/components/admin/fleet/VehicleFormDrawer";
-import MaintenanceModal from "@/components/admin/fleet/MaintenanceModal";
-import FleetKPIs from "@/components/admin/fleet/FleetKPIs";
+import FleetToolbar from "@/modules/admin/components/fleet/FleetToolbar";
+import VehicleCardAdmin from "@/modules/admin/components/fleet/VehicleCardAdmin";
+import VehicleFormDrawer from "@/modules/admin/components/fleet/VehicleFormDrawer";
+import MaintenanceModal from "@/modules/admin/components/fleet/MaintenanceModal";
+import FleetKPIs from "@/modules/admin/components/fleet/FleetKPIs";
 
 export default function FleetPage() {
   const { user, checking } = useAuthGuard("admin");

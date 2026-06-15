@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { User, Crown, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 interface UserActionsProps {
   session: any;

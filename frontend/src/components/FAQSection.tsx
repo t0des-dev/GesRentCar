@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, HelpCircle } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
-import { cn } from "@/lib/utils";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { cn } from "@/shared/utils";
 import Link from "next/link";
 
 interface FAQSectionProps {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import SignaturePad from "@/components/SignaturePad";
 import { Car, FileText, CheckCircle, AlertCircle, FileDown } from "lucide-react";
-import api from "@/lib/api/client";
+import api from "@/shared/services/client";
 
 export default function SignClient() {
   const params = useParams();

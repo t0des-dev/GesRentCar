@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useMyReservations } from "@/hooks/useApi";
-import { useAuth } from "@/lib/auth/context";
+import { useMyReservations } from "@/shared/hooks/useApi";
+import { useAuth } from "@/modules/auth/context/context";
 import { AnimatePresence } from "framer-motion";
 
 // Modular Components
-import ProfileHeader from "@/components/dashboard/ProfileHeader";
-import StatsGrid from "@/components/dashboard/StatsGrid";
-import ReservationTabs from "@/components/dashboard/ReservationTabs";
-import ReservationList from "@/components/dashboard/ReservationList";
-import ReservationDetailModal from "@/components/dashboard/ReservationDetailModal";
+import ProfileHeader from "@/modules/dashboard/components/ProfileHeader";
+import StatsGrid from "@/modules/dashboard/components/StatsGrid";
+import ReservationTabs from "@/modules/dashboard/components/ReservationTabs";
+import ReservationList from "@/modules/dashboard/components/ReservationList";
+import ReservationDetailModal from "@/modules/dashboard/components/ReservationDetailModal";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";

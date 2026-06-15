@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState, useMemo, Suspense, type ReactNode } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 
-import { useVehicles } from "@/hooks/useApi";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useVehicles } from "@/shared/hooks/useApi";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useStorefront } from "@/hooks/useStorefront";
 
 import HeroSection from "@/components/home/HeroSection";
@@ -20,11 +20,11 @@ const WhyUsSection = dynamic(() => import("@/components/home/WhyUsSection"));
 const FeaturedVehicles = dynamic(() => import("@/components/home/FeaturedVehicles"));
 const LifestyleSlider = dynamic(() => import("@/components/LifestyleSlider"), { ssr: false });
 const ExperienceMap = dynamic(() => import("@/components/ExperienceMap"), { ssr: false });
-const ConciergeBanner = dynamic(() => import("@/components/ConciergeBanner"), { ssr: false });
+const ConciergeBanner = dynamic(() => import("@/modules/ai/components/ConciergeBanner"), { ssr: false });
 const FAQSection = dynamic(() => import("@/components/FAQSection"), { ssr: false });
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
 const CtaBanner = dynamic(() => import("@/components/home/CtaBanner"));
-const VehicleComparator = dynamic(() => import("@/components/VehicleComparator"), { ssr: false });
+const VehicleComparator = dynamic(() => import("@/modules/fleet/components/VehicleComparator"), { ssr: false });
 const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"));
 
 import JsonLd from "@/components/SEO/JsonLd";

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import api from "@/lib/api/client";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import api from "@/shared/services/client";
 import { motion } from "framer-motion";
 import { ArrowLeft, Car, Calendar as CalendarIcon, Wrench, ShieldAlert, Activity, DollarSign, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 export default function VehicleDashboardPage() {
   const params = useParams();

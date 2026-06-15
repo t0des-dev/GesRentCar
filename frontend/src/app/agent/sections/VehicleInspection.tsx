@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ShieldCheck, Camera, Loader2, AlertTriangle, CheckCircle2, Wrench, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 const API = "http://localhost:8000/api";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";

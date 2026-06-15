@@ -3,9 +3,9 @@
 import { motion, MotionValue, AnimatePresence } from "framer-motion";
 import { MapPin, ArrowRight, Calendar, Building2, Plane } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useState } from "react";
-import MagneticWrapper from "@/components/ui/MagneticWrapper";
+import MagneticWrapper from "@/shared/ui/MagneticWrapper";
 
 interface HeroSearchFormProps {
   location: string;

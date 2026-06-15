@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { PenTool, RotateCcw, Check, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 interface SignaturePadProps {
   onSave: (base64: string) => void;

@@ -1,13 +1,13 @@
 "use client";
 
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
 import { Menu } from "lucide-react";
-import { useAuth } from "@/lib/auth/context";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/modules/auth/context/context";
+import { cn } from "@/shared/utils";
 import { useState, useEffect, useRef } from "react";
 import { useScroll } from "framer-motion";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useCurrency } from "@/shared/hooks/useCurrency";
 
 import Logo from "./navbar/Logo";
 import NavLinks from "./navbar/NavLinks";

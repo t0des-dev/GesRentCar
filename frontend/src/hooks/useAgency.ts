@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { hexToHsl } from "@/lib/utils";
-import api from "@/lib/api/client";
+import { hexToHsl } from "@/shared/utils";
+import api from "@/shared/services/client";
 import { useEffect, useMemo } from "react";
 import type { SectionsContent } from "@/types/storefront";
 

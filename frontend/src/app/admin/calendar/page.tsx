@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
-import api from "@/lib/api/client";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import api from "@/shared/services/client";
 
 // Modular Components
-import CalendarHeader from "@/components/admin/calendar/CalendarHeader";
-import CalendarGrid from "@/components/admin/calendar/CalendarGrid";
-import CalendarReservationModal from "@/components/admin/calendar/CalendarReservationModal";
+import CalendarHeader from "@/modules/admin/components/calendar/CalendarHeader";
+import CalendarGrid from "@/modules/admin/components/calendar/CalendarGrid";
+import CalendarReservationModal from "@/modules/admin/components/calendar/CalendarReservationModal";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 

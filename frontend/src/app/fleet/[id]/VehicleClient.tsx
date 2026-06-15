@@ -5,9 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Star, ShieldCheck, Gauge, Fuel, Users, Calendar, ArrowRight, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
-import api from "@/lib/api/client";
-import { getImageUrl } from "@/lib/utils/image";
-import { useTranslation } from "@/hooks/useTranslation";
+import api from "@/shared/services/client";
+import { getImageUrl } from "@/shared/utils/image";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 export default function VehicleClient() {
   const params = useParams();

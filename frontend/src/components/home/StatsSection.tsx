@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 import * as Icons from "lucide-react";
 
 export default function StatsSection({ content }: { content: any }) {

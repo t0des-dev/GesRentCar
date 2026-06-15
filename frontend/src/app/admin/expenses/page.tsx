@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { Plus, Search, Filter, Trash2, FileText, Download } from "lucide-react";
-import api from "@/lib/api/client";
+import api from "@/shared/services/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Expense } from "@/types/admin";
-import ExpenseFormDrawer from "@/components/admin/expenses/ExpenseFormDrawer";
-import ExpensesChart from "@/components/admin/expenses/ExpensesChart";
+import ExpenseFormDrawer from "@/modules/admin/components/expenses/ExpenseFormDrawer";
+import ExpensesChart from "@/modules/admin/components/expenses/ExpensesChart";
 import { toast } from "react-hot-toast";
 
 export default function ExpensesPage() {

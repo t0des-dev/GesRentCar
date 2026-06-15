@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from "@/lib/api/client";
-import { cn } from "@/lib/utils";
+import api from "@/shared/services/client";
+import { cn } from "@/shared/utils";
 import { TrendingUp, TrendingDown, DollarSign, Car } from "lucide-react";
 
 interface VehicleProfit {

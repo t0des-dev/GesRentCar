@@ -4,11 +4,11 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet
 } from "lucide-react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useState, useEffect } from "react";
 
-import AdminSidebar from "@/components/admin/layout/AdminSidebar";
-import AdminTopbar from "@/components/admin/layout/AdminTopbar";
+import AdminSidebar from "@/modules/admin/components/layout/AdminSidebar";
+import AdminTopbar from "@/modules/admin/components/layout/AdminTopbar";
 
 const MENU_GROUPS = [
   {

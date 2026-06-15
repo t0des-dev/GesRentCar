@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { Zap, ShieldCheck, Mountain, Wind, ChevronRight } from "lucide-react";
 import type { ElementType } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { getImageUrl } from "@/lib/utils/image";
+import { cn } from "@/shared/utils";
+import { getImageUrl } from "@/shared/utils/image";
 import type { LifestyleItem } from "@/types/storefront";
 
 const ICON_MAP: Record<string, ElementType> = {

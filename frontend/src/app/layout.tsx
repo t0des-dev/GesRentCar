@@ -3,16 +3,16 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import { LanguageProvider } from "@/hooks/useTranslation";
+import { LanguageProvider } from "@/shared/hooks/useTranslation";
 import ReactQueryProvider from "@/lib/QueryProvider";
 import CompareFloatingBar from "@/components/CompareFloatingBar";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SessionProvider } from "next-auth/react";
-import { AuthProvider } from "@/lib/auth/context";
-import { CurrencyProvider } from "@/hooks/useCurrency";
+import { AuthProvider } from "@/modules/auth/context/context";
+import { CurrencyProvider } from "@/shared/hooks/useCurrency";
 import { Toaster } from "react-hot-toast";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
-import ConciergeAI from "@/components/ConciergeAI";
+import ConciergeAI from "@/modules/ai/components/ConciergeAI";
 import CustomCursor from "@/components/CustomCursor";
 import SkipNav from "@/components/SkipNav";
 

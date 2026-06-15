@@ -4,9 +4,9 @@ import { useEffect, useState, useMemo } from "react";
 import { Car, ArrowRight } from "lucide-react";
 
 // Modular Sub-components
-import KpiGrid from "@/components/agent/dashboard/KpiGrid";
-import RecentActivity from "@/components/agent/dashboard/RecentActivity";
-import QuickActions from "@/components/agent/dashboard/QuickActions";
+import KpiGrid from "@/modules/agent/components/dashboard/KpiGrid";
+import RecentActivity from "@/modules/agent/components/dashboard/RecentActivity";
+import QuickActions from "@/modules/agent/components/dashboard/QuickActions";
 
 const API = "http://localhost:8000/api";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";

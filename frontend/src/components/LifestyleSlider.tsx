@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Play, ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 import type { Testimonial } from "@/types/storefront";
 
 const DEFAULT_TESTIMONIALS = [

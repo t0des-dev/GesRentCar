@@ -4,11 +4,11 @@ import { useState, useMemo, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Car, ChevronLeft, ChevronRight } from "lucide-react";
-import VehicleCardSkeleton from "@/components/VehicleCardSkeleton";
-import VehicleCard from "@/components/VehicleCard";
-import { useTranslation } from "@/hooks/useTranslation";
-import { cn } from "@/lib/utils";
-import { getImageUrl } from "@/lib/utils/image";
+import VehicleCardSkeleton from "@/modules/fleet/components/VehicleCardSkeleton";
+import VehicleCard from "@/modules/fleet/components/VehicleCard";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { cn } from "@/shared/utils";
+import { getImageUrl } from "@/shared/utils/image";
 
 interface FeaturedVehiclesProps {
   vehicles: any[];

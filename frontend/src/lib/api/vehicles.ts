@@ -1,4 +1,4 @@
-import api from "./client";
+import api from "@/shared/services/client";
 
 export interface Vehicle {
   id: number;

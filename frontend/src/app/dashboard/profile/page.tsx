@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/lib/auth/context";
+import { useAuth } from "@/modules/auth/context/context";
 import { CheckCircle2, AlertCircle, Shield, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "@/lib/api/client";
-import { cn } from "@/lib/utils";
+import api from "@/shared/services/client";
+import { cn } from "@/shared/utils";
 
 // Modular Components
-import ProfileHeaderNavigation from "@/components/dashboard/profile/ProfileHeaderNavigation";
-import PersonalInfoForm from "@/components/dashboard/profile/PersonalInfoForm";
-import SecuritySettingsForm from "@/components/dashboard/profile/SecuritySettingsForm";
+import ProfileHeaderNavigation from "@/modules/dashboard/components/profile/ProfileHeaderNavigation";
+import PersonalInfoForm from "@/modules/dashboard/components/profile/PersonalInfoForm";
+import SecuritySettingsForm from "@/modules/dashboard/components/profile/SecuritySettingsForm";
 
 export default function ProfilePage() {
   const { user, refresh: update } = useAuth();

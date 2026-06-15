@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, CheckCircle2, Shield } from "lucide-react";
-import api from "@/lib/api/client";
+import api from "@/shared/services/client";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
-import VehicleInfo from "@/components/booking/VehicleInfo";
-import BookingForm from "@/components/booking/BookingForm";
-import BookingSuccess from "@/components/booking/BookingSuccess";
-import SignatureStep from "@/components/booking/SignatureStep";
-import { StripeCheckout } from "@/components/StripeCheckout";
+import VehicleInfo from "@/modules/booking/components/VehicleInfo";
+import BookingForm from "@/modules/booking/components/BookingForm";
+import BookingSuccess from "@/modules/booking/components/BookingSuccess";
+import SignatureStep from "@/modules/booking/components/SignatureStep";
+import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 
 const IMAGE_MAPPING: Record<string, string> = {
   "mercedes": "/mercedes_c_class_white_1777383858811.png",

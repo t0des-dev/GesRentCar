@@ -4,20 +4,20 @@ import { useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2, ArrowUpDown } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
-import { useTranslation } from "@/hooks/useTranslation";
-import { FleetFilterState } from "@/components/FleetFilters";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
 import RecentBookingPopup from "@/components/RecentBookingPopup";
 import { LayoutGrid, List } from "lucide-react";
 
 // Modular Components
-import FleetHeader from "@/components/fleet/FleetHeader";
-import FleetSidebar from "@/components/fleet/FleetSidebar";
-import FleetGrid from "@/components/fleet/FleetGrid";
+import FleetHeader from "@/modules/fleet/components/FleetHeader";
+import FleetSidebar from "@/modules/fleet/components/FleetSidebar";
+import FleetGrid from "@/modules/fleet/components/FleetGrid";
 
 // Hooks
-import { useFleetData } from "@/hooks/useFleetData";
+import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 const PAGE_SIZE = 6;
 

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 
 // Modular Components
-import AgentSidebar from "@/components/agent/AgentSidebar";
+import AgentSidebar from "@/modules/agent/components/AgentSidebar";
 
 // Sections (already modular)
 import AgentHome from "./sections/AgentHome";

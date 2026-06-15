@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, LogIn, Shield, UserCog, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
-import { useAuth } from '@/lib/auth/context';
+import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {

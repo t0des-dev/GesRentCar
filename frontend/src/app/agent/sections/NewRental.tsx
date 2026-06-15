@@ -5,9 +5,9 @@ import {
   ScanLine, User, Car, FileCheck, ChevronLeft, ChevronRight,
   Loader2, CheckCircle2, AlertCircle, Camera, Calendar, CreditCard, Phone, Mail, Hash,
 } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 const API = "http://localhost:8000/api";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";

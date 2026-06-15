@@ -8,8 +8,8 @@ import {
   Globe as FacebookIcon, Camera as InstagramIcon, Share2 as TwitterIcon, Globe
 } from "lucide-react";
 import { useAgency } from "@/hooks/useAgency";
-import { useTranslation } from "@/hooks/useTranslation";
-import { cn } from "@/lib/utils";
+import { useTranslation } from "@/shared/hooks/useTranslation";
+import { cn } from "@/shared/utils";
 
 export default function ContactPage() {
   const agency = useAgency();

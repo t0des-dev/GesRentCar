@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { CarFront, Globe, Heart, MessageCircle, MapPin, Phone, Mail, ArrowRight, Share2, Music } from "lucide-react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/shared/ui/button";
 
 export default function Footer() {
   const { t } = useTranslation();
