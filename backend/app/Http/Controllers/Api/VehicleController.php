@@ -14,7 +14,7 @@ class VehicleController extends Controller
     public function index(Request $request, \App\Services\PricingService $pricing)
     {
         $version = Cache::get('vehicles_cache_version', 1);
-        $cacheKey = 'vehicles_index_v' . $version . '_' . md5(json_encode($request->all()) . app()->getLocale());
+        $cacheKey = 'vehicles_index_v2_' . $version . '_' . md5(json_encode($request->all()) . app()->getLocale());
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $pricing) {
             $query = Vehicle::query();
