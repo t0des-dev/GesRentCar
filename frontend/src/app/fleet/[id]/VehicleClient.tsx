@@ -20,6 +20,11 @@ export default function VehicleClient() {
   const [returnDate, setReturnDate] = useState("");
 
   useEffect(() => {
+    setPickupDate(localStorage.getItem('vrc_search_start') || "");
+    setReturnDate(localStorage.getItem('vrc_search_end') || "");
+  }, []);
+
+  useEffect(() => {
     const fetchVehicle = async () => {
       try {
         const res = await api.get(`/vehicles/${params.id}`);

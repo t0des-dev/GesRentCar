@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { BookingState } from "@/types/booking";
 
 const MOCK_OPTIONS = [
@@ -26,6 +26,27 @@ export function useBooking(initialVehicles: any[] = []) {
     },
     paymentMethod: "deposit_card",
   });
+
+  useEffect(() => {
+    // Read from URL and localStorage to prepopulate booking
+    const params = new URLSearchParams(window.location.search);
+    const vId = params.get("vehicle");
+    const sDate = params.get("start_date") || localStorage.getItem('vrc_search_start') || "";
+    const eDate = params.get("end_date") || localStorage.getItem('vrc_search_end') || "";
+    const loc = params.get("location") || localStorage.getItem('vrc_search_location') || "";
+
+    setBooking(prev => ({
+      ...prev,
+      vehicleId: vId ? Number(vId) : prev.vehicleId,
+      startDate: sDate,
+      endDate: eDate,
+      location: loc
+    }));
+
+    if (vId) {
+      setStep(1); // Auto advance to period step if vehicle is already selected
+    }
+  }, []);
 
   const update = (key: keyof BookingState, val: any) => setBooking(prev => ({ ...prev, [key]: val }));
 
