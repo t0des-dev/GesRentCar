@@ -71,7 +71,7 @@ export default function CalendarReservationModal({ reservation, onClose, apiUrl 
                   <motion.a
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    href={`${apiUrl}/contracts/${reservation.id}/pdf?lang=fr&token=${localStorage.getItem('auth_token')}`}
+                    href={`${apiUrl}/public/reservations/${reservation.id}/contract?lang=fr`}
                     target="_blank"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-gold/90 text-ink-1 rounded-xl text-xs font-bold uppercase tracking-wider mt-1"
                   >
