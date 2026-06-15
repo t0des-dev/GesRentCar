@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, FileText, CheckCircle, CreditCard, ShieldCheck, Download, AlertTriangle, MessageCircle, Mail } from "lucide-react";
+import { X, Calendar, FileText, CheckCircle, CreditCard, ShieldCheck, Download, AlertTriangle, MessageCircle, Mail, RefreshCw } from "lucide-react";
 import { Reservation } from "@/types/admin";
 
 interface ReservationDrawerProps {
@@ -10,6 +10,17 @@ interface ReservationDrawerProps {
   onGenerateContract: (id: number) => void;
   actionLoading: number | null;
 }
+
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "—";
+  try {
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+  } catch {
+    return dateStr;
+  }
+};
 
 export default function ReservationDrawer({ reservation, onClose, onGenerateContract, actionLoading }: ReservationDrawerProps) {
   const steps = [
@@ -187,8 +198,8 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">Période</p>
-                <p className="text-sm font-bold text-ink-1">{reservation.start_date}</p>
-                <p className="text-sm font-bold text-ink-1">au {reservation.end_date}</p>
+                <p className="text-sm font-bold text-ink-1">{formatDate(reservation.start_date)}</p>
+                <p className="text-sm font-bold text-ink-1">au {formatDate(reservation.end_date)}</p>
               </div>
             </motion.div>
 
@@ -233,6 +244,7 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
                     disabled={actionLoading === reservation.id}
                     className="flex items-center gap-2 bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all disabled:opacity-60"
                   >
+                    {actionLoading === reservation.id ? <RefreshCw size={16} className="animate-spin" /> : <FileText size={16} />}
                     Générer PDF
                   </motion.button>
                 </div>

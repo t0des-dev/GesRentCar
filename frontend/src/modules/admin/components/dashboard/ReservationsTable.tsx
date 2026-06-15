@@ -15,6 +15,17 @@ interface ReservationsTableProps {
   onRowClick: (reservation: Reservation) => void;
 }
 
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "—";
+  try {
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+  } catch {
+    return dateStr;
+  }
+};
+
 const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
   confirmed:       { bg: "from-emerald-500/20 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-500" },
   active:          { bg: "from-primary/20 to-primary/10", border: "border-primary/40", text: "text-primary" },
@@ -132,7 +143,7 @@ export default function ReservationsTable({
                   </td>
                   <td className="py-4 pr-4 text-sm text-ink-1 font-medium">{r.client?.name ?? "—"}</td>
                   <td className="py-4 pr-4 text-sm text-ink-2">
-                    {r.start_date} <span className="text-ink-3 mx-1">→</span> {r.end_date}
+                    {formatDate(r.start_date)} <span className="text-ink-3 mx-1">→</span> {formatDate(r.end_date)}
                   </td>
                   <td className="py-4 pr-4 text-sm font-bold text-gold">{r.total_price.toLocaleString('fr-FR')} DH</td>
                   <td className="py-4 pr-4">
@@ -254,18 +265,43 @@ export default function ReservationsTable({
                   </span>
                 </div>
                 <p className="text-sm text-ink-2">Par <span className="font-semibold text-ink-1">{r.client?.name ?? "Client inconnu"}</span></p>
-                <p className="text-sm text-ink-2">{r.start_date} → {r.end_date}</p>
+                <p className="text-sm text-ink-2">{formatDate(r.start_date)} → {formatDate(r.end_date)}</p>
               </div>
 
               {/* Card Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <p className="text-xl font-bold text-gold">{r.total_price.toLocaleString()} DH</p>
+              <div className="flex flex-col gap-4 pt-4 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <p className="text-xl font-bold text-gold">{r.total_price.toLocaleString('fr-FR')} DH</p>
+
+                  {r.contract ? (
+                    <a 
+                      href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}/storage/${r.contract.file_path}`} 
+                      target="_blank" 
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs font-bold text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
+                    >
+                      <Download size={14} strokeWidth={2} /> Contrat
+                    </a>
+                  ) : (
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => { e.stopPropagation(); onGenerateContract(r.id); }}
+                      disabled={actionLoading === r.id}
+                      className="text-xs font-bold text-ink-2 hover:text-gold uppercase tracking-wider border-2 border-border hover:border-gold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 disabled:opacity-60"
+                    >
+                      <RefreshCw size={14} className={actionLoading === r.id ? "animate-spin" : ""} strokeWidth={2} />
+                      Générer
+                    </motion.button>
+                  )}
+                </div>
+
                 {r.status === "pending" && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-end">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider"
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
                       onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }}
                       disabled={actionLoading === r.id}
                     >
@@ -274,7 +310,7 @@ export default function ReservationsTable({
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider"
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
                       onClick={(e) => { e.stopPropagation(); onAction(r.id, "reject"); }}
                       disabled={actionLoading === r.id}
                     >
