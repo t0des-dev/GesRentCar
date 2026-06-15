@@ -14,11 +14,11 @@ interface UseFleetDataProps {
 }
 
 export function useFleetData({ pageSize, search, filters, sortBy, startDate, endDate }: UseFleetDataProps) {
-  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(pageSize);
 
   const { data: apiData, isLoading } = useVehicles({
-    page,
-    per_page: pageSize,
+    page: 1,
+    per_page: limit,
     max_price: filters.maxPrice < 3000 ? filters.maxPrice : undefined,
     type: filters.type !== "All" ? filters.type.toLowerCase() : undefined,
     start_date: startDate,
@@ -73,16 +73,20 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
   }, [filtered, sortBy]);
 
   const handleFilterChange = useCallback((f: FleetFilterState) => {
-    // Note: Parent needs to update filters state, but we reset page here if filters change
-    setPage(1);
-  }, []);
+    setLimit(pageSize);
+  }, [pageSize]);
+
+  const loadMore = useCallback(() => {
+    setLimit((prev) => prev + pageSize);
+  }, [pageSize]);
+
+  const hasMore = apiData?.total ? limit < apiData.total : false;
 
   return {
     sorted,
     isLoading,
-    page,
-    setPage,
-    totalPages: apiData?.last_page ?? 1,
+    loadMore,
+    hasMore,
     totalCount: sorted.length
   };
 }

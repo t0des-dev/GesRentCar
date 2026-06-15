@@ -42,15 +42,31 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
         </button>
 
         {/* Left: Gallery */}
-        <div className="flex-1 relative bg-slate-100 min-h-[400px]">
+        <div className="flex-1 relative bg-slate-100 min-h-[400px] group">
           <img 
             src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
-            className="w-full h-full object-cover" 
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
             alt={vehicle.model}
           />
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className={cn("w-2 h-2 rounded-full transition-all", i === activeImage ? "w-8 bg-primary" : "bg-white/50")} />
+          
+          {/* 360 View Dummy Button */}
+          <button className="absolute top-8 left-8 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold text-slate-900 flex items-center gap-2 shadow-lg hover:bg-white transition-all hover:scale-105 border border-white/20">
+            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            Vue 360° Intérieur
+          </button>
+
+          {/* Gallery Thumbnails (mock) */}
+          <div className="absolute bottom-6 left-6 right-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[1, 2, 3].map((i) => (
+              <button 
+                key={i} 
+                className={cn(
+                  "w-16 h-12 rounded-lg overflow-hidden border-2 transition-all shrink-0", 
+                  i === 1 ? "border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]" : "border-white/20 opacity-60 hover:opacity-100"
+                )}
+              >
+                <img src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} className="w-full h-full object-cover" alt="" />
+              </button>
             ))}
           </div>
         </div>

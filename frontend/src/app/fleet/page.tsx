@@ -9,10 +9,11 @@ import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
 import RecentBookingPopup from "@/components/RecentBookingPopup";
 import { LayoutGrid, List } from "lucide-react";
 
-// Modular Components
 import FleetHeader from "@/modules/fleet/components/FleetHeader";
 import FleetSidebar from "@/modules/fleet/components/FleetSidebar";
 import FleetGrid from "@/modules/fleet/components/FleetGrid";
+import CompareFloatingBar from "@/components/CompareFloatingBar";
+import { Filter } from "lucide-react";
 
 // Hooks
 import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
@@ -38,9 +39,10 @@ function FleetContent() {
     lifestyle: "all",
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const {
-    sorted, isLoading, page, setPage, totalPages
+    sorted, isLoading, loadMore, hasMore
   } = useFleetData({
     pageSize: PAGE_SIZE,
     search,
@@ -52,8 +54,7 @@ function FleetContent() {
 
   const handleFilterChange = useCallback((f: FleetFilterState) => {
     setFilters(f);
-    setPage(1);
-  }, [setPage]);
+  }, []);
 
   const sortOptions = [
     { value: "price_asc", label: "Prix: Croissant" },
@@ -75,14 +76,34 @@ function FleetContent() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <FleetHeader search={search} setSearch={(val) => { setSearch(val); setPage(1); }} />
+          <FleetHeader search={search} setSearch={(val) => { setSearch(val); }} />
         </motion.div>
 
         {/* Main Content — Sidebar + Grid */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
           
-          {/* Left Sidebar */}
-          <FleetSidebar onFilter={handleFilterChange} />
+          {/* Left Sidebar (Drawer on Mobile, Sidebar on Desktop) */}
+          <div className={cn(
+            "fixed inset-0 z-50 lg:static lg:block lg:z-auto transition-transform duration-300",
+            isMobileFiltersOpen ? "translate-y-0" : "translate-y-full lg:translate-y-0"
+          )}>
+            {/* Overlay for mobile */}
+            {isMobileFiltersOpen && (
+              <div 
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm lg:hidden"
+                onClick={() => setIsMobileFiltersOpen(false)}
+              />
+            )}
+            
+            <div className="absolute bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-3xl overflow-y-auto lg:h-auto lg:bg-transparent lg:static lg:rounded-none overflow-hidden pb-24 lg:pb-0 shadow-2xl lg:shadow-none">
+              <div className="sticky top-0 bg-white/90 backdrop-blur-md z-10 p-4 border-b border-slate-100 flex justify-center lg:hidden">
+                <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+              </div>
+              <div className="p-6 lg:p-0">
+                <FleetSidebar onFilter={handleFilterChange} />
+              </div>
+            </div>
+          </div>
           
           {/* Right Content */}
           <div className="flex-1 min-w-0">
@@ -151,14 +172,27 @@ function FleetContent() {
             <FleetGrid 
               vehicles={sorted}
               loading={isLoading}
-              page={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
+              hasMore={hasMore}
+              onLoadMore={loadMore}
               onQuickView={setQuickViewVehicle}
               layoutView={layoutView}
             />
           </div>
         </div>
+      </div>
+
+      {/* Compare Floating Bar */}
+      <CompareFloatingBar />
+
+      {/* Mobile Filters Toggle Button */}
+      <div className="fixed bottom-6 right-6 z-40 lg:hidden">
+        <button
+          onClick={() => setIsMobileFiltersOpen(true)}
+          className="flex items-center gap-2 bg-slate-900 text-white px-5 py-3.5 rounded-full shadow-2xl shadow-slate-900/20 font-bold tracking-wide"
+        >
+          <Filter size={18} />
+          Filtres
+        </button>
       </div>
 
       {/* Quick View Modal */}
