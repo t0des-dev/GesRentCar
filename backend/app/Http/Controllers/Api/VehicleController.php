@@ -165,18 +165,26 @@ class VehicleController extends Controller
 
     public function uploadImage(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120', // Higher max since we optimize
-        ]);
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            ]);
 
-        if ($request->hasFile('image')) {
-            $url = $imageService->optimizeAndStore($request->file('image'), 'vehicles');
-            $vehicle->update(['image_url' => $url]);
-            $this->clearCache();
-            return response()->json(['url' => $url]);
+            if ($request->hasFile('image')) {
+                $url = $imageService->optimizeAndStore($request->file('image'), 'vehicles');
+                $vehicle->update(['image_url' => $url]);
+                $this->clearCache();
+                return response()->json(['url' => $url]);
+            }
+
+            return response()->json(['message' => 'Aucun fichier'], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur upload: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
         }
-
-        return response()->json(['message' => 'Aucun fichier'], 400);
     }
 
     public function uploadPhotos(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
