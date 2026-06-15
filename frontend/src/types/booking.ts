@@ -14,7 +14,8 @@ export interface BookingState {
   startDate: string;
   endDate: string;
   location: string;
-  options: string[];
+  flexibility: "best_price" | "flexible";
+  mileage: "limited" | "unlimited";
   client: BookingClient;
   paymentMethod: "deposit_card" | "full_card";
 }

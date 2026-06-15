@@ -3,12 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { BookingState } from "@/types/booking";
 
-const MOCK_OPTIONS = [
-  { id: "chauffeur", price: 1500, type: "per_day" },
-  { id: "airport_vip", price: 500, type: "fixed" },
-  { id: "champagne", price: 1200, type: "fixed" },
-  { id: "vip_insure", price: 300, type: "per_day" },
-];
+
 
 export function useBooking(initialVehicles: any[] = []) {
   const [step, setStep] = useState(0);
@@ -19,7 +14,8 @@ export function useBooking(initialVehicles: any[] = []) {
   const [signature, setSignature] = useState<string | null>(null);
 
   const [booking, setBooking] = useState<BookingState>({
-    vehicleId: null, startDate: "", endDate: "", location: "", options: [],
+    vehicleId: null, startDate: "", endDate: "", location: "", 
+    flexibility: "best_price", mileage: "limited",
     client: { 
       name: "", email: "", phone: "", cin: "", licenseNumber: "",
       cinImageUrl: "", licenseImageUrl: "", verified: false 
@@ -62,13 +58,10 @@ export function useBooking(initialVehicles: any[] = []) {
   const isHighSeason = booking.startDate && (new Date(booking.startDate).getMonth() === 6 || new Date(booking.startDate).getMonth() === 7);
   const dynamicBasePrice = Math.round(basePrice * (isHighSeason ? 1.15 : 1));
   
-  const optionsPrice = booking.options.reduce((sum, optId) => {
-    const opt = MOCK_OPTIONS.find(o => o.id === optId);
-    if (!opt) return sum;
-    return sum + (opt.type === "per_day" ? opt.price * days : opt.price);
-  }, 0);
+  const flexibilityPrice = booking.flexibility === 'flexible' ? 60 * days : 0;
+  const mileagePrice = booking.mileage === 'unlimited' ? 140 * days : 0;
 
-  const total = dynamicBasePrice + optionsPrice;
+  const total = dynamicBasePrice + flexibilityPrice + mileagePrice;
   const deposit = Math.round(total * 0.1);
 
   const canNext = () => {

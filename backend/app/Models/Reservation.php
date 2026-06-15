@@ -19,6 +19,7 @@ class Reservation extends Model
         'documents',
         'payment_method',
         'signature',
+        'options',
     ];
 
     protected function casts(): array
@@ -29,6 +30,7 @@ class Reservation extends Model
             'documents'      => 'array',
             'total_price'    => 'decimal:2',
             'deposit_amount' => 'decimal:2',
+            'options'        => 'array',
         ];
     }
 

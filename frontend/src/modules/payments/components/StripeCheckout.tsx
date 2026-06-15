@@ -155,6 +155,7 @@ export interface StripeCheckoutProps {
       license_image_url?: string;
     };
     signature?: string;
+    options?: any;
   };
   onSuccess: (reservationId?: number) => void;
 }

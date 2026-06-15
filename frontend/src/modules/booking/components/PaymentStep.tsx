@@ -51,6 +51,10 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
           cin_image_url: booking.client.cinImageUrl,
           license_image_url: booking.client.licenseImageUrl,
         },
+        options: {
+          flexibility: booking.flexibility,
+          mileage: booking.mileage,
+        },
         payment_method: "on_site",
       });
       onSuccess(res.id);
@@ -126,6 +130,10 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
                         license_number: booking.client.licenseNumber,
                         cin_image_url: booking.client.cinImageUrl,
                         license_image_url: booking.client.licenseImageUrl,
+                      },
+                      options: {
+                        flexibility: booking.flexibility,
+                        mileage: booking.mileage,
                       },
                     }}
                     onSuccess={onSuccess}

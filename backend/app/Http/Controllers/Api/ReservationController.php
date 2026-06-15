@@ -41,6 +41,7 @@ class ReservationController extends Controller
             'vehicle_id' => 'required|exists:vehicles,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
+            'options' => 'nullable|array',
         ]);
 
         $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
@@ -56,12 +57,22 @@ class ReservationController extends Controller
         
         $totalPrice = $days * $vehicle->price_per_day;
 
-        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle) {
+        // Add options price
+        $optionsData = $validated['options'] ?? [];
+        if (isset($optionsData['flexibility']) && $optionsData['flexibility'] === 'flexible') {
+            $totalPrice += 60 * $days;
+        }
+        if (isset($optionsData['mileage']) && $optionsData['mileage'] === 'unlimited') {
+            $totalPrice += 140 * $days;
+        }
+
+        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle, $optionsData) {
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
             
             return Reservation::create(array_merge($validated, [
                 'total_price' => $totalPrice,
-                'status' => $status
+                'status' => $status,
+                'options' => empty($optionsData) ? null : $optionsData,
             ]));
         });
 
@@ -87,6 +98,7 @@ class ReservationController extends Controller
             'client.license_image_url' => 'nullable|string',
             'payment_method' => 'required|string|in:cash,cmi,transfer,stripe,on_site',
             'signature' => 'nullable|string',
+            'options' => 'nullable|array',
         ]);
 
         $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
@@ -116,7 +128,16 @@ class ReservationController extends Controller
         
         $totalPrice = $days * $vehicle->price_per_day;
 
-        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle, $client) {
+        // Add options price
+        $optionsData = $validated['options'] ?? [];
+        if (isset($optionsData['flexibility']) && $optionsData['flexibility'] === 'flexible') {
+            $totalPrice += 60 * $days;
+        }
+        if (isset($optionsData['mileage']) && $optionsData['mileage'] === 'unlimited') {
+            $totalPrice += 140 * $days;
+        }
+
+        $reservation = DB::transaction(function () use ($validated, $totalPrice, $vehicle, $client, $optionsData) {
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
             
             // For on_site, we still mark as confirmed but with payment_method in metadata if needed, 
@@ -130,6 +151,7 @@ class ReservationController extends Controller
                 'total_price' => $totalPrice,
                 'status' => $status,
                 'payment_method' => $validated['payment_method'],
+                'options' => empty($optionsData) ? null : $optionsData,
             ]);
 
             if (isset($validated['signature'])) {

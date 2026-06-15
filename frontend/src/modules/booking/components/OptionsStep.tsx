@@ -1,61 +1,136 @@
 "use client";
 
 import { cn } from "@/shared/utils";
-import { Shield, User, Plane, FileText, Check, Info } from "lucide-react";
+import { CreditCard, Route, Check } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
-
-const MOCK_OPTIONS = [
-  { id: "chauffeur", label: "Chauffeur Privé", price: 1500, type: "per_day", icon: User, desc: "Un chauffeur bilingue et discret à votre entière disposition 24/7." },
-  { id: "airport_vip", label: "Accueil Aéroport VIP", price: 500, type: "fixed", icon: Plane, desc: "Service Meet & Greet au terminal avec coupe-file prioritaire." },
-  { id: "champagne", label: "Service Champagne", price: 1200, type: "fixed", icon: FileText, desc: "Bouteille Moët & Chandon servie bien fraîche à la remise des clés." },
-  { id: "vip_insure", label: "Assurance Platinium", price: 300, type: "per_day", icon: Shield, desc: "Couverture totale sans franchise, assistance 0km incluse." },
-];
 
 export default function OptionsStep({ booking, update }: BookingStepProps) {
   return (
-    <div>
-      <div className="mb-6 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-amber-500/10 flex items-center justify-center">
-          <Shield className="text-amber-500" size={18} />
+    <div className="space-y-8">
+      {/* Options de paiement / Flexibilité */}
+      <div>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <CreditCard size={20} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Options de paiement</h3>
+            <p className="text-sm text-slate-500">Choisissez le niveau de flexibilité pour votre réservation.</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-bold text-slate-900">Services Exclusifs</h3>
-          <p className="text-sm text-slate-500">Sublimez votre séjour avec notre conciergerie privée.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            onClick={() => update("flexibility", "best_price")}
+            className={cn("relative overflow-hidden flex flex-col p-5 rounded-2xl border-2 transition-all text-left group", booking.flexibility === "best_price" ? "border-emerald-500 bg-emerald-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-emerald-200")}
+          >
+            {booking.flexibility === "best_price" && (
+              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-500 rounded-bl-full flex items-start justify-end p-2 text-white">
+                <Check size={14} strokeWidth={3} />
+              </div>
+            )}
+            <div className="mb-4">
+              <p className="font-bold text-slate-900 text-lg mb-1">Meilleur prix</p>
+              <ul className="text-sm text-slate-500 space-y-2 mt-3">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                  <span>Annulation gratuite dans les 24 heures</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-auto pt-4 border-t border-slate-100/80">
+              <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">Inclus</span>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => update("flexibility", "flexible")}
+            className={cn("relative overflow-hidden flex flex-col p-5 rounded-2xl border-2 transition-all text-left group", booking.flexibility === "flexible" ? "border-emerald-500 bg-emerald-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-emerald-200")}
+          >
+            {booking.flexibility === "flexible" && (
+              <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-500 rounded-bl-full flex items-start justify-end p-2 text-white">
+                <Check size={14} strokeWidth={3} />
+              </div>
+            )}
+            <div className="mb-4">
+              <p className="font-bold text-slate-900 text-lg mb-1">Restez flexible</p>
+              <ul className="text-sm text-slate-500 space-y-2 mt-3">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                  <span>Annulation gratuite à tout moment avant la prise en charge</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-auto pt-4 border-t border-slate-100/80">
+              <p className={cn("text-lg font-bold", booking.flexibility === "flexible" ? "text-emerald-600" : "text-slate-900")}>
+                + 60 <span className="text-xs uppercase tracking-wider text-slate-400">DH / jour</span>
+              </p>
+            </div>
+          </button>
         </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {MOCK_OPTIONS.map((opt) => {
-          const isSelected = booking.options.includes(opt.id);
-          const Icon = opt.icon;
-          return (
-            <button key={opt.id} onClick={() => {
-              update("options", isSelected ? booking.options.filter(o => o !== opt.id) : [...booking.options, opt.id]);
-            }} className={cn("relative overflow-hidden flex flex-col p-5 rounded-2xl border-2 transition-all text-left group", isSelected ? "border-amber-500 bg-amber-500/5 shadow-sm" : "border-slate-100 bg-white hover:border-amber-200")}>
-              
-              {isSelected && (
-                <div className="absolute top-0 right-0 w-12 h-12 bg-amber-500 rounded-bl-full flex items-start justify-end p-2 text-white">
-                  <Check size={14} strokeWidth={3} />
-                </div>
-              )}
 
-              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-all duration-200", isSelected ? "bg-amber-500 text-white" : "bg-slate-50 text-slate-400 group-hover:bg-amber-100 group-hover:text-amber-600")}>
-                <Icon size={24} />
+      {/* Kilométrage */}
+      <div>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+            <Route size={20} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Kilométrage</h3>
+            <p className="text-sm text-slate-500">Définissez la limite kilométrique selon vos besoins.</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            onClick={() => update("mileage", "limited")}
+            className={cn("relative overflow-hidden flex flex-col p-5 rounded-2xl border-2 transition-all text-left group", booking.mileage === "limited" ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-blue-200")}
+          >
+            {booking.mileage === "limited" && (
+              <div className="absolute top-0 right-0 w-12 h-12 bg-blue-500 rounded-bl-full flex items-start justify-end p-2 text-white">
+                <Check size={14} strokeWidth={3} />
               </div>
-              
-              <div className="mb-auto">
-                <p className="font-semibold text-slate-900 mb-1">{opt.label}</p>
-                <p className="text-sm text-slate-500 leading-relaxed pr-4">{opt.desc}</p>
+            )}
+            <div className="mb-4">
+              <p className="font-bold text-slate-900 text-lg mb-1">680 km</p>
+              <ul className="text-sm text-slate-500 space-y-2 mt-3">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-blue-500 shrink-0 mt-0.5" />
+                  <span>+ 2 DH / pour chaque kilomètre supplémentaire</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-auto pt-4 border-t border-slate-100/80">
+              <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">Inclus</span>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => update("mileage", "unlimited")}
+            className={cn("relative overflow-hidden flex flex-col p-5 rounded-2xl border-2 transition-all text-left group", booking.mileage === "unlimited" ? "border-blue-500 bg-blue-50/50 shadow-sm" : "border-slate-100 bg-white hover:border-blue-200")}
+          >
+            {booking.mileage === "unlimited" && (
+              <div className="absolute top-0 right-0 w-12 h-12 bg-blue-500 rounded-bl-full flex items-start justify-end p-2 text-white">
+                <Check size={14} strokeWidth={3} />
               </div>
-              
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-end justify-between">
-                <p className={cn("text-lg font-bold", isSelected ? "text-amber-600" : "text-slate-900")}>
-                  +{opt.price.toLocaleString()} <span className="text-xs uppercase tracking-wider text-slate-400">{opt.type === "per_day" ? "DH/jour" : "DH (forfait)"}</span>
-                </p>
-              </div>
-            </button>
-          );
-        })}
+            )}
+            <div className="mb-4">
+              <p className="font-bold text-slate-900 text-lg mb-1">Kilomètres illimités</p>
+              <ul className="text-sm text-slate-500 space-y-2 mt-3">
+                <li className="flex items-start gap-2">
+                  <Check size={16} className="text-blue-500 shrink-0 mt-0.5" />
+                  <span>Tous les kilomètres sont inclus</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-auto pt-4 border-t border-slate-100/80">
+              <p className={cn("text-lg font-bold", booking.mileage === "unlimited" ? "text-blue-600" : "text-slate-900")}>
+                + 140 <span className="text-xs uppercase tracking-wider text-slate-400">DH / jour</span>
+              </p>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );

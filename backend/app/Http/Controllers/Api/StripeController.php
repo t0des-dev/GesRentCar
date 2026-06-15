@@ -40,6 +40,7 @@ class StripeController extends Controller
             'client.license_image_url' => 'nullable|string',
             'amount'          => 'required|numeric|min:1', // Deposit amount in DH (integer)
             'signature'       => 'nullable|string',
+            'options'         => 'nullable|array',
         ]);
 
         // Create or find client
@@ -67,6 +68,16 @@ class StripeController extends Controller
         $days  = (new \DateTime($validated['start_date']))->diff(new \DateTime($validated['end_date']))->days;
         if ($days == 0) $days = 1;
         $totalPrice = $days * $vehicle->price_per_day;
+
+        // Add options price
+        $optionsData = $validated['options'] ?? [];
+        if (isset($optionsData['flexibility']) && $optionsData['flexibility'] === 'flexible') {
+            $totalPrice += 60 * $days;
+        }
+        if (isset($optionsData['mileage']) && $optionsData['mileage'] === 'unlimited') {
+            $totalPrice += 140 * $days;
+        }
+
         $deposit    = $validated['amount']; // 10% computed on frontend
 
         // Create Stripe PaymentIntent (amount in centimes — Stripe requires smallest currency unit)
@@ -85,7 +96,7 @@ class StripeController extends Controller
         ]);
 
         // Create pending reservation
-        $reservation = DB::transaction(function () use ($validated, $totalPrice, $deposit, $vehicle, $client, $intent, $request) {
+        $reservation = DB::transaction(function () use ($validated, $totalPrice, $deposit, $vehicle, $client, $intent, $request, $optionsData) {
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'pending_payment';
 
             $res = Reservation::create([
@@ -96,6 +107,7 @@ class StripeController extends Controller
                 'total_price'    => $totalPrice,
                 'deposit_amount' => $deposit,
                 'status'         => $status,
+                'options'        => empty($optionsData) ? null : $optionsData,
             ]);
 
             // If signature is provided, create the contract record now

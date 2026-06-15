@@ -67,6 +67,24 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
               </div>
               <span className="font-semibold text-slate-900">{booking.location || "Non défini"}</span>
             </div>
+            {booking.flexibility === "flexible" && (
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <ShieldCheck size={16} />
+                  <span>Flexibilité</span>
+                </div>
+                <span className="font-semibold text-slate-900">+{60 * days} DH</span>
+              </div>
+            )}
+            {booking.mileage === "unlimited" && (
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <Info size={16} />
+                  <span>Km illimités</span>
+                </div>
+                <span className="font-semibold text-slate-900">+{140 * days} DH</span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
