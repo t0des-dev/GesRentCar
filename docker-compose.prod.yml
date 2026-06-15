@@ -48,7 +48,6 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost/api
     depends_on:
       - backend
 
