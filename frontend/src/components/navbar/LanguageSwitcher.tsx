@@ -26,7 +26,7 @@ export default function LanguageSwitcher({
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-xs font-semibold",
           (isScrolled || !transparentHero)
-            ? "text-foreground/60 hover:text-foreground hover:bg-muted/60"
+            ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             : "text-white/70 hover:text-white hover:bg-white/10"
         )}
       >

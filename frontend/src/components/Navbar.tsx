@@ -105,7 +105,7 @@ export default function Navbar() {
             className={cn(
               "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
               isScrolled 
-                ? "bg-muted/40 text-foreground hover:bg-muted/60 hover:text-foreground" 
+                ? "bg-slate-100 text-slate-800 hover:bg-slate-200" 
                 : "bg-white/12 text-white hover:bg-white/20 hover:text-white"
             )}
             aria-label="Toggle menu"
@@ -139,7 +139,7 @@ function CurrencySwitcher({
         className={cn(
           "px-3 py-1.5 rounded-lg transition-all duration-300 text-xs font-semibold tracking-wide",
           isScrolled
-            ? "text-ink-3 hover:text-ink-2 hover:bg-gold/8"
+            ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             : "text-white/75 hover:text-white hover:bg-white/12"
         )}
       >

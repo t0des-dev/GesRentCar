@@ -37,7 +37,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300",
               isScrolled
-                ? "bg-muted/70 hover:bg-muted text-foreground"
+                ? "bg-slate-100 hover:bg-slate-200 text-slate-800"
                 : "bg-white/10 hover:bg-white/20 text-white"
             )}
           >
@@ -85,7 +85,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
           className={cn(
             "rounded-lg",
             isScrolled
-              ? "text-foreground/80 hover:text-foreground"
+              ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               : "text-white/80 hover:text-white hover:bg-white/10"
           )}
         >

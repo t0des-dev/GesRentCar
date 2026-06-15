@@ -13,7 +13,7 @@ export default function NavLinks({ links, className, isScrolled }: { links: any[
           className={cn(
             "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300",
             isScrolled
-              ? "text-foreground/70 hover:text-foreground hover:bg-muted/60"
+              ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               : "text-white/70 hover:text-white hover:bg-white/10"
           )}
         >
