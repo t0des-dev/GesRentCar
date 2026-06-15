@@ -248,7 +248,7 @@ export default function FleetPage() {
             {successMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-emerald-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{successMsg}</motion.div>}
             {errorMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-red-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{errorMsg}</motion.div>}
           </AnimatePresence>
-          <button className="btn-primary" onClick={() => { setCurrentVehicle({ brand: "", model: "", plate: "", price_per_day: 0, year: 2024, fuel_type: "Diesel", status: "available", type: "internal" }); setShowDrawer(true); }}>
+          <button className="btn-primary" onClick={() => { setCurrentVehicle({ brand: "", model: "", plate: "", price_per_day: 0, year: 2024, fuel_type: "Diesel", status: "available", type: "internal", category: "standard" }); setShowDrawer(true); }}>
             <Plus size={16} /> Nouveau Véhicule
           </button>
         </div>
