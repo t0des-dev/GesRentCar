@@ -73,7 +73,7 @@ class FleetSeeder extends Seeder
         ];
 
         foreach ($vehicles as $v) {
-            Vehicle::create($v);
+            Vehicle::updateOrCreate(['plate' => $v['plate']], $v);
         }
     }
 }
