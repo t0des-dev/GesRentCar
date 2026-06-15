@@ -85,7 +85,8 @@ class VehicleController extends Controller
 
     protected function clearCache()
     {
-        Cache::increment('vehicles_cache_version');
+        $version = Cache::get('vehicles_cache_version', 1);
+        Cache::put('vehicles_cache_version', $version + 1);
     }
 
     public function show(Vehicle $vehicle)
