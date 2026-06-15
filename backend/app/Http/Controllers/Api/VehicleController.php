@@ -90,7 +90,15 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle)
     {
-        return response()->json($vehicle->load('agent'));
+        $vehicle->load(['agent', 'reservations', 'maintenances']);
+        
+        $vehicle->loadSum(['reservations as total_revenue' => function($q) {
+            $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
+        }], 'total_price');
+        
+        $vehicle->loadSum('maintenances as total_maintenance_cost', 'cost');
+        
+        return response()->json($vehicle);
     }
 
     public function store(Request $request)
