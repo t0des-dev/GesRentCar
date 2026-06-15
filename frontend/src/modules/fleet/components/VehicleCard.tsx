@@ -47,15 +47,18 @@ export default function VehicleCard({
     <Link
       href={`/fleet/${id}`}
       className={cn(
-        "group flex bg-white rounded-xl overflow-hidden relative",
-        "shadow-sm hover:shadow-2xl transition-all duration-500 card-premium",
-        "border border-border hover:border-gold/30",
+        "group flex bg-white rounded-[1.5rem] overflow-hidden relative",
+        "shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-700",
+        "border border-slate-200/60 hover:border-gold/40",
         layoutView === "list" ? "flex-col md:flex-row md:h-[280px]" : "flex-col",
         className
       )}
     >
+      {/* Animated Glow Border on Hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[1.5rem] shadow-[inset_0_0_0_1px_rgba(212,175,55,0.3)] z-20" />
+
       {/* Image Container */}
-      <div className={cn("relative bg-surface-2 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[3/2] w-full")}>
+      <div className={cn("relative bg-slate-50 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
@@ -78,15 +81,15 @@ export default function VehicleCard({
 
         {/* FOMO Badge - Top Left */}
         {isPopular && (
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1 bg-red-500/90 backdrop-blur rounded-lg shadow-lg border border-red-400">
-            <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <span className="text-[10px] font-extrabold tracking-wider uppercase text-white">Très demandé</span>
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-red-500/90 backdrop-blur-md rounded-full shadow-lg border border-red-400/50">
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            <span className="text-[9px] font-black tracking-widest uppercase text-white">Très demandé</span>
           </div>
         )}
 
         {/* Dynamic Reason Badge — Top Right */}
         {dynamicReason && (
-          <div className="absolute top-3 right-3 z-10 bg-gold/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-lg border border-gold/50">
+          <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-gold to-yellow-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(212,175,55,0.3)] border border-gold/40">
             {dynamicReason.toUpperCase()}
           </div>
         )}
@@ -99,17 +102,18 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Quick View Overlay — Center Icon */}
+        {/* Quick View Overlay — Slide Up */}
         <div
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onQuickView?.();
           }}
-          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer"
+          className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer bg-gradient-to-t from-black/60 via-transparent to-transparent translate-y-4 group-hover:translate-y-0"
         >
-          <div className="w-16 h-16 rounded-full bg-gold/20 backdrop-blur flex items-center justify-center text-white border border-white/30 hover:bg-gold/40 transition-all">
-            <Eye size={24} strokeWidth={1.5} />
+          <div className="px-6 py-2.5 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-2 text-white border border-white/30 hover:bg-white/30 hover:scale-105 transition-all shadow-xl">
+            <Eye size={16} strokeWidth={2} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Aperçu rapide</span>
           </div>
         </div>
 

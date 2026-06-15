@@ -5,7 +5,7 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
-    container_name: vectoria-backend
+    container_name: gesrentcar-backend
     restart: always
     volumes:
       - ./backend/storage:/var/www/storage
@@ -27,7 +27,7 @@ services:
   # Queue Worker
   worker:
     build: ./backend
-    container_name: vectoria-worker
+    container_name: gesrentcar-worker
     restart: always
     command: php artisan queue:work --tries=3 --timeout=90
     volumes:
@@ -44,7 +44,7 @@ services:
   # Frontend (Next.js Standalone)
   frontend:
     build: ./frontend
-    container_name: vectoria-frontend
+    container_name: gesrentcar-frontend
     restart: always
     environment:
       - NODE_ENV=production
@@ -54,7 +54,7 @@ services:
   # Nginx (Reverse Proxy & Static Server)
   web:
     image: nginx:alpine
-    container_name: vectoria-web
+    container_name: gesrentcar-web
     restart: always
     ports:
       - "8080:80"
@@ -69,7 +69,7 @@ services:
   # Database
   db:
     image: postgres:15-alpine
-    container_name: vectoria-db
+    container_name: gesrentcar-db
     restart: always
     environment:
       - POSTGRES_DB=vectoria
@@ -81,7 +81,7 @@ services:
   # Redis
   redis:
     image: redis:7-alpine
-    container_name: vectoria-redis
+    container_name: gesrentcar-redis
     restart: always
 
 volumes:

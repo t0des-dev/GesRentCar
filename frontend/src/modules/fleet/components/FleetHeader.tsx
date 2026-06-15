@@ -62,7 +62,7 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
               placeholder={t("search_placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-13 pr-5 py-3.5 bg-white border-2 border-border rounded-lg text-ink-1 text-base font-medium focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all placeholder:text-ink-3"
+              className="w-full pl-13 pr-5 py-4 bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm rounded-2xl text-ink-1 text-base font-bold focus:outline-none focus:bg-white focus:border-gold focus:ring-4 focus:ring-gold/10 transition-all placeholder:text-ink-4 placeholder:font-medium"
             />
           </div>
         </motion.div>

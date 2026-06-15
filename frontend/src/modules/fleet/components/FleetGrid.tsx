@@ -46,13 +46,13 @@ export default function FleetGrid({
           <div className={cn("grid gap-8 lg:gap-12", layoutView === "grid" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1")}>
             <AnimatePresence mode="popLayout">
               {vehicles.map((v, idx) => (
-                <motion.div
+                  <motion.div
                   key={v.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                   className={cn(
                     "relative",
                     layoutView === "grid" && idx % 3 === 0 ? "md:col-span-2" : ""

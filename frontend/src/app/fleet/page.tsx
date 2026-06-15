@@ -92,7 +92,7 @@ function FleetContent() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="flex items-center justify-between mb-12 pb-6 border-b border-border flex-wrap gap-4"
+              className="sticky top-24 z-30 flex items-center justify-between mb-8 pb-4 pt-4 border-b border-border flex-wrap gap-4 bg-white/70 backdrop-blur-xl rounded-t-2xl px-4 -mx-4 sm:mx-0 shadow-[0_4px_30px_rgba(0,0,0,0.02)]"
             >
               <div className="flex items-center gap-3">
                 <p className="text-xs font-bold uppercase tracking-widest text-ink-3">

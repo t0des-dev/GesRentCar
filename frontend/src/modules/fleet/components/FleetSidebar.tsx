@@ -31,8 +31,16 @@ export default function FleetSidebar({ onFilter }: FleetSidebarProps) {
           className="relative overflow-hidden rounded-xl p-8 bg-gradient-to-br from-primary to-primary/90 border-2 border-primary/40 shadow-lg shadow-primary/20"
         >
           {/* Background Elements */}
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-gold/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl" />
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} 
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-20 -right-20 w-40 h-40 bg-gold/30 rounded-full blur-3xl" 
+          />
+          <motion.div 
+            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.5, 0.2] }} 
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute -bottom-10 -left-10 w-32 h-32 bg-gold/20 rounded-full blur-2xl" 
+          />
           
           {/* Content */}
           <div className="relative z-10 space-y-4">

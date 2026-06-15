@@ -3,7 +3,7 @@ services:
   # Backend API
   backend:
     build: ./backend
-    container_name: vectoria-backend
+    container_name: gesrentcar-backend
     restart: always
     ports:
       - "8000:8000"
@@ -29,7 +29,7 @@ services:
   # Frontend Web
   frontend:
     build: ./frontend
-    container_name: vectoria-frontend
+    container_name: gesrentcar-frontend
     restart: always
     ports:
       - "3000:3000"
@@ -39,7 +39,7 @@ services:
   # Database
   db:
     image: postgres:15-alpine
-    container_name: vectoria-db
+    container_name: gesrentcar-db
     restart: always
     environment:
       - POSTGRES_DB=vectoria
@@ -51,7 +51,7 @@ services:
   # Redis Cache & Queues
   redis:
     image: redis:7-alpine
-    container_name: vectoria-redis
+    container_name: gesrentcar-redis
     restart: always
     ports:
       - "6379:6379"
