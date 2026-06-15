@@ -11,13 +11,17 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     libzip-dev \
-    libicu-dev
+    libicu-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libfreetype6-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
     && pecl install redis \
     && docker-php-ext-enable redis
 
