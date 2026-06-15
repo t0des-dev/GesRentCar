@@ -9,7 +9,7 @@ import CalendarHeader from "@/components/admin/calendar/CalendarHeader";
 import CalendarGrid from "@/components/admin/calendar/CalendarGrid";
 import CalendarReservationModal from "@/components/admin/calendar/CalendarReservationModal";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}");
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 export default function CalendarPage() {
   const { user, checking } = useAuthGuard("admin");

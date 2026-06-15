@@ -36,7 +36,7 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
     return () => clearInterval(interval);
   }, []);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}");
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   const contractUrl = reservationId
     ? `${apiBase}/public/reservations/${reservationId}/contract`
     : null;

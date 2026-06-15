@@ -24,7 +24,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
     formData.append("type", type);
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}");
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const res = await fetch(`${apiBase}/ocr/scan`, {
         method: "POST",
         body: formData,
