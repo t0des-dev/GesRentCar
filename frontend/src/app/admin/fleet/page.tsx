@@ -193,7 +193,13 @@ export default function FleetPage() {
       setShowDrawer(false);
       fetchVehicles();
     } catch (err: any) {
-      showError(`Erreur: ${err.response?.data?.message || err.message}`);
+      let errorText = err.response?.data?.message || err.message;
+      if (err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        const firstErrorKey = Object.keys(errors)[0];
+        errorText = errors[firstErrorKey][0];
+      }
+      showError(`Erreur: ${errorText}`);
     } finally {
       setSubmitting(false);
     }
