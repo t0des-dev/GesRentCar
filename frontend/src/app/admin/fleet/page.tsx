@@ -6,6 +6,7 @@ import { useAgency } from "@/hooks/useAgency";
 import { Plus } from "lucide-react";
 import api from "@/lib/api/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 // Types
 import { Vehicle, Maintenance } from "@/types/admin";
@@ -43,15 +44,22 @@ export default function FleetPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
+  const showSuccess = (msg: string) => {
+    toast.success(msg);
+  };
+
+  const showError = (msg: string) => {
+    toast.error(msg);
+  };
+
   const fetchVehicles = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch more to handle frontend filtering efficiently for medium-sized fleets
       const res = await api.get('/vehicles?per_page=100');
       const data = res.data;
       setVehicles(Array.isArray(data) ? data : data.data ?? []);
     } catch {
-      setErrorMsg("Erreur lors de la synchronisation de la flotte.");
+      showError("Erreur lors de la synchronisation de la flotte.");
     } finally {
       setLoading(false);
     }
@@ -60,11 +68,6 @@ export default function FleetPage() {
   useEffect(() => { 
     if (!checking && user) fetchVehicles(); 
   }, [fetchVehicles, checking, user]);
-
-  const showSuccess = (msg: string) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(""), 3000);
-  };
 
   const handleEdit = (v: Vehicle) => {
     setCurrentVehicle({ ...v, new_image: null });
@@ -85,7 +88,7 @@ export default function FleetPage() {
       showSuccess("Image mise à jour avec succès !");
       fetchVehicles();
     } catch {
-      setErrorMsg("Erreur lors de l'upload de l'image.");
+      showError("Erreur lors de l'upload de l'image.");
     }
   };
 
@@ -96,7 +99,7 @@ export default function FleetPage() {
       setCurrentVehicle(vehicles.find(v => v.id === vehicleId));
       setShowMaintenanceModal(true);
     } catch {
-      setErrorMsg("Erreur lors de la récupération de la maintenance.");
+      showError("Erreur lors de la récupération de la maintenance.");
     }
   };
 
@@ -108,7 +111,7 @@ export default function FleetPage() {
       showSuccess("Véhicule supprimé.");
       fetchVehicles();
     } catch {
-      setErrorMsg("Erreur lors de la suppression.");
+      showError("Erreur lors de la suppression.");
     } finally {
       setDeletingId(null);
     }
@@ -123,7 +126,7 @@ export default function FleetPage() {
       setSelectedIds([]);
       fetchVehicles();
     } catch {
-      setErrorMsg("Erreur lors de la suppression de groupe.");
+      showError("Erreur lors de la suppression de groupe.");
       setLoading(false);
     }
   };
@@ -137,7 +140,7 @@ export default function FleetPage() {
       setSelectedIds([]);
       fetchVehicles();
     } catch {
-      setErrorMsg("Erreur lors de la mise à jour de groupe.");
+      showError("Erreur lors de la mise à jour de groupe.");
       setLoading(false);
     }
   };
@@ -147,7 +150,6 @@ export default function FleetPage() {
     if (!currentVehicle) return;
 
     setSubmitting(true);
-    setErrorMsg("");
     
     try {
       const allowedFields = [
@@ -191,7 +193,7 @@ export default function FleetPage() {
       setShowDrawer(false);
       fetchVehicles();
     } catch (err: any) {
-      setErrorMsg(`Erreur: ${err.response?.data?.message || err.message}`);
+      showError(`Erreur: ${err.response?.data?.message || err.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -244,10 +246,6 @@ export default function FleetPage() {
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">Showroom <span className="italic text-primary">Privé</span></h1>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <AnimatePresence>
-            {successMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-emerald-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{successMsg}</motion.div>}
-            {errorMsg && <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="bg-red-500 text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-wider shadow-sm">{errorMsg}</motion.div>}
-          </AnimatePresence>
           <button className="btn-primary" onClick={() => { setCurrentVehicle({ brand: "", model: "", plate: "", price_per_day: 0, year: 2024, fuel_type: "Diesel", status: "available", type: "internal", category: "standard" }); setShowDrawer(true); }}>
             <Plus size={16} /> Nouveau Véhicule
           </button>
