@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import api from "@/lib/api/client";
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/api$/, "");
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}")).replace(/\/api$/, "");
 
 interface User {
   id: number;

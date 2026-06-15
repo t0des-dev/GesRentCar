@@ -9,7 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const API = "http://localhost:8000/api";
+const API = (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}");
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 type ClientData = { name: string; cin: string; license?: string; email?: string; phone?: string; };

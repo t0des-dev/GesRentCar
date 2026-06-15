@@ -72,7 +72,7 @@ export default function VehicleCardAdmin({
         )}
 
         {vehicle.image_url ? (
-          <img src={`http://localhost:8000${vehicle.image_url}`} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}${vehicle.image_url}`} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         ) : (
           <div className="w-full h-full bg-surface-1 flex items-center justify-center text-ink-3">
             <Car size={80} strokeWidth={0.5} />

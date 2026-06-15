@@ -163,7 +163,7 @@ export default function ReservationsTable({
                           <CheckCircle size={12} strokeWidth={2} /> Généré
                         </span>
                         <a 
-                          href={`http://localhost:8000/storage/${r.contract.file_path}`} 
+                          href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}/storage/${r.contract.file_path}`} 
                           target="_blank" 
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs font-bold text-gold hover:text-gold/80 transition-colors flex items-center gap-1"

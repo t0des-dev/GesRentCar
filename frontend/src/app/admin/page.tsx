@@ -17,7 +17,7 @@ import MaintenanceAlerts from "@/components/admin/dashboard/MaintenanceAlerts";
 import DocumentPreviewModal from "@/components/admin/dashboard/DocumentPreviewModal";
 import { PerformanceCharts, PopularModels } from "@/components/admin/dashboard/DashboardAnalytics";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+const API = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NEXT_PUBLIC_API_URL || "${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}");
 
 export default function AdminDashboard() {
   const { user, checking } = useAuthGuard("admin");
