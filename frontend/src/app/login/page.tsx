@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, LogIn, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 
