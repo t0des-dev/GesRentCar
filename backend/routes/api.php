@@ -44,20 +44,14 @@ Route::get('/health', function (): JsonResponse {
     return response()->json($checks, $statusCode);
 });
 
-// ─── Auth aliases (no version prefix) — compatibility for deployed frontend ───
-Route::prefix('auth')->middleware('throttle:auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-});
-Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', function (Request $request) {
-        return ['user' => $request->user()];
-    });
+// ─── Sanctum CSRF alias for frontend calling /api/sanctum/csrf-cookie ─────────
+Route::get('/sanctum/csrf-cookie', function () {
+    return app()->make(\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class)
+        ->show(request());
 });
 
-// ─── API v1 ──────────────────────────────────────────────────────────────────
-Route::prefix('v1')->group(function () {
+// ─── Shared route definitions (applied to both /v1 and unversioned) ────────────
+$apiRoutes = function () {
 
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -104,7 +98,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/cmi/callback', [CmiController::class, 'callback']);
     });
 
-    // Reservations (Protected + rate limited: 60 req/min per IP)
+    // Protected routes (auth + audit + rate limit)
     Route::middleware(['auth:sanctum', 'audit', 'throttle:api'])->group(function () {
         Route::apiResource('/clients', ClientController::class);
         Route::post('/reservations', [ReservationController::class, 'store']);
@@ -172,5 +166,11 @@ Route::prefix('v1')->group(function () {
             Route::delete('/users/{user}', [UserController::class, 'destroy']);
         });
     });
+};
 
-});
+// ─── API v1 (versioned) ───────────────────────────────────────────────────────
+Route::prefix('v1')->group($apiRoutes);
+
+// ─── Unversioned aliases — compatibility for deployed frontend ────────────────
+// Handles /api/* calls from frontend built without /v1 in NEXT_PUBLIC_API_URL
+Route::group([], $apiRoutes);
