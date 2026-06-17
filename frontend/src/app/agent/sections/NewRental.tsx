@@ -57,6 +57,11 @@ export default function NewRental() {
 
     setScanning(true); setError("");
     try {
+      const maxFileSize = 8 * 1024 * 1024; // 8MB
+      if (file.size > maxFileSize) {
+        throw new Error("Fichier trop volumineux (max 8MB).");
+      }
+
       const formData = new FormData();
       formData.append("image", file);
       formData.append("type", "cin");
@@ -66,6 +71,9 @@ export default function NewRental() {
         headers: { Accept: "application/json", Authorization: `Bearer ${getToken()}` },
         body: formData
       });
+      if (!res.ok) {
+        throw new Error(`Erreur serveur OCR (${res.status}).`);
+      }
       const data = await res.json();
       if (data.success) {
         setClientData({

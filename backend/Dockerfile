@@ -25,6 +25,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && pecl install redis \
     && docker-php-ext-enable redis
 
+# Set PHP upload limits
+RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 12M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_execution_time = 120" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

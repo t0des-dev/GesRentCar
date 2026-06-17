@@ -23,12 +23,23 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
     formData.append("image", e.target.files[0]);
     formData.append("type", type);
 
+    const maxFileSize = 8 * 1024 * 1024; // 8MB
+    if (e.target.files[0].size > maxFileSize) {
+      console.error("OCR Error: File too large (max 8MB)");
+      setIsScanning(false);
+      return;
+    }
+
     try {
       const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const res = await fetch(`${apiBase}/ocr/scan`, {
         method: "POST",
         body: formData,
       });
+      if (!res.ok) {
+        console.error("OCR Error: Server responded with status", res.status);
+        return;
+      }
       const data = await res.json();
       
       if (data.success && data.data) {
