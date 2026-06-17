@@ -29,11 +29,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "VectoriaRentCar - Premium Car Rental",
-  description: "Centralized car rental management system for modern agencies. Experience luxury and performance.",
+  description: "Location de véhicules premium au Maroc. Flotte d'exception, service conciergerie 24/7.",
+  manifest: "/manifest.json",
+  themeColor: "#D4AF37",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Vectoria",
+  },
   openGraph: {
     title: "VectoriaRentCar - Premium Fleet",
     description: "Book your luxury car today with VectoriaRentCar.",
-    url: "https://vectoria-rent.com",
+    url: "https://vectoria.carbonick.com",
     siteName: "VectoriaRentCar",
     images: [
       {
@@ -42,7 +49,7 @@ export const metadata: Metadata = {
         height: 630,
       },
     ],
-    locale: "en_US",
+    locale: "fr_MA",
     type: "website",
   },
   twitter: {

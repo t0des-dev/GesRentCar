@@ -6,7 +6,7 @@ import { Search, Calendar, Filter, Loader2, AlertCircle, Car } from "lucide-reac
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
 import styles from "./page.module.css";
 
-const API = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/v1";
 
 const CATEGORIES = [
   { id: 'all', label: 'All' },

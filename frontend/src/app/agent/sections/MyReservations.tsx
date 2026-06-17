@@ -5,7 +5,7 @@ import { Car, Calendar, Search, Filter, ChevronDown, ChevronUp, DollarSign, Load
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 
-const API = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 const STATUS_MAP: Record<string, { label: string, style: string }> = {

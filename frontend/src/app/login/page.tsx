@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, LogIn, Shield, UserCog, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 
@@ -235,32 +235,17 @@ export default function LoginPage() {
             </div>
           </motion.div>
 
-          {/* Demo Accounts */}
+          {/* Demo Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             className="mt-8 pt-8 border-t border-border text-center"
           >
-            <p className="text-[11px] font-bold uppercase tracking-widest text-ink-3 mb-4">Comptes de démonstration :</p>
-            <div className="flex gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-surface-1 border-2 border-border text-ink-2 font-bold text-xs uppercase tracking-wider hover:border-gold hover:bg-gold/5 transition-all"
-                onClick={() => { setEmail('admin@vectoria.com'); setPassword('Admin2026!'); }}
-              >
-                <Shield size={14} /> Admin
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-surface-1 border-2 border-border text-ink-2 font-bold text-xs uppercase tracking-wider hover:border-gold hover:bg-gold/5 transition-all"
-                onClick={() => { setEmail('agent@vectoria.com'); setPassword('Agent2026!'); }}
-              >
-                <UserCog size={14} /> Agent
-              </motion.button>
-            </div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-ink-3 mb-2">Comptes de démonstration</p>
+            <p className="text-xs text-ink-4">
+              Consultez la documentation pour les identifiants de test.
+            </p>
           </motion.div>
         </div>
       </motion.div>

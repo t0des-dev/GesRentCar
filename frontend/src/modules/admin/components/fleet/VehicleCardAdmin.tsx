@@ -80,7 +80,7 @@ export default function VehicleCardAdmin({
 
         {vehicle.image_url ? (
           <div className="w-full h-full relative">
-            <img src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}${vehicle.image_url}`} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <img src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${vehicle.image_url}`} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-80" />
           </div>
         ) : (

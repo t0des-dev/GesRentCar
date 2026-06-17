@@ -7,6 +7,12 @@ services:
       dockerfile: Dockerfile
     container_name: gesrentcar-backend
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep php-fpm | grep -q grep || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     volumes:
       - ./backend/storage:/var/www/storage
     environment:
@@ -56,6 +62,12 @@ services:
     image: nginx:alpine
     container_name: gesrentcar-web
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     ports:
       - "8080:80"
     volumes:

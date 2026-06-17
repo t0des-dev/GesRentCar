@@ -8,7 +8,7 @@ import KpiGrid from "@/modules/agent/components/dashboard/KpiGrid";
 import RecentActivity from "@/modules/agent/components/dashboard/RecentActivity";
 import QuickActions from "@/modules/agent/components/dashboard/QuickActions";
 
-const API = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 export default function AgentHome({ onNewRental }: { onNewRental: () => void }) {

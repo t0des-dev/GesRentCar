@@ -220,7 +220,7 @@ export default function ExpensesPage() {
                       </td>
                       <td className="p-4">
                         {exp.receipt_url ? (
-                          <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}${exp.receipt_url}`} target="_blank" rel="noreferrer" className="text-primary hover:text-primary-dark inline-flex items-center gap-1 text-xs font-bold">
+                          <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${exp.receipt_url}`} target="_blank" rel="noreferrer" className="text-primary hover:text-primary-dark inline-flex items-center gap-1 text-xs font-bold">
                             <FileText size={14} /> Voir
                           </a>
                         ) : (

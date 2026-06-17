@@ -163,13 +163,13 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
                 <p className="text-xl font-bold text-ink-1 leading-tight mb-4">{reservation.client?.name || "N/A"}</p>
                 <div className="flex gap-3">
                   {reservation.client?.cin_image_url && (
-                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}${reservation.client.cin_image_url}`} target="_blank" 
+                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${reservation.client.cin_image_url}`} target="_blank" 
                        className="text-xs font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg hover:bg-gold/20 transition-colors">
                       CIN
                     </a>
                   )}
                   {reservation.client?.license_image_url && (
-                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}${reservation.client.license_image_url}`} target="_blank" 
+                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${reservation.client.license_image_url}`} target="_blank" 
                        className="text-xs font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg hover:bg-gold/20 transition-colors">
                       Permis
                     </a>
@@ -221,7 +221,7 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
                   </div>
                   <motion.a 
                     whileHover={{ scale: 1.05 }}
-                    href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace("/api", "")}/storage/${reservation.contract.file_path}`} 
+                    href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}/storage/${reservation.contract.file_path}`} 
                     target="_blank" 
                     className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
                   >

@@ -9,7 +9,7 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 
-const API = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 type ClientData = { name: string; cin: string; license?: string; email?: string; phone?: string; };

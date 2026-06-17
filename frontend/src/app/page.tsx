@@ -4,7 +4,7 @@ import HomeClient from "@/components/home/HomeClient";
 export async function generateMetadata(): Promise<Metadata> {
   let config = null;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/config`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'}/config`, {
       next: { revalidate: 60 } // Cache for 60 seconds
     });
     if (res.ok) {
