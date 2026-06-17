@@ -169,8 +169,8 @@ $apiRoutes = function () {
 };
 
 // ─── API v1 (versioned) ───────────────────────────────────────────────────────
-Route::prefix('v1')->group($apiRoutes);
+Route::prefix('v1')->name('v1.')->group($apiRoutes);
 
 // ─── Unversioned aliases — compatibility for deployed frontend ────────────────
 // Handles /api/* calls from frontend built without /v1 in NEXT_PUBLIC_API_URL
-Route::group([], $apiRoutes);
+Route::name('compat.')->group($apiRoutes);
