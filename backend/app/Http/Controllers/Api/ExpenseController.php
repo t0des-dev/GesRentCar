@@ -40,10 +40,11 @@ class ExpenseController extends Controller
             'category' => 'required|string|max:100',
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'payment_method' => 'nullable|string|max:50',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         $expense = Expense::create($validated);
+
         return response()->json($expense, 201);
     }
 
@@ -57,10 +58,11 @@ class ExpenseController extends Controller
             'category' => 'sometimes|required|string|max:100',
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'payment_method' => 'nullable|string|max:50',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
         ]);
 
         $expense->update($validated);
+
         return response()->json($expense);
     }
 
@@ -68,6 +70,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
         $expense->delete();
+
         return response()->json(['message' => 'Expense deleted successfully']);
     }
 
@@ -75,7 +78,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
         $request->validate([
-            'receipt' => 'required|file|mimes:jpeg,png,jpg,webp,pdf|max:5120'
+            'receipt' => 'required|file|mimes:jpeg,png,jpg,webp,pdf|max:5120',
         ]);
 
         if ($request->hasFile('receipt')) {
@@ -85,7 +88,7 @@ class ExpenseController extends Controller
 
             return response()->json([
                 'message' => 'Receipt uploaded successfully',
-                'receipt_url' => $expense->receipt_url
+                'receipt_url' => $expense->receipt_url,
             ]);
         }
 

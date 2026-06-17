@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::table('settings', function (Blueprint $table) {
             // Check if column exists before adding (to avoid errors if someone manually added them)
-            if (!Schema::hasColumn('settings', 'agency_slogan')) {
+            if (! Schema::hasColumn('settings', 'agency_slogan')) {
                 $table->string('agency_slogan')->nullable()->after('value');
             }
-            if (!Schema::hasColumn('settings', 'agency_primary_color')) {
+            if (! Schema::hasColumn('settings', 'agency_primary_color')) {
                 $table->string('agency_primary_color')->nullable()->after('agency_slogan');
             }
         });

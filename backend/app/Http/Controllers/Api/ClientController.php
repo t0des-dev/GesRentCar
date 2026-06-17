@@ -39,9 +39,9 @@ class ClientController extends Controller
     {
         $validated = $request->validate([
             'name' => 'string',
-            'email' => 'email|unique:clients,email,' . $client->id,
+            'email' => 'email|unique:clients,email,'.$client->id,
             'phone' => 'string',
-            'cin' => 'string|unique:clients,cin,' . $client->id,
+            'cin' => 'string|unique:clients,cin,'.$client->id,
         ]);
 
         $client->update($validated);
@@ -52,6 +52,7 @@ class ClientController extends Controller
     public function destroy(Client $client)
     {
         $client->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -3,15 +3,18 @@
 namespace App\Filament\Resources\VehicleResource\Pages;
 
 use App\Filament\Resources\VehicleResource;
-use Filament\Resources\Pages\Page;
 use App\Models\Vehicle;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\Page;
 
 class KanbanVehicles extends Page
 {
     protected static string $resource = VehicleResource::class;
 
     protected string $view = 'filament.resources.vehicle-resource.pages.kanban-vehicles';
-    
+
     protected static ?string $title = 'Véhicules (Kanban)';
 
     public function getColumns(): array
@@ -26,20 +29,20 @@ class KanbanVehicles extends Page
     public function getVehicles(): array
     {
         $vehicles = Vehicle::all();
-        
+
         $columns = [
             'available' => [],
             'rented' => [],
             'maintenance' => [],
         ];
-        
+
         foreach ($vehicles as $vehicle) {
             $status = $vehicle->status;
             if (isset($columns[$status])) {
                 $columns[$status][] = $vehicle;
             }
         }
-        
+
         return $columns;
     }
 
@@ -48,9 +51,9 @@ class KanbanVehicles extends Page
         $vehicle = Vehicle::find($vehicleId);
         if ($vehicle && in_array($newStatus, array_keys($this->getColumns()))) {
             $vehicle->update(['status' => $newStatus]);
-            
+
             // Notification
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->title('Statut mis à jour')
                 ->success()
                 ->send();
@@ -60,17 +63,17 @@ class KanbanVehicles extends Page
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\Action::make('grid_view')
+            Action::make('grid_view')
                 ->label('Vue Grille')
                 ->icon('heroicon-m-squares-2x2')
                 ->color('gray')
                 ->url(VehicleResource::getUrl('index')),
-            \Filament\Actions\Action::make('table_view')
+            Action::make('table_view')
                 ->label('Vue Liste')
                 ->icon('heroicon-m-list-bullet')
                 ->color('gray')
                 ->url(VehicleResource::getUrl('table')),
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

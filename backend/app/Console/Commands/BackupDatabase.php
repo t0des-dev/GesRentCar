@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Storage;
 
 class BackupDatabase extends Command
 {
@@ -21,14 +22,14 @@ class BackupDatabase extends Command
         $backupDir = storage_path('app/backups');
 
         // Ensure backup directory exists
-        if (!is_dir($backupDir)) {
+        if (! is_dir($backupDir)) {
             mkdir($backupDir, 0755, true);
         }
 
         $filename = "vectoria-{$timestamp}.sql";
         $filepath = "{$backupDir}/{$filename}";
 
-        $this->info("Starting database backup...");
+        $this->info('Starting database backup...');
 
         // Database connection details from env
         $host = config('database.connections.pgsql.host', 'db');
@@ -55,20 +56,22 @@ class BackupDatabase extends Command
         if ($result->failed()) {
             $this->error("pg_dump failed: {$result->errorOutput()}");
             Log::error("Backup failed: {$result->errorOutput()}");
+
             return 1;
         }
 
         $filesize = filesize($filepath);
-        $this->info("Database dump created: {$filename} (" . $this->formatBytes($filesize) . ")");
+        $this->info("Database dump created: {$filename} (".$this->formatBytes($filesize).')');
 
         // Compress if requested
         if ($this->option('compress')) {
             $gzFile = "{$filepath}.gz";
-            $compressResult = Process::run("gzip -c " . escapeshellarg($filepath) . " > " . escapeshellarg($gzFile));
+            $compressResult = Process::run('gzip -c '.escapeshellarg($filepath).' > '.escapeshellarg($gzFile));
 
             if ($compressResult->failed()) {
                 $this->error("Compression failed: {$compressResult->errorOutput()}");
                 Log::error("Compression failed: {$compressResult->errorOutput()}");
+
                 return 1;
             }
 
@@ -77,7 +80,7 @@ class BackupDatabase extends Command
             $filepath = $gzFile;
             $filename = basename($gzFile);
             $filesize = filesize($gzFile);
-            $this->info("Compressed: {$filename} (" . $this->formatBytes($filesize) . ")");
+            $this->info("Compressed: {$filename} (".$this->formatBytes($filesize).')');
         }
 
         // Upload to S3/MinIO if requested
@@ -88,8 +91,8 @@ class BackupDatabase extends Command
         // Clean old backups
         $this->cleanupOldBackups($backupDir, $this->option('retention'));
 
-        Log::info("Backup completed: {$filename} (" . $this->formatBytes($filesize) . ")");
-        $this->info("Backup completed successfully.");
+        Log::info("Backup completed: {$filename} (".$this->formatBytes($filesize).')');
+        $this->info('Backup completed successfully.');
 
         return 0;
     }
@@ -97,12 +100,12 @@ class BackupDatabase extends Command
     private function uploadToS3(string $filepath, string $filename): void
     {
         $bucket = config('filesystems.disks.s3.bucket');
-        $prefix = 'backups/' . now()->format('Y/m/d');
+        $prefix = 'backups/'.now()->format('Y/m/d');
 
         $this->info("Uploading to S3: s3://{$bucket}/{$prefix}/{$filename}");
 
         try {
-            $s3Disk = \Illuminate\Support\Facades\Storage::disk('s3');
+            $s3Disk = Storage::disk('s3');
             $content = file_get_contents($filepath);
             $s3Disk->put("{$prefix}/{$filename}", $content);
 
@@ -127,7 +130,7 @@ class BackupDatabase extends Command
             if ($mtime < $cutoff->timestamp) {
                 unlink($file);
                 $deleted++;
-                $this->line("  Deleted: " . basename($file));
+                $this->line('  Deleted: '.basename($file));
             }
         }
 
@@ -138,6 +141,7 @@ class BackupDatabase extends Command
     {
         $units = ['B', 'KB', 'MB', 'GB'];
         $factor = floor((strlen((string) $bytes) - 1) / 3);
-        return sprintf("%.{$precision}f", $bytes / pow(1024, $factor)) . ' ' . ($units[$factor] ?? 'TB');
+
+        return sprintf("%.{$precision}f", $bytes / pow(1024, $factor)).' '.($units[$factor] ?? 'TB');
     }
 }

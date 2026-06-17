@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use App\Services\ImageService;
+use App\Services\PricingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Cache;
 
 class VehicleController extends Controller
 {
-    public function index(Request $request, \App\Services\PricingService $pricing)
+    public function index(Request $request, PricingService $pricing)
     {
         $version = Cache::get('vehicles_cache_version', 1);
-        $cacheKey = 'vehicles_index_v2_' . $version . '_' . md5(json_encode($request->all()) . app()->getLocale());
+        $cacheKey = 'vehicles_index_v2_'.$version.'_'.md5(json_encode($request->all()).app()->getLocale());
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $pricing) {
             $query = Vehicle::query();
@@ -23,64 +23,64 @@ class VehicleController extends Controller
                 $query->available($request->start_date, $request->end_date);
             }
 
-        if ($request->has('ids')) {
-            $ids = is_array($request->ids) ? $request->ids : explode(',', $request->ids);
-            $query->whereIn('id', $ids);
-        }
-
-        if ($request->has('brand')) {
-            $query->where('brand', 'like', '%' . $request->brand . '%');
-        }
-
-        if ($request->has('type')) {
-            $type = strtolower($request->type);
-            if (in_array($type, ['internal', 'collaborator'])) {
-                $query->where('type', $type);
-            } else {
-                $query->where('category', $type);
+            if ($request->has('ids')) {
+                $ids = is_array($request->ids) ? $request->ids : explode(',', $request->ids);
+                $query->whereIn('id', $ids);
             }
-        }
 
-        if ($request->has('category')) {
-            $query->where('category', strtolower($request->category));
-        }
-
-        if ($request->has('max_price')) {
-            $query->where('price_per_day', '<=', $request->max_price);
-        }
-
-        $perPage = $request->query('per_page', 6);
-        
-        $vehicles = $query->withSum(['reservations as total_revenue' => function($q) {
-            $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
-        }], 'total_price')
-        ->withSum('maintenances as total_maintenance_cost', 'cost')
-        ->withExists(['reservations as is_currently_rented' => function($q) {
-            $q->whereIn('status', ['ongoing', 'confirmed'])
-              ->where('start_date', '<=', now())
-              ->where('end_date', '>=', now());
-        }])
-        ->paginate($perPage);
-
-        $totalVehicles = Vehicle::count();
-        $rentedVehicles = Vehicle::where('status', 'rented')->count();
-        $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
-
-        $vehicles->getCollection()->transform(function ($vehicle) use ($pricing, $occupancyRate) {
-            $dynamic = $pricing->getDynamicRate($vehicle, $occupancyRate);
-            $vehicle->dynamic_price = $dynamic['price'];
-            $vehicle->dynamic_reason = $dynamic['reason'];
-            
-            // Calcul Auto du Statut (si pas en maintenance forcée)
-            if ($vehicle->status !== 'maintenance') {
-                $vehicle->status = $vehicle->is_currently_rented ? 'rented' : 'available';
+            if ($request->has('brand')) {
+                $query->where('brand', 'like', '%'.$request->brand.'%');
             }
-            
-            return $vehicle;
+
+            if ($request->has('type')) {
+                $type = strtolower($request->type);
+                if (in_array($type, ['internal', 'collaborator'])) {
+                    $query->where('type', $type);
+                } else {
+                    $query->where('category', $type);
+                }
+            }
+
+            if ($request->has('category')) {
+                $query->where('category', strtolower($request->category));
+            }
+
+            if ($request->has('max_price')) {
+                $query->where('price_per_day', '<=', $request->max_price);
+            }
+
+            $perPage = $request->query('per_page', 6);
+
+            $vehicles = $query->withSum(['reservations as total_revenue' => function ($q) {
+                $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
+            }], 'total_price')
+                ->withSum('maintenances as total_maintenance_cost', 'cost')
+                ->withExists(['reservations as is_currently_rented' => function ($q) {
+                    $q->whereIn('status', ['ongoing', 'confirmed'])
+                        ->where('start_date', '<=', now())
+                        ->where('end_date', '>=', now());
+                }])
+                ->paginate($perPage);
+
+            $totalVehicles = Vehicle::count();
+            $rentedVehicles = Vehicle::where('status', 'rented')->count();
+            $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
+
+            $vehicles->getCollection()->transform(function ($vehicle) use ($pricing, $occupancyRate) {
+                $dynamic = $pricing->getDynamicRate($vehicle, $occupancyRate);
+                $vehicle->dynamic_price = $dynamic['price'];
+                $vehicle->dynamic_reason = $dynamic['reason'];
+
+                // Calcul Auto du Statut (si pas en maintenance forcée)
+                if ($vehicle->status !== 'maintenance') {
+                    $vehicle->status = $vehicle->is_currently_rented ? 'rented' : 'available';
+                }
+
+                return $vehicle;
+            });
+
+            return response()->json($vehicles);
         });
-
-        return response()->json($vehicles);
-      });
     }
 
     protected function clearCache()
@@ -92,13 +92,13 @@ class VehicleController extends Controller
     public function show(Vehicle $vehicle)
     {
         $vehicle->load(['agent', 'reservations', 'maintenances']);
-        
-        $vehicle->loadSum(['reservations as total_revenue' => function($q) {
+
+        $vehicle->loadSum(['reservations as total_revenue' => function ($q) {
             $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
         }], 'total_price');
-        
+
         $vehicle->loadSum('maintenances as total_maintenance_cost', 'cost');
-        
+
         return response()->json($vehicle);
     }
 
@@ -130,6 +130,7 @@ class VehicleController extends Controller
 
         $vehicle = Vehicle::create($data);
         $this->clearCache();
+
         return response()->json($vehicle, 201);
     }
 
@@ -138,7 +139,7 @@ class VehicleController extends Controller
         $data = $request->validate([
             'brand' => 'sometimes|string',
             'model' => 'sometimes|string',
-            'plate' => 'sometimes|string|unique:vehicles,plate,' . $vehicle->id,
+            'plate' => 'sometimes|string|unique:vehicles,plate,'.$vehicle->id,
             'price_per_day' => 'sometimes|numeric',
             'status' => 'sometimes|in:available,rented,maintenance',
             'category' => 'sometimes|string',
@@ -160,10 +161,11 @@ class VehicleController extends Controller
 
         $vehicle->update($data);
         $this->clearCache();
+
         return response()->json($vehicle);
     }
 
-    public function uploadImage(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
+    public function uploadImage(Request $request, Vehicle $vehicle, ImageService $imageService)
     {
         try {
             $request->validate([
@@ -174,20 +176,21 @@ class VehicleController extends Controller
                 $url = $imageService->optimizeAndStore($request->file('image'), 'vehicles');
                 $vehicle->update(['image_url' => $url]);
                 $this->clearCache();
+
                 return response()->json(['url' => $url]);
             }
 
             return response()->json(['message' => 'Aucun fichier'], 400);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Erreur upload: ' . $e->getMessage(),
+                'message' => 'Erreur upload: '.$e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
             ], 500);
         }
     }
 
-    public function uploadPhotos(Request $request, Vehicle $vehicle, \App\Services\ImageService $imageService)
+    public function uploadPhotos(Request $request, Vehicle $vehicle, ImageService $imageService)
     {
         $request->validate([
             'photos' => 'required|array',
@@ -195,13 +198,14 @@ class VehicleController extends Controller
         ]);
 
         $currentPhotos = $vehicle->photos ?? [];
-        
+
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
                 $currentPhotos[] = $imageService->optimizeAndStore($photo, 'vehicles/gallery');
             }
             $vehicle->update(['photos' => $currentPhotos]);
             $this->clearCache();
+
             return response()->json(['photos' => $currentPhotos]);
         }
 
@@ -212,6 +216,7 @@ class VehicleController extends Controller
     {
         $vehicle->delete();
         $this->clearCache();
+
         return response()->json(null, 204);
     }
 }

@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
+use App\Models\Client;
+use App\Models\Contract;
 use App\Models\Reservation;
 use App\Models\Vehicle;
-use App\Models\Client;
 use App\Services\NotificationService;
 use App\Services\PricingService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Stripe\PaymentIntent;
+use Stripe\Refund;
+use Stripe\Stripe;
 
 class ReservationController extends Controller
 {
@@ -25,10 +32,10 @@ class ReservationController extends Controller
         $perPage = min($perPage, 100); // sécurité : max 100 par page
 
         $reservations = Reservation::with([
-                'client:id,name,email,phone,cin,cin_image_url,license_image_url',
-                'vehicle:id,brand,model,plate,image_url',
-                'contract:id,reservation_id,file_path,signed_at',
-            ])
+            'client:id,name,email,phone,cin,cin_image_url,license_image_url',
+            'vehicle:id,brand,model,plate,image_url',
+            'contract:id,reservation_id,file_path,signed_at',
+        ])
             ->latest('id')
             ->paginate($perPage);
 
@@ -40,12 +47,12 @@ class ReservationController extends Controller
     {
         $user = $request->user();
         $reservations = Reservation::whereHas('client', function ($q) use ($user) {
-                $q->where('email', $user->email);
-            })
+            $q->where('email', $user->email);
+        })
             ->with([
-                'vehicle:id,brand,model,plate,image_url',
-                'client:id,name,email,phone',
-            ])
+            'vehicle:id,brand,model,plate,image_url',
+            'client:id,name,email,phone',
+        ])
             ->latest('id')
             ->get();
 
@@ -56,19 +63,19 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id'  => 'required|exists:clients,id',
+            'client_id' => 'required|exists:clients,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'start_date' => 'required|date',
-            'end_date'   => 'required|date|after:start_date',
-            'options'    => 'nullable|array',
+            'end_date' => 'required|date|after:start_date',
+            'options' => 'nullable|array',
         ]);
 
-        $options    = $validated['options'] ?? [];
-        $startDate  = \Carbon\Carbon::parse($validated['start_date']);
-        $endDate    = \Carbon\Carbon::parse($validated['end_date']);
-        $days       = max(1, $startDate->diffInDays($endDate));
+        $options = $validated['options'] ?? [];
+        $startDate = Carbon::parse($validated['start_date']);
+        $endDate = Carbon::parse($validated['end_date']);
+        $days = max(1, $startDate->diffInDays($endDate));
 
-        $reservation = DB::transaction(function () use ($validated, $options, $startDate, $endDate, $days) {
+        $reservation = DB::transaction(function () use ($validated, $options, $startDate, $days) {
             // ✅ Verrou pessimiste : empêche la double réservation concurrente
             $vehicle = Vehicle::lockForUpdate()->findOrFail($validated['vehicle_id']);
 
@@ -77,16 +84,16 @@ class ReservationController extends Controller
             }
 
             $pricing = $this->pricing->calculateTotal($vehicle, $days, $options, null, $startDate);
-            $status  = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
+            $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
 
             return Reservation::create([
-                'client_id'   => $validated['client_id'],
-                'vehicle_id'  => $vehicle->id,
-                'start_date'  => $validated['start_date'],
-                'end_date'    => $validated['end_date'],
+                'client_id' => $validated['client_id'],
+                'vehicle_id' => $vehicle->id,
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
                 'total_price' => $pricing['total_price'],
-                'status'      => $status,
-                'options'     => empty($options) ? null : $options,
+                'status' => $status,
+                'options' => empty($options) ? null : $options,
             ]);
         });
 
@@ -103,28 +110,28 @@ class ReservationController extends Controller
     public function publicStore(Request $request)
     {
         $validated = $request->validate([
-            'vehicle_id'               => 'required|exists:vehicles,id',
-            'start_date'               => 'required|date',
-            'end_date'                 => 'required|date|after:start_date',
-            'client.name'              => 'required|string',
-            'client.email'             => 'required|email',
-            'client.phone'             => 'required|string',
-            'client.cin'               => 'required|string',
-            'client.license_number'    => 'nullable|string',
-            'client.cin_image_url'     => 'nullable|string',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'client.name' => 'required|string',
+            'client.email' => 'required|email',
+            'client.phone' => 'required|string',
+            'client.cin' => 'required|string',
+            'client.license_number' => 'nullable|string',
+            'client.cin_image_url' => 'nullable|string',
             'client.license_image_url' => 'nullable|string',
-            'payment_method'           => 'required|string|in:cash,cmi,transfer,stripe,on_site',
-            'signature'                => 'nullable|string',
-            'options'                  => 'nullable|array',
+            'payment_method' => 'required|string|in:cash,cmi,transfer,stripe,on_site',
+            'signature' => 'nullable|string',
+            'options' => 'nullable|array',
         ]);
 
         $clientData = $validated['client'];
-        $options    = $validated['options'] ?? [];
-        $startDate  = \Carbon\Carbon::parse($validated['start_date']);
-        $endDate    = \Carbon\Carbon::parse($validated['end_date']);
-        $days       = max(1, $startDate->diffInDays($endDate));
+        $options = $validated['options'] ?? [];
+        $startDate = Carbon::parse($validated['start_date']);
+        $endDate = Carbon::parse($validated['end_date']);
+        $days = max(1, $startDate->diffInDays($endDate));
 
-        $reservation = DB::transaction(function () use ($validated, $clientData, $options, $startDate, $endDate, $days) {
+        $reservation = DB::transaction(function () use ($validated, $clientData, $options, $startDate, $days) {
             // ✅ Verrou pessimiste
             $vehicle = Vehicle::lockForUpdate()->findOrFail($validated['vehicle_id']);
 
@@ -135,35 +142,35 @@ class ReservationController extends Controller
             $client = Client::firstOrCreate(
                 ['email' => $clientData['email']],
                 [
-                    'name'              => $clientData['name'],
-                    'phone'             => $clientData['phone'],
-                    'cin'               => $clientData['cin'],
-                    'license_number'    => $clientData['license_number'] ?? null,
-                    'cin_image_url'     => $clientData['cin_image_url'] ?? null,
+                    'name' => $clientData['name'],
+                    'phone' => $clientData['phone'],
+                    'cin' => $clientData['cin'],
+                    'license_number' => $clientData['license_number'] ?? null,
+                    'cin_image_url' => $clientData['cin_image_url'] ?? null,
                     'license_image_url' => $clientData['license_image_url'] ?? null,
                 ]
             );
 
             $pricing = $this->pricing->calculateTotal($vehicle, $days, $options, null, $startDate);
-            $status  = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
+            $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
 
             $res = Reservation::create([
-                'client_id'      => $client->id,
-                'vehicle_id'     => $vehicle->id,
-                'start_date'     => $validated['start_date'],
-                'end_date'       => $validated['end_date'],
-                'total_price'    => $pricing['total_price'],
-                'status'         => $status,
+                'client_id' => $client->id,
+                'vehicle_id' => $vehicle->id,
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'total_price' => $pricing['total_price'],
+                'status' => $status,
                 'payment_method' => $validated['payment_method'],
-                'options'        => empty($options) ? null : $options,
+                'options' => empty($options) ? null : $options,
             ]);
 
             if (! empty($validated['signature'])) {
-                \App\Models\Contract::create([
+                Contract::create([
                     'reservation_id' => $res->id,
                     'signature_data' => $validated['signature'],
-                    'signed_at'      => now(),
-                    'file_path'      => 'contracts/contract_' . $res->id . '.pdf',
+                    'signed_at' => now(),
+                    'file_path' => 'contracts/contract_'.$res->id.'.pdf',
                 ]);
             }
 
@@ -201,17 +208,17 @@ class ReservationController extends Controller
     public function update(Request $request, Reservation $reservation)
     {
         $validated = $request->validate([
-            'status'     => 'sometimes|string|in:pending,confirmed,ongoing,completed,cancelled,attente_paiement,pending_partner',
+            'status' => 'sometimes|string|in:pending,confirmed,ongoing,completed,cancelled,attente_paiement,pending_partner',
             'start_date' => 'sometimes|date',
-            'end_date'   => 'sometimes|date|after:start_date',
+            'end_date' => 'sometimes|date|after:start_date',
             'vehicle_id' => 'sometimes|exists:vehicles,id',
         ]);
 
         if (isset($validated['start_date']) || isset($validated['end_date']) || isset($validated['vehicle_id'])) {
             $vehicleId = $validated['vehicle_id'] ?? $reservation->vehicle_id;
-            $startDate = \Carbon\Carbon::parse($validated['start_date'] ?? $reservation->start_date);
-            $endDate   = \Carbon\Carbon::parse($validated['end_date'] ?? $reservation->end_date);
-            $days      = max(1, $startDate->diffInDays($endDate));
+            $startDate = Carbon::parse($validated['start_date'] ?? $reservation->start_date);
+            $endDate = Carbon::parse($validated['end_date'] ?? $reservation->end_date);
+            $days = max(1, $startDate->diffInDays($endDate));
 
             $updated = DB::transaction(function () use ($validated, $reservation, $vehicleId, $startDate, $endDate, $days) {
                 // ✅ Verrou pessimiste lors de la modification aussi
@@ -222,11 +229,11 @@ class ReservationController extends Controller
                     ->whereIn('status', ['confirmed', 'ongoing'])
                     ->where(function ($q) use ($startDate, $endDate) {
                         $q->whereBetween('start_date', [$startDate, $endDate])
-                          ->orWhereBetween('end_date', [$startDate, $endDate])
-                          ->orWhere(function ($q) use ($startDate, $endDate) {
-                              $q->where('start_date', '<=', $startDate)
-                                ->where('end_date', '>=', $endDate);
-                          });
+                            ->orWhereBetween('end_date', [$startDate, $endDate])
+                            ->orWhere(function ($q) use ($startDate, $endDate) {
+                                $q->where('start_date', '<=', $startDate)
+                                    ->where('end_date', '>=', $endDate);
+                            });
                     })
                     ->exists();
 
@@ -245,6 +252,7 @@ class ReservationController extends Controller
 
                 $validated['total_price'] = $pricing['total_price'];
                 $reservation->update($validated);
+
                 return $reservation;
             });
 
@@ -252,6 +260,7 @@ class ReservationController extends Controller
         }
 
         $reservation->update($validated);
+
         return response()->json($reservation);
     }
 
@@ -273,7 +282,7 @@ class ReservationController extends Controller
         );
 
         return response()->json([
-            'message'     => 'Réservation acceptée par le partenaire.',
+            'message' => 'Réservation acceptée par le partenaire.',
             'reservation' => $reservation->fresh(['client', 'vehicle']),
         ]);
     }
@@ -288,7 +297,7 @@ class ReservationController extends Controller
         $reservation->update(['status' => 'cancelled']);
 
         return response()->json([
-            'message'     => 'Réservation rejetée par le partenaire.',
+            'message' => 'Réservation rejetée par le partenaire.',
             'reservation' => $reservation->fresh(),
         ]);
     }
@@ -306,7 +315,7 @@ class ReservationController extends Controller
 
         if (! in_array($reservation->status, $cancellableStatuses)) {
             return response()->json([
-                'message' => "Impossible d'annuler une réservation en statut : {$reservation->status}."
+                'message' => "Impossible d'annuler une réservation en statut : {$reservation->status}.",
             ], 422);
         }
 
@@ -326,30 +335,30 @@ class ReservationController extends Controller
             $reservation->update(['status' => 'cancelled']);
 
             // Audit log
-            \App\Models\ActivityLog::create([
-                'user_id'     => auth()->id(),
-                'action'      => 'reservation_cancelled',
+            ActivityLog::create([
+                'user_id' => auth()->id(),
+                'action' => 'reservation_cancelled',
                 'description' => "Réservation #{$reservation->id} annulée. Client: {$reservation->client->name}.",
-                'ip_address'  => request()->ip(),
+                'ip_address' => request()->ip(),
             ]);
         });
 
         // Notification client
         try {
-            $refNum = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+            $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
             $this->notificationService->sendSms(
                 $reservation->client->phone,
                 "VectoriaRentCar: Votre réservation {$refNum} a été annulée."
-                . ($refundResult ? " Remboursement de {$refundResult['amount']} MAD initié." : '')
+                .($refundResult ? " Remboursement de {$refundResult['amount']} MAD initié." : '')
             );
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::warning('[Cancel] SMS notification failed: ' . $e->getMessage());
+            Log::warning('[Cancel] SMS notification failed: '.$e->getMessage());
         }
 
         return response()->json([
-            'message'     => 'Réservation annulée avec succès.',
+            'message' => 'Réservation annulée avec succès.',
             'reservation' => $reservation->fresh(),
-            'refund'      => $refundResult,
+            'refund' => $refundResult,
         ]);
     }
 
@@ -364,38 +373,39 @@ class ReservationController extends Controller
     private function processStripeRefund(Reservation $reservation): ?array
     {
         try {
-            \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+            Stripe::setApiKey(config('services.stripe.secret'));
 
             // Trouver le PaymentIntent via les metadata Stripe
-            $intents = \Stripe\PaymentIntent::all([
+            $intents = PaymentIntent::all([
                 'limit' => 10,
             ]);
 
             // Remboursement via Charge (plus fiable)
             $refundAmount = (int) ($reservation->payment->paid_amount * 100);
 
-            $refund = \Stripe\Refund::create([
+            $refund = Refund::create([
                 'payment_intent' => $this->findStripePaymentIntent($reservation),
-                'amount'         => $refundAmount,
-                'reason'         => 'requested_by_customer',
-                'metadata'       => [
+                'amount' => $refundAmount,
+                'reason' => 'requested_by_customer',
+                'metadata' => [
                     'reservation_id' => $reservation->id,
-                    'reason'         => 'flexible_cancellation',
+                    'reason' => 'flexible_cancellation',
                 ],
             ]);
 
             // Mettre à jour le statut du paiement
             $reservation->payment->update(['status' => 'refunded']);
 
-            \Illuminate\Support\Facades\Log::info("[Refund] Réservation #{$reservation->id} remboursée. Refund ID: {$refund->id}");
+            Log::info("[Refund] Réservation #{$reservation->id} remboursée. Refund ID: {$refund->id}");
 
             return [
                 'refund_id' => $refund->id,
-                'amount'    => $reservation->payment->paid_amount,
-                'status'    => $refund->status,
+                'amount' => $reservation->payment->paid_amount,
+                'status' => $refund->status,
             ];
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("[Refund] Échec remboursement réservation #{$reservation->id}: " . $e->getMessage());
+            Log::error("[Refund] Échec remboursement réservation #{$reservation->id}: ".$e->getMessage());
+
             return null;
         }
     }
@@ -407,11 +417,13 @@ class ReservationController extends Controller
     private function findStripePaymentIntent(Reservation $reservation): ?string
     {
         try {
-            $intents = \Stripe\PaymentIntent::search([
+            $intents = PaymentIntent::search([
                 'query' => "metadata['reservation_id']:'{$reservation->id}'",
             ]);
+
             return $intents->data[0]->id ?? null;
         } catch (\Exception $e) {
             return null;
         }
     }
+}

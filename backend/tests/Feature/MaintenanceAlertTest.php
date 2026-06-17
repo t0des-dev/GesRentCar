@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
-use Mockery;
 
 class MaintenanceAlertTest extends TestCase
 {
@@ -27,7 +26,7 @@ class MaintenanceAlertTest extends TestCase
             'vehicle_id' => $vehicle->id,
             'type' => 'insurance',
             'next_due' => now()->addDays(15),
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         Artisan::call('maintenance:check-alerts');
@@ -46,7 +45,7 @@ class MaintenanceAlertTest extends TestCase
             'vehicle_id' => $vehicle->id,
             'type' => 'tech_visit',
             'next_due' => now()->subDays(2),
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         Artisan::call('maintenance:check-alerts');
@@ -66,7 +65,7 @@ class MaintenanceAlertTest extends TestCase
             'type' => 'oil',
             'next_due' => now()->addDays(60),
             'next_due_km' => 10000,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         Artisan::call('maintenance:check-alerts');

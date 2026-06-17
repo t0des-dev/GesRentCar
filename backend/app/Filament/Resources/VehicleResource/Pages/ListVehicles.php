@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\VehicleResource\Pages;
 
 use App\Filament\Resources\VehicleResource;
+use App\Filament\Widgets\StatsOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -30,7 +31,7 @@ class ListVehicles extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            \App\Filament\Widgets\StatsOverview::class,
+            StatsOverview::class,
         ];
     }
 }

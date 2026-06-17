@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Reservation;
+use App\Services\Payment\PaymentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,29 +20,29 @@ class PaymentController extends Controller
         ]);
 
         $reservation = Reservation::findOrFail($validated['reservation_id']);
-        
+
         return DB::transaction(function () use ($reservation, $validated) {
             $existingPayment = $reservation->payment;
-            
+
             if ($existingPayment) {
                 $newPaid = $existingPayment->paid_amount + $validated['amount'];
                 $newRemaining = $reservation->total_price - $newPaid;
-                
+
                 $existingPayment->update([
                     'paid_amount' => $newPaid,
                     'remaining' => max(0, $newRemaining),
-                    'status' => $newRemaining <= 0 ? 'full' : 'partial'
+                    'status' => $newRemaining <= 0 ? 'full' : 'partial',
                 ]);
-                
+
                 $payment = $existingPayment;
             } else {
                 $remaining = $reservation->total_price - $validated['amount'];
-                
+
                 $payment = Payment::create([
                     'reservation_id' => $reservation->id,
                     'paid_amount' => $validated['amount'],
                     'remaining' => max(0, $remaining),
-                    'status' => $remaining <= 0 ? 'full' : 'partial'
+                    'status' => $remaining <= 0 ? 'full' : 'partial',
                 ]);
             }
 
@@ -51,6 +53,25 @@ class PaymentController extends Controller
 
             return response()->json($payment, 201);
         });
+    }
+
+    public function releaseDeposit(Request $request, int $reservationId): JsonResponse
+    {
+        $reservation = Reservation::findOrFail($reservationId);
+
+        if ($reservation->status !== 'completed') {
+            return response()->json([
+                'message' => 'La caution ne peut être libérée que pour une réservation terminée.',
+            ], 422);
+        }
+
+        $paymentService = app(PaymentService::class);
+        $payment = $paymentService->releaseDeposit($reservation);
+
+        return response()->json([
+            'message' => 'Caution libérée avec succès.',
+            'payment' => $payment,
+        ]);
     }
 
     public function show(Payment $payment)

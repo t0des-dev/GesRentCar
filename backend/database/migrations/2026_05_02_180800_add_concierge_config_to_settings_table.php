@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            if (!Schema::hasColumn('settings', 'concierge_config')) {
+            if (! Schema::hasColumn('settings', 'concierge_config')) {
                 $table->json('concierge_config')->nullable();
             }
         });

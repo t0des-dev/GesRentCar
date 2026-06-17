@@ -6,12 +6,13 @@ use App\Models\Vehicle;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class MaintenanceAlertsWidget extends BaseWidget
 {
     protected static ?string $heading = 'Alertes de Maintenance & Conformité';
-    protected int | string | array $columnSpan = 'full';
+
+    protected int|string|array $columnSpan = 'full';
+
     protected static ?int $sort = 3;
 
     public function table(Table $table): Table

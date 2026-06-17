@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Client;
 use App\Models\Vehicle;
 use App\Services\AvailabilityEngine;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,7 +15,7 @@ class AvailabilityEngineTest extends TestCase
 
     public function test_prevents_double_booking_using_engine()
     {
-        $engine = new AvailabilityEngine();
+        $engine = new AvailabilityEngine;
         $client = Client::factory()->create();
         $vehicle = Vehicle::factory()->create(['price_per_day' => 100, 'type' => 'internal']);
 
@@ -27,7 +26,7 @@ class AvailabilityEngineTest extends TestCase
 
         // Second booking overlaps and must throw Exception
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Double booking detected");
+        $this->expectExceptionMessage('Double booking detected');
 
         $engine->secureBooking($vehicle->id, '2026-06-05', '2026-06-15', [
             'client_id' => $client->id,
@@ -36,7 +35,7 @@ class AvailabilityEngineTest extends TestCase
 
     public function test_calculates_10_percent_deposit_for_internal_vehicles()
     {
-        $engine = new AvailabilityEngine();
+        $engine = new AvailabilityEngine;
         $client = Client::factory()->create();
         $vehicle = Vehicle::factory()->create(['price_per_day' => 100, 'type' => 'internal']);
 
@@ -51,7 +50,7 @@ class AvailabilityEngineTest extends TestCase
 
     public function test_partner_vehicle_requires_partner_validation()
     {
-        $engine = new AvailabilityEngine();
+        $engine = new AvailabilityEngine;
         $client = Client::factory()->create();
         $vehicle = Vehicle::factory()->create(['price_per_day' => 100, 'type' => 'collaborator']);
 

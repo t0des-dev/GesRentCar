@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ImageService
@@ -15,7 +16,7 @@ class ImageService
     {
         try {
             $extension = $file->getClientOriginalExtension();
-            $name = time() . '_' . uniqid() . '.webp';
+            $name = time().'_'.uniqid().'.webp';
             $tempPath = $file->getRealPath();
 
             // Load image based on type
@@ -58,22 +59,22 @@ class ImageService
                 $newWidth = $maxWidth;
                 $newHeight = floor($height * ($maxWidth / $width));
                 $tmpImg = imagecreatetruecolor($newWidth, $newHeight);
-                
+
                 // Preserve transparency for PNG/WebP
                 imagealphablending($tmpImg, false);
                 imagesavealpha($tmpImg, true);
-                
+
                 imagecopyresampled($tmpImg, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                 imagedestroy($img);
                 $img = $tmpImg;
             }
 
             // Save as WebP for best compression
-            $path = $directory . '/' . $name;
-            $fullPath = storage_path('app/public/' . $path);
-            
+            $path = $directory.'/'.$name;
+            $fullPath = storage_path('app/public/'.$path);
+
             // Ensure directory exists
-            if (!file_exists(dirname($fullPath))) {
+            if (! file_exists(dirname($fullPath))) {
                 mkdir(dirname($fullPath), 0755, true);
             }
 
@@ -82,16 +83,17 @@ class ImageService
             } else {
                 // Fallback to jpeg if webp is not supported
                 $name = str_replace('.webp', '.jpg', $name);
-                $path = $directory . '/' . $name;
-                $fullPath = storage_path('app/public/' . $path);
+                $path = $directory.'/'.$name;
+                $fullPath = storage_path('app/public/'.$path);
                 imagejpeg($img, $fullPath, $quality);
             }
-            
+
             imagedestroy($img);
 
             return Storage::url($path);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Image optimization failed: ' . $e->getMessage());
+            Log::error('Image optimization failed: '.$e->getMessage());
+
             return Storage::url($file->store($directory, 'public'));
         }
     }

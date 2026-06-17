@@ -25,6 +25,7 @@ class AdminPanelProvider extends PanelProvider
         parent::register();
         // dd('provider registered');
     }
+
     public function panel(Panel $panel): Panel
     {
         return $panel

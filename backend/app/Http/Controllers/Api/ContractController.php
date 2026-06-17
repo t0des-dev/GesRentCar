@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reservation;
+use App\Jobs\GenerateContractPdf;
 use App\Models\Contract;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
-
+use App\Models\Reservation;
 use App\Services\NotificationService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
@@ -24,12 +23,12 @@ class ContractController extends Controller
     public function generate(Reservation $reservation)
     {
         $lang = request('lang', 'fr');
-        
-        \App\Jobs\GenerateContractPdf::dispatch($reservation->id, $lang);
+
+        GenerateContractPdf::dispatch($reservation->id, $lang);
 
         return response()->json([
-            'message'  => 'Contract generation queued.',
-            'reservation_id' => $reservation->id
+            'message' => 'Contract generation queued.',
+            'reservation_id' => $reservation->id,
         ]);
     }
 
@@ -40,15 +39,15 @@ class ContractController extends Controller
 
         $pdf = Pdf::loadView('pdf.contract', [
             'reservation' => $reservation->load(['client', 'vehicle', 'contract']),
-            'client'      => $reservation->client,
-            'vehicle'     => $reservation->vehicle,
-            'lang'        => $lang,
+            'client' => $reservation->client,
+            'vehicle' => $reservation->vehicle,
+            'lang' => $lang,
         ])
-        ->setPaper('a4', 'portrait')
-        ->setOption('dpi', 150)
-        ->setOption('defaultFont', 'DejaVu Sans');
+            ->setPaper('a4', 'portrait')
+            ->setOption('dpi', 150)
+            ->setOption('defaultFont', 'DejaVu Sans');
 
-        $filename = 'VRC-Contrat-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT) . '.pdf';
+        $filename = 'VRC-Contrat-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT).'.pdf';
 
         return $pdf->download($filename);
     }
@@ -57,31 +56,31 @@ class ContractController extends Controller
     public function sign(Request $request, Reservation $reservation)
     {
         $request->validate([
-            'signature' => 'required|string'
+            'signature' => 'required|string',
         ]);
 
         $contract = $reservation->contract;
 
-        if (!$contract) {
+        if (! $contract) {
             // Auto-generate if not yet created
-            $fileName = 'contracts/contract_' . $reservation->id . '.pdf';
+            $fileName = 'contracts/contract_'.$reservation->id.'.pdf';
             $contract = Contract::create([
                 'reservation_id' => $reservation->id,
-                'file_path'      => $fileName,
+                'file_path' => $fileName,
             ]);
         }
 
         $contract->update([
             'signature_data' => $request->signature,
-            'signed_at'      => now(),
+            'signed_at' => now(),
         ]);
 
         // Re-generate PDF with signature embedded in background
-        \App\Jobs\GenerateContractPdf::dispatch($reservation->id, 'fr');
+        GenerateContractPdf::dispatch($reservation->id, 'fr');
         $this->notificationService->notifyContractSigned($reservation);
 
         return response()->json([
-            'message'  => 'Signature received. Contract re-generation queued.',
+            'message' => 'Signature received. Contract re-generation queued.',
             'contract' => $contract->fresh(),
         ]);
     }
@@ -94,7 +93,7 @@ class ContractController extends Controller
         if ($reservation->contract && $reservation->contract->signed_at) {
             return response()->json(['message' => 'Contrat déjà signé.'], 403);
         }
+
         return $this->sign($request, $reservation);
     }
 }
-

@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\ActivityLog;
+use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,9 +17,9 @@ class AuditMiddleware
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             ActivityLog::create([
                 'user_id' => $request->user()?->id,
-                'action' => $request->method() . ' ' . $request->path(),
+                'action' => $request->method().' '.$request->path(),
                 'ip_address' => $request->ip(),
-                'details' => json_encode($request->except(['password', 'password_confirmation']))
+                'details' => json_encode($request->except(['password', 'password_confirmation'])),
             ]);
         }
 

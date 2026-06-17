@@ -4,13 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VehicleResource\Pages;
 use App\Filament\Resources\VehicleResource\RelationManagers;
+use App\Filament\Widgets\StatsOverview;
 use App\Models\Vehicle;
 use Filament\Forms;
-use Filament\Schemas\Schema;
+use Filament\Infolists;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Infolists;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -18,8 +19,10 @@ class VehicleResource extends Resource
 {
     protected static ?string $model = Vehicle::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
-    protected static string | \UnitEnum | null $navigationGroup = 'Fleet Management';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Fleet Management';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $form): Schema
@@ -115,7 +118,7 @@ class VehicleResource extends Resource
                                     ->columnSpanFull(),
                             ])->columns(2),
                     ])
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -136,7 +139,7 @@ class VehicleResource extends Resource
                         Tables\Columns\TextColumn::make('brand')
                             ->weight('bold')
                             ->size('lg')
-                            ->formatStateUsing(fn ($record) => $record->brand . ' ' . $record->model)
+                            ->formatStateUsing(fn ($record) => $record->brand.' '.$record->model)
                             ->searchable(['brand', 'model']),
                         Tables\Columns\TextColumn::make('plate')
                             ->color('gray')
@@ -215,7 +218,7 @@ class VehicleResource extends Resource
                             ->height(300),
                         Infolists\Components\TextEntry::make('brand')
                             ->label('Marque & Modèle')
-                            ->formatStateUsing(fn ($record) => $record->brand . ' ' . $record->model)
+                            ->formatStateUsing(fn ($record) => $record->brand.' '.$record->model)
                             ->weight('bold')
                             ->size('lg'),
                         Infolists\Components\TextEntry::make('plate')
@@ -278,7 +281,7 @@ class VehicleResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            \App\Filament\Widgets\StatsOverview::class,
+            StatsOverview::class,
         ];
     }
 }

@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reservation;
 use App\Models\Payment;
-use App\Services\Payment\CmiGateway;
+use App\Models\Reservation;
 use App\Services\NotificationService;
+use App\Services\Payment\CmiGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class CmiController extends Controller
 {
     protected $gateway;
+
     protected $notifications;
 
     public function __construct(CmiGateway $gateway, NotificationService $notifications)
@@ -35,9 +36,10 @@ class CmiController extends Controller
         if ($request->input('HASH') !== $calculatedHash) {
             Log::error('CMI Hash mismatch', [
                 'received' => $request->input('HASH'),
-                'calculated' => $calculatedHash
+                'calculated' => $calculatedHash,
             ]);
-            return redirect(config('services.cmi.fail_url') . '?error=hash_mismatch');
+
+            return redirect(config('services.cmi.fail_url').'?error=hash_mismatch');
         }
 
         $procReturnCode = $request->input('ProcReturnCode');
@@ -51,22 +53,22 @@ class CmiController extends Controller
 
             Payment::create([
                 'reservation_id' => $reservation->id,
-                'paid_amount'    => $request->input('amount'),
-                'remaining'      => $reservation->total_price - $request->input('amount'),
-                'status'         => 'full',
+                'paid_amount' => $request->input('amount'),
+                'remaining' => $reservation->total_price - $request->input('amount'),
+                'status' => 'full',
                 'payment_method' => 'cmi',
                 'transaction_id' => $request->input('TransId'),
-                'type'           => 'deposit'
+                'type' => 'deposit',
             ]);
 
             // Notify
             $this->notifications->notifyDepositPaid($reservation->load(['client', 'vehicle', 'contract']));
 
-            return redirect(config('services.cmi.redirect_url') . "?reservation_id={$reservationId}&status=success");
+            return redirect(config('services.cmi.redirect_url')."?reservation_id={$reservationId}&status=success");
         }
 
         // Payment Failed
-        return redirect(config('services.cmi.fail_url') . "?reservation_id={$reservationId}&error=payment_rejected&code={$procReturnCode}");
+        return redirect(config('services.cmi.fail_url')."?reservation_id={$reservationId}&error=payment_rejected&code={$procReturnCode}");
     }
 
     /**
@@ -75,10 +77,10 @@ class CmiController extends Controller
     public function init(Reservation $reservation)
     {
         $client = $reservation->client;
-        
+
         $result = $this->gateway->charge($reservation->deposit_amount, [
             'reservation_id' => $reservation->id,
-            'email'          => $client->email
+            'email' => $client->email,
         ]);
 
         return response()->json($result);

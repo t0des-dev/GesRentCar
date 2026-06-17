@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -48,13 +48,14 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user
+            'user' => $user,
         ], 201);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => 'Déconnecté']);
     }
 
@@ -63,14 +64,14 @@ class AuthController extends Controller
         $user = $request->user();
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
         ]);
 
         $user->update($request->only('name', 'email'));
 
         return response()->json([
             'message' => 'Profil mis à jour avec succès',
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -82,7 +83,7 @@ class AuthController extends Controller
         ]);
 
         $request->user()->update([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         return response()->json(['message' => 'Mot de passe modifié avec succès']);

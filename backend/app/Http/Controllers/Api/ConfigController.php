@@ -16,21 +16,21 @@ class ConfigController extends Controller
     {
         $request->validate([
             'file' => 'required|image|max:5120', // Max 5MB
-            'type' => 'required|string|in:logo,hero,favicon'
+            'type' => 'required|string|in:logo,hero,favicon',
         ]);
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $type = $request->input('type');
-            
-            $filename = time() . '_' . $type . '.' . $file->getClientOriginalExtension();
+
+            $filename = time().'_'.$type.'.'.$file->getClientOriginalExtension();
             $path = $file->storeAs('branding', $filename, 'public');
-            
-            $url = asset('storage/branding/' . $filename);
+
+            $url = asset('storage/branding/'.$filename);
 
             return response()->json([
                 'url' => $url,
-                'message' => 'Fichier téléchargé avec succès'
+                'message' => 'Fichier téléchargé avec succès',
             ]);
         }
 
@@ -40,13 +40,13 @@ class ConfigController extends Controller
     public function index(): JsonResponse
     {
         $setting = Setting::where('key', 'agency_config')->first();
-        
+
         // If agency_config record doesn't exist, try to migrate from legacy records
-        if (!$setting) {
+        if (! $setting) {
             $name = Setting::where('key', 'agency_name')->value('value') ?? env('AGENCY_NAME', 'Vectoria Rent Car');
             $slogan = Setting::where('key', 'agency_slogan')->value('value') ?? env('AGENCY_SLOGAN', 'Premium Car Rental');
             $color = Setting::where('key', 'agency_primary_color')->value('value') ?? env('AGENCY_PRIMARY_COLOR', '#6366f1');
-            
+
             return response()->json([
                 'agency_name' => $name,
                 'agency_slogan' => $slogan,
@@ -87,36 +87,84 @@ class ConfigController extends Controller
     public function update(Request $request): JsonResponse
     {
         $data = $request->all();
-        
+
         $setting = Setting::firstOrCreate(['key' => 'agency_config']);
-        
-        if (isset($data['name'])) $setting->value = $data['name'];
-        if (isset($data['slogan'])) $setting->agency_slogan = $data['slogan'];
-        if (isset($data['primary_color'])) $setting->agency_primary_color = $data['primary_color'];
-        if (isset($data['logo_url'])) $setting->logo_url = $data['logo_url'];
-        if (isset($data['hero_image_url'])) $setting->hero_image_url = $data['hero_image_url'];
-        if (isset($data['hero_video_url'])) $setting->hero_video_url = $data['hero_video_url'];
-        if (isset($data['about_text_fr'])) $setting->about_text_fr = $data['about_text_fr'];
-        if (isset($data['about_text_en'])) $setting->about_text_en = $data['about_text_en'];
-        if (isset($data['about_text_ar'])) $setting->about_text_ar = $data['about_text_ar'];
-        if (isset($data['sections_config'])) $setting->sections_config = $data['sections_config'];
-        if (isset($data['category_prices'])) $setting->category_prices = $data['category_prices'];
-        if (isset($data['special_offers'])) $setting->special_offers = $data['special_offers'];
-        if (isset($data['header_config'])) $setting->header_config = $data['header_config'];
-        if (isset($data['footer_config'])) $setting->footer_config = $data['footer_config'];
-        if (isset($data['theme_config'])) $setting->theme_config = $data['theme_config'];
-        if (isset($data['stats_config'])) $setting->stats_config = $data['stats_config'];
-        
+
+        if (isset($data['name'])) {
+            $setting->value = $data['name'];
+        }
+        if (isset($data['slogan'])) {
+            $setting->agency_slogan = $data['slogan'];
+        }
+        if (isset($data['primary_color'])) {
+            $setting->agency_primary_color = $data['primary_color'];
+        }
+        if (isset($data['logo_url'])) {
+            $setting->logo_url = $data['logo_url'];
+        }
+        if (isset($data['hero_image_url'])) {
+            $setting->hero_image_url = $data['hero_image_url'];
+        }
+        if (isset($data['hero_video_url'])) {
+            $setting->hero_video_url = $data['hero_video_url'];
+        }
+        if (isset($data['about_text_fr'])) {
+            $setting->about_text_fr = $data['about_text_fr'];
+        }
+        if (isset($data['about_text_en'])) {
+            $setting->about_text_en = $data['about_text_en'];
+        }
+        if (isset($data['about_text_ar'])) {
+            $setting->about_text_ar = $data['about_text_ar'];
+        }
+        if (isset($data['sections_config'])) {
+            $setting->sections_config = $data['sections_config'];
+        }
+        if (isset($data['category_prices'])) {
+            $setting->category_prices = $data['category_prices'];
+        }
+        if (isset($data['special_offers'])) {
+            $setting->special_offers = $data['special_offers'];
+        }
+        if (isset($data['header_config'])) {
+            $setting->header_config = $data['header_config'];
+        }
+        if (isset($data['footer_config'])) {
+            $setting->footer_config = $data['footer_config'];
+        }
+        if (isset($data['theme_config'])) {
+            $setting->theme_config = $data['theme_config'];
+        }
+        if (isset($data['stats_config'])) {
+            $setting->stats_config = $data['stats_config'];
+        }
+
         // CMS & SEO
-        if (isset($data['sections_order'])) $setting->sections_order = $data['sections_order'];
-        if (isset($data['testimonials'])) $setting->testimonials = $data['testimonials'];
-        if (isset($data['seo_config'])) $setting->seo_config = $data['seo_config'];
-        if (isset($data['social_hub'])) $setting->social_hub = $data['social_hub'];
-        if (isset($data['faq_config'])) $setting->faq_config = $data['faq_config'];
-        if (isset($data['features_config'])) $setting->features_config = $data['features_config'];
-        if (isset($data['concierge_config'])) $setting->concierge_config = $data['concierge_config'];
-        if (isset($data['sections_content'])) $setting->sections_content = $data['sections_content'];
-        
+        if (isset($data['sections_order'])) {
+            $setting->sections_order = $data['sections_order'];
+        }
+        if (isset($data['testimonials'])) {
+            $setting->testimonials = $data['testimonials'];
+        }
+        if (isset($data['seo_config'])) {
+            $setting->seo_config = $data['seo_config'];
+        }
+        if (isset($data['social_hub'])) {
+            $setting->social_hub = $data['social_hub'];
+        }
+        if (isset($data['faq_config'])) {
+            $setting->faq_config = $data['faq_config'];
+        }
+        if (isset($data['features_config'])) {
+            $setting->features_config = $data['features_config'];
+        }
+        if (isset($data['concierge_config'])) {
+            $setting->concierge_config = $data['concierge_config'];
+        }
+        if (isset($data['sections_content'])) {
+            $setting->sections_content = $data['sections_content'];
+        }
+
         $setting->save();
 
         return response()->json(['message' => 'Configuration sauvegardée avec succès']);

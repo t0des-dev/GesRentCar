@@ -13,11 +13,9 @@ class AvailabilityEngine
     /**
      * Secures a vehicle for booking using pessimistic locking to prevent race conditions.
      *
-     * @param int $vehicleId
-     * @param string|Carbon $startDate
-     * @param string|Carbon $endDate
-     * @param array $reservationData
-     * @return Reservation
+     * @param  string|Carbon  $startDate
+     * @param  string|Carbon  $endDate
+     *
      * @throws Exception
      */
     public function secureBooking(int $vehicleId, $startDate, $endDate, array $reservationData): Reservation
@@ -26,7 +24,7 @@ class AvailabilityEngine
         $end = Carbon::parse($endDate);
 
         if ($start->greaterThanOrEqualTo($end)) {
-            throw new Exception("Invalid date range: Start date must be before end date.");
+            throw new Exception('Invalid date range: Start date must be before end date.');
         }
 
         return DB::transaction(function () use ($vehicleId, $start, $end, $reservationData) {
@@ -35,11 +33,11 @@ class AvailabilityEngine
             $vehicle = Vehicle::where('id', $vehicleId)->lockForUpdate()->first();
 
             if (! $vehicle) {
-                throw new Exception("Vehicle not found.");
+                throw new Exception('Vehicle not found.');
             }
 
             if ($vehicle->status === 'maintenance') {
-                throw new Exception("Vehicle is currently under maintenance.");
+                throw new Exception('Vehicle is currently under maintenance.');
             }
 
             // Check for overlaps with active or pending reservations
@@ -47,15 +45,15 @@ class AvailabilityEngine
                 ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'active'])
                 ->where(function ($query) use ($start, $end) {
                     $query->whereBetween('start_date', [$start, $end])
-                          ->orWhereBetween('end_date', [$start, $end])
-                          ->orWhere(function ($q) use ($start, $end) {
-                              $q->where('start_date', '<=', $start)
+                        ->orWhereBetween('end_date', [$start, $end])
+                        ->orWhere(function ($q) use ($start, $end) {
+                            $q->where('start_date', '<=', $start)
                                 ->where('end_date', '>=', $end);
-                          });
+                        });
                 })->exists();
 
             if ($hasOverlap) {
-                throw new Exception("Double booking detected. Vehicle is no longer available for these dates.");
+                throw new Exception('Double booking detected. Vehicle is no longer available for these dates.');
             }
 
             // Calculate total price based on vehicle's daily rate
@@ -85,15 +83,15 @@ class AvailabilityEngine
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
-        return !Reservation::where('vehicle_id', $vehicleId)
+        return ! Reservation::where('vehicle_id', $vehicleId)
             ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'active'])
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('start_date', [$start, $end])
-                      ->orWhereBetween('end_date', [$start, $end])
-                      ->orWhere(function ($q) use ($start, $end) {
-                          $q->where('start_date', '<=', $start)
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($q) use ($start, $end) {
+                        $q->where('start_date', '<=', $start)
                             ->where('end_date', '>=', $end);
-                      });
+                    });
             })->exists();
     }
 }

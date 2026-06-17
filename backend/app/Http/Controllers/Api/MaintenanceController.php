@@ -15,6 +15,7 @@ class MaintenanceController extends Controller
         if ($request->has('vehicle_id')) {
             $query->where('vehicle_id', $request->vehicle_id);
         }
+
         return response()->json($query->orderBy('maintenance_date', 'desc')->get());
     }
 
@@ -29,7 +30,7 @@ class MaintenanceController extends Controller
         ]);
 
         $maintenance = Maintenance::create($data);
-        
+
         // Mettre à jour le statut du véhicule si nécessaire
         Vehicle::find($data['vehicle_id'])->update(['status' => 'maintenance']);
 
@@ -39,6 +40,7 @@ class MaintenanceController extends Controller
     public function destroy(Maintenance $maintenance)
     {
         $maintenance->delete();
+
         return response()->json(null, 204);
     }
 }

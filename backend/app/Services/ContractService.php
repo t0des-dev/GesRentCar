@@ -21,8 +21,8 @@ class ContractService
             'vehicle' => $vehicle,
         ]);
 
-        $fileName = 'contracts/contract_' . $reservation->id . '_' . time() . '.pdf';
-        
+        $fileName = 'contracts/contract_'.$reservation->id.'_'.time().'.pdf';
+
         Storage::disk('public')->put($fileName, $pdf->output());
 
         $contract = Contract::updateOrCreate(
@@ -52,10 +52,10 @@ class ContractService
     protected function sendNotifications(Contract $contract)
     {
         $client = $contract->reservation->client;
-        
+
         // Mock WhatsApp sending via a queued job or API call
         Log::info("WhatsApp notification sent to {$client->phone} with contract ID {$contract->id}");
-        
+
         // Mock Email sending
         if ($client->email) {
             Log::info("Email notification sent to {$client->email} with contract attached.");

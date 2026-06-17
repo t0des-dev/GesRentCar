@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class CleanupTimedOutReservations extends Command
 {
     protected $signature = 'reservations:cleanup-timeout';
+
     protected $description = 'Cancel collaborator reservations that have not been validated within 1 hour';
 
     public function handle()
@@ -21,6 +22,6 @@ class CleanupTimedOutReservations extends Command
             $this->info("Cancelled reservation #{$reservation->id} due to partner timeout.");
         }
 
-        $this->info("Cleanup completed. " . $timedOut->count() . " reservations cancelled.");
+        $this->info('Cleanup completed. '.$timedOut->count().' reservations cancelled.');
     }
 }

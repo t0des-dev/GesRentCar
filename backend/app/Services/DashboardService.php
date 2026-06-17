@@ -38,11 +38,11 @@ class DashboardService
         $activeReservations = Reservation::whereIn('status', ['confirmed', 'active', 'completed'])
             ->where(function ($query) use ($startOfMonth, $endOfMonth) {
                 $query->whereBetween('start_date', [$startOfMonth, $endOfMonth])
-                      ->orWhereBetween('end_date', [$startOfMonth, $endOfMonth])
-                      ->orWhere(function ($q) use ($startOfMonth, $endOfMonth) {
-                          $q->where('start_date', '<', $startOfMonth)
+                    ->orWhereBetween('end_date', [$startOfMonth, $endOfMonth])
+                    ->orWhere(function ($q) use ($startOfMonth, $endOfMonth) {
+                        $q->where('start_date', '<', $startOfMonth)
                             ->where('end_date', '>', $endOfMonth);
-                      });
+                    });
             })->get();
 
         $totalRentedDays = 0;
@@ -72,7 +72,7 @@ class DashboardService
             $vehiclePlate = $res->vehicle ? $res->vehicle->plate : 'N/A';
             $startDate = $res->start_date ? $res->start_date->format('Y-m-d') : 'N/A';
             $endDate = $res->end_date ? $res->end_date->format('Y-m-d') : 'N/A';
-            
+
             $csv .= "{$res->id},\"{$clientName}\",\"{$vehiclePlate}\",{$startDate},{$endDate},{$res->status},{$res->total_price}\n";
         }
 

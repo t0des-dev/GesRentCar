@@ -43,11 +43,11 @@ class Vehicle extends Model
     protected function casts(): array
     {
         return [
-            'photos'        => 'array',
+            'photos' => 'array',
             'price_per_day' => 'decimal:2',
-            'insurance_date'       => 'date',
+            'insurance_date' => 'date',
             'tech_inspection_date' => 'date',
-            'vignette_date'        => 'date',
+            'vignette_date' => 'date',
         ];
     }
 
@@ -73,14 +73,14 @@ class Vehicle extends Model
     {
         return $query->whereDoesntHave('reservations', function ($q) use ($start, $end) {
             $q->whereIn('status', ['confirmed', 'ongoing'])
-              ->where(function ($query) use ($start, $end) {
-                  $query->whereBetween('start_date', [$start, $end])
+                ->where(function ($query) use ($start, $end) {
+                    $query->whereBetween('start_date', [$start, $end])
                         ->orWhereBetween('end_date', [$start, $end])
                         ->orWhere(function ($query) use ($start, $end) {
                             $query->where('start_date', '<=', $start)
-                                  ->where('end_date', '>=', $end);
+                                ->where('end_date', '>=', $end);
                         });
-              });
+                });
         });
     }
 
@@ -93,11 +93,11 @@ class Vehicle extends Model
             ->whereIn('status', ['confirmed', 'ongoing'])
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('start_date', [$start, $end])
-                      ->orWhereBetween('end_date', [$start, $end])
-                      ->orWhere(function ($query) use ($start, $end) {
-                          $query->where('start_date', '<=', $start)
-                                ->where('end_date', '>=', $end);
-                      });
+                    ->orWhereBetween('end_date', [$start, $end])
+                    ->orWhere(function ($query) use ($start, $end) {
+                        $query->where('start_date', '<=', $start)
+                            ->where('end_date', '>=', $end);
+                    });
             })->exists();
     }
 }

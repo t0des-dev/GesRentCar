@@ -5,13 +5,13 @@ namespace App\Filament\Resources\VehicleResource\Pages;
 use App\Filament\Resources\VehicleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 
 class TableVehicles extends ListRecords
 {
     protected static string $resource = VehicleResource::class;
-    
+
     protected static ?string $title = 'Véhicules (Liste)';
 
     public function table(Table $table): Table
@@ -23,7 +23,7 @@ class TableVehicles extends ListRecords
                     ->circular(),
                 Tables\Columns\TextColumn::make('brand')
                     ->label('Marque & Modèle')
-                    ->formatStateUsing(fn ($record) => $record->brand . ' ' . $record->model)
+                    ->formatStateUsing(fn ($record) => $record->brand.' '.$record->model)
                     ->searchable(['brand', 'model'])
                     ->sortable(),
                 Tables\Columns\TextColumn::make('plate')

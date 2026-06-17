@@ -19,6 +19,6 @@ class Contract extends Model
 
     public function reservation()
     {
-        return $this->belongsTo(\App\Models\Reservation::class);
+        return $this->belongsTo(Reservation::class);
     }
 }

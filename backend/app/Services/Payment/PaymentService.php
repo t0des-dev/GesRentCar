@@ -18,15 +18,15 @@ class PaymentService
     public function processPayment(Reservation $reservation, float $amount, string $method = 'cash'): Payment
     {
         if ($amount > $reservation->total_price) {
-            throw new Exception("Payment amount exceeds total price.");
+            throw new Exception('Payment amount exceeds total price.');
         }
 
         $transactionId = null;
 
         if ($method === 'cmi') {
             $result = $this->gateway->charge($amount, ['reservation_id' => $reservation->id]);
-            if (!$result['success']) {
-                throw new Exception("CMI Payment failed.");
+            if (! $result['success']) {
+                throw new Exception('CMI Payment failed.');
             }
             $transactionId = $result['transaction_id'];
         }
@@ -35,7 +35,7 @@ class PaymentService
         $alreadyPaid = Payment::where('reservation_id', $reservation->id)
             ->where('type', 'payment')
             ->sum('paid_amount');
-            
+
         $remaining = $reservation->total_price - ($alreadyPaid + $amount);
         $status = $remaining <= 0 ? 'full' : 'partial';
 
@@ -60,7 +60,6 @@ class PaymentService
     {
         $transactionId = null;
         if ($method === 'cmi') {
-            // Usually deposit is pre-auth, here we mock it
             $result = $this->gateway->charge($reservation->deposit_amount, ['pre_auth' => true]);
             $transactionId = $result['transaction_id'];
         }
@@ -69,7 +68,7 @@ class PaymentService
             'reservation_id' => $reservation->id,
             'paid_amount' => $reservation->deposit_amount,
             'remaining' => 0,
-            'status' => 'full',
+            'status' => 'held',
             'payment_method' => $method,
             'type' => 'deposit',
             'transaction_id' => $transactionId,
@@ -79,13 +78,13 @@ class PaymentService
     public function processRefund(Payment $payment, float $amount): Payment
     {
         if ($amount > $payment->paid_amount) {
-            throw new Exception("Refund cannot exceed original payment amount.");
+            throw new Exception('Refund cannot exceed original payment amount.');
         }
 
         $transactionId = null;
         if ($payment->payment_method === 'cmi') {
             $result = $this->gateway->refund($payment->transaction_id, $amount);
-            if (!($result['success'] ?? false)) {
+            if (! ($result['success'] ?? false)) {
                 throw new Exception($result['message'] ?? 'CMI refund failed.');
             }
             $transactionId = $result['transaction_id'];
@@ -100,5 +99,33 @@ class PaymentService
             'type' => 'refund',
             'transaction_id' => $transactionId,
         ]);
+    }
+
+    public function releaseDeposit(Reservation $reservation): Payment
+    {
+        $deposit = Payment::where('reservation_id', $reservation->id)
+            ->where('type', 'deposit')
+            ->where('status', 'held')
+            ->first();
+
+        if (! $deposit) {
+            throw new Exception("No held deposit found for reservation #{$reservation->id}");
+        }
+
+        $transactionId = null;
+        if ($deposit->payment_method === 'cmi') {
+            $result = $this->gateway->refund($deposit->transaction_id, $deposit->paid_amount);
+            if (! ($result['success'] ?? false)) {
+                throw new Exception($result['message'] ?? 'CMI deposit release failed.');
+            }
+            $transactionId = $result['transaction_id'];
+        }
+
+        $deposit->update([
+            'status' => 'released',
+            'transaction_id' => $transactionId ?? $deposit->transaction_id,
+        ]);
+
+        return $deposit;
     }
 }

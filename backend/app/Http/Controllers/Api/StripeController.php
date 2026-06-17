@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\GenerateContractPdf;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\Payment;
@@ -10,6 +11,7 @@ use App\Models\Reservation;
 use App\Models\Vehicle;
 use App\Services\NotificationService;
 use App\Services\PricingService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -31,29 +33,29 @@ class StripeController extends Controller
     public function createIntent(Request $request)
     {
         $validated = $request->validate([
-            'vehicle_id'               => 'required|exists:vehicles,id',
-            'start_date'               => 'required|date',
-            'end_date'                 => 'required|date|after:start_date',
-            'client.name'              => 'required|string',
-            'client.email'             => 'required|email',
-            'client.phone'             => 'required|string',
-            'client.cin'               => 'required|string',
-            'client.license_number'    => 'nullable|string',
-            'client.cin_image_url'     => 'nullable|string',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'client.name' => 'required|string',
+            'client.email' => 'required|email',
+            'client.phone' => 'required|string',
+            'client.cin' => 'required|string',
+            'client.license_number' => 'nullable|string',
+            'client.cin_image_url' => 'nullable|string',
             'client.license_image_url' => 'nullable|string',
-            'amount'                   => 'required|numeric|min:1',
-            'signature'                => 'nullable|string',
-            'options'                  => 'nullable|array',
+            'amount' => 'required|numeric|min:1',
+            'signature' => 'nullable|string',
+            'options' => 'nullable|array',
         ]);
 
         $clientData = $validated['client'];
-        $options    = $validated['options'] ?? [];
-        $startDate  = \Carbon\Carbon::parse($validated['start_date']);
-        $endDate    = \Carbon\Carbon::parse($validated['end_date']);
-        $days       = max(1, $startDate->diffInDays($endDate));
+        $options = $validated['options'] ?? [];
+        $startDate = Carbon::parse($validated['start_date']);
+        $endDate = Carbon::parse($validated['end_date']);
+        $days = max(1, $startDate->diffInDays($endDate));
 
         [$reservation, $totalPrice, $deposit] = DB::transaction(function () use (
-            $validated, $clientData, $options, $startDate, $endDate, $days, $request
+            $validated, $clientData, $options, $startDate, $days, $request
         ) {
             // ✅ Verrou pessimiste — empêche la double réservation concurrente
             $vehicle = Vehicle::lockForUpdate()->findOrFail($validated['vehicle_id']);
@@ -66,39 +68,39 @@ class StripeController extends Controller
             $client = Client::firstOrCreate(
                 ['email' => $clientData['email']],
                 [
-                    'name'              => $clientData['name'],
-                    'phone'             => $clientData['phone'],
-                    'cin'               => $clientData['cin'],
-                    'license_number'    => $clientData['license_number'] ?? null,
-                    'cin_image_url'     => $clientData['cin_image_url'] ?? null,
+                    'name' => $clientData['name'],
+                    'phone' => $clientData['phone'],
+                    'cin' => $clientData['cin'],
+                    'license_number' => $clientData['license_number'] ?? null,
+                    'cin_image_url' => $clientData['cin_image_url'] ?? null,
                     'license_image_url' => $clientData['license_image_url'] ?? null,
                 ]
             );
 
             // ✅ Calcul centralisé via PricingService
             $pricingResult = $this->pricing->calculateTotal($vehicle, $days, $options, null, $startDate);
-            $totalPrice    = $pricingResult['total_price'];
-            $deposit       = (float) $validated['amount'];
+            $totalPrice = $pricingResult['total_price'];
+            $deposit = (float) $validated['amount'];
 
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'pending_payment';
 
             $res = Reservation::create([
-                'client_id'      => $client->id,
-                'vehicle_id'     => $vehicle->id,
-                'start_date'     => $validated['start_date'],
-                'end_date'       => $validated['end_date'],
-                'total_price'    => $totalPrice,
+                'client_id' => $client->id,
+                'vehicle_id' => $vehicle->id,
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'total_price' => $totalPrice,
                 'deposit_amount' => $deposit,
-                'status'         => $status,
-                'options'        => empty($options) ? null : $options,
+                'status' => $status,
+                'options' => empty($options) ? null : $options,
             ]);
 
             if ($request->filled('signature')) {
                 Contract::create([
                     'reservation_id' => $res->id,
                     'signature_data' => $request->signature,
-                    'signed_at'      => now(),
-                    'file_path'      => 'contracts/contract_' . $res->id . '.pdf',
+                    'signed_at' => now(),
+                    'file_path' => 'contracts/contract_'.$res->id.'.pdf',
                 ]);
             }
 
@@ -107,22 +109,22 @@ class StripeController extends Controller
 
         // Créer le PaymentIntent Stripe APRÈS la transaction (évite de bloquer la connexion DB)
         $intent = PaymentIntent::create([
-            'amount'   => (int) ($deposit * 100),
+            'amount' => (int) ($deposit * 100),
             'currency' => 'mad',
             'metadata' => [
                 'reservation_id' => $reservation->id,
-                'client_id'      => $reservation->client_id,
-                'vehicle_id'     => $reservation->vehicle_id,
-                'total_price'    => $totalPrice,
+                'client_id' => $reservation->client_id,
+                'vehicle_id' => $reservation->vehicle_id,
+                'total_price' => $totalPrice,
             ],
             'automatic_payment_methods' => ['enabled' => true],
         ]);
 
         return response()->json([
-            'client_secret'  => $intent->client_secret,
+            'client_secret' => $intent->client_secret,
             'reservation_id' => $reservation->id,
-            'amount'         => $deposit,
-            'total_price'    => $totalPrice,
+            'amount' => $deposit,
+            'total_price' => $totalPrice,
         ]);
     }
 
@@ -130,7 +132,7 @@ class StripeController extends Controller
     public function confirm(Request $request)
     {
         $validated = $request->validate([
-            'reservation_id'    => 'required|exists:reservations,id',
+            'reservation_id' => 'required|exists:reservations,id',
             'payment_intent_id' => 'required|string',
         ]);
 
@@ -146,7 +148,7 @@ class StripeController extends Controller
         $this->processConfirmedPayment($reservation, (float) ($intent->amount / 100));
 
         return response()->json([
-            'message'     => 'Réservation confirmée avec succès.',
+            'message' => 'Réservation confirmée avec succès.',
             'reservation' => $reservation->fresh()->load(['client', 'vehicle']),
         ]);
     }
@@ -161,27 +163,28 @@ class StripeController extends Controller
     public function webhook(Request $request)
     {
         $payload = $request->getContent();
-        $sig     = $request->header('Stripe-Signature');
-        $secret  = config('services.stripe.webhook_secret');
+        $sig = $request->header('Stripe-Signature');
+        $secret = config('services.stripe.webhook_secret');
 
         // ── Vérification de la signature Stripe ───────────────────────────────
         try {
             $event = Webhook::constructEvent($payload, $sig, $secret);
         } catch (SignatureVerificationException $e) {
-            Log::warning('[Stripe Webhook] Invalid signature: ' . $e->getMessage());
+            Log::warning('[Stripe Webhook] Invalid signature: '.$e->getMessage());
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        Log::info('[Stripe Webhook] Event received: ' . $event->type, [
+        Log::info('[Stripe Webhook] Event received: '.$event->type, [
             'event_id' => $event->id,
         ]);
 
         // ── Dispatcher les événements pertinents ──────────────────────────────
         match ($event->type) {
-            'payment_intent.succeeded'         => $this->handlePaymentSucceeded($event->data->object),
-            'payment_intent.payment_failed'    => $this->handlePaymentFailed($event->data->object),
-            'charge.dispute.created'           => $this->handleDisputeCreated($event->data->object),
-            default                            => null,
+            'payment_intent.succeeded' => $this->handlePaymentSucceeded($event->data->object),
+            'payment_intent.payment_failed' => $this->handlePaymentFailed($event->data->object),
+            'charge.dispute.created' => $this->handleDisputeCreated($event->data->object),
+            default => null,
         };
 
         return response()->json(['received' => true]);
@@ -203,6 +206,7 @@ class StripeController extends Controller
             Log::warning('[Stripe Webhook] payment_intent.succeeded sans reservation_id dans metadata', [
                 'intent_id' => $intent->id,
             ]);
+
             return;
         }
 
@@ -210,12 +214,14 @@ class StripeController extends Controller
 
         if (! $reservation) {
             Log::error("[Stripe Webhook] Réservation #{$reservationId} introuvable.");
+
             return;
         }
 
         // ── Idempotence : éviter le double traitement ─────────────────────────
         if ($reservation->status === 'confirmed') {
             Log::info("[Stripe Webhook] Réservation #{$reservationId} déjà confirmée. Skip.");
+
             return;
         }
 
@@ -246,13 +252,13 @@ class StripeController extends Controller
             // Notifier le client
             try {
                 $reservation->load(['client', 'vehicle']);
-                $refNum = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+                $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
                 $this->notifications->sendSms(
                     $reservation->client->phone,
                     "VectoriaRentCar: Votre paiement pour {$refNum} a échoué. Veuillez réessayer ou nous contacter."
                 );
             } catch (\Exception $e) {
-                Log::warning('[Stripe Webhook] Notification paiement échoué: ' . $e->getMessage());
+                Log::warning('[Stripe Webhook] Notification paiement échoué: '.$e->getMessage());
             }
         }
     }
@@ -293,8 +299,8 @@ class StripeController extends Controller
                 ['reservation_id' => $reservation->id],
                 [
                     'paid_amount' => $paidAmount,
-                    'remaining'   => max(0, $reservation->total_price - $paidAmount),
-                    'status'      => $paidAmount >= $reservation->total_price ? 'full' : 'partial',
+                    'remaining' => max(0, $reservation->total_price - $paidAmount),
+                    'status' => $paidAmount >= $reservation->total_price ? 'full' : 'partial',
                 ]
             );
 
@@ -302,7 +308,7 @@ class StripeController extends Controller
 
             // Générer le PDF du contrat si signé
             if ($reservation->contract) {
-                \App\Jobs\GenerateContractPdf::dispatch($reservation->id, 'fr');
+                GenerateContractPdf::dispatch($reservation->id, 'fr');
             }
         });
 
@@ -312,7 +318,7 @@ class StripeController extends Controller
                 $reservation->fresh()->load(['client', 'vehicle', 'contract'])
             );
         } catch (\Exception $e) {
-            Log::warning('[Stripe] Notification post-paiement échouée: ' . $e->getMessage());
+            Log::warning('[Stripe] Notification post-paiement échouée: '.$e->getMessage());
         }
     }
 }

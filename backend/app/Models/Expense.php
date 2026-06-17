@@ -17,7 +17,7 @@ class Expense extends Model
         'vehicle_id',
         'payment_method',
         'receipt_url',
-        'notes'
+        'notes',
     ];
 
     public function vehicle()

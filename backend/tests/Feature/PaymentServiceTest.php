@@ -20,7 +20,7 @@ class PaymentServiceTest extends TestCase
     {
         parent::setUp();
         // Using real CmiGateway here for sandbox test since it's mocked
-        $this->paymentService = new PaymentService(new CmiGateway());
+        $this->paymentService = new PaymentService(new CmiGateway);
     }
 
     public function test_cmi_partial_payment_and_full_payment()
@@ -29,12 +29,12 @@ class PaymentServiceTest extends TestCase
         $reservation = Reservation::factory()->create([
             'vehicle_id' => $vehicle->id,
             'total_price' => 1000,
-            'status' => 'pending_payment'
+            'status' => 'pending_payment',
         ]);
 
         // Partial payment 400
         $payment1 = $this->paymentService->processPayment($reservation, 400, 'cmi');
-        
+
         $this->assertEquals(400, $payment1->paid_amount);
         $this->assertEquals(600, $payment1->remaining);
         $this->assertEquals('partial', $payment1->status);

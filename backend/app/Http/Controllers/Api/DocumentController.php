@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response;
 
 class DocumentController extends Controller
 {
@@ -15,9 +13,9 @@ class DocumentController extends Controller
      */
     public function preview(string $filename)
     {
-        $path = 'private/documents/clients/' . $filename;
+        $path = 'private/documents/clients/'.$filename;
 
-        if (!Storage::exists($path)) {
+        if (! Storage::exists($path)) {
             abort(404);
         }
 

@@ -33,8 +33,8 @@ Schedule::job(new CheckAbandonedReservations)->hourly()
 Schedule::call(function () {
     app(NotificationService::class)->checkMaintenanceAlerts();
 })->dailyAt('08:00')
-  ->name('check-maintenance-alerts')
-  ->withoutOverlapping();
+    ->name('check-maintenance-alerts')
+    ->withoutOverlapping();
 
 /**
  * Backup quotidien de la base de données à 03:00.
@@ -51,3 +51,10 @@ Schedule::command('db:backup', ['--compress', '--upload', '--retention' => 30])
             '🔴 [BACKUP] Le backup quotidien de la base de données a échoué.'
         );
     });
+
+/**
+ * Libération automatique des cautions pour les réservations terminées.
+ */
+Schedule::command('deposits:release')->daily()
+    ->name('release-deposits')
+    ->withoutOverlapping();

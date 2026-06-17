@@ -20,28 +20,28 @@ class DashboardServiceTest extends TestCase
         Payment::factory()->create([
             'paid_amount' => 500,
             'type' => 'payment',
-            'created_at' => Carbon::create(2026, 6, 15)
+            'created_at' => Carbon::create(2026, 6, 15),
         ]);
         Payment::factory()->create([
             'paid_amount' => 1500,
             'type' => 'payment',
-            'created_at' => Carbon::create(2026, 6, 20)
+            'created_at' => Carbon::create(2026, 6, 20),
         ]);
         // Refund should be negative or handled, assuming it's negative based on our PaymentService
         Payment::factory()->create([
             'paid_amount' => -200,
             'type' => 'refund',
-            'created_at' => Carbon::create(2026, 6, 25)
+            'created_at' => Carbon::create(2026, 6, 25),
         ]);
-        
+
         // Different month
         Payment::factory()->create([
             'paid_amount' => 1000,
             'type' => 'payment',
-            'created_at' => Carbon::create(2026, 5, 15)
+            'created_at' => Carbon::create(2026, 5, 15),
         ]);
 
-        $service = new DashboardService();
+        $service = new DashboardService;
         $revenue = $service->getMonthlyRevenue(2026, 6);
 
         // 500 + 1500 = 2000 (We excluded 'refund' type in sum, but technically the refund negative logic could be combined)
@@ -55,10 +55,10 @@ class DashboardServiceTest extends TestCase
         $reservation = Reservation::factory()->create([
             'vehicle_id' => $vehicle->id,
             'total_price' => 999.99,
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
-        $service = new DashboardService();
+        $service = new DashboardService;
         $csv = $service->exportReservationsCSV();
 
         $this->assertStringContainsString('ID,Client,Vehicle,Start Date,End Date,Status,Total Price', $csv);

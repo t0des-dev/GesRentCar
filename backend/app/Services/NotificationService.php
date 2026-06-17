@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Jobs\SendNotification;
+use App\Models\Maintenance;
 use App\Models\Reservation;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use App\Notifications\ReservationConfirmed;
+use App\Models\Vehicle;
 use App\Notifications\ContractReady;
+use App\Notifications\ContractSigned;
+use App\Notifications\ReservationConfirmed;
+use Illuminate\Support\Facades\Log;
 
 class NotificationService
 {
@@ -18,17 +21,17 @@ class NotificationService
      * Send a WhatsApp text message via Meta Graph API.
      * Falls back to log-only if credentials are not set.
      */
-    public function sendWhatsApp(string $to, string $message, string $template = null, array $components = []): bool
+    public function sendWhatsApp(string $to, string $message, ?string $template = null, array $components = []): bool
     {
         $to = $this->normalizePhone($to);
         Log::info("[Queue] WhatsApp → {$to}");
 
         $payload = ['messaging_product' => 'whatsapp', 'to' => $to];
         if ($template) {
-            $payload['type']     = 'template';
+            $payload['type'] = 'template';
             $payload['template'] = [
-                'name'       => $template,
-                'language'   => ['code' => 'fr'],
+                'name' => $template,
+                'language' => ['code' => 'fr'],
                 'components' => $components,
             ];
         } else {
@@ -36,7 +39,8 @@ class NotificationService
             $payload['text'] = ['body' => $message, 'preview_url' => false];
         }
 
-        \App\Jobs\SendNotification::dispatch('whatsapp', $to, $message, $payload);
+        SendNotification::dispatch('whatsapp', $to, $message, $payload);
+
         return true;
     }
 
@@ -48,7 +52,8 @@ class NotificationService
         $to = $this->normalizePhone($to);
         Log::info("[Queue] SMS → {$to}");
 
-        \App\Jobs\SendNotification::dispatch('sms', $to, $message);
+        SendNotification::dispatch('sms', $to, $message);
+
         return true;
     }
 
@@ -62,14 +67,14 @@ class NotificationService
      */
     public function notifyDepositPaid(Reservation $reservation): void
     {
-        $client      = $reservation->client;
-        $vehicle     = $reservation->vehicle;
-        $deposit     = number_format($reservation->deposit_amount ?? ($reservation->total_price * 0.1), 2);
-        $total       = number_format($reservation->total_price, 2);
+        $client = $reservation->client;
+        $vehicle = $reservation->vehicle;
+        $deposit = number_format($reservation->deposit_amount ?? ($reservation->total_price * 0.1), 2);
+        $total = number_format($reservation->total_price, 2);
         $contractUrl = url("/api/public/reservations/{$reservation->id}/contract");
-        $refNum      = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
-        $startDate   = $reservation->start_date?->format('d/m/Y') ?? '—';
-        $endDate     = $reservation->end_date?->format('d/m/Y') ?? '—';
+        $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $startDate = $reservation->start_date?->format('d/m/Y') ?? '—';
+        $endDate = $reservation->end_date?->format('d/m/Y') ?? '—';
 
         $message = <<<MSG
 🚗 *Vectoria Rent Car — Réservation Confirmée*
@@ -105,8 +110,10 @@ MSG;
 
         // Email notification
         if ($client->email) {
-            try { $client->notify(new ReservationConfirmed($reservation)); } catch (\Exception $e) {
-                Log::warning('[Email] ReservationConfirmed failed: ' . $e->getMessage());
+            try {
+                $client->notify(new ReservationConfirmed($reservation));
+            } catch (\Exception $e) {
+                Log::warning('[Email] ReservationConfirmed failed: '.$e->getMessage());
             }
         }
 
@@ -123,11 +130,11 @@ MSG;
      */
     public function notifyOnSiteReservation(Reservation $reservation): void
     {
-        $client  = $reservation->client;
+        $client = $reservation->client;
         $vehicle = $reservation->vehicle;
-        $refNum  = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
-        $start   = $reservation->start_date?->format('d/m/Y') ?? '—';
-        $total   = number_format($reservation->total_price, 2);
+        $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $start = $reservation->start_date?->format('d/m/Y') ?? '—';
+        $total = number_format($reservation->total_price, 2);
 
         $message = <<<MSG
 📍 *Vectoria Rent Car — Réservation Enregistrée*
@@ -150,8 +157,10 @@ MSG;
         }
 
         if ($client->email) {
-            try { $client->notify(new ReservationConfirmed($reservation)); } catch (\Exception $e) {
-                Log::warning('[Email] failed: ' . $e->getMessage());
+            try {
+                $client->notify(new ReservationConfirmed($reservation));
+            } catch (\Exception $e) {
+                Log::warning('[Email] failed: '.$e->getMessage());
             }
         }
     }
@@ -161,12 +170,12 @@ MSG;
      */
     public function notifyReservationConfirmed(Reservation $reservation): void
     {
-        $client  = $reservation->client;
+        $client = $reservation->client;
         $vehicle = $reservation->vehicle;
-        $refNum  = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
-        $start   = $reservation->start_date?->format('d/m/Y') ?? '—';
-        $end     = $reservation->end_date?->format('d/m/Y') ?? '—';
-        $total   = number_format($reservation->total_price, 2);
+        $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $start = $reservation->start_date?->format('d/m/Y') ?? '—';
+        $end = $reservation->end_date?->format('d/m/Y') ?? '—';
+        $total = number_format($reservation->total_price, 2);
 
         $message = <<<MSG
 ✅ *Vectoria Rent Car — Confirmation*
@@ -187,8 +196,10 @@ MSG;
         }
 
         if ($client->email) {
-            try { $client->notify(new ReservationConfirmed($reservation)); } catch (\Exception $e) {
-                Log::warning('[Email] failed: ' . $e->getMessage());
+            try {
+                $client->notify(new ReservationConfirmed($reservation));
+            } catch (\Exception $e) {
+                Log::warning('[Email] failed: '.$e->getMessage());
             }
         }
     }
@@ -198,11 +209,11 @@ MSG;
      */
     public function sendContractLink(Reservation $reservation): void
     {
-        $client      = $reservation->client;
+        $client = $reservation->client;
         // Point to the frontend public signature page instead of the API download endpoint
         $frontendUrl = rtrim(config('app.frontend_url', 'http://localhost:3000'), '/');
         $contractUrl = "{$frontendUrl}/c/{$reservation->id}/sign";
-        $refNum      = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
 
         $message = <<<MSG
 📄 *Vectoria Rent Car — Votre Contrat est Prêt*
@@ -223,8 +234,10 @@ MSG;
         }
 
         if ($client->email) {
-            try { $client->notify(new ContractReady($reservation)); } catch (\Exception $e) {
-                Log::warning('[Email] ContractReady failed: ' . $e->getMessage());
+            try {
+                $client->notify(new ContractReady($reservation));
+            } catch (\Exception $e) {
+                Log::warning('[Email] ContractReady failed: '.$e->getMessage());
             }
         }
     }
@@ -234,11 +247,11 @@ MSG;
      */
     public function notifyContractSigned(Reservation $reservation): void
     {
-        $client      = $reservation->client;
+        $client = $reservation->client;
         $contractUrl = $reservation->contract
-            ? asset('storage/' . $reservation->contract->file_path)
+            ? asset('storage/'.$reservation->contract->file_path)
             : url("/api/public/reservations/{$reservation->id}/contract");
-        $refNum = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
 
         $message = <<<MSG
 ✍️ *Vectoria Rent Car — Contrat Signé*
@@ -258,8 +271,10 @@ MSG;
         }
 
         if ($client->email) {
-            try { $client->notify(new \App\Notifications\ContractSigned($reservation)); } catch (\Exception $e) {
-                Log::warning('[Email] ContractSigned attachment failed: ' . $e->getMessage());
+            try {
+                $client->notify(new ContractSigned($reservation));
+            } catch (\Exception $e) {
+                Log::warning('[Email] ContractSigned attachment failed: '.$e->getMessage());
             }
         }
 
@@ -276,9 +291,9 @@ MSG;
         $warningLimit = $today->copy()->addDays(15);
 
         // 1. Check Document Expiries
-        $expiring = \App\Models\Vehicle::where(function($q) use ($today, $warningLimit) {
+        $expiring = Vehicle::where(function ($q) use ($today, $warningLimit) {
             $q->whereBetween('insurance_date', [$today, $warningLimit])
-              ->orWhereBetween('tech_inspection_date', [$today, $warningLimit]);
+                ->orWhereBetween('tech_inspection_date', [$today, $warningLimit]);
         })->get();
 
         foreach ($expiring as $vehicle) {
@@ -287,7 +302,7 @@ MSG;
 
         // 2. Check Maintenance (based on km)
         // This usually happens during vehicle return, but we can do a general check
-        $dueMaintenances = \App\Models\Maintenance::where('status', 'scheduled')
+        $dueMaintenances = Maintenance::where('status', 'scheduled')
             ->where('next_due_date', '<=', $warningLimit)
             ->get();
 
@@ -302,8 +317,8 @@ MSG;
     public function notifyMaintenanceDue($maintenance, bool $isUrgent = false): bool
     {
         $vehicle = $maintenance->vehicle;
-        $level   = $isUrgent ? '🔴 URGENTE' : '🟡 RAPPEL';
-        $due     = $maintenance->next_due
+        $level = $isUrgent ? '🔴 URGENTE' : '🟡 RAPPEL';
+        $due = $maintenance->next_due
             ? $maintenance->next_due->format('d/m/Y')
             : "{$maintenance->next_due_km} km";
 
@@ -346,13 +361,14 @@ MSG;
     {
         $phone = preg_replace('/\s+/', '', $phone);
         // Moroccan local format
-        if (str_starts_with($phone, '0') && !str_starts_with($phone, '00')) {
-            $phone = '+212' . substr($phone, 1);
+        if (str_starts_with($phone, '0') && ! str_starts_with($phone, '00')) {
+            $phone = '+212'.substr($phone, 1);
         }
         // Already international without +
-        if (str_starts_with($phone, '212') && !str_starts_with($phone, '+')) {
-            $phone = '+' . $phone;
+        if (str_starts_with($phone, '212') && ! str_starts_with($phone, '+')) {
+            $phone = '+'.$phone;
         }
+
         return $phone;
     }
 }

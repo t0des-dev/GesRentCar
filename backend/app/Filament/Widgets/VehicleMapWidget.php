@@ -9,7 +9,7 @@ class VehicleMapWidget extends Widget
 {
     protected string $view = 'filament.widgets.vehicle-map-widget';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 4;
 
@@ -20,10 +20,10 @@ class VehicleMapWidget extends Widget
             // Randomish coords around Casablanca (33.5731, -7.5898)
             $lat = 33.5731 + (rand(-100, 100) / 2000);
             $lng = -7.5898 + (rand(-100, 100) / 2000);
-            
+
             return [
                 'id' => $v->id,
-                'name' => $v->brand . ' ' . $v->model,
+                'name' => $v->brand.' '.$v->model,
                 'plate' => $v->plate,
                 'status' => $v->status,
                 'lat' => $lat,

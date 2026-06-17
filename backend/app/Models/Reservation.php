@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'client_id',
         'vehicle_id',
@@ -25,12 +26,12 @@ class Reservation extends Model
     protected function casts(): array
     {
         return [
-            'start_date'     => 'datetime',
-            'end_date'       => 'datetime',
-            'documents'      => 'array',
-            'total_price'    => 'decimal:2',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+            'documents' => 'array',
+            'total_price' => 'decimal:2',
             'deposit_amount' => 'decimal:2',
-            'options'        => 'array',
+            'options' => 'array',
         ];
     }
 
@@ -61,17 +62,19 @@ class Reservation extends Model
     {
         if ($this->status === 'pending_partner' && $this->created_at->addHour()->isPast()) {
             $this->cancel('partner_timeout');
+
             return true;
         }
+
         return false;
     }
 
     public function acceptPartner()
     {
         if ($this->status !== 'pending_partner') {
-            throw new \Exception("Cannot accept partner validation. Current status: " . $this->status);
+            throw new \Exception('Cannot accept partner validation. Current status: '.$this->status);
         }
-        
+
         $this->update(['status' => 'pending_payment']);
         // Here we could dispatch an event to notify the client
     }
@@ -79,7 +82,7 @@ class Reservation extends Model
     public function refusePartner()
     {
         if ($this->status !== 'pending_partner') {
-            throw new \Exception("Cannot refuse partner validation. Current status: " . $this->status);
+            throw new \Exception('Cannot refuse partner validation. Current status: '.$this->status);
         }
 
         $this->cancel('partner_refused');

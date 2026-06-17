@@ -36,32 +36,32 @@ return [
     ],
 
     'twilio' => [
-        'sid'   => env('TWILIO_SID'),
+        'sid' => env('TWILIO_SID'),
         'token' => env('TWILIO_TOKEN'),
-        'from'  => env('TWILIO_FROM'),
+        'from' => env('TWILIO_FROM'),
     ],
 
     'whatsapp' => [
-        'token'           => env('WHATSAPP_TOKEN'),
+        'token' => env('WHATSAPP_TOKEN'),
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'version'         => env('WHATSAPP_API_VERSION', 'v17.0'),
+        'version' => env('WHATSAPP_API_VERSION', 'v17.0'),
     ],
 
     'admin_phone' => env('ADMIN_PHONE', '+212600000000'),
 
     // ─── Stripe ────────────────────────────────────────────────────────────────
     'stripe' => [
-        'key'            => env('STRIPE_PUBLISHABLE_KEY'),
-        'secret'         => env('STRIPE_SECRET_KEY'),
+        'key' => env('STRIPE_PUBLISHABLE_KEY'),
+        'secret' => env('STRIPE_SECRET_KEY'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
     'cmi' => [
-        'client_id'    => env('CMI_CLIENT_ID'),
-        'store_key'    => env('CMI_STORE_KEY'),
-        'base_url'     => env('CMI_BASE_URL', 'https://test.cmi.co.ma/fim/est3Dgate'),
+        'client_id' => env('CMI_CLIENT_ID'),
+        'store_key' => env('CMI_STORE_KEY'),
+        'base_url' => env('CMI_BASE_URL', 'https://test.cmi.co.ma/fim/est3Dgate'),
         'redirect_url' => env('CMI_REDIRECT_URL'),
-        'fail_url'     => env('CMI_FAIL_URL'),
+        'fail_url' => env('CMI_FAIL_URL'),
     ],
 
 ];

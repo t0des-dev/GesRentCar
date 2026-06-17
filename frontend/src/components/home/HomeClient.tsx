@@ -102,20 +102,20 @@ export default function HomeClient() {
   const currentOrder = Array.isArray(storefront.sections_order) && storefront.sections_order.length > 0
     ? storefront.sections_order
     : [
-        { id: "hero", active: true },
-        { id: "experience", active: true },
-        { id: "vibe_selector", active: !!sections.vibe_selector },
-        { id: "lifestyle_gallery", active: !!sections.lifestyle_gallery },
-        { id: "stats", active: !!sections.stats },
-        { id: "why_us", active: !!sections.why_us },
-        { id: "featured", active: !!sections.featured },
-        { id: "testimonials", active: !!sections.testimonials },
-        { id: "map", active: !!sections.map },
-        { id: "concierge_banner", active: !!sections.concierge_banner },
-        { id: "faq", active: !!sections.faq },
-        { id: "how_it_works", active: true },
-        { id: "cta_banner", active: true },
-        { id: "comparator", active: !!sections.comparator },
+        { id: "hero",              active: true },
+        { id: "featured",          active: true },
+        { id: "why_us",            active: true },
+        { id: "how_it_works",      active: true },
+        { id: "experience",        active: !!sections.experience },
+        { id: "stats",             active: !!sections.stats },
+        { id: "testimonials",      active: !!sections.testimonials },
+        { id: "concierge_banner",  active: !!sections.concierge_banner },
+        { id: "lifestyle_gallery", active: false },
+        { id: "vibe_selector",     active: false },
+        { id: "map",               active: false },
+        { id: "faq",               active: !!sections.faq },
+        { id: "comparator",        active: !!sections.comparator },
+        { id: "cta_banner",        active: true },
       ];
 
   return (

@@ -18,7 +18,7 @@ class ContractServiceTest extends TestCase
     public function test_generates_pdf_contract()
     {
         Storage::fake('public');
-        
+
         $client = Client::factory()->create();
         $vehicle = Vehicle::factory()->create();
         $reservation = Reservation::factory()->create([
@@ -26,7 +26,7 @@ class ContractServiceTest extends TestCase
             'vehicle_id' => $vehicle->id,
         ]);
 
-        $service = new ContractService();
+        $service = new ContractService;
         $contract = $service->generateContract($reservation);
 
         $this->assertNotNull($contract->file_path);
@@ -45,11 +45,11 @@ class ContractServiceTest extends TestCase
             'vehicle_id' => $vehicle->id,
         ]);
 
-        $service = new ContractService();
+        $service = new ContractService;
         $contract = $service->generateContract($reservation);
 
         $base64Image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-        
+
         $signedContract = $service->signContract($contract, $base64Image);
 
         $this->assertNotNull($signedContract->signed_at);

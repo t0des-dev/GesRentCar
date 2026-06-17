@@ -5,8 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Models\Reservation;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -14,8 +14,10 @@ class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calendar-days';
-    protected static string | \UnitEnum | null $navigationGroup = 'Bookings';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Bookings';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $form): Schema

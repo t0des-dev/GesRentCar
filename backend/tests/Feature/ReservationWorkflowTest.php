@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Client;
 use App\Models\Reservation;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;

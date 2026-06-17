@@ -11,7 +11,7 @@ trait HasTranslations
         return $this->morphMany(Translation::class, 'translatable');
     }
 
-    public function translate(string $key, string $locale = null): ?string
+    public function translate(string $key, ?string $locale = null): ?string
     {
         $locale = $locale ?? app()->getLocale();
 
@@ -23,7 +23,7 @@ trait HasTranslations
         return $translation?->value;
     }
 
-    public function setTranslation(string $key, string $value, string $locale = null): Translation
+    public function setTranslation(string $key, string $value, ?string $locale = null): Translation
     {
         $locale = $locale ?? app()->getLocale();
 

@@ -23,7 +23,8 @@ class CheckAbandonedReservations implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries   = 3;
+    public int $tries = 3;
+
     public int $timeout = 120;
 
     public function handle(NotificationService $notifications): void
@@ -39,9 +40,9 @@ class CheckAbandonedReservations implements ShouldQueue
 
         foreach ($toRemind as $reservation) {
             try {
-                $refNum  = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+                $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
                 $vehicle = $reservation->vehicle;
-                $client  = $reservation->client;
+                $client = $reservation->client;
 
                 if (! $client?->phone) {
                     continue;
@@ -50,21 +51,21 @@ class CheckAbandonedReservations implements ShouldQueue
                 $notifications->sendSms(
                     $client->phone,
                     "VectoriaRentCar: Votre réservation {$refNum} ({$vehicle->brand} {$vehicle->model}) est en attente de paiement. "
-                    . "Finalisez votre paiement pour sécuriser votre véhicule, sinon elle sera annulée sous 22h."
+                    .'Finalisez votre paiement pour sécuriser votre véhicule, sinon elle sera annulée sous 22h.'
                 );
 
                 $notifications->sendWhatsApp(
                     $client->phone,
                     "⏰ *VRC — Rappel de paiement*\n\n"
-                    . "Bonjour *{$client->name}*, votre réservation *{$refNum}* pour la *{$vehicle->brand} {$vehicle->model}* "
-                    . "est toujours en attente de paiement.\n\n"
-                    . "💳 Complétez votre paiement pour ne pas perdre votre réservation !\n\n"
-                    . "_Vectoria Rent Car — Excellence & Prestige_"
+                    ."Bonjour *{$client->name}*, votre réservation *{$refNum}* pour la *{$vehicle->brand} {$vehicle->model}* "
+                    ."est toujours en attente de paiement.\n\n"
+                    ."💳 Complétez votre paiement pour ne pas perdre votre réservation !\n\n"
+                    .'_Vectoria Rent Car — Excellence & Prestige_'
                 );
 
                 Log::info("[AbandonedReservations] Relance envoyée pour #{$reservation->id}");
             } catch (\Exception $e) {
-                Log::warning("[AbandonedReservations] Relance échouée #{$reservation->id}: " . $e->getMessage());
+                Log::warning("[AbandonedReservations] Relance échouée #{$reservation->id}: ".$e->getMessage());
             }
         }
 
@@ -76,8 +77,8 @@ class CheckAbandonedReservations implements ShouldQueue
 
         foreach ($toCancel as $reservation) {
             try {
-                $refNum  = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
-                $client  = $reservation->client;
+                $refNum = 'VRC-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+                $client = $reservation->client;
 
                 $reservation->update(['status' => 'cancelled']);
 
@@ -85,13 +86,13 @@ class CheckAbandonedReservations implements ShouldQueue
                     $notifications->sendSms(
                         $client->phone,
                         "VectoriaRentCar: Votre réservation {$refNum} a été annulée automatiquement suite à l'absence de paiement. "
-                        . "N'hésitez pas à réserver à nouveau sur notre site."
+                        ."N'hésitez pas à réserver à nouveau sur notre site."
                     );
                 }
 
                 Log::info("[AbandonedReservations] Réservation #{$reservation->id} annulée automatiquement.");
             } catch (\Exception $e) {
-                Log::error("[AbandonedReservations] Annulation échouée #{$reservation->id}: " . $e->getMessage());
+                Log::error("[AbandonedReservations] Annulation échouée #{$reservation->id}: ".$e->getMessage());
             }
         }
 

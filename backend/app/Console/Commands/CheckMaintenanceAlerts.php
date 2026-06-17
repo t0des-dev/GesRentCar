@@ -6,11 +6,11 @@ use App\Models\Maintenance;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class CheckMaintenanceAlerts extends Command
 {
     protected $signature = 'maintenance:check-alerts';
+
     protected $description = 'Check for upcoming maintenance due by date or mileage';
 
     public function handle(NotificationService $notifier)

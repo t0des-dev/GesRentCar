@@ -14,14 +14,14 @@ class VehiclePolicyTest extends TestCase
     public function test_admin_can_create_vehicle()
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        
+
         $this->assertTrue($admin->can('create', Vehicle::class));
     }
 
     public function test_agent_cannot_create_vehicle()
     {
         $agent = User::factory()->create(['role' => 'agent']);
-        
+
         $this->assertFalse($agent->can('create', Vehicle::class));
     }
 
