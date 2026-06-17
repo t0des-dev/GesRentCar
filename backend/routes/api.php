@@ -44,6 +44,18 @@ Route::get('/health', function (): JsonResponse {
     return response()->json($checks, $statusCode);
 });
 
+// ─── Auth aliases (no version prefix) — compatibility for deployed frontend ───
+Route::prefix('auth')->middleware('throttle:auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+});
+Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', function (Request $request) {
+        return ['user' => $request->user()];
+    });
+});
+
 // ─── API v1 ──────────────────────────────────────────────────────────────────
 Route::prefix('v1')->group(function () {
 
