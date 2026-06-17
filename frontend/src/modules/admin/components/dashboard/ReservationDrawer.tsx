@@ -222,7 +222,7 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
                   </div>
                   <motion.a 
                     whileHover={{ scale: 1.05 }}
-                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${reservation.id}/contract/file`} 
+                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${reservation.id}/contract/file`} 
                     target="_blank" 
                     className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
                   >

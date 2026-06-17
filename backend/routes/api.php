@@ -84,6 +84,7 @@ $apiRoutes = function () {
 
         // ─── Public contract download & signature ─────────────────────────
         Route::get('/public/reservations/{reservation}/contract', [ContractController::class, 'download']);
+        Route::get('/public/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
         Route::post('/public/reservations/{reservation}/sign', [ContractController::class, 'publicSign']);
     });
 
