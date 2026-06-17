@@ -35,3 +35,19 @@ Schedule::call(function () {
 })->dailyAt('08:00')
   ->name('check-maintenance-alerts')
   ->withoutOverlapping();
+
+/**
+ * Backup quotidien de la base de données à 03:00.
+ * - pg_dump avec compression gzip
+ * - Upload vers S3/MinIO
+ * - Rétention 30 jours
+ */
+Schedule::command('db:backup', ['--compress', '--upload', '--retention' => 30])
+    ->dailyAt('03:00')
+    ->name('daily-database-backup')
+    ->withoutOverlapping()
+    ->onFailure(function () {
+        app(NotificationService::class)->notifyAdmin(
+            '🔴 [BACKUP] Le backup quotidien de la base de données a échoué.'
+        );
+    });

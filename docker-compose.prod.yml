@@ -42,8 +42,39 @@ services:
       - APP_ENV=production
       - DB_CONNECTION=pgsql
       - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=vectoria
+      - DB_USERNAME=admin
+      - DB_PASSWORD=secret
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
+    depends_on:
+      - backend
+
+  # Scheduler (cron tasks: backups, maintenance alerts, abandoned reservations)
+  scheduler:
+    build: ./backend
+    container_name: gesrentcar-scheduler
+    restart: always
+    command: >
+      sh -c "echo '0 * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1' | crontab - && crond -f -L /dev/stdout"
+    volumes:
+      - ./backend/storage:/var/www/storage
+    environment:
+      - APP_ENV=production
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=vectoria
+      - DB_USERNAME=admin
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+      - BACKUP_S3_BUCKET=${BACKUP_S3_BUCKET:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-eu-west-1}
+      - AWS_ENDPOINT=${AWS_ENDPOINT:-}
     depends_on:
       - backend
 

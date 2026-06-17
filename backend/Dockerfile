@@ -1,6 +1,6 @@
 FROM php:8.4-fpm
 
-# Install system dependencies
+# Install system dependencies + pg_dump for backups
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libjpeg-dev \
     libwebp-dev \
-    libfreetype6-dev
+    libfreetype6-dev \
+    postgresql-client
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
