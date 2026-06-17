@@ -7,11 +7,11 @@ Route::get('/login', function () {
 })->name('login');
 
 // SPA fallback: serve the Next.js index.html for all frontend routes
-// This MUST come last — catch-all matches everything
+// Excludes /api/* so API routes are never intercepted by this catch-all
 Route::get('/{any}', function () {
     $file = public_path('index.html');
     if (file_exists($file)) {
         return response()->file($file);
     }
     abort(404);
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');
