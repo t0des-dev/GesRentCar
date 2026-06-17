@@ -2,6 +2,7 @@
 
 import { useCompare } from "@/hooks/useCompare";
 import { useVehicles } from "@/shared/hooks/useApi";
+import { getImageUrl } from "@/shared/utils/image";
 import { ArrowLeft, Check, X, Shield, Zap, Info, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -97,7 +98,7 @@ export default function ComparePage() {
                 <div className="p-6 md:p-8 flex flex-col items-center text-center">
                   <div className="h-48 w-full relative mb-6">
                     <img
-                      src={vehicle.image_url || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop"}
+                      src={getImageUrl(vehicle.image_url ?? undefined) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop"}
                       alt={vehicle.model}
                       className="w-full h-full object-contain"
                     />

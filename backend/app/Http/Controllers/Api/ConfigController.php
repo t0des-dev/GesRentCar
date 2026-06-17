@@ -26,7 +26,7 @@ class ConfigController extends Controller
             $filename = time().'_'.$type.'.'.$file->getClientOriginalExtension();
             $path = $file->storeAs('branding', $filename, 'public');
 
-            $url = asset('storage/branding/'.$filename);
+            $url = '/storage/branding/'.$filename;
 
             return response()->json([
                 'url' => $url,
