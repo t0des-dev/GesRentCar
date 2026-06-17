@@ -44,13 +44,13 @@ class ContractController extends Controller
 
         $path = $contract->file_path;
 
-        if (! Storage::exists($path)) {
+        if (! Storage::disk('public')->exists($path)) {
             abort(404, 'Contract file not found on disk.');
         }
 
         $filename = basename($path);
 
-        return Storage::download($path, $filename, [
+        return Storage::disk('public')->download($path, $filename, [
             'Content-Type' => 'application/pdf',
         ]);
     }
