@@ -139,7 +139,7 @@ function CurrencySwitcher({
         className={cn(
           "px-3 py-1.5 rounded-lg transition-all duration-300 text-xs font-semibold tracking-wide",
           isScrolled
-            ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            ? "text-slate-900 hover:text-black hover:bg-slate-100 font-semibold"
             : "text-white/75 hover:text-white hover:bg-white/12"
         )}
       >

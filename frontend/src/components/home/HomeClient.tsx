@@ -63,9 +63,9 @@ export default function HomeClient() {
     localStorage.setItem('vrc_search_end', endDate);
     
     const params = new URLSearchParams();
-    if (location)  params.append("location", location);
-    if (startDate) params.append("start_date", startDate);
-    if (endDate)   params.append("end_date", endDate);
+    if (location) params.set("location", location);
+    if (startDate) params.set("start_date", startDate);
+    if (endDate) params.set("end_date", endDate);
     router.push(`/fleet?${params.toString()}`);
   };
 
