@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Crown, HeadphonesIcon, ShieldCheck, Star, Car, LayoutDashboard, Settings, Users } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import { getImageUrl } from "@/shared/utils/image";
 
 interface WhyUsSectionProps {
   content?: {
@@ -79,7 +80,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
               >
                 {feature.image ? (
                   <div className="w-full h-48 relative overflow-hidden shrink-0 bg-slate-100">
-                    <img src={feature.image} alt={feature.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img src={getImageUrl(feature.image) || feature.image} alt={feature.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 ) : (

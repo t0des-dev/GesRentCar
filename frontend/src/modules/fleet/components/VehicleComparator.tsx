@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Scale, X, Zap, Shield, Crown, Star, ArrowRight } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { getImageUrl } from "@/shared/utils/image";
 import type { ComparatorVehicle } from "@/types/storefront";
 
 const DEFAULT_VEHICLES: ComparatorVehicle[] = [
@@ -60,7 +61,7 @@ export default function VehicleComparator({ content = {} }: { content?: { badge?
                 selectedIds.includes(v.id) ? "ring-4 ring-primary ring-offset-4" : "opacity-70 hover:opacity-100"
               )}
             >
-              <img src={v.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <img src={getImageUrl(v.image) || v.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 text-left">
                 <p className="text-white font-black text-xl">{v.brand} {v.model}</p>

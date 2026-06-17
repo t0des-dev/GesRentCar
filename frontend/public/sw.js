@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vectoria-cache-v4';
-const STATIC_CACHE = 'vectoria-static-v4';
+const CACHE_NAME = 'vectoria-cache-v5';
+const STATIC_CACHE = 'vectoria-static-v5';
 
 // Same-origin assets safe to cache long-term (hashed assets, images, fonts)
 const PRECACHE_URLS = [

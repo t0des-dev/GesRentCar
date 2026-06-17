@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Play, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { getImageUrl } from "@/shared/utils/image";
 import type { Testimonial } from "@/types/storefront";
 
 const DEFAULT_TESTIMONIALS = [
@@ -86,7 +87,7 @@ export default function LifestyleSlider({ content = {} }: {
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                    <img src={activeMoment.image} className="w-full h-full object-cover" />
+                    <img src={getImageUrl(activeMoment.image) || activeMoment.image} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900">{activeMoment.user}</p>

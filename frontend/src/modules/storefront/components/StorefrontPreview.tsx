@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { getImageUrl } from "@/shared/utils/image";
 import { 
   Car, Calendar, Shield, Star, MapPin, 
   Phone, Mail, Globe as FacebookIcon, Camera as InstagramIcon, MessageCircle, 
@@ -72,7 +73,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                 return (
                   <section id="preview-section-hero" key="hero" className="relative h-[350px] flex flex-col items-center justify-center text-center px-6 overflow-hidden -mt-14">
                     <img 
-                      src={form.hero_image_url || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"} 
+                      src={getImageUrl(form.hero_image_url) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"} 
                       className="absolute inset-0 w-full h-full object-cover"
                       alt="Hero"
                     />
