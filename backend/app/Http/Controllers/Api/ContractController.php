@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ContractController extends Controller
 {
@@ -29,6 +30,28 @@ class ContractController extends Controller
         return response()->json([
             'message' => 'Contract generation queued.',
             'reservation_id' => $reservation->id,
+        ]);
+    }
+
+    // ─── Serve stored PDF file ────────────────────────────────────────────────
+    public function file(Reservation $reservation)
+    {
+        $contract = $reservation->contract;
+
+        if (! $contract || ! $contract->file_path) {
+            abort(404, 'Contract not found.');
+        }
+
+        $path = $contract->file_path;
+
+        if (! Storage::exists($path)) {
+            abort(404, 'Contract file not found on disk.');
+        }
+
+        $filename = basename($path);
+
+        return Storage::download($path, $filename, [
+            'Content-Type' => 'application/pdf',
         ]);
     }
 

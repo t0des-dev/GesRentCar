@@ -66,7 +66,7 @@ export default function ContractSignClient() {
 
   const contract = (reservation as any).contract;
   const isAlreadySigned = (contract && contract.signed_at) || success;
-  const currentPdfUrl = signedUrl || (contract?.file_path ? `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}/storage/${contract.file_path}` : null);
+  const currentPdfUrl = signedUrl || (contract ? `${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${id}/contract/file` : null);
 
   return (
     <main className="min-h-screen pt-24 pb-20 bg-[#f8fafc]">

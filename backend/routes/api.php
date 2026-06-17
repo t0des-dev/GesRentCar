@@ -126,6 +126,7 @@ $apiRoutes = function () {
         Route::get('/exports/profit-loss', [ExportController::class, 'profitLoss']);
 
         Route::post('/reservations/{reservation}/contract', [ContractController::class, 'generate']);
+        Route::get('/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
         Route::post('/reservations/{reservation}/sign', [ContractController::class, 'sign']);
 
         Route::post('/ocr/scan', [OcrController::class, 'scan']);

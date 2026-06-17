@@ -226,7 +226,7 @@ export default function ReservationsTable({
                           <CheckCircle size={12} strokeWidth={2} /> Généré
                         </span>
                         <a 
-                          href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}/storage/${r.contract.file_path}`} 
+                          href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${r.id}/contract/file`} 
                           target="_blank" 
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs font-bold text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
@@ -327,7 +327,7 @@ export default function ReservationsTable({
 
                   {r.contract ? (
                     <a 
-                      href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}/storage/${r.contract.file_path}`} 
+                      href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${r.id}/contract/file`} 
                       target="_blank" 
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs font-bold text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
