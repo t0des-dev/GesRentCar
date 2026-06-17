@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { Plus, Search, Filter, Trash2, FileText, Download } from "lucide-react";
 import api from "@/shared/services/client";
+import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Expense } from "@/types/admin";
 import ExpenseFormDrawer from "@/modules/admin/components/expenses/ExpenseFormDrawer";
@@ -221,7 +222,7 @@ export default function ExpensesPage() {
                       </td>
                       <td className="p-4">
                         {exp.receipt_url ? (
-                          <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${exp.receipt_url}`} target="_blank" rel="noreferrer" className="text-primary hover:text-primary-dark inline-flex items-center gap-1 text-xs font-bold">
+                          <a href={getImageUrl(exp.receipt_url) || '#'} target="_blank" rel="noreferrer" className="text-primary hover:text-primary-dark inline-flex items-center gap-1 text-xs font-bold">
                             <FileText size={14} /> Voir
                           </a>
                         ) : (

@@ -86,6 +86,9 @@ $apiRoutes = function () {
         Route::get('/public/reservations/{reservation}/contract', [ContractController::class, 'download']);
         Route::get('/public/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
         Route::post('/public/reservations/{reservation}/sign', [ContractController::class, 'publicSign']);
+
+        // Public storage files (images, etc.)
+        Route::get('/storage/{path...}', [DocumentController::class, 'serve']);
     });
 
     // ─── Stripe (rate limited: 10 req/min per IP) ──────────────────────────────

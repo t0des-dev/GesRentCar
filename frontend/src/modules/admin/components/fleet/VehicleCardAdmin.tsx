@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Car, Camera, Star, Fuel, TrendingUp, Edit, Trash2, Loader2, ShieldAlert, Wrench, Activity } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { getImageUrl } from "@/shared/utils/image";
 import { Vehicle } from "@/types/admin";
 import Link from "next/link";
 import api from "@/shared/services/client";
@@ -81,7 +82,7 @@ export default function VehicleCardAdmin({
 
         {vehicle.image_url ? (
           <div className="w-full h-full relative">
-            <img src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${vehicle.image_url}`} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <img src={getImageUrl(vehicle.image_url) || "https://placehold.co/800x450?text=Aucune+Image"} alt={vehicle.model} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-80" />
           </div>
         ) : (

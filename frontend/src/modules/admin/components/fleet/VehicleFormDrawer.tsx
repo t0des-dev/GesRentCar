@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { X, Loader2, CheckCircle, Plus, Globe, Car, Info, Settings, Calendar, ShieldCheck } from "lucide-react";
 import { Vehicle } from "@/types/admin";
 import api from "@/shared/services/client";
+import { getImageUrl } from "@/shared/utils/image";
 import { useState } from "react";
 
 interface VehicleFormDrawerProps {
@@ -154,7 +155,7 @@ export default function VehicleFormDrawer({
                    <div className="flex flex-col items-center gap-4 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                       <div className="w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-white relative group">
                         <img
-                          src={vehicle.new_image ? URL.createObjectURL(vehicle.new_image) : (vehicle.image_url ? `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${vehicle.image_url}` : 'https://placehold.co/800x450?text=Aucune+Image')}
+                          src={vehicle.new_image ? URL.createObjectURL(vehicle.new_image) : (vehicle.image_url ? getImageUrl(vehicle.image_url) || 'https://placehold.co/800x450?text=Aucune+Image' : 'https://placehold.co/800x450?text=Aucune+Image')}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           alt="Main"
                         />
@@ -181,7 +182,7 @@ export default function VehicleFormDrawer({
                   <div className="grid grid-cols-3 gap-3">
                     {vehicle?.photos?.map((url: string, i: number) => (
                       <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group">
-                        <img src={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${url}`} alt="Gallery" className="w-full h-full object-cover" />
+                        <img src={getImageUrl(url) || url} alt="Gallery" className="w-full h-full object-cover" />
                         <button
                           type="button"
                           className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-lg flex items-center justify-center cursor-pointer transition-transform opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 hover:bg-red-600 shadow-md"

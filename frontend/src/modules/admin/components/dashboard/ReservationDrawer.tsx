@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, FileText, CheckCircle, CreditCard, ShieldCheck, Download, AlertTriangle, MessageCircle, Mail, RefreshCw } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import { fmt } from "@/shared/utils/format";
+import { getImageUrl } from "@/shared/utils/image";
 
 interface ReservationDrawerProps {
   reservation: Reservation;
@@ -164,13 +165,13 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
                 <p className="text-xl font-bold text-ink-1 leading-tight mb-4">{reservation.client?.name || "N/A"}</p>
                 <div className="flex gap-3">
                   {reservation.client?.cin_image_url && (
-                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${reservation.client.cin_image_url}`} target="_blank" 
+                    <a href={getImageUrl(reservation.client.cin_image_url) || '#'} target="_blank" 
                        className="text-xs font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg hover:bg-gold/20 transition-colors">
                       CIN
                     </a>
                   )}
                   {reservation.client?.license_image_url && (
-                    <a href={`${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace("/api/v1", "")}${reservation.client.license_image_url}`} target="_blank" 
+                    <a href={getImageUrl(reservation.client.license_image_url) || '#'} target="_blank" 
                        className="text-xs font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg hover:bg-gold/20 transition-colors">
                       Permis
                     </a>
