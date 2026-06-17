@@ -9,6 +9,7 @@ interface CurrencyContextType {
   setCurrency: (c: Currency) => void;
   rates: Record<Currency, number>;
   convert: (amount: number, from?: Currency) => string;
+  formatPrice: (value: unknown) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -42,8 +43,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const convert = (amount: number, from: Currency = "MAD") => {
-    // If original is MAD, we multiply by the target rate
-    const converted = amount * RATES[currency];
+    const safe = typeof amount === "number" && !isNaN(amount) ? amount : 0;
+    const converted = safe * RATES[currency];
     const formatted = new Intl.NumberFormat("fr-FR", {
       style: "decimal",
       minimumFractionDigits: currency === "MAD" ? 0 : 2,
@@ -53,8 +54,14 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     return `${formatted} ${SYMBOLS[currency]}`;
   };
 
+  const formatPrice = (value: unknown): string => {
+    const num = typeof value === "number" ? value : parseFloat(String(value));
+    if (isNaN(num)) return "0";
+    return num.toLocaleString("fr-FR");
+  };
+
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency: handleSetCurrency, rates: RATES, convert }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency: handleSetCurrency, rates: RATES, convert, formatPrice }}>
       {children}
     </CurrencyContext.Provider>
   );

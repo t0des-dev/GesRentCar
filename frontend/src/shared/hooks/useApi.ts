@@ -8,11 +8,12 @@ import { reservationService, CreateReservationPayload } from "@/lib/api/reservat
  * Fetches paginated vehicles list with optional filters.
  * Falls back to mock data if API is unreachable.
  */
-export function useVehicles(filters: VehicleFilters = {}) {
+export function useVehicles(filters: VehicleFilters = {}, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["vehicles", filters],
     queryFn: () => vehicleService.getVehicles(filters),
-    placeholderData: (prev) => prev, // Keep old data while refetching (no flash)
+    placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 }
 

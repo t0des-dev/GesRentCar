@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, Suspense, type ReactNode } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useState, useMemo, Suspense, useCallback, type ReactNode } from "react";
+import { motion, useScroll, useSpring, useMotionValueEvent } from "framer-motion";
 
 import { useVehicles } from "@/shared/hooks/useApi";
 import { useTranslation } from "@/shared/hooks/useTranslation";
@@ -30,8 +30,30 @@ const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSect
 import JsonLd from "@/components/SEO/JsonLd";
 import { useEffect } from "react";
 
-function SectionSkeleton({ className = "h-96" }: { className?: string }) {
-  return <div className={`bg-slate-100 animate-pulse rounded-2xl ${className}`} role="presentation" aria-hidden="true" />;
+const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
+  hero: "h-screen",
+  stats: "h-40",
+  featured: "h-[500px]",
+  why_us: "h-[400px]",
+  how_it_works: "h-[350px]",
+  experience: "h-[500px]",
+  testimonials: "h-[400px]",
+  faq: "h-[500px]",
+  cta_banner: "h-80",
+  concierge_banner: "h-64",
+  map: "h-[400px]",
+  comparator: "h-[500px]",
+};
+
+function SectionSkeleton({ id, className }: { id?: string; className?: string }) {
+  const height = className ?? SECTION_SKELETON_HEIGHTS[id ?? ""] ?? "h-96";
+  return (
+    <div
+      className={`bg-slate-100 animate-pulse rounded-2xl ${height}`}
+      role="presentation"
+      aria-hidden="true"
+    />
+  );
 }
 
 export default function HomeClient() {
@@ -41,11 +63,12 @@ export default function HomeClient() {
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [scrollPercent, setScrollPercent] = useState(0);
 
   useEffect(() => {
-    const savedLocation = localStorage.getItem('vrc_search_location');
-    const savedStart = localStorage.getItem('vrc_search_start');
-    const savedEnd = localStorage.getItem('vrc_search_end');
+    const savedLocation = localStorage.getItem("vrc_search_location");
+    const savedStart = localStorage.getItem("vrc_search_start");
+    const savedEnd = localStorage.getItem("vrc_search_end");
     if (savedLocation) setLocation(savedLocation);
     if (savedStart) setStartDate(savedStart);
     if (savedEnd) setEndDate(savedEnd);
@@ -54,69 +77,102 @@ export default function HomeClient() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
 
-  const { data: apiData, isLoading } = useVehicles({ per_page: 24 });
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setScrollPercent(Math.round(latest * 100));
+  });
+
+  const sections = storefront.sections_config;
+  const aboutText = lang === "ar" ? storefront.about_text_ar : lang === "en" ? storefront.about_text_en : storefront.about_text_fr;
+  const STATS = storefront.stats_config.items || [];
+
+  const currentOrder = useMemo(() => {
+    if (Array.isArray(storefront.sections_order) && storefront.sections_order.length > 0) {
+      return storefront.sections_order;
+    }
+    return [
+      { id: "hero",              active: true },
+      { id: "featured",          active: true },
+      { id: "why_us",            active: true },
+      { id: "how_it_works",      active: true },
+      { id: "experience",        active: !!sections.experience },
+      { id: "stats",             active: !!sections.stats },
+      { id: "testimonials",      active: !!sections.testimonials },
+      { id: "concierge_banner",  active: !!sections.concierge_banner },
+      { id: "lifestyle_gallery", active: false },
+      { id: "vibe_selector",     active: false },
+      { id: "map",               active: false },
+      { id: "faq",               active: !!sections.faq },
+      { id: "comparator",        active: !!sections.comparator },
+      { id: "cta_banner",        active: true },
+    ];
+  }, [storefront.sections_order, sections]);
+
+  const featuredActive = useMemo(
+    () => currentOrder.some((s) => s.id === "featured" && s.active !== false),
+    [currentOrder]
+  );
+
+  const { data: apiData, isLoading } = useVehicles({ per_page: 24 }, { enabled: featuredActive });
   const featuredVehicles = apiData?.data ?? [];
 
-  const handleSearch = () => {
-    localStorage.setItem('vrc_search_location', location);
-    localStorage.setItem('vrc_search_start', startDate);
-    localStorage.setItem('vrc_search_end', endDate);
-    
+  const handleSearch = useCallback(() => {
+    localStorage.setItem("vrc_search_location", location);
+    localStorage.setItem("vrc_search_start", startDate);
+    localStorage.setItem("vrc_search_end", endDate);
+
     const params = new URLSearchParams();
     if (location) params.set("location", location);
     if (startDate) params.set("start_date", startDate);
     if (endDate) params.set("end_date", endDate);
     router.push(`/fleet?${params.toString()}`);
-  };
+  }, [location, startDate, endDate, router]);
 
-  const sections = storefront.sections_config;
-  const aboutText = lang === 'ar' ? storefront.about_text_ar : (lang === 'en' ? storefront.about_text_en : storefront.about_text_fr);
+  const sectionMap = useMemo<Record<string, () => ReactNode>>(
+    () => ({
+      hero: () => (
+        <HeroSection
+          agency={storefront}
+          content={storefront.sections_content.hero}
+          location={location}
+          setLocation={setLocation}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          onSearch={handleSearch}
+          aboutText={aboutText}
+          stats={STATS}
+        />
+      ),
+      experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
+      stats: () => <StatsSection content={storefront.stats_config} />,
+      vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
+      lifestyle_gallery: () => <LifestyleGallery content={storefront.sections_content.lifestyle} />,
+      why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,
+      featured: () => (
+        <FeaturedVehicles
+          vehicles={featuredVehicles}
+          loading={isLoading}
+          content={storefront.sections_content.featured_vehicles}
+        />
+      ),
+      testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
+      map: () => <ExperienceMap content={storefront.sections_content.map} />,
+      concierge_banner: () => <ConciergeBanner content={storefront.concierge_config} />,
+      faq: () => (
+        <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />
+      ),
+      how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
+      cta_banner: () => <CtaBanner content={storefront.sections_content.cta_banner} />,
+      comparator: () => <VehicleComparator content={storefront.sections_content.comparator} />,
+    }),
+    [storefront, location, startDate, endDate, handleSearch, aboutText, STATS, featuredVehicles, isLoading]
+  );
 
-  const STATS = storefront.stats_config.items || [];
-
-  const SECTION_MAP: Record<string, () => ReactNode> = {
-    hero: () => (
-      <HeroSection
-        agency={storefront} content={storefront.sections_content.hero}
-        location={location} setLocation={setLocation}
-        startDate={startDate} setStartDate={setStartDate}
-        endDate={endDate} setEndDate={setEndDate}
-        onSearch={handleSearch} aboutText={aboutText} stats={STATS}
-      />
-    ),
-    experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
-    stats: () => <StatsSection content={storefront.stats_config} />,
-    vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
-    lifestyle_gallery: () => <LifestyleGallery content={storefront.sections_content.lifestyle} />,
-    why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,
-    featured: () => <FeaturedVehicles vehicles={featuredVehicles} loading={isLoading} content={storefront.sections_content.featured_vehicles} />,
-    testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
-    map: () => <ExperienceMap content={storefront.sections_content.map} />,
-    concierge_banner: () => <ConciergeBanner content={storefront.concierge_config} />,
-    faq: () => <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />,
-    how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
-    cta_banner: () => <CtaBanner content={storefront.sections_content.cta_banner} />,
-    comparator: () => <VehicleComparator content={storefront.sections_content.comparator} />,
-  };
-
-  const currentOrder = Array.isArray(storefront.sections_order) && storefront.sections_order.length > 0
-    ? storefront.sections_order
-    : [
-        { id: "hero",              active: true },
-        { id: "featured",          active: true },
-        { id: "why_us",            active: true },
-        { id: "how_it_works",      active: true },
-        { id: "experience",        active: !!sections.experience },
-        { id: "stats",             active: !!sections.stats },
-        { id: "testimonials",      active: !!sections.testimonials },
-        { id: "concierge_banner",  active: !!sections.concierge_banner },
-        { id: "lifestyle_gallery", active: false },
-        { id: "vibe_selector",     active: false },
-        { id: "map",               active: false },
-        { id: "faq",               active: !!sections.faq },
-        { id: "comparator",        active: !!sections.comparator },
-        { id: "cta_banner",        active: true },
-      ];
+  const activeSections = useMemo(
+    () => currentOrder.filter((s) => s.active !== false),
+    [currentOrder]
+  );
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -125,33 +181,36 @@ export default function HomeClient() {
         className="fixed top-0 left-0 right-0 h-0.5 bg-primary z-[100] origin-left"
         style={{ scaleX }}
         role="progressbar"
-        aria-valuenow={Math.round(scrollYProgress.get() * 100)}
+        aria-valuenow={scrollPercent}
         aria-label="Progression"
       />
-      <Suspense fallback={<SectionSkeleton className="h-screen" />}>
-        {currentOrder.filter((s) => s.active !== false).map((s, i) => (
-          <Suspense key={s.id} fallback={<SectionSkeleton />}>
-            {s.id === 'hero' ? (
-                SECTION_MAP[s.id]?.()
+      <Suspense fallback={<SectionSkeleton id="hero" />}>
+        {activeSections.map((s) => (
+          <Suspense key={s.id} fallback={<SectionSkeleton id={s.id} />}>
+            {s.id === "hero" ? (
+              sectionMap[s.id]?.()
             ) : (
-                <motion.div
-                  className={i === 1 ? "-mt-16 md:-mt-24 lg:-mt-32 relative z-10" : "relative z-10"}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                >
-                  {SECTION_MAP[s.id]?.()}
-                </motion.div>
+              <motion.div
+                className="relative z-10"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              >
+                {sectionMap[s.id]?.()}
+              </motion.div>
             )}
           </Suspense>
         ))}
       </Suspense>
       <StickyBookingBar
         content={storefront.sections_content.sticky_booking}
-        location={location} setLocation={setLocation}
-        startDate={startDate} setStartDate={setStartDate}
-        endDate={endDate} setEndDate={setEndDate}
+        location={location}
+        setLocation={setLocation}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
         onSearch={handleSearch}
       />
       <PromotionBanner content={storefront.sections_content.promotion_banner} />
