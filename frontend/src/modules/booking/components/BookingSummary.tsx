@@ -4,6 +4,7 @@ import { BookingState } from "@/types/booking";
 import { useCurrency } from "@/shared/hooks/useCurrency";
 import { ShieldCheck, Info, Calendar, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { PRICING_OPTIONS } from "@/lib/config/pricing";
 
 interface BookingSummaryProps {
   booking: BookingState;
@@ -73,7 +74,7 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
                   <ShieldCheck size={16} />
                   <span>Flexibilité</span>
                 </div>
-                <span className="font-semibold text-slate-900">+{60 * days} DH</span>
+                <span className="font-semibold text-slate-900">+{PRICING_OPTIONS.FLEXIBILITY_PER_DAY * days} DH</span>
               </div>
             )}
             {booking.mileage === "unlimited" && (
@@ -82,7 +83,7 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
                   <Info size={16} />
                   <span>Km illimités</span>
                 </div>
-                <span className="font-semibold text-slate-900">+{140 * days} DH</span>
+                <span className="font-semibold text-slate-900">+{PRICING_OPTIONS.UNLIMITED_MILEAGE_PER_DAY * days} DH</span>
               </div>
             )}
           </div>

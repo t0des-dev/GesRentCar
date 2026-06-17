@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class StatsController extends Controller
@@ -46,6 +47,7 @@ class StatsController extends Controller
 
     public function generalStats()
     {
+        return Cache::remember('admin_general_stats', now()->addMinutes(5), function () {
         $totalRevenue = (float) Payment::sum('paid_amount');
         $reservationsCount = DB::table('reservations')->count();
         $activeBookings = DB::table('reservations')->whereIn('status', ['confirmed', 'active'])->count();
@@ -143,19 +145,20 @@ class StatsController extends Controller
 
         $clientsCount = DB::table('clients')->count();
 
-        return response()->json([
-            'revenue' => $totalRevenue,
-            'reservations_count' => $reservationsCount,
-            'active_bookings' => $activeBookings,
-            'occupancy_rate' => $occupancyRate,
-            'fleet_size' => $fleetSize,
-            'clients_count' => $clientsCount,
-            'maintenance_alerts' => $maintenanceAlerts,
-            'revenue_history' => $revenueHistory,
-            'fleet_distribution' => $fleetDistribution,
-            'top_vehicles' => $topVehicles,
-            'payment_status' => $paymentStatus,
-        ]);
+            return response()->json([
+                'revenue'             => $totalRevenue,
+                'reservations_count'  => $reservationsCount,
+                'active_bookings'     => $activeBookings,
+                'occupancy_rate'      => $occupancyRate,
+                'fleet_size'          => $fleetSize,
+                'clients_count'       => $clientsCount,
+                'maintenance_alerts'  => $maintenanceAlerts,
+                'revenue_history'     => $revenueHistory,
+                'fleet_distribution'  => $fleetDistribution,
+                'top_vehicles'        => $topVehicles,
+                'payment_status'      => $paymentStatus,
+            ]);
+        }); // end Cache::remember
     }
 
     public function vehicleProfitability()

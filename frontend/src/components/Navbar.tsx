@@ -14,6 +14,7 @@ import NavLinks from "./navbar/NavLinks";
 import LanguageSwitcher from "./navbar/LanguageSwitcher";
 import UserActions from "./navbar/UserActions";
 import MobileMenu from "./navbar/MobileMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -64,7 +65,7 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "bg-white/92 backdrop-blur-2xl border-b border-border/30 shadow-md"
+          ? "bg-white/92 dark:bg-slate-900/92 backdrop-blur-2xl border-b border-border/30 shadow-md"
           : "bg-transparent"
       )}
     >
@@ -94,6 +95,14 @@ export default function Navbar() {
               currencyOpen={currencyOpen} setCurrencyOpen={setCurrencyOpen}
               isScrolled={isScrolled} currencyRef={currencyRef}
             />
+
+            {/* Dark Mode Toggle */}
+            <div className={cn(
+              "transition-all duration-300",
+              isScrolled ? "text-slate-900" : "text-white/75 hover:text-white"
+            )}>
+              <ThemeToggle />
+            </div>
 
             {/* User Actions — Premium */}
             <UserActions session={session} signOut={() => logout()} t={t} isScrolled={isScrolled} />
@@ -148,7 +157,7 @@ function CurrencySwitcher({
       {currencyOpen && (
         <div className={cn(
           "absolute right-0 mt-2 w-40 rounded-xl overflow-hidden z-[60] shadow-lg border",
-          "bg-white border-border-subtle"
+          "bg-white dark:bg-slate-800 border-border-subtle"
         )}>
           {["MAD", "EUR", "USD"].map((c) => (
             <button

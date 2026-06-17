@@ -15,6 +15,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ConciergeAI from "@/modules/ai/components/ConciergeAI";
 import CustomCursor from "@/components/CustomCursor";
 import SkipNav from "@/components/SkipNav";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,35 +62,37 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SkipNav />
-        <AuthProvider>
-          <ReactQueryProvider>
-            <LanguageProvider>
-              <CurrencyProvider>
-                <CustomCursor />
-                <ServiceWorkerRegister />
-                <LayoutWrapper>
-                  <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
-                  <ConciergeAI />
-                </LayoutWrapper>
-                <CompareFloatingBar />
-                <WhatsAppFloat />
-                <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: '#0f172a',
-                    color: '#fff',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '16px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    padding: '12px 24px',
-                  }
-                }} />
-              </CurrencyProvider>
-            </LanguageProvider>
-          </ReactQueryProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <SkipNav />
+          <AuthProvider>
+            <ReactQueryProvider>
+              <LanguageProvider>
+                <CurrencyProvider>
+                  <CustomCursor />
+                  <ServiceWorkerRegister />
+                  <LayoutWrapper>
+                    <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
+                    <ConciergeAI />
+                  </LayoutWrapper>
+                  <CompareFloatingBar />
+                  <WhatsAppFloat />
+                  <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
+                    duration: 4000,
+                    style: {
+                      background: '#0f172a',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      padding: '12px 24px',
+                    }
+                  }} />
+                </CurrencyProvider>
+              </LanguageProvider>
+            </ReactQueryProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

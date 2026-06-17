@@ -368,13 +368,39 @@ export function useAgency() {
   }, [data]);
 
   useEffect(() => {
+    const root = document.documentElement;
+
     if (config.primary_color) {
-      document.documentElement.style.setProperty("--primary", hexToHsl(config.primary_color));
+      root.style.setProperty("--primary", hexToHsl(config.primary_color));
     }
     if (config.theme_config?.border_radius) {
-      document.documentElement.style.setProperty("--radius", config.theme_config.border_radius);
+      root.style.setProperty("--radius", config.theme_config.border_radius);
     }
-  }, [config.primary_color, config.theme_config?.border_radius]);
+
+    // Font family from CMS
+    if (config.theme_config?.font_family) {
+      root.style.setProperty("--font-family", config.theme_config.font_family);
+      document.body.style.fontFamily = `"${config.theme_config.font_family}", "Cairo", system-ui, sans-serif`;
+    }
+
+    // Button style from CMS (maps to border-radius)
+    if (config.theme_config?.button_style) {
+      const btnRadiusMap: Record<string, string> = {
+        square: "0px",
+        rounded: "12px",
+        pill: "9999px",
+      };
+      const btnRadius = btnRadiusMap[config.theme_config.button_style] || "12px";
+      root.style.setProperty("--btn-radius", btnRadius);
+    }
+
+    // Glassmorphism toggle
+    if (config.theme_config?.glassmorphism === false) {
+      root.classList.add("no-glass");
+    } else {
+      root.classList.remove("no-glass");
+    }
+  }, [config.primary_color, config.theme_config?.border_radius, config.theme_config?.font_family, config.theme_config?.button_style, config.theme_config?.glassmorphism]);
 
   return config;
 }

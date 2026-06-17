@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search } from "lucide-react";
+import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search, ChevronLeft, ChevronRight, XCircle, Clock } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import { cn } from "@/shared/utils";
 
@@ -13,6 +13,11 @@ interface ReservationsTableProps {
   onPreviewDocs: (docs: { cin?: string; license?: string; name?: string }) => void;
   actionLoading: number | null;
   onRowClick: (reservation: Reservation) => void;
+  // Pagination
+  currentPage?: number;
+  lastPage?: number;
+  total?: number;
+  onPageChange?: (page: number) => void;
 }
 
 const formatDate = (dateStr?: string) => {
@@ -27,21 +32,41 @@ const formatDate = (dateStr?: string) => {
 };
 
 const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
-  confirmed:       { bg: "from-emerald-500/20 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-500" },
-  active:          { bg: "from-primary/20 to-primary/10", border: "border-primary/40", text: "text-primary" },
-  completed:       { bg: "from-blue-500/20 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-500" },
-  pending_payment: { bg: "from-amber-500/20 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-500" },
-  pending:         { bg: "from-amber-500/20 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-500" },
-  rejected:        { bg: "from-red-500/20 to-red-500/10", border: "border-red-400/40", text: "text-red-500" },
+  confirmed:        { bg: "from-emerald-500/20 to-emerald-500/10", border: "border-emerald-400/40",  text: "text-emerald-500" },
+  active:           { bg: "from-primary/20 to-primary/10",         border: "border-primary/40",      text: "text-primary" },
+  ongoing:          { bg: "from-sky-500/20 to-sky-500/10",          border: "border-sky-400/40",      text: "text-sky-500" },
+  completed:        { bg: "from-blue-500/20 to-blue-500/10",        border: "border-blue-400/40",     text: "text-blue-500" },
+  pending_payment:  { bg: "from-amber-500/20 to-amber-500/10",      border: "border-amber-400/40",    text: "text-amber-500" },
+  attente_paiement: { bg: "from-orange-500/20 to-orange-500/10",    border: "border-orange-400/40",   text: "text-orange-500" },
+  pending:          { bg: "from-amber-500/20 to-amber-500/10",      border: "border-amber-400/40",    text: "text-amber-500" },
+  pending_partner:  { bg: "from-purple-500/20 to-purple-500/10",    border: "border-purple-400/40",   text: "text-purple-500" },
+  rejected:         { bg: "from-red-500/20 to-red-500/10",          border: "border-red-400/40",      text: "text-red-500" },
+  cancelled:        { bg: "from-red-500/20 to-red-500/10",          border: "border-red-400/40",      text: "text-red-500" },
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  confirmed:        "Confirmée",
+  active:           "Active",
+  ongoing:          "En cours",
+  completed:        "Terminée",
+  pending_payment:  "Attente paiement",
+  attente_paiement: "Attente paiement",
+  pending:          "En attente",
+  pending_partner:  "Attente partenaire",
+  rejected:         "Rejetée",
+  cancelled:        "Annulée",
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const s = STATUS_STYLES[status] || STATUS_STYLES.pending;
+  const s = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
   return (
     <span className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-br border-2", s.bg, s.border, s.text)}>
-      {status === "confirmed" && <CheckCircle size={12} />}
-      {status === "active" && <Car size={12} />}
-      {status}
+      {status === "confirmed"       && <CheckCircle size={12} />}
+      {status === "active"          && <Car size={12} />}
+      {status === "ongoing"         && <Car size={12} />}
+      {status === "cancelled"       && <XCircle size={12} />}
+      {status === "pending_partner" && <Clock size={12} />}
+      {STATUS_LABELS[status] ?? status}
     </span>
   );
 }
@@ -52,7 +77,11 @@ export default function ReservationsTable({
   onGenerateContract, 
   onPreviewDocs, 
   actionLoading,
-  onRowClick
+  onRowClick,
+  currentPage = 1,
+  lastPage = 1,
+  total,
+  onPageChange,
 }: ReservationsTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -80,9 +109,31 @@ export default function ReservationsTable({
           </div>
           <h2 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">Flux des Réservations</h2>
           <span className="px-3 py-1.5 rounded-lg bg-gold/20 border border-gold/40 text-xs font-bold text-gold uppercase tracking-wider">
-            {reservations.length} total
+            {total ?? reservations.length} total
           </span>
         </div>
+        {/* Pagination compacte header */}
+        {lastPage > 1 && onPageChange && (
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage <= 1}
+              className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
+            >
+              <ChevronLeft size={16} />
+            </motion.button>
+            <span className="text-xs font-bold text-ink-2 px-2">{currentPage} / {lastPage}</span>
+            <motion.button
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage >= lastPage}
+              className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
+            >
+              <ChevronRight size={16} />
+            </motion.button>
+          </div>
+        )}
       </div>
 
       {/* Search Input */}

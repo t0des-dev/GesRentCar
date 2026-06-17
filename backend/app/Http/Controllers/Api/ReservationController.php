@@ -292,4 +292,126 @@ class ReservationController extends Controller
             'reservation' => $reservation->fresh(),
         ]);
     }
-}
+
+    // ─── Annulation (client ou admin) ─────────────────────────────────────────
+    /**
+     * Annule une réservation.
+     * - Si le client avait choisi la flexibilité et payé via Stripe → remboursement automatique.
+     * - Notifie le client par SMS/WhatsApp.
+     * - Logge dans activity_logs.
+     */
+    public function cancel(Reservation $reservation)
+    {
+        $cancellableStatuses = ['pending', 'pending_payment', 'confirmed', 'attente_paiement', 'pending_partner'];
+
+        if (! in_array($reservation->status, $cancellableStatuses)) {
+            return response()->json([
+                'message' => "Impossible d'annuler une réservation en statut : {$reservation->status}."
+            ], 422);
+        }
+
+        $reservation->load(['client', 'vehicle', 'payment']);
+        $refundResult = null;
+
+        // ── Remboursement Stripe si flexibilité active et paiement existant ──────
+        if (
+            ($reservation->options['flexibility'] ?? null) === 'flexible'
+            && $reservation->payment
+            && $reservation->payment->status !== 'refunded'
+        ) {
+            $refundResult = $this->processStripeRefund($reservation);
+        }
+
+        DB::transaction(function () use ($reservation) {
+            $reservation->update(['status' => 'cancelled']);
+
+            // Audit log
+            \App\Models\ActivityLog::create([
+                'user_id'     => auth()->id(),
+                'action'      => 'reservation_cancelled',
+                'description' => "Réservation #{$reservation->id} annulée. Client: {$reservation->client->name}.",
+                'ip_address'  => request()->ip(),
+            ]);
+        });
+
+        // Notification client
+        try {
+            $refNum = 'VRC-' . str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+            $this->notificationService->sendSms(
+                $reservation->client->phone,
+                "VectoriaRentCar: Votre réservation {$refNum} a été annulée."
+                . ($refundResult ? " Remboursement de {$refundResult['amount']} MAD initié." : '')
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('[Cancel] SMS notification failed: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'message'     => 'Réservation annulée avec succès.',
+            'reservation' => $reservation->fresh(),
+            'refund'      => $refundResult,
+        ]);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPERS PRIVÉS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Déclenche un remboursement Stripe pour le paiement d'une réservation.
+     * Retourne les détails du remboursement ou null en cas d'échec.
+     */
+    private function processStripeRefund(Reservation $reservation): ?array
+    {
+        try {
+            \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+            // Trouver le PaymentIntent via les metadata Stripe
+            $intents = \Stripe\PaymentIntent::all([
+                'limit' => 10,
+            ]);
+
+            // Remboursement via Charge (plus fiable)
+            $refundAmount = (int) ($reservation->payment->paid_amount * 100);
+
+            $refund = \Stripe\Refund::create([
+                'payment_intent' => $this->findStripePaymentIntent($reservation),
+                'amount'         => $refundAmount,
+                'reason'         => 'requested_by_customer',
+                'metadata'       => [
+                    'reservation_id' => $reservation->id,
+                    'reason'         => 'flexible_cancellation',
+                ],
+            ]);
+
+            // Mettre à jour le statut du paiement
+            $reservation->payment->update(['status' => 'refunded']);
+
+            \Illuminate\Support\Facades\Log::info("[Refund] Réservation #{$reservation->id} remboursée. Refund ID: {$refund->id}");
+
+            return [
+                'refund_id' => $refund->id,
+                'amount'    => $reservation->payment->paid_amount,
+                'status'    => $refund->status,
+            ];
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("[Refund] Échec remboursement réservation #{$reservation->id}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Retrouve le payment_intent_id Stripe lié à une réservation
+     * via les PaymentIntents avec metadata.reservation_id.
+     */
+    private function findStripePaymentIntent(Reservation $reservation): ?string
+    {
+        try {
+            $intents = \Stripe\PaymentIntent::search([
+                'query' => "metadata['reservation_id']:'{$reservation->id}'",
+            ]);
+            return $intents->data[0]->id ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }

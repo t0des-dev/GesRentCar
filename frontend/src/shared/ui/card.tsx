@@ -10,11 +10,11 @@ const cardVariants = cva(
       variant: {
         default: "bg-card border-border shadow-sm hover:shadow-md",
         editorial:
-          "bg-white border-border-subtle shadow-sm hover:shadow-lg hover:border-border hover:shadow-xl hover:-translate-y-0.5",
+          "bg-white dark:bg-card border-border-subtle shadow-sm hover:shadow-lg hover:border-border hover:shadow-xl hover:-translate-y-0.5",
         premium:
-          "bg-white border-border-subtle shadow-sm hover:shadow-xl hover:border-primary/15 hover:-translate-y-1",
+          "bg-white dark:bg-card border-border-subtle shadow-sm hover:shadow-xl hover:border-primary/15 hover:-translate-y-1",
         glass: "bg-glass backdrop-blur-xl border-white/30 shadow-lg",
-        admin: "bg-white border-border-subtle shadow-xs hover:shadow-sm",
+        admin: "bg-white dark:bg-card border-border-subtle shadow-xs hover:shadow-sm",
       },
     },
     defaultVariants: {

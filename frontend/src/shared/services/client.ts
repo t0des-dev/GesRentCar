@@ -11,6 +11,8 @@ const api = axios.create({
   },
 });
 
+let isRedirecting = false;
+
 api.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("vectoria_token");
@@ -25,8 +27,17 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      const hadToken = !!localStorage.getItem("vectoria_token");
-      if (hadToken) {
+      const url = error.config?.url || "";
+
+      // Don't handle 401 for auth endpoints (login/register)
+      const isAuthEndpoint = url.includes("/auth/login") || url.includes("/auth/register");
+
+      // Don't redirect if already on login/register page
+      const currentPath = window.location.pathname;
+      const isOnAuthPage = currentPath === "/login" || currentPath === "/register";
+
+      if (!isAuthEndpoint && !isOnAuthPage && !isRedirecting) {
+        isRedirecting = true;
         localStorage.removeItem("vectoria_user");
         localStorage.removeItem("vectoria_token");
         window.location.href = "/login";

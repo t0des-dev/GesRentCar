@@ -28,7 +28,7 @@ class ExpenseController extends Controller
             }
         }
 
-        return response()->json($query->get());
+        return response()->json($query->paginate((int) $request->query('per_page', 50)));
     }
 
     public function store(Request $request)
@@ -75,7 +75,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
         $request->validate([
-            'receipt' => 'required|image|mimes:jpeg,png,jpg,pdf|max:5120'
+            'receipt' => 'required|file|mimes:jpeg,png,jpg,webp,pdf|max:5120'
         ]);
 
         if ($request->hasFile('receipt')) {

@@ -9,13 +9,15 @@ use App\Http\Controllers\Api\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware(['auth:sanctum', 'throttle:api']);
 
 // Public search
-// Auth
-Route::prefix('auth')->group(function () {
+// Auth (rate limited: 5 attempts/min per IP)
+Route::prefix('auth')->middleware('throttle:auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+});
+Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', function (Request $request) {
@@ -26,29 +28,33 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::get('/config', [\App\Http\Controllers\Api\ConfigController::class, 'index']);
+Route::middleware('throttle:public')->group(function () {
+    Route::get('/config', [\App\Http\Controllers\Api\ConfigController::class, 'index']);
 
-Route::get('/vehicles', [VehicleController::class, 'index']);
-Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+    Route::get('/vehicles', [VehicleController::class, 'index']);
+    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
 
-// Public reservations
-Route::post('/public/reservations', [ReservationController::class, 'publicStore']);
+    // Public reservations
+    Route::post('/public/reservations', [ReservationController::class, 'publicStore']);
 
-// ─── Public contract download & signature ─────────────────────────
-Route::get('/public/reservations/{reservation}/contract', [\App\Http\Controllers\Api\ContractController::class, 'download']);
-Route::post('/public/reservations/{reservation}/sign', [\App\Http\Controllers\Api\ContractController::class, 'publicSign']);
+    // ─── Public contract download & signature ─────────────────────────
+    Route::get('/public/reservations/{reservation}/contract', [\App\Http\Controllers\Api\ContractController::class, 'download']);
+    Route::post('/public/reservations/{reservation}/sign', [\App\Http\Controllers\Api\ContractController::class, 'publicSign']);
+});
 
-// ─── Stripe ───────────────────────────────────────────────────────────────────
-Route::post('/stripe/intent',   [StripeController::class, 'createIntent']);
-Route::post('/stripe/confirm',  [StripeController::class, 'confirm']);
-Route::post('/stripe/webhook',  [StripeController::class, 'webhook']);
+// ─── Stripe (rate limited: 10 req/min per IP) ──────────────────────────────
+Route::middleware('throttle:payment')->group(function () {
+    Route::post('/stripe/intent',   [StripeController::class, 'createIntent']);
+    Route::post('/stripe/confirm',  [StripeController::class, 'confirm']);
+    Route::post('/stripe/webhook',  [StripeController::class, 'webhook']);
 
-// ─── CMI Maroc ───────────────────────────────────────────────────────────────
-Route::post('/cmi/init/{reservation}', [\App\Http\Controllers\Api\CmiController::class, 'init']);
-Route::post('/cmi/callback',           [\App\Http\Controllers\Api\CmiController::class, 'callback']);
+    // ─── CMI Maroc ───────────────────────────────────────────────────────────────
+    Route::post('/cmi/init/{reservation}', [\App\Http\Controllers\Api\CmiController::class, 'init']);
+    Route::post('/cmi/callback',           [\App\Http\Controllers\Api\CmiController::class, 'callback']);
+});
 
-// Reservations (Protected)
-Route::middleware(['auth:sanctum', 'audit'])->group(function () {
+// Reservations (Protected + rate limited: 60 req/min per IP)
+Route::middleware(['auth:sanctum', 'audit', 'throttle:api'])->group(function () {
     Route::apiResource('/clients', \App\Http\Controllers\Api\ClientController::class);
     Route::post('/reservations', [ReservationController::class, 'store']);
     Route::get('/reservations', [ReservationController::class, 'index']);
@@ -57,6 +63,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update']);
     Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
     Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
+    Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
 
     // Stats
     Route::get('stats/revenue', [\App\Http\Controllers\Api\StatsController::class, 'revenueByCategory']);
@@ -70,6 +77,7 @@ Route::middleware(['auth:sanctum', 'audit'])->group(function () {
     Route::post('/config/upload', [\App\Http\Controllers\Api\ConfigController::class, 'uploadAsset']);
 
     Route::get('/exports/reservations', [\App\Http\Controllers\Api\ExportController::class, 'reservations']);
+    Route::get('/exports/profit-loss',  [\App\Http\Controllers\Api\ExportController::class, 'profitLoss']);
     
     Route::post('/reservations/{reservation}/contract', [\App\Http\Controllers\Api\ContractController::class, 'generate']);
     Route::post('/reservations/{reservation}/sign', [\App\Http\Controllers\Api\ContractController::class, 'sign']);
