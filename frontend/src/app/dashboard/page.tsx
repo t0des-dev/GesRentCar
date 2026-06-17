@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useMyReservations } from "@/shared/hooks/useApi";
 import { useAuth } from "@/modules/auth/context/context";
 import { AnimatePresence } from "framer-motion";
+import { fmt } from "@/shared/utils/format";
 
 // Modular Components
 import ProfileHeader from "@/modules/dashboard/components/ProfileHeader";
@@ -67,7 +68,7 @@ export default function DashboardPage() {
           totalCount={RESERVATIONS.length} 
           confirmedCount={upcoming} 
           pendingCount={pending} 
-          totalSpent={mounted ? `${totalSpent.toLocaleString()} DH` : `${totalSpent} DH`} 
+          totalSpent={mounted ? `${fmt(totalSpent)} DH` : `${totalSpent} DH`} 
         />
 
         <ReservationTabs 

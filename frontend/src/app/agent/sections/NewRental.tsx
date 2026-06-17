@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
@@ -462,7 +463,7 @@ export default function NewRental() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-slate-900">{totalPrice.toLocaleString("fr-FR")} DH</p>
+                    <p className="text-2xl font-bold text-slate-900">{fmt(totalPrice)} DH</p>
                   </div>
                 </motion.div>
               )}

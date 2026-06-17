@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface FleetCalendarProps {
   reservations: Reservation[];
@@ -200,7 +201,7 @@ export default function FleetCalendar({ reservations, onReservationClick }: Flee
                             <p className="text-xs text-ink-2 font-semibold mb-2">{res.start_date} au {res.end_date}</p>
                             <div className="flex justify-between items-center pt-2 border-t border-border">
                               <span className="text-[10px] uppercase tracking-wider text-ink-3">Total</span>
-                              <span className="text-sm font-bold text-gold">{res.total_price.toLocaleString()} DH</span>
+                              <span className="text-sm font-bold text-gold">{fmt(res.total_price)} DH</span>
                             </div>
                             <div className="flex justify-between items-center mt-1">
                               <span className="text-[10px] uppercase tracking-wider text-ink-3">Statut</span>

@@ -8,6 +8,7 @@ import Link from "next/link";
 import api from "@/shared/services/client";
 import { getImageUrl } from "@/shared/utils/image";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import { fmt } from "@/shared/utils/format";
 
 export default function VehicleClient() {
   const params = useParams();
@@ -324,11 +325,11 @@ export default function VehicleClient() {
                 >
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-sm text-gold font-bold">{vehicle.price_per_day} MAD × {days} jours</span>
-                    <span className="text-sm text-gold font-bold">{totalPrice.toLocaleString()} MAD</span>
+                    <span className="text-sm text-gold font-bold">{fmt(totalPrice)} MAD</span>
                   </div>
                   <div className="flex justify-between items-center pt-4 border-t border-gold/30">
                     <span className="text-xs font-bold uppercase tracking-widest text-ink-1">Total Estimé</span>
-                    <span className="text-2xl font-bold text-gold">{totalPrice.toLocaleString()} MAD</span>
+                    <span className="text-2xl font-bold text-gold">{fmt(totalPrice)} MAD</span>
                   </div>
                 </motion.div>
               )}

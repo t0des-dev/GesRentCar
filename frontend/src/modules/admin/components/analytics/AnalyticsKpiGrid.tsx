@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { DollarSign, Calendar, TrendingUp, Car, ArrowUpRight } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface AnalyticsKpiGridProps {
   stats: any;
@@ -10,7 +11,7 @@ interface AnalyticsKpiGridProps {
 
 export default function AnalyticsKpiGrid({ stats }: AnalyticsKpiGridProps) {
   const kpis = [
-    { label: "Chiffre d'Affaires", value: `${Number(stats?.total_revenue || 0).toLocaleString()} DH`, sub: "+12.5% vs mois dernier", icon: DollarSign, color: "text-green-600", bg: "bg-green-50" },
+    { label: "Chiffre d'Affaires", value: `${fmt(stats?.total_revenue || 0)} DH`, sub: "+12.5% vs mois dernier", icon: DollarSign, color: "text-green-600", bg: "bg-green-50" },
     { label: "Réservations", value: stats?.total_reservations || 0, sub: "85% de taux de conversion", icon: Calendar, color: "text-blue-600", bg: "bg-blue-50" },
     { label: "Taux d'Occupation", value: `${stats?.occupancy_rate || 72}%`, sub: "+5% cette semaine", icon: TrendingUp, color: "text-purple-600", bg: "bg-purple-50" },
     { label: "Flotte Active", value: stats?.active_vehicles || 0, sub: "Sur 85 véhicules totaux", icon: Car, color: "text-orange-600", bg: "bg-orange-50" },

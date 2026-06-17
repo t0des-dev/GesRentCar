@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Expense } from "@/types/admin";
+import { fmt } from "@/shared/utils/format";
 
 interface ExpensesChartProps {
   expenses: Expense[];
@@ -80,7 +81,7 @@ export default function ExpensesChart({ expenses }: ExpensesChartProps) {
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value: any) => [`${Number(value).toLocaleString()} DH`, "Montant"]}
+              formatter={(value: any) => [`${fmt(value)} DH`, "Montant"]}
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
             <Legend 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, ExternalLink, ShieldCheck } from "lucide-react";
 import axios from "axios";
+import { fmt } from "@/shared/utils/format";
 
 interface CmiCheckoutProps {
   reservationId: number;
@@ -82,7 +83,7 @@ export function CmiCheckout({ reservationId, deposit }: CmiCheckoutProps) {
         ) : (
           <img src="https://www.cmi.co.ma/sites/default/files/Logo-cmi_0.png" className="h-5 brightness-0 invert" alt="" />
         )}
-        {loading ? "Redirection..." : `Payer ${deposit.toLocaleString()} DH via CMI`}
+        {loading ? "Redirection..." : `Payer ${fmt(deposit)} DH via CMI`}
       </button>
 
       <p className="text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.1em]">

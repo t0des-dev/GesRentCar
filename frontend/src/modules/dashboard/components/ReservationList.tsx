@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Car, MapPin, Calendar, Download, ChevronRight, CheckCircle, XCircle, AlertCircle, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 const STATUS_CONFIG: any = {
   confirmed:       { label: "Confirmée",       icon: CheckCircle,  bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
@@ -117,7 +118,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
               {/* Price */}
               <div className="text-right w-full lg:w-auto lg:border-none border-t border-border pt-6 lg:pt-0">
                 <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">Montant Total</p>
-                <p className="text-3xl font-bold text-gold tracking-tight">{res.totalPrice.toLocaleString()} <span className="text-lg text-ink-3 ml-1">DH</span></p>
+                <p className="text-3xl font-bold text-gold tracking-tight">{fmt(res.totalPrice)} <span className="text-lg text-ink-3 ml-1">DH</span></p>
               </div>
             </div>
 

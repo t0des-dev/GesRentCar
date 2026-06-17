@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
+import { fmt } from "@/shared/utils/format";
 
 export default function PricingSimulator() {
   const [basePrice, setBasePrice] = useState(500);
@@ -100,7 +101,7 @@ export default function PricingSimulator() {
             </p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black text-slate-900 tracking-tighter">
-                {estimatedRevenue.toLocaleString()}
+                {fmt(estimatedRevenue)}
               </span>
               <span className="text-lg font-black text-slate-400">MAD</span>
             </div>

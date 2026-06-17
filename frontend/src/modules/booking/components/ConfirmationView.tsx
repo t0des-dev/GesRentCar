@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Check, FileText } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import confetti from "canvas-confetti";
+import { fmt } from "@/shared/utils/format";
 
 interface ConfirmationViewProps {
   booking: BookingState;
@@ -56,7 +57,7 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Véhicule Bloqué !</h1>
         <p className="text-slate-500 text-base leading-relaxed">
           Félicitations <strong className="text-slate-900">{booking.client.name}</strong> !<br/>
-          Votre acompte de <strong>{deposit.toLocaleString()} DH</strong> a été traité avec succès.
+          Votre acompte de <strong>{fmt(deposit)} DH</strong> a été traité avec succès.
           {startFormatted && <> Le véhicule vous attendra le <strong>{startFormatted}</strong>.</>}
         </p>
 
@@ -77,11 +78,11 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
           <div className="h-px bg-slate-100" />
           <div className="flex justify-between">
             <span className="text-slate-400 font-semibold text-sm">Montant total</span>
-            <span className="font-semibold text-slate-900">{total.toLocaleString()} DH</span>
+            <span className="font-semibold text-slate-900">{fmt(total)} DH</span>
           </div>
           <div className="flex justify-between">
             <span className="text-emerald-600 font-semibold text-sm">Acompte payé</span>
-            <span className="font-semibold text-emerald-600">{deposit.toLocaleString()} DH ✓</span>
+            <span className="font-semibold text-emerald-600">{fmt(deposit)} DH ✓</span>
           </div>
         </div>
 

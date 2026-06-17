@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Car, Camera, Star, Fuel, TrendingUp, Edit, Trash2, Loader2, ShieldAlert, Wrench, Activity } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 import { Vehicle } from "@/types/admin";
 import Link from "next/link";
 import api from "@/shared/services/client";
@@ -167,12 +168,12 @@ export default function VehicleCardAdmin({
         <div className="bg-surface-1 rounded-xl p-4 grid grid-cols-2 gap-4 mb-5 border border-border/60">
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-ink-3">Revenus générés</span>
-            <span className="text-lg font-black text-ink-1">{Number(vehicle.total_revenue || 0).toLocaleString()} DH</span>
+            <span className="text-lg font-black text-ink-1">{fmt(Number(vehicle.total_revenue || 0))} DH</span>
           </div>
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-ink-3">Marge nette</span>
             <span className={cn("text-lg font-black", roi >= 0 ? "text-emerald-600" : "text-red-600")}>
-               {roi > 0 ? "+" : ""}{roi.toLocaleString()} DH
+               {roi > 0 ? "+" : ""}{fmt(roi)} DH
             </span>
           </div>
         </div>

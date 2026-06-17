@@ -9,6 +9,7 @@ import { Expense } from "@/types/admin";
 import ExpenseFormDrawer from "@/modules/admin/components/expenses/ExpenseFormDrawer";
 import ExpensesChart from "@/modules/admin/components/expenses/ExpensesChart";
 import { toast } from "react-hot-toast";
+import { fmt } from "@/shared/utils/format";
 
 export default function ExpensesPage() {
   const { user, checking } = useAuthGuard("admin");
@@ -96,7 +97,7 @@ export default function ExpensesPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <div className="card-premium bg-slate-900 text-white flex-1 flex flex-col justify-center">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Total des dépenses</h3>
-            <p className="text-4xl font-black">{totalAmount.toLocaleString()} <span className="text-xl font-bold text-slate-500">DH</span></p>
+            <p className="text-4xl font-black">{fmt(totalAmount)} <span className="text-xl font-bold text-slate-500">DH</span></p>
             <p className="text-xs text-slate-400 mt-2">Pour la période sélectionnée</p>
           </div>
           
@@ -105,7 +106,7 @@ export default function ExpensesPage() {
             {highestExpense ? (
               <>
                 <p className="text-xl font-bold text-slate-900 truncate">{highestExpense.title}</p>
-                <p className="text-lg font-black text-red-500">{Number(highestExpense.amount).toLocaleString()} DH</p>
+                <p className="text-lg font-black text-red-500">{fmt(Number(highestExpense.amount))} DH</p>
                 <p className="text-xs text-slate-500 mt-1">{new Date(highestExpense.expense_date).toLocaleDateString('fr-FR')}</p>
               </>
             ) : (
@@ -216,7 +217,7 @@ export default function ExpensesPage() {
                         )}
                       </td>
                       <td className="p-4 font-black text-slate-900">
-                        {Number(exp.amount).toLocaleString()} DH
+                        {fmt(Number(exp.amount))} DH
                       </td>
                       <td className="p-4">
                         {exp.receipt_url ? (

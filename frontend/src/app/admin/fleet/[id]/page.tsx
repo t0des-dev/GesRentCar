@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Car, Calendar as CalendarIcon, Wrench, ShieldAlert, Activity, DollarSign, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 export default function VehicleDashboardPage() {
   const params = useParams();
@@ -112,23 +113,23 @@ export default function VehicleDashboardPage() {
              <div className="space-y-4">
                 <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                   <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block mb-1">Revenus Générés</span>
-                  <span className="text-2xl font-black text-emerald-700">{totalRev.toLocaleString()} DH</span>
+                  <span className="text-2xl font-black text-emerald-700">{fmt(totalRev)} DH</span>
                 </div>
                 <div className="bg-red-50 rounded-xl p-4 border border-red-100">
                   <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider block mb-1">Coûts d'Entretien</span>
-                  <span className="text-2xl font-black text-red-700">- {totalCost.toLocaleString()} DH</span>
+                  <span className="text-2xl font-black text-red-700">- {fmt(totalCost)} DH</span>
                 </div>
                 <div className="bg-surface-1 rounded-xl p-4 border border-border">
                   <span className="text-[10px] font-bold text-ink-3 uppercase tracking-wider block mb-1">Marge Nette Principale</span>
                   <span className={cn("text-3xl font-black", roi >= 0 ? "text-emerald-600" : "text-red-600")}>
-                    {roi > 0 ? "+" : ""}{roi.toLocaleString()} DH
+                    {roi > 0 ? "+" : ""}{fmt(roi)} DH
                   </span>
                 </div>
 
                 {isCollab && (
                   <div className="bg-primary/10 rounded-xl p-4 border border-primary/20 mt-4">
                     <span className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">Commission Due ({vehicle.commission_rate}%)</span>
-                    <span className="text-xl font-black text-primary">{collabCommission.toLocaleString()} DH</span>
+                    <span className="text-xl font-black text-primary">{fmt(collabCommission)} DH</span>
                   </div>
                 )}
              </div>
@@ -167,7 +168,7 @@ export default function VehicleDashboardPage() {
                          res.status === 'ongoing' ? 'bg-blue-100 text-blue-700' :
                          'bg-amber-100 text-amber-700'
                        )}>{res.status}</span>
-                       <span className="text-sm font-black text-primary">{Number(res.total_price).toLocaleString()} DH</span>
+                       <span className="text-sm font-black text-primary">{fmt(res.total_price)} DH</span>
                      </div>
                    </div>
                  ))
@@ -201,7 +202,7 @@ export default function VehicleDashboardPage() {
                        <span className="text-xs text-ink-3">{new Date(m.date).toLocaleDateString()} • {m.mileage} KM</span>
                      </div>
                      <div className="mt-4 pt-3 border-t border-border/50 text-right">
-                       <span className="text-sm font-black text-red-600">-{Number(m.cost).toLocaleString()} DH</span>
+                       <span className="text-sm font-black text-red-600">-{fmt(m.cost)} DH</span>
                      </div>
                    </div>
                  ))

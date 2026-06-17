@@ -10,6 +10,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { Loader2, Lock, CheckCircle, AlertCircle } from "lucide-react";
 import { stripeService } from "@/lib/api/stripe";
+import { fmt } from "@/shared/utils/format";
 
 // ─── Stripe instance (singleton) ─────────────────────────────────────────────
 const stripePromise = loadStripe(
@@ -128,7 +129,7 @@ function CheckoutForm({
         ) : (
           <Lock size={20} />
         )}
-        {status === "loading" ? "Traitement en cours..." : `Payer ${deposit.toLocaleString()} DH`}
+        {status === "loading" ? "Traitement en cours..." : `Payer ${fmt(deposit)} DH`}
       </button>
 
       <p className="text-center text-xs text-slate-400 font-semibold flex items-center justify-center gap-2">

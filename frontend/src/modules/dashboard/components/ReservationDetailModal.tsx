@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Car, Calendar, DollarSign, Shield } from "lucide-react";
+import { fmt } from "@/shared/utils/format";
 
 interface ReservationDetailModalProps {
   reservation: any;
@@ -117,7 +118,7 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
                   <p className="text-xs font-bold uppercase tracking-widest text-ink-3">Investissement</p>
                 </div>
                 <p className="font-bold text-3xl text-gold">
-                  {reservation.totalPrice.toLocaleString()} <span className="text-lg text-ink-3">DH</span>
+                  {fmt(reservation.totalPrice)} <span className="text-lg text-ink-3">DH</span>
                 </p>
                 <div className="flex items-center gap-2 mt-3 text-emerald-600">
                   <Shield size={14} strokeWidth={2} />

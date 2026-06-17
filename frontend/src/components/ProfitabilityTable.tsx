@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import api from "@/shared/services/client";
 import { cn } from "@/shared/utils";
 import { TrendingUp, TrendingDown, DollarSign, Car } from "lucide-react";
+import { fmt } from "@/shared/utils/format";
 
 interface VehicleProfit {
   brand: string;
@@ -66,17 +67,17 @@ export default function ProfitabilityTable({ data: initialData }: { data?: Vehic
                   </div>
                 </td>
                 <td className="px-6 py-6 text-right font-bold text-slate-700">
-                  {Number(v.total_revenue).toLocaleString()} <span className="text-[10px] text-slate-400">DH</span>
+                  {fmt(v.total_revenue)} <span className="text-[10px] text-slate-400">DH</span>
                 </td>
                 <td className="px-6 py-6 text-right font-bold text-rose-500/80">
-                  -{Number(v.total_costs).toLocaleString()} <span className="text-[10px] text-slate-300">DH</span>
+                  -{fmt(v.total_costs)} <span className="text-[10px] text-slate-300">DH</span>
                 </td>
                 <td className="px-6 py-6 text-right">
                   <div className={cn(
                     "inline-flex items-center gap-1.5 font-black text-sm",
                     v.net_profit >= 0 ? "text-emerald-600" : "text-rose-600"
                   )}>
-                    {Number(v.net_profit).toLocaleString()} DH
+                    {fmt(v.net_profit)} DH
                     {v.net_profit >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                   </div>
                 </td>

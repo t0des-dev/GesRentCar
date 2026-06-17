@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { TrendingUp, Car, Clock, CheckCircle2 } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface KpiGridProps {
   stats: {
@@ -16,7 +17,7 @@ interface KpiGridProps {
 
 export default function KpiGrid({ stats, loading }: KpiGridProps) {
   const kpis = [
-    { label: "Chiffre d'Affaires", value: `${stats.totalRevenue.toLocaleString("fr-FR")} DH`, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Chiffre d'Affaires", value: `${fmt(stats.totalRevenue)} DH`, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
     { label: "Départs Aujourd'hui", value: stats.pickups, icon: Car, color: "text-indigo-600", bg: "bg-indigo-50" },
     { label: "Retours Aujourd'hui", value: stats.returns, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
     { label: "Locations Actives", value: stats.active, icon: CheckCircle2, color: "text-blue-600", bg: "bg-blue-50" },

@@ -6,6 +6,7 @@ import { ChevronLeft, CheckCircle2, Shield } from "lucide-react";
 import api from "@/shared/services/client";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
+import { fmt } from "@/shared/utils/format";
 
 import VehicleInfo from "@/modules/booking/components/VehicleInfo";
 import BookingForm from "@/modules/booking/components/BookingForm";
@@ -131,7 +132,7 @@ export default function SearchClient() {
                   <div className="flex items-center justify-between mb-10">
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Estimation du séjour</p>
-                      <h2 className="text-3xl font-black text-slate-900 tracking-tight">{totalPrice.toLocaleString("fr-FR")} DH</h2>
+                      <h2 className="text-3xl font-black text-slate-900 tracking-tight">{fmt(totalPrice)} DH</h2>
                     </div>
                     <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{form.start_date && form.end_date ? "Total" : "/ jour"}</span>
@@ -151,8 +152,8 @@ export default function SearchClient() {
                       <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest mb-4">
                          <Shield size={14} /> Paiement de l'acompte (15%)
                       </div>
-                      <h3 className="text-2xl font-black text-slate-900 mb-2">{deposit.toLocaleString()} DH</h3>
-                      <p className="text-slate-400 text-xs font-medium italic">Le reste ({ (totalPrice - deposit).toLocaleString() } DH) sera payé lors de la prise du véhicule.</p>
+                      <h3 className="text-2xl font-black text-slate-900 mb-2">{fmt(deposit)} DH</h3>
+                      <p className="text-slate-400 text-xs font-medium italic">Le reste ({ fmt(totalPrice - deposit) } DH) sera payé lors de la prise du véhicule.</p>
                    </div>
                    <StripeCheckout deposit={deposit} bookingPayload={bookingPayload} onSuccess={() => setStep("success")} />
                 </motion.div>

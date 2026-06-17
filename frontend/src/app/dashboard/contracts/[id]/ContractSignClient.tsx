@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import SignaturePad from "@/components/SignaturePad";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 export default function ContractSignClient() {
   const { id } = useParams();
@@ -126,7 +127,7 @@ export default function ContractSignClient() {
                 <div className="pt-4 border-t border-slate-100">
                   <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mb-1">Montant Net</p>
                   <p className="text-2xl font-bold text-slate-900 tracking-tight">
-                    {reservation.total_price.toLocaleString()} <span className="text-sm text-slate-400">DH</span>
+                    {fmt(reservation.total_price)} <span className="text-sm text-slate-400">DH</span>
                   </p>
                 </div>
               </div>

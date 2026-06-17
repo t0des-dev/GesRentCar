@@ -5,6 +5,7 @@ import { useCurrency } from "@/shared/hooks/useCurrency";
 import { ShieldCheck, Info, Calendar, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { PRICING_OPTIONS } from "@/lib/config/pricing";
+import { fmt } from "@/shared/utils/format";
 
 interface BookingSummaryProps {
   booking: BookingState;
@@ -91,7 +92,7 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
           <div className="space-y-4">
             <div className="flex justify-between items-end">
               <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider">Total Net à payer</span>
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">{total.toLocaleString()} DH</span>
+              <span className="text-2xl font-bold text-slate-900 tracking-tight">{fmt(total)} DH</span>
             </div>
             
             <motion.div 
@@ -102,7 +103,7 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
                   <span className="text-emerald-700 font-semibold text-xs uppercase tracking-wider block mb-1">Acompte Immédiat (10%)</span>
                   <span className="text-xs text-emerald-600/60 italic">Pour bloquer la réservation</span>
                 </div>
-                <span className="text-xl font-bold text-emerald-700 tracking-tight">{deposit.toLocaleString()} DH</span>
+                <span className="text-xl font-bold text-emerald-700 tracking-tight">{fmt(deposit)} DH</span>
               </div>
             </motion.div>
           </div>

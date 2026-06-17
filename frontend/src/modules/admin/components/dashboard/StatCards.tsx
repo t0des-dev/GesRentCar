@@ -4,6 +4,7 @@ import { TrendingUp, Calendar, Car, Percent } from "lucide-react";
 import { DashboardStats } from "@/types/admin";
 import { motion } from "framer-motion";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface StatCardsProps {
   stats: DashboardStats | null;
@@ -33,7 +34,7 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
   const kpiCards = [
     {
       label: "Revenus Totaux",
-      value: `${stats.revenue.toLocaleString('fr-FR')} DH`,
+      value: `${fmt(stats.revenue)} DH`,
       icon: TrendingUp,
       gradient: "from-emerald-500/30 to-emerald-500/10",
       border: "border-emerald-400/40",

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Car, Calendar, Search, Filter, ChevronDown, ChevronUp, DollarSign, Loader2, CheckCircle2, User, Hash, Tag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
@@ -177,7 +178,7 @@ export default function MyReservations() {
                     
                     <div className="text-right w-28">
                       <p className="font-bold text-slate-900">
-                        {parseFloat(r.total_price).toLocaleString("fr-FR")} DH
+{fmt(r.total_price)} DH
                       </p>
                     </div>
                     
@@ -205,7 +206,7 @@ export default function MyReservations() {
                             { label: "Prise en charge", value: r.start_date, icon: Calendar },
                             { label: "Restitution", value: r.end_date, icon: Calendar },
                             { label: "Immatriculation", value: r.vehicle?.plate ?? "—", icon: Tag },
-                            { label: "Total Contrat", value: `${parseFloat(r.total_price).toLocaleString("fr-FR")} DH`, icon: Hash, premium: true },
+                            { label: "Total Contrat", value: `${fmt(r.total_price)} DH`, icon: Hash, premium: true },
                           ].map((item, i) => (
                             <div key={i}>
                               <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mb-1">

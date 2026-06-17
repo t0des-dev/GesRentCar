@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShieldCheck, Camera, Loader2, AlertTriangle, CheckCircle2, Wrench, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
@@ -193,7 +194,7 @@ export default function VehicleInspection() {
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-slate-900">
-                      {report.estimated_repair_cost.toLocaleString("fr-FR")} DH
+                      {fmt(report.estimated_repair_cost)} DH
                     </p>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search, ChevronLeft, ChevronRight, XCircle, Clock } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface ReservationsTableProps {
   reservations: Reservation[];
@@ -196,7 +197,7 @@ export default function ReservationsTable({
                   <td className="py-4 pr-4 text-sm text-ink-2">
                     {formatDate(r.start_date)} <span className="text-ink-3 mx-1">→</span> {formatDate(r.end_date)}
                   </td>
-                  <td className="py-4 pr-4 text-sm font-bold text-gold">{r.total_price.toLocaleString('fr-FR')} DH</td>
+                  <td className="py-4 pr-4 text-sm font-bold text-gold">{fmt(r.total_price)} DH</td>
                   <td className="py-4 pr-4">
                     <div className="flex flex-col gap-2">
                       <StatusBadge status={r.status} />
@@ -322,7 +323,7 @@ export default function ReservationsTable({
               {/* Card Footer */}
               <div className="flex flex-col gap-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-between">
-                  <p className="text-xl font-bold text-gold">{r.total_price.toLocaleString('fr-FR')} DH</p>
+                  <p className="text-xl font-bold text-gold">{fmt(r.total_price)} DH</p>
 
                   {r.contract ? (
                     <a 

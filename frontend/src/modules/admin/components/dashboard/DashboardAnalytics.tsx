@@ -5,6 +5,7 @@ import { TrendingUp, Car, Trophy, Wallet } from "lucide-react";
 import RevenueChart from "@/components/RevenueChart";
 import FleetPieChart from "@/components/FleetPieChart";
 import { cn } from "@/shared/utils";
+import { fmt } from "@/shared/utils/format";
 
 interface PerformanceChartsProps {
   stats: any;
@@ -76,7 +77,7 @@ export function PopularModels({ stats }: { stats: any }) {
                   <p className="text-xs font-bold uppercase tracking-wider text-ink-3">{v.count} réservations</p>
                 </div>
               </div>
-              <p className="font-bold text-gold">{v.revenue.toLocaleString()} DH</p>
+              <p className="font-bold text-gold">{fmt(v.revenue)} DH</p>
             </motion.div>
           ))}
         </div>

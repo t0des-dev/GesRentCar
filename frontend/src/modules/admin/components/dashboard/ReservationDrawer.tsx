@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, FileText, CheckCircle, CreditCard, ShieldCheck, Download, AlertTriangle, MessageCircle, Mail, RefreshCw } from "lucide-react";
 import { Reservation } from "@/types/admin";
+import { fmt } from "@/shared/utils/format";
 
 interface ReservationDrawerProps {
   reservation: Reservation;
@@ -194,7 +195,7 @@ export default function ReservationDrawer({ reservation, onClose, onGenerateCont
             >
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">Montant Total</p>
-                <p className="text-3xl font-bold text-gold">{reservation.total_price.toLocaleString('fr-FR')} DH</p>
+                <p className="text-3xl font-bold text-gold">{fmt(reservation.total_price)} DH</p>
               </div>
               <div className="text-right">
                 <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">Période</p>

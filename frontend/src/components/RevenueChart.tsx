@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   Cell
 } from "recharts";
+import { fmt } from "@/shared/utils/format";
 
 interface RevenueData {
   month: string;
@@ -40,7 +41,7 @@ const RevenueChart = memo(function RevenueChart({ data }: { data: RevenueData[] 
           <Tooltip 
             cursor={{ fill: '#f8fafc' }}
             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', padding: '10px' }}
-            formatter={(val) => [`${Number(val).toLocaleString()} DH`, 'Revenu']}
+            formatter={(val) => [`${fmt(val)} DH`, 'Revenu']}
           />
           <Bar dataKey="revenue" radius={[6, 6, 0, 0]} barSize={40}>
             {data.map((entry, index) => (
