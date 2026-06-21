@@ -1,41 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-type User = { id: number; name: string; email: string; role: string };
+import { useAuth } from "@/modules/auth/context/context";
 
 export function useAuthGuard(requiredRole?: "admin" | "agent") {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [checking, setChecking] = useState(true);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const token  = localStorage.getItem("vectoria_token");
-    const stored = localStorage.getItem("vectoria_user");
+    if (loading) return;
 
-    if (!token || !stored) {
+    if (!user) {
       router.replace("/login");
       return;
     }
 
-    try {
-      const parsed: User = JSON.parse(stored);
-
-      // Vérifier le rôle si requis
-      if (requiredRole && parsed.role !== requiredRole) {
-        // Rediriger vers la bonne page selon le rôle réel
-        router.replace(parsed.role === "admin" ? "/admin" : "/agent");
-        return;
-      }
-
-      setUser(parsed);
-    } catch {
-      router.replace("/login");
-    } finally {
-      setChecking(false);
+    // Vérifier le rôle si requis
+    if (requiredRole && user.role !== requiredRole) {
+      // Rediriger vers la bonne page selon le rôle réel
+      router.replace(user.role === "admin" ? "/admin" : "/agent");
+      return;
     }
-  }, [router, requiredRole]);
+  }, [user, loading, router, requiredRole]);
 
-  return { user, checking };
+  return { user, checking: loading };
 }
