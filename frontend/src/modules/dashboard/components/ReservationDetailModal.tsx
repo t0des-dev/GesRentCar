@@ -51,7 +51,7 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="bg-white rounded-2xl w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl border-2 border-gold/30"
+          className="bg-surface-0 rounded-2xl w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl border border-gold/40 dark:border-gold/30"
         >
           {/* Close Button */}
           <motion.button
@@ -147,13 +147,16 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
               </motion.button>
 
               {reservation.hasContract && (
-                <motion.button
+                <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold to-gold/90 text-ink-1 font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all"
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${reservation.id}/contract/file`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold to-gold/90 text-ink-1 font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all cursor-pointer flex items-center justify-center animate-pulse"
                 >
                   Télécharger l'Acte
-                </motion.button>
+                </motion.a>
               )}
             </motion.div>
           </div>

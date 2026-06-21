@@ -7,9 +7,10 @@ import { motion } from "framer-motion";
 
 interface ProfileHeaderProps {
   session: any;
+  isDemo?: boolean;
 }
 
-export default function ProfileHeader({ session }: ProfileHeaderProps) {
+export default function ProfileHeader({ session, isDemo }: ProfileHeaderProps) {
   const { logout } = useAuth();
   
   return (
@@ -17,7 +18,7 @@ export default function ProfileHeader({ session }: ProfileHeaderProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="flex flex-col md:flex-row items-center justify-between mb-16 p-8 bg-gradient-to-br from-surface-1 to-surface-2 border-2 border-gold/20 rounded-2xl shadow-lg shadow-gold/10"
+      className="flex flex-col md:flex-row items-center justify-between mb-16 p-8 bg-gradient-to-br from-surface-1 to-surface-2 border border-border/80 rounded-2xl shadow-lg shadow-gold/5 dark:shadow-gold/2"
     >
       <div className="flex flex-col md:flex-row items-center gap-8 flex-1">
         
@@ -50,9 +51,16 @@ export default function ProfileHeader({ session }: ProfileHeaderProps) {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="text-center md:text-left space-y-2"
         >
-          <div className="flex items-center justify-center md:justify-start gap-2">
-            <Crown size={16} className="text-gold" />
-            <p className="text-gold font-bold text-xs uppercase tracking-widest">Membre Élite Vectoria</p>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+            <div className="flex items-center gap-2">
+              <Crown size={16} className="text-gold" />
+              <p className="text-gold font-bold text-xs uppercase tracking-widest">Membre Élite Vectoria</p>
+            </div>
+            {isDemo && (
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
+                Mode Démo
+              </span>
+            )}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-ink-1 tracking-tight font-serif">
             {session?.user?.name || "L'Excellence"}

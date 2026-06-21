@@ -55,14 +55,16 @@ export default function DashboardPage() {
   const upcoming = useMemo(() => RESERVATIONS.filter(r => r.status === "confirmed").length, [RESERVATIONS]);
   const pending  = useMemo(() => RESERVATIONS.filter(r => r.status === "pending_payment").length, [RESERVATIONS]);
 
+  const isDemo = !apiReservations;
+
   return (
-    <main className="min-h-screen bg-slate-950 text-white pt-28 pb-20">
+    <main className="min-h-screen bg-background text-foreground pt-28 pb-20">
       <AnimatePresence>
         {selectedRes && <ReservationDetailModal reservation={selectedRes} onClose={() => setSelectedRes(null)} />}
       </AnimatePresence>
-
+ 
       <div className="container mx-auto px-6 max-w-6xl">
-        <ProfileHeader session={user ? { user } : null} />
+        <ProfileHeader session={user ? { user } : null} isDemo={isDemo} />
 
         <StatsGrid 
           totalCount={RESERVATIONS.length} 

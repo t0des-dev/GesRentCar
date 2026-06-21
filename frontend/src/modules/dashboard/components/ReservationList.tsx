@@ -81,7 +81,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.08, duration: 0.5 }}
           whileHover={{ y: -2 }}
-          className="group bg-white rounded-2xl border-2 border-border shadow-md hover:shadow-xl hover:shadow-gold/20 transition-all overflow-hidden flex flex-col lg:flex-row card-premium"
+          className="group rounded-2xl transition-all overflow-hidden flex flex-col lg:flex-row card-premium"
         >
           {/* Image */}
           <div className="w-full lg:w-80 h-56 lg:h-auto relative overflow-hidden shrink-0">
@@ -134,13 +134,16 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
               </motion.button>
 
               {res.hasContract && (
-                <motion.button 
+                <motion.a 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500/20 border-2 border-emerald-400/40 rounded-lg text-xs font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/30 transition-all"
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract/file`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500/20 border border-emerald-400/30 rounded-lg text-xs font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/30 transition-all cursor-pointer"
                 >
                   <Download size={14} strokeWidth={2} /> Contrat
-                </motion.button>
+                </motion.a>
               )}
 
               <motion.button 
