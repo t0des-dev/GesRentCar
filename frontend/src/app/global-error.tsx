@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function GlobalError({
@@ -9,6 +10,19 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    const errorMsg = error?.message || "";
+    if (
+      errorMsg.includes("ChunkLoadError") ||
+      errorMsg.includes("Failed to load chunk") ||
+      errorMsg.includes("Loading chunk") ||
+      errorMsg.includes("310")
+    ) {
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
+    }
+  }, [error]);
   return (
     <html>
       <body className="bg-[#f8fafc]">

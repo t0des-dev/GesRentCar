@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 export default function Error({
   error,
   reset,
@@ -7,6 +9,20 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    const errorMsg = error?.message || "";
+    if (
+      errorMsg.includes("ChunkLoadError") ||
+      errorMsg.includes("Failed to load chunk") ||
+      errorMsg.includes("Loading chunk") ||
+      errorMsg.includes("310")
+    ) {
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      }
+    }
+  }, [error]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
       <div className="text-center max-w-md mx-auto px-6">
