@@ -147,7 +147,7 @@ export default function LoginPage() {
             <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
               <Car size={32} className="text-white" strokeWidth={1.5} />
             </div>
-            <h1 className="text-3xl font-bold text-ink-1 font-serif mb-1">Vectoria</h1>
+            <h1 className="text-4xl font-normal text-ink-1 font-display italic mb-1">Vectoria</h1>
             <p className="text-ink-3 text-sm font-medium">Premium Car Rental</p>
           </motion.div>
 
@@ -156,7 +156,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl shadow-primary/5 border border-border/80 p-10 lg:p-8 space-y-6 focus-within:border-gold/30 transition-all duration-300"
+            className="premium-glass rounded-2xl shadow-2xl p-10 lg:p-8 space-y-6 focus-within:border-gold/50 transition-all duration-300"
           >
             {/* Title */}
             <div>

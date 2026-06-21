@@ -102,7 +102,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
             <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8">
               <div className="flex-1">
                 <p className="section-eyebrow mb-3">Expérience Active</p>
-                <h3 className="text-2xl font-bold text-ink-1 tracking-tight mb-4 font-serif">{res.vehicle}</h3>
+                <h3 className="text-3xl font-normal text-ink-1 tracking-tight mb-4 font-display italic">{res.vehicle}</h3>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3 text-ink-2">
                     <MapPin size={16} className="text-gold" />
@@ -122,8 +122,11 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
               </div>
             </div>
 
+            {/* Custom Luxury Separator Line */}
+            <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent w-full my-6" />
+
             {/* Actions */}
-            <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-border">
+            <div className="flex flex-wrap items-center gap-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

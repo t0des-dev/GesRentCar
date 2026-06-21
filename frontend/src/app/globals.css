@@ -291,16 +291,31 @@
     border-radius: var(--radius-xl);
     border: 1px solid hsl(var(--border-subtle));
     box-shadow: 0 2px 8px -2px rgba(0,0,0,0.04);
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
   :root.dark .card-premium,
   .dark .card-premium {
     background: hsl(var(--card));
   }
   .card-premium:hover {
-    border-color: hsl(var(--primary) / 0.15);
-    box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px hsl(var(--primary) / 0.06);
-    transform: translateY(-3px);
+    border-color: hsl(var(--gold) / 0.4);
+    box-shadow: 0 25px 50px -12px hsla(var(--gold) / 0.08), 0 0 0 1px hsla(var(--gold) / 0.12);
+    transform: translateY(-4px) scale(1.005);
+  }
+  .transition-luxury {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-glass {
+    background: hsla(var(--surface-0) / 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsla(var(--gold) / 0.15);
+    box-shadow: 0 20px 40px -15px hsla(var(--foreground) / 0.05);
+  }
+  :root.dark .premium-glass,
+  .dark .premium-glass {
+    background: hsla(var(--surface-0) / 0.7);
+    border: 1px solid hsla(var(--gold) / 0.1);
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3);
   }
   .card-admin {
     background: #fff;
