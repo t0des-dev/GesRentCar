@@ -67,7 +67,7 @@ export default function AdminDashboard() {
   };
 
   const handleExport = () => {
-    const token = localStorage.getItem("auth_token") || "";
+    const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
     window.open(`${API}/exports/reservations?token=${token}`, "_blank");
   };
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, UserPlus, Car, AlertCircle, Loader2, User, CheckCircle } from 'lucide-react';
-import { authService } from '@/lib/api/auth';
+import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const [passwordConf, setPasswordConf] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { register } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,13 +28,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const { user } = await authService.register({ 
-        name, 
-        email, 
-        password, 
-        password_confirmation: passwordConf 
-      });
-
+      await register(name, email, password, passwordConf);
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de l\'inscription.');

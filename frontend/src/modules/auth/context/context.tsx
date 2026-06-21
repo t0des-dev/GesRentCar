@@ -16,6 +16,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string, password_confirmation: string) => Promise<User>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -53,7 +54,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
     setUser(u);
     localStorage.setItem("vectoria_user", JSON.stringify(u));
-    if (res.data.token) localStorage.setItem("vectoria_token", res.data.token);
+    if (res.data.token) {
+      localStorage.setItem("vectoria_token", res.data.token);
+      localStorage.setItem("auth_token", res.data.token);
+    }
+    return u;
+  };
+
+  const register = async (name: string, email: string, password: string, password_confirmation: string) => {
+    await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+    const res = await api.post("/auth/register", { name, email, password, password_confirmation });
+    const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
+    setUser(u);
+    localStorage.setItem("vectoria_user", JSON.stringify(u));
+    if (res.data.token) {
+      localStorage.setItem("vectoria_token", res.data.token);
+      localStorage.setItem("auth_token", res.data.token);
+    }
     return u;
   };
 
@@ -62,10 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("vectoria_user");
     localStorage.removeItem("vectoria_token");
+    localStorage.removeItem("auth_token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refresh: fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refresh: fetchUser }}>
       {children}
     </AuthContext.Provider>
   );

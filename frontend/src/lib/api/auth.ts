@@ -10,6 +10,8 @@ export const authService = {
 
     if (data.token && typeof window !== "undefined") {
       localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("vectoria_token", data.token);
+      localStorage.setItem("vectoria_user", JSON.stringify(data.user));
     }
     return data;
   },
@@ -18,6 +20,8 @@ export const authService = {
     const { data } = await api.post("/auth/register", payload);
     if (data.token && typeof window !== "undefined") {
       localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("vectoria_token", data.token);
+      localStorage.setItem("vectoria_user", JSON.stringify(data.user));
     }
     return data;
   },
@@ -26,6 +30,8 @@ export const authService = {
     await api.post("/auth/logout");
     if (typeof window !== "undefined") {
       localStorage.removeItem("auth_token");
+      localStorage.removeItem("vectoria_token");
+      localStorage.removeItem("vectoria_user");
     }
   },
 
