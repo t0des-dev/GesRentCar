@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
+import { useAuth } from "@/modules/auth/context/context";
 import { useState, useEffect } from "react";
 
 import AdminSidebar from "@/modules/admin/components/layout/AdminSidebar";
@@ -40,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuthGuard("admin");
+  const { logout } = useAuth();
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -50,8 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [pathname]);
 
   const handleLogout = () => {
-    localStorage.removeItem("vectoria_token");
-    localStorage.removeItem("vectoria_user");
+    logout();
     router.replace("/login");
   };
 
