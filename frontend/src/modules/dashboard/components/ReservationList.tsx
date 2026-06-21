@@ -137,7 +137,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
                 <motion.a 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract/file`}
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=fr`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500/20 border border-emerald-400/30 rounded-lg text-xs font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/30 transition-all cursor-pointer"

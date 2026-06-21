@@ -7,10 +7,9 @@ import { motion } from "framer-motion";
 
 interface ProfileHeaderProps {
   session: any;
-  isDemo?: boolean;
 }
 
-export default function ProfileHeader({ session, isDemo }: ProfileHeaderProps) {
+export default function ProfileHeader({ session }: ProfileHeaderProps) {
   const { logout } = useAuth();
   
   return (
@@ -56,11 +55,6 @@ export default function ProfileHeader({ session, isDemo }: ProfileHeaderProps) {
               <Crown size={16} className="text-gold" />
               <p className="text-gold font-bold text-xs uppercase tracking-widest">Membre Élite Vectoria</p>
             </div>
-            {isDemo && (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
-                Mode Démo
-              </span>
-            )}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-ink-1 tracking-tight font-serif">
             {session?.user?.name || "L'Excellence"}

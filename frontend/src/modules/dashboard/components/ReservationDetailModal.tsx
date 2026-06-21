@@ -150,7 +150,7 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
                 <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${reservation.id}/contract/file`}
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${reservation.id}/contract?lang=fr`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold to-gold/90 text-ink-1 font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all cursor-pointer flex items-center justify-center animate-pulse"
