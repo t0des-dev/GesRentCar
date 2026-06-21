@@ -4,8 +4,8 @@
 
 ![Vectoria Architecture](https://img.shields.io/badge/Architecture-DDD-purple.svg)
 ![Frontend](https://img.shields.io/badge/Frontend-Next.js_14-black.svg)
-![Backend](https://img.shields.io/badge/Backend-Laravel_11-red.svg)
-![Admin](https://img.shields.io/badge/Admin-Filament_v3-yellow.svg)
+![Backend](https://img.shields.io/badge/Backend-Laravel_12-red.svg)
+![Admin](https://img.shields.io/badge/Admin-Filament_v5-yellow.svg)
 
 ---
 
@@ -32,7 +32,7 @@
 Le projet est divisé en deux répertoires principaux :
 
 *   `/frontend` : Application Next.js (App Router), React, Tailwind CSS, Axios, React Query.
-*   `/backend` : Application Laravel 11, Filament Admin Panel, SQLite (par défaut) / PostgreSQL.
+*   `/backend` : Application Laravel 12, Filament Admin Panel, SQLite (par défaut) / PostgreSQL.
 
 ---
 

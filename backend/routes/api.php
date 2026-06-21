@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\ConciergeController;
 use App\Http\Controllers\Api\MaintenanceController;
 use App\Http\Controllers\Api\OcrController;
 use App\Http\Controllers\Api\PaymentController;
@@ -78,6 +79,7 @@ $apiRoutes = function () {
 
         Route::get('/vehicles', [VehicleController::class, 'index']);
         Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+        Route::post('/concierge/chat', [ConciergeController::class, 'chat']);
 
         // Public reservations
         Route::post('/public/reservations', [ReservationController::class, 'publicStore']);

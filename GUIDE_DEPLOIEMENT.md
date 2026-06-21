@@ -69,12 +69,12 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Cela va construire et démarrer les conteneurs suivants :
-- `vectoria-backend` (API PHP-FPM)
-- `vectoria-worker` (Traitement asynchrone / queues)
-- `vectoria-frontend` (Next.js en mode standalone)
-- `vectoria-web` (Nginx, servant de reverse-proxy sur le port `8080`)
-- `vectoria-db` (Base de données PostgreSQL)
-- `vectoria-redis` (Cache et files d'attente Redis)
+- `gesrentcar-backend` (API PHP-FPM)
+- `gesrentcar-worker` (Traitement asynchrone / queues)
+- `gesrentcar-frontend` (Next.js en mode standalone)
+- `gesrentcar-web` (Nginx, servant de reverse-proxy sur le port `8080`)
+- `gesrentcar-db` (Base de données PostgreSQL)
+- `gesrentcar-redis` (Cache et files d'attente Redis)
 
 ## Étape 4 : Initialiser l'application
 
@@ -82,14 +82,13 @@ Une fois les conteneurs démarrés, vous devez générer la clé d'application L
 
 ```bash
 # Générer la clé d'application
-docker exec -it vectoria-backend php artisan key:generate
+docker exec -it gesrentcar-backend php artisan key:generate
 
 # Lancer les migrations et les seeders (si vous avez des données de test)
-docker exec -it vectoria-backend php artisan migrate --force
-docker exec -it vectoria-backend php artisan db:seed --force
+docker exec -it gesrentcar-backend php artisan db:seed --force
 
 # Créer le lien symbolique pour les fichiers publics (images de véhicules, contrats, etc.)
-docker exec -it vectoria-backend php artisan storage:link
+docker exec -it gesrentcar-backend php artisan storage:link
 ```
 
 ## Étape 5 : Exposer l'application (Reverse Proxy SSL)
@@ -129,7 +128,7 @@ git pull origin main
 docker compose -f docker-compose.prod.yml up -d --build
 
 # 3. Exécuter les migrations si nécessaire
-docker exec -it vectoria-backend php artisan migrate --force
+docker exec -it gesrentcar-backend php artisan migrate --force
 ```
 
 ## Résolution des problèmes fréquents

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, UserCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 
@@ -10,9 +10,21 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Redirection automatique des utilisateurs connectés
+  useEffect(() => {
+    if (!authLoading && user) {
+      const role = user.role || (typeof window !== "undefined" ? JSON.parse(localStorage.getItem("vectoria_user") || "{}").role : null);
+      if (role === "admin") router.push("/admin");
+      else if (role === "agent") router.push("/agent");
+      else router.push("/dashboard");
+    }
+  }, [user, authLoading, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +46,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-surface-0">
-      {/* Left Side — Hero Section */}
+      {/* Left Side — Hero Section (with sliding gradient animation) */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden flex-col justify-between p-12"
+        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/95 to-primary/80 bg-[length:200%_200%] animate-gradient-shift relative overflow-hidden flex-col justify-between p-12"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
@@ -139,12 +151,12 @@ export default function LoginPage() {
             <p className="text-ink-3 text-sm font-medium">Premium Car Rental</p>
           </motion.div>
 
-          {/* Form Card */}
+          {/* Form Card (with premium Glassmorphism look) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-white rounded-2xl shadow-xl shadow-primary/10 border-2 border-border p-10 lg:p-8 space-y-6"
+            className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl shadow-primary/5 border border-border/80 p-10 lg:p-8 space-y-6 focus-within:border-gold/30 transition-all duration-300"
           >
             {/* Title */}
             <div>
@@ -186,19 +198,55 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="flex items-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
-                  <Lock size={14} className="text-gold" /> Mot de passe
-                </label>
+                <div className="flex justify-between items-center">
+                  <label htmlFor="password" className="flex items-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
+                    <Lock size={14} className="text-gold" /> Mot de passe
+                  </label>
+                  <a 
+                    href="#forgot" 
+                    onClick={(e) => { 
+                      e.preventDefault(); 
+                      alert("Fonctionnalité de récupération en cours de développement. Veuillez utiliser les comptes de démonstration pour le test."); 
+                    }} 
+                    className="text-xs font-semibold text-gold hover:text-gold-dark hover:underline transition-colors"
+                  >
+                    Mot de passe oublié ?
+                  </a>
+                </div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    autoComplete="current-password"
+                    className="input-premium w-full pr-10 focus:border-gold focus:ring-2 focus:ring-gold/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-gold transition-colors focus:outline-none"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me Checkbox */}
+              <div className="flex items-center gap-2 mt-1">
                 <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
-                  className="input-premium focus:border-gold focus:ring-2 focus:ring-gold/20"
+                  id="remember"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="rounded border-border text-gold focus:ring-gold/50 cursor-pointer w-4 h-4"
                 />
+                <label htmlFor="remember" className="text-xs font-medium text-ink-3 select-none cursor-pointer">
+                  Se souvenir de moi
+                </label>
               </div>
 
               {/* Submit Button */}
@@ -224,11 +272,39 @@ export default function LoginPage() {
               </motion.button>
             </form>
 
+            {/* Quick Demo Login */}
+            <div className="pt-5 border-t border-border space-y-4">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
+                <Sparkles size={14} className="text-gold animate-pulse" />
+                Connexion rapide (Démo)
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { role: 'Admin', email: 'admin@vectoria.com', password: 'Admin2026!', color: 'border-amber-500/30 hover:border-amber-500 text-amber-600 hover:bg-amber-50/50 focus:ring-amber-500/20' },
+                  { role: 'Agent', email: 'agent@vectoria.com', password: 'Agent2026!', color: 'border-blue-500/30 hover:border-blue-500 text-blue-600 hover:bg-blue-50/50 focus:ring-blue-500/20' },
+                  { role: 'Client', email: 'client@vectoria.com', password: 'Client2026!', color: 'border-emerald-500/30 hover:border-emerald-500 text-emerald-600 hover:bg-emerald-50/50 focus:ring-emerald-500/20' }
+                ].map((account) => (
+                  <button
+                    key={account.role}
+                    type="button"
+                    onClick={() => {
+                      setEmail(account.email);
+                      setPassword(account.password);
+                    }}
+                    className={`py-2 px-1 text-[11px] font-bold rounded-xl border transition-all text-center flex flex-col items-center justify-center gap-1 focus:ring-2 focus:outline-none cursor-pointer ${account.color}`}
+                  >
+                    <UserCheck size={14} />
+                    <span>{account.role}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Register Link */}
             <div className="text-center pt-4 border-t border-border">
               <p className="text-ink-3 text-sm">
                 Pas encore de compte ?{' '}
-                <a href="/register" className="font-bold text-gold hover:text-gold/90 transition-colors">
+                <a href="/register" className="font-bold text-gold hover:text-gold-dark transition-colors">
                   S'inscrire
                 </a>
               </p>
@@ -240,11 +316,10 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="mt-8 pt-8 border-t border-border text-center"
+            className="mt-8 text-center"
           >
-            <p className="text-[11px] font-bold uppercase tracking-widest text-ink-3 mb-2">Comptes de démonstration</p>
             <p className="text-xs text-ink-4">
-              Consultez la documentation pour les identifiants de test.
+              Sélectionnez un rôle ci-dessus pour pré-remplir automatiquement les identifiants de test.
             </p>
           </motion.div>
         </div>
@@ -252,3 +327,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

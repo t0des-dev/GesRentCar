@@ -61,8 +61,51 @@ export function useConcierge() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI logic
-    setTimeout(() => {
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const res = await fetch(`${apiBase}/concierge/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userMsg,
+          history: messages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        const topSuggestion = data.suggestions?.[0];
+        let rec: Recommendation | undefined = undefined;
+
+        if (topSuggestion) {
+          rec = {
+            id: String(topSuggestion.id),
+            brand: topSuggestion.brand,
+            model: topSuggestion.model,
+            price: Number(topSuggestion.price_per_day),
+            reason: `Recommandé pour votre style ${data.vibe}`,
+          };
+        }
+
+        setMessages(prev => [...prev, {
+          role: "bot",
+          content: data.reply,
+          recommendation: rec,
+        }]);
+      } else {
+        throw new Error("API success is false");
+      }
+    } catch (err) {
+      console.warn("Concierge API error, falling back to simulated logic", err);
+      // Fallback: simulated offline logic
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       let response = "C'est un excellent choix. Pour ce type d'occasion, je vous suggère un véhicule qui allie prestige et confort.";
       let recommendation: Recommendation | undefined;
 
@@ -82,18 +125,10 @@ export function useConcierge() {
         response = "Pour vos rendez-vous d'affaires, la Classe S assure une présence discrète et imposante.";
       }
 
-      if ((lowerMsg.includes("météo") || lowerMsg.includes("temps") || lowerMsg.includes("atlas")) && weather) {
-        if (weather.condition.includes("Pluvieux") || weather.condition.includes("Neigeux")) {
-          response = `D'après mes capteurs, le temps est ${weather.condition.toLowerCase()} (${weather.temp}°C). Je vous recommande fortement un véhicule 4x4 pour une sécurité maximale sur les routes glissantes ou enneigées.`;
-          recommendation = { id: "2", brand: "Range Rover", model: "Autobiography", price: 4500, reason: "Suspension adaptative et transmission intégrale de pointe pour affronter les intempéries." };
-        } else {
-          response = `Il fait actuellement ${weather.temp}°C et le ciel est ${weather.condition.toLowerCase()}. C'est le moment idéal pour profiter d'un cabriolet ou d'un véhicule de luxe.`;
-        }
-      }
-
       setMessages(prev => [...prev, { role: "bot", content: response, recommendation }]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return {
