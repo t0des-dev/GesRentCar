@@ -11,10 +11,8 @@ import { Reservation, DashboardStats } from "@/types/admin";
 import DashboardHeader from "@/modules/admin/components/dashboard/DashboardHeader";
 import StatCards from "@/modules/admin/components/dashboard/StatCards";
 import FleetCalendar from "@/modules/admin/components/dashboard/FleetCalendar";
-import ReservationsTable from "@/modules/admin/components/dashboard/ReservationsTable";
 import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationDrawer";
 import MaintenanceAlerts from "@/modules/admin/components/dashboard/MaintenanceAlerts";
-import DocumentPreviewModal from "@/modules/admin/components/dashboard/DocumentPreviewModal";
 import { PerformanceCharts, PopularModels } from "@/modules/admin/components/dashboard/DashboardAnalytics";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
@@ -25,7 +23,6 @@ export default function AdminDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [previewDocs, setPreviewDocs] = useState<{cin?: string, license?: string, name?: string} | null>(null);
   const [drawerReservation, setDrawerReservation] = useState<Reservation | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -53,12 +50,6 @@ export default function AdminDashboard() {
       <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Vérification de la session...</p>
     </div>
   );
-
-  const handleAction = async (id: number, action: "accept" | "reject") => {
-    setActionLoading(id);
-    try { await api.post(`/reservations/${id}/${action}`); await fetchData(); }
-    catch (_err) { /* ignore */ } finally { setActionLoading(null); }
-  };
 
   const handleGenerateContract = async (id: number) => {
     setActionLoading(id);
@@ -91,17 +82,7 @@ export default function AdminDashboard() {
         onReservationClick={setDrawerReservation} 
       />
 
-      <ReservationsTable 
-        reservations={reservations} 
-        onAction={handleAction} 
-        onGenerateContract={handleGenerateContract}
-        onPreviewDocs={setPreviewDocs}
-        actionLoading={actionLoading}
-        onRowClick={setDrawerReservation}
-      />
-
       <MaintenanceAlerts alerts={stats?.maintenance_alerts} />
-      <DocumentPreviewModal docs={previewDocs} onClose={() => setPreviewDocs(null)} />
 
       {drawerReservation && (
         <ReservationDrawer 

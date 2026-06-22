@@ -11,13 +11,14 @@ export default function NavLinks({ links, className, isScrolled }: { links: any[
           key={i}
           href={link.url}
           className={cn(
-            "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300",
+            "relative px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300 group flex flex-col items-center",
             isScrolled
-              ? "text-slate-900 hover:text-black hover:bg-slate-100 font-semibold"
-              : "text-white/70 hover:text-white hover:bg-white/10"
+              ? "text-slate-900 hover:text-gold"
+              : "text-white/80 hover:text-white"
           )}
         >
           {link.label}
+          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-3/5" />
         </Link>
       ))}
     </nav>

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet
+  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
@@ -13,9 +13,10 @@ import AdminTopbar from "@/modules/admin/components/layout/AdminTopbar";
 
 const MENU_GROUPS = [
   {
-    id: "general", title: "Général", icon: LayoutDashboard, badge: 3,
+    id: "general", title: "Général", icon: LayoutDashboard, badge: 4,
     items: [
       { icon: LayoutDashboard, label: "Tableau de bord", href: "/admin" },
+      { icon: ClipboardList, label: "Réservations", href: "/admin/reservations" },
       { icon: Calendar, label: "Planning", href: "/admin/calendar" },
       { icon: Wallet, label: "Trésorerie", href: "/admin/expenses" },
     ]

@@ -47,15 +47,11 @@ export default function VehicleCard({
     <Link
       href={`/fleet/${id}`}
       className={cn(
-        "group flex bg-white rounded-[1.5rem] overflow-hidden relative",
-        "shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-700",
-        "border border-slate-200/60 hover:border-gold/40",
+        "group flex overflow-hidden relative card-premium",
         layoutView === "list" ? "flex-col md:flex-row md:h-[280px]" : "flex-col",
         className
       )}
     >
-      {/* Animated Glow Border on Hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[1.5rem] shadow-[inset_0_0_0_1px_rgba(212,175,55,0.3)] z-20" />
 
       {/* Image Container */}
       <div className={cn("relative bg-slate-50 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
@@ -132,7 +128,7 @@ export default function VehicleCard({
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{brand}</p>
-            <h3 className={cn("font-bold tracking-tight text-ink-1 group-hover:text-gold transition-colors duration-300", layoutView === "list" ? "text-2xl" : "text-xl")}>
+            <h3 className={cn("font-display italic font-normal tracking-tight text-ink-1 group-hover:text-gold transition-colors duration-300", layoutView === "list" ? "text-3xl" : "text-2xl")}>
               {model}
             </h3>
           </div>
@@ -160,7 +156,7 @@ export default function VehicleCard({
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-border my-1" />
+        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />
 
         {/* Price Section */}
         <div className={cn("flex", layoutView === "list" ? "flex-row items-end justify-between mt-auto" : "flex-col")}>
