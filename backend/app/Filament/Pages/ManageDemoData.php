@@ -19,15 +19,15 @@ use Illuminate\Support\Facades\DB;
 
 class ManageDemoData extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-server-stack';
 
-    protected static string $view = 'filament.pages.manage-demo-data';
+    protected string $view = 'filament.pages.manage-demo-data';
 
     protected static ?string $navigationLabel = 'Données de Démo';
 
     protected static ?string $title = 'Gestion des Données de Démo';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string|\UnitEnum|null $navigationGroup = 'Configuration';
 
     protected static ?int $navigationSort = 4;
 
