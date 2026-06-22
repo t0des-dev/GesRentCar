@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Monitor, Plus, Trash2, Smartphone, MapPin, Mail, Phone } from "lucide-react";
+import { Monitor, Plus, Trash2, Smartphone } from "lucide-react";
 import type { StorefrontForm } from "@/types/storefront";
 
 interface MenuFooterSettingsProps {

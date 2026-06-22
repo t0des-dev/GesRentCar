@@ -45,6 +45,7 @@ export default function ExpensesPage() {
     }
   }, [monthFilter, categoryFilter]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!checking && user) fetchExpenses();
   }, [fetchExpenses, checking, user]);

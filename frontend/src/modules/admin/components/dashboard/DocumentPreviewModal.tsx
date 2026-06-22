@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X, AlertTriangle, ExternalLink } from "lucide-react";
+import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 
 interface DocumentPreviewModalProps {
@@ -82,7 +83,7 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
                   </a>
                 </div>
                 <div className="aspect-video rounded-xl overflow-hidden border-2 border-border group relative">
-                  <img src={getImageUrl(docs.cin)} alt="CIN" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <Image src={getImageUrl(docs.cin) || ""} alt="CIN" width={800} height={600} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 </div>
               </motion.div>
             )}
@@ -102,7 +103,7 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
                   </a>
                 </div>
                 <div className="aspect-video rounded-xl overflow-hidden border-2 border-border group relative">
-                  <img src={getImageUrl(docs.license)} alt="Permis" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <Image src={getImageUrl(docs.license) || ""} alt="Permis" width={800} height={600} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 </div>
               </motion.div>
             )}

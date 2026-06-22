@@ -32,16 +32,16 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
         v.model.toLowerCase().includes(search.toLowerCase());
       const matchTrans =
         filters.transmission === "All" ||
-        (v as any).transmission === filters.transmission;
+        v.transmission === filters.transmission;
       const matchSeats =
         filters.seats === "All" ||
-        ((filters.seats === "7+" ? (v as any).seats >= 7 : (v as any).seats === Number(filters.seats)));
+        ((filters.seats === "7+" ? (v.seats ?? 0) >= 7 : (v.seats ?? 0) === Number(filters.seats)));
 
       const matchLifestyle = filters.lifestyle === "all" || (function() {
         const m = v.model.toLowerCase();
         const b = v.brand.toLowerCase();
         const t = v.type.toLowerCase();
-        const d = ((v as any).description_fr || (v as any).description || "").toLowerCase();
+        const d = (v.description_fr || "").toLowerCase();
         
         if (filters.lifestyle === "business") {
           return t.includes("luxury") || t.includes("sedan") || b.includes("mercedes") || b.includes("bmw") || b.includes("audi") || b.includes("range");
@@ -53,7 +53,7 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
           return t.includes("suv") || b.includes("jeep") || b.includes("land") || b.includes("toyota") || d.includes("4x4") || d.includes("aventure") || d.includes("mountain");
         }
         if (filters.lifestyle === "family") {
-          return ((v.seats || 0) >= 7) || t.includes("van") || t.includes("suv") || d.includes("famille") || d.includes("spacious");
+          return ((v.seats ?? 0) >= 7) || t.includes("van") || t.includes("suv") || d.includes("famille") || d.includes("spacious");
         }
         return true;
       })();
@@ -71,10 +71,6 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
       return 0;
     });
   }, [filtered, sortBy]);
-
-  const handleFilterChange = useCallback((f: FleetFilterState) => {
-    setLimit(pageSize);
-  }, [pageSize]);
 
   const loadMore = useCallback(() => {
     setLimit((prev) => prev + pageSize);

@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAgency } from '@/hooks/useAgency';
+import Image from "next/image";
 import { 
-  Save, Palette, Type, Loader2, TrendingUp, Menu, Search, Smartphone, Monitor, Eye, EyeOff, RotateCcw, Layers, QrCode, X
+  Save, Palette, Type, Loader2, TrendingUp, Menu, Search, Smartphone, Monitor, Eye, EyeOff, Layers, QrCode, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/shared/services/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/shared/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import type { StorefrontForm, Testimonial } from '@/types/storefront';
+import type { StorefrontForm } from '@/types/storefront';
 import { defaultStorefrontForm } from '@/constants/storefrontDefaults';
 
 // Modular Components
@@ -48,15 +49,15 @@ export default function StorefrontManager() {
         hero_image_url: currentAgency.hero_image_url || prev.hero_image_url,
         sections_config: { ...prev.sections_config, ...currentAgency.sections_config },
         sections_order: currentAgency.sections_order || prev.sections_order,
-        seo_config: { ...prev.seo_config, ...(currentAgency.seo_config as any) },
+        seo_config: { ...prev.seo_config, ...currentAgency.seo_config },
         category_prices: currentAgency.category_prices || prev.category_prices,
         header_config: { ...prev.header_config, ...currentAgency.header_config },
-        footer_config: { ...prev.footer_config, ...(currentAgency.footer_config as any) },
-        theme_config: { ...prev.theme_config, ...(currentAgency.theme_config as any) },
-        stats_config: { ...prev.stats_config, ...(currentAgency.stats_config as any) },
-        sections_content: { ...prev.sections_content, ...(currentAgency.sections_content as any) },
-        concierge_config: { ...prev.concierge_config, ...(currentAgency.concierge_config as any) }
-      }));
+        footer_config: { ...prev.footer_config, ...currentAgency.footer_config } as StorefrontForm['footer_config'],
+        theme_config: { ...prev.theme_config, ...currentAgency.theme_config } as StorefrontForm['theme_config'],
+        stats_config: { ...prev.stats_config, ...currentAgency.stats_config } as StorefrontForm['stats_config'],
+        sections_content: { ...prev.sections_content, ...currentAgency.sections_content } as StorefrontForm['sections_content'],
+        concierge_config: { ...prev.concierge_config, ...currentAgency.concierge_config } as StorefrontForm['concierge_config']
+      } as StorefrontForm));
       initialized.current = true;
     }
   }, [currentAgency]);
@@ -90,7 +91,7 @@ export default function StorefrontManager() {
   return (
     <div className='flex flex-col gap-12'>
       <header className='flex flex-col md:flex-row md:items-center justify-between gap-6'>
-        <div><h2 className='text-3xl font-black text-slate-900 tracking-tight'>Atelier Storefront</h2><p className='text-slate-500 font-medium italic mt-1'>Concevez l'expérience digitale de votre agence.</p></div>
+        <div><h2 className='text-3xl font-black text-slate-900 tracking-tight'>Atelier Storefront</h2><p className='text-slate-500 font-medium italic mt-1'>Concevez l&apos;expérience digitale de votre agence.</p></div>
         <div className='flex items-center gap-4'>
           <button onClick={() => setShowQR(true)} className='hidden md:flex items-center gap-2 px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50 shadow-sm'><QrCode size={14} /> Test Mobile</button>
           <button onClick={() => setShowPreview(!showPreview)} className={cn('hidden lg:flex items-center gap-3 px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all border', showPreview ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-600 border-slate-200')}>{showPreview ? <EyeOff size={14} /> : <Eye size={14} />} {showPreview ? 'Masquer Aperçu' : 'Aperçu Live'}</button>
@@ -124,7 +125,7 @@ export default function StorefrontManager() {
             {activeTab === 'navigation' && <MenuFooterSettings form={form} setForm={setForm} />}
             {activeTab === 'cms' && <StructureManager form={form} setForm={setForm} onNavigate={setActiveTab} onSelectSection={setPreviewSectionId} />}
             {activeTab === 'multilingual' && <MultilingualSettings form={form} setForm={setForm} />}
-            {activeTab === 'seo' && <SEOManager config={form.seo_config} onChange={(seo: any) => setForm({ ...form, seo_config: seo })} />}
+            {activeTab === 'seo' && <SEOManager config={form.seo_config} onChange={(seo) => setForm({ ...form, seo_config: seo })} />}
             {activeTab === 'business' && <BusinessSettings form={form} setForm={setForm} />}
           </AnimatePresence>
         </div>
@@ -163,7 +164,7 @@ export default function StorefrontManager() {
               <h3 className='text-xl font-black text-slate-900 mb-2'>Tester sur Mobile</h3>
               <p className='text-sm text-slate-500 mb-6'>Scannez ce code avec votre téléphone pour prévisualiser la vitrine.</p>
               <div className='bg-slate-50 p-4 rounded-3xl border border-slate-100 inline-block'>
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}`} alt='QR Code' className='w-48 h-48 mx-auto rounded-xl' />
+                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}`} alt='QR Code' width={192} height={192} className='w-48 h-48 mx-auto rounded-xl' />
               </div>
             </motion.div>
           </div>

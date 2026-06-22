@@ -126,7 +126,7 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nom de l'Agence</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Nom de l&apos;Agence</label>
               <input type="text" value={form.name ?? ""} onChange={e => setForm({...form, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none focus:bg-white focus:border-primary transition-all" />
             </div>
             <div className="space-y-2">
@@ -135,7 +135,7 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <AssetUpload type="logo" label="Logo de l'Agence" currentUrl={form.logo_url} onUploadComplete={(url) => setForm({...form, logo_url: url})} />
+            <AssetUpload type="logo" label="Logo de l&apos;Agence" currentUrl={form.logo_url} onUploadComplete={(url) => setForm({...form, logo_url: url})} />
             <AssetUpload type="hero" label="Image de repli (Poster)" currentUrl={form.hero_image_url} onUploadComplete={(url) => setForm({...form, hero_image_url: url})} />
           </div>
           <div className="space-y-2">
@@ -180,7 +180,7 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
               <select value={form.theme_config?.font_family ?? "Inter"} onChange={e => setForm({...form, theme_config: {...form.theme_config, font_family: e.target.value}})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 font-bold outline-none appearance-none">
                 <option value="Inter">Standard (Inter)</option>
                 <option value="Playfair Display">Élégance (Playfair Display)</option>
-                <option value="Outfit">Moderne & Tech (Outfit)</option>
+                <option value="Outfit">Moderne &amp; Tech (Outfit)</option>
               </select>
             </div>
           </div>

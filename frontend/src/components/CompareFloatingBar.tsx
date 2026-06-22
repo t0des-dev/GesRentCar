@@ -10,6 +10,7 @@ export default function CompareFloatingBar() {
   const { selectedIds, removeFromCompare, clearCompare } = useCompare();
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     setMounted(true);
   }, []);

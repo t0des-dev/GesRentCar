@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [profileData, setProfileData] = useState({ name: "", email: "" });
   const [passwordData, setPasswordData] = useState({ current_password: "", password: "", password_confirmation: "" });
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     setMounted(true);
     if (user) {

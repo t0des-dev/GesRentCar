@@ -2,21 +2,29 @@
 
 import { BookingState } from "@/types/booking";
 import { useCurrency } from "@/shared/hooks/useCurrency";
+import Image from "next/image";
 import { ShieldCheck, Info, Calendar, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { PRICING_OPTIONS } from "@/lib/config/pricing";
 import { fmt } from "@/shared/utils/format";
+
+interface SummaryVehicle {
+  brand?: string;
+  model?: string;
+  type?: string;
+  img?: string;
+}
 
 interface BookingSummaryProps {
   booking: BookingState;
   days: number;
   total: number;
   deposit: number;
-  vehicle: any;
+  vehicle?: SummaryVehicle | null;
 }
 
 export default function BookingSummary({ booking, days, total, deposit, vehicle }: BookingSummaryProps) {
-  const { convert } = useCurrency();
+  useCurrency();
 
   return (
     <aside className="w-full lg:w-1/3 sticky top-32">
@@ -36,7 +44,7 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
               className="flex items-center gap-6"
             >
               <div className="w-24 h-20 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shrink-0 shadow-sm">
-                <img src={vehicle.img} alt={vehicle.model} className="w-full h-full object-cover" />
+                <Image src={vehicle.img || ""} alt={vehicle.model || ""} width={96} height={80} className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">

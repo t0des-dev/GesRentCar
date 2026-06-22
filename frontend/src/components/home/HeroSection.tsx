@@ -33,6 +33,7 @@ export default function HeroSection({
   const [mounted, setMounted] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   const { scrollY } = useScroll();

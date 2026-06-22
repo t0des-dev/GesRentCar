@@ -3,9 +3,15 @@
 import { Shield, Lock, KeyRound, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface SecurityData {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+}
+
 interface SecuritySettingsFormProps {
-  data: any;
-  setData: (data: any) => void;
+  data: SecurityData;
+  setData: (data: SecurityData) => void;
   onSubmit: (e: React.FormEvent) => void;
   loading: boolean;
 }

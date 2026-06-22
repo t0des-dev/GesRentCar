@@ -1,11 +1,22 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { X, Car, Calendar, DollarSign, Shield } from "lucide-react";
 import { fmt } from "@/shared/utils/format";
 
+interface ReservationDetail {
+  id: number | string;
+  vehicle: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  img?: string;
+  hasContract?: boolean;
+}
+
 interface ReservationDetailModalProps {
-  reservation: any;
+  reservation: ReservationDetail | null;
   onClose: () => void;
 }
 
@@ -66,10 +77,12 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
           {/* Hero Image */}
           <div className="h-64 relative overflow-hidden">
             {reservation.img ? (
-              <img 
+              <Image 
                 src={reservation.img} 
                 alt={reservation.vehicle} 
                 className="absolute inset-0 w-full h-full object-cover" 
+                width={800}
+                height={400}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-surface-1">
@@ -155,7 +168,7 @@ export default function ReservationDetailModal({ reservation, onClose }: Reserva
                   rel="noopener noreferrer"
                   className="px-8 py-3 rounded-lg bg-gradient-to-r from-gold to-gold/90 text-ink-1 font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all cursor-pointer flex items-center justify-center animate-pulse"
                 >
-                  Télécharger l'Acte
+                  Télécharger l&apos;Acte
                 </motion.a>
               )}
             </motion.div>

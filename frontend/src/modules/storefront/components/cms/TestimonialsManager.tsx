@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Star, User, MessageSquare, Quote } from "lucide-react";
+import { Plus, Trash2, Star, MessageSquare, Quote } from "lucide-react";
 import { cn } from "@/shared/utils";
 
 interface Testimonial {

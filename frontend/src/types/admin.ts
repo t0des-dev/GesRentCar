@@ -53,6 +53,7 @@ export interface Maintenance {
   cost: number;
   date?: string;
   maintenance_date?: string;
+  mileage?: number;
   status?: "pending" | "in_progress" | "completed";
   vehicle?: Vehicle;
   created_at?: string;

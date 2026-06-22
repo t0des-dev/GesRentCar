@@ -3,9 +3,18 @@
 import { Mail, Phone, User, Fingerprint, Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import styles from "@/app/search/[id]/page.module.css";
 
+interface BookingFormData {
+  name: string;
+  email: string;
+  phone: string;
+  cin: string;
+  start_date: string;
+  end_date: string;
+}
+
 interface BookingFormProps {
-  form: any;
-  setForm: (v: any) => void;
+  form: BookingFormData;
+  setForm: (v: BookingFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
   loading: boolean;
   today: string;

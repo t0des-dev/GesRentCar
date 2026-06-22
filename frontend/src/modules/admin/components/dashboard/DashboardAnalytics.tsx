@@ -6,12 +6,14 @@ import RevenueChart from "@/components/RevenueChart";
 import FleetPieChart from "@/components/FleetPieChart";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import type { DashboardStats } from "@/types/admin";
+import type { LucideIcon } from "lucide-react";
 
 interface PerformanceChartsProps {
-  stats: any;
+  stats: DashboardStats;
 }
 
-function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
+function SectionHeader({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="w-10 h-10 rounded-lg bg-gold/20 border-2 border-gold/40 flex items-center justify-center">
@@ -42,7 +44,7 @@ export function PerformanceCharts({ stats }: PerformanceChartsProps) {
   );
 }
 
-export function PopularModels({ stats }: { stats: any }) {
+export function PopularModels({ stats }: { stats: DashboardStats }) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -53,7 +55,7 @@ export function PopularModels({ stats }: { stats: any }) {
       <div className="bg-white rounded-2xl border-2 border-border shadow-lg p-6 md:p-8 card-premium">
         <SectionHeader icon={Trophy} label="Modèles les plus Demandés" />
         <div className="space-y-3">
-          {stats.top_vehicles?.map((v: any, i: number) => (
+          {stats.top_vehicles?.map((v, i) => (
             <motion.div 
               key={i} 
               initial={{ opacity: 0, x: -10 }}

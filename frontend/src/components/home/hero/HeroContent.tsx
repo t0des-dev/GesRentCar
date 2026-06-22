@@ -1,31 +1,37 @@
 "use client";
 
-import React from "react";
+import React, { type ComponentType } from "react";
 import { motion, MotionValue } from "framer-motion";
 import { Shield, Zap, Clock, Star, Compass, Mountain, Wind, HeadphonesIcon, ShieldCheck, Car, LayoutDashboard, Settings, Users } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import MagneticWrapper from "@/shared/ui/MagneticWrapper";
+import type { SectionsContent } from "@/types/storefront";
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   Shield, Zap, Clock, Star, Compass, Mountain, Wind,
   HeadphonesIcon, ShieldCheck, Car, LayoutDashboard, Settings, Users,
 };
 
+interface HeroBenefit {
+  icon: string;
+  text: string;
+}
+
 interface HeroContentProps {
-  content: any;
+  content: Partial<SectionsContent>;
   aboutText: string;
-  stats: any[];
+  stats: { value: string; label: string }[];
   y1: MotionValue<number>;
   mounted: boolean;
   t: (key: string) => string;
 }
 
 export default function HeroContent({ content, aboutText, stats, y1, mounted, t }: HeroContentProps) {
-  const heroSection = content?.hero || content;
-  const title = heroSection?.title || "Vectoria Premium Experience";
+  const heroSection = content?.hero ?? content;
+  const title = (heroSection && "title" in heroSection ? heroSection.title : undefined) || "Vectoria Premium Experience";
   const words = title.split(' ');
-  const badge = heroSection?.badge || "Location Premium";
-  const benefits = heroSection?.benefits || [
+  const badge = (heroSection && "badge" in heroSection ? heroSection.badge : undefined) || "Location Premium";
+  const benefits = (heroSection && "benefits" in heroSection ? heroSection.benefits : undefined) || [
     { icon: "Shield", text: "Assurance tout risque" },
     { icon: "Zap", text: "Livraison instantanée" },
     { icon: "Clock", text: "Support VIP 24/7" },
@@ -86,7 +92,7 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
         transition={{ delay: 0.4, duration: 0.6 }}
         className="body-feature text-white/85 max-w-2xl mb-10 leading-relaxed"
       >
-        {heroSection?.subtitle || aboutText || t("hero_subtitle")}
+        {(heroSection && "subtitle" in heroSection ? heroSection.subtitle : undefined) || aboutText || t("hero_subtitle")}
       </motion.p>
 
       <motion.div
@@ -95,7 +101,7 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
         transition={{ delay: 0.7, duration: 0.6 }}
         className="flex flex-wrap gap-3 mb-12"
       >
-        {benefits.map((item: any, i: number) => (
+        {benefits.map((item: HeroBenefit, i: number) => (
           <MagneticWrapper key={i}>
             <div
               data-cursor="Détails"

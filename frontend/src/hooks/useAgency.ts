@@ -74,10 +74,10 @@ export interface AgencyConfig {
       color?: string;
     }>;
   };
-  category_prices?: any;
-  special_offers?: any[];
-  testimonials?: any[];
-  sections_order?: any[];
+  category_prices?: import("@/types/storefront").CategoryPrices;
+  special_offers?: import("@/types/storefront").SpecialOffer[];
+  testimonials?: import("@/types/storefront").Testimonial[];
+  sections_order?: import("@/types/storefront").SectionOrder[];
   seo_config?: {
     title?: string;
     description?: string;
@@ -327,23 +327,23 @@ export function useAgency() {
       merged.sections_content = {
         ...DEFAULT_SECTIONS_CONTENT,
         ...data.sections_content,
-      } as any;
+      };
       
       // Ensure why_us is merged properly
       merged.sections_content!.why_us = {
         ...(DEFAULT_SECTIONS_CONTENT.why_us || {}),
         ...(data.sections_content.why_us || {})
-      } as any;
+      };
 
       // Ensure testimonials is merged properly
       merged.sections_content!.testimonials = {
         ...(DEFAULT_SECTIONS_CONTENT.testimonials || {}),
         ...(data.sections_content.testimonials || {})
-      } as any;
+      };
 
       // Recover legacy features_config into why_us if it doesn't exist yet
       if ((!data.sections_content.why_us?.features || data.sections_content.why_us.features.length === 0) && merged.features_config && merged.features_config.length > 0) {
-        merged.sections_content!.why_us!.features = merged.features_config as any;
+        merged.sections_content!.why_us!.features = merged.features_config as import("@/types/storefront").FeatureItem[];
       }
 
       // Recover legacy testimonials into sections_content.testimonials.items
@@ -354,14 +354,14 @@ export function useAgency() {
       if (merged.features_config && merged.features_config.length > 0 && merged.sections_content) {
         merged.sections_content.why_us = {
           ...(merged.sections_content.why_us || {}),
-          features: merged.features_config as any
-        } as any;
+          features: merged.features_config as import("@/types/storefront").FeatureItem[]
+        } as SectionsContent['why_us'];
       }
       if (merged.testimonials && merged.testimonials.length > 0 && merged.sections_content) {
         merged.sections_content.testimonials = {
           ...(merged.sections_content.testimonials || {}),
           items: merged.testimonials
-        } as any;
+        } as SectionsContent['testimonials'];
       }
     }
     return merged;

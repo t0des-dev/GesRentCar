@@ -457,29 +457,29 @@ const translations = {
   }
 };
 
-const LanguageContext = createContext<any>(null);
+interface LanguageContextValue {
+  lang: Language;
+  switchLang: (newLang: Language) => void;
+  t: (key: string) => string;
+  isReady: boolean;
+}
+
+const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>("fr");
+  const [lang, setLang] = useState<Language>(() => {
+    if (typeof window === "undefined") return "fr";
+    const saved = localStorage.getItem("vectoria_lang") as Language;
+    if (saved && ["fr", "en", "ar"].includes(saved)) return saved;
+    const browserLang = navigator.language.split("-")[0];
+    if (["fr", "en", "ar"].includes(browserLang)) return browserLang as Language;
+    return "fr";
+  });
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Detect language
-    const saved = localStorage.getItem("vectoria_lang") as Language;
-    if (saved) {
-      setLang(saved);
-      document.documentElement.dir = saved === "ar" ? "rtl" : "ltr";
-      document.documentElement.lang = saved;
-    } else {
-      // Browser detection
-      const browserLang = navigator.language.split("-")[0];
-      if (["fr", "en", "ar"].includes(browserLang)) {
-        const bl = browserLang as Language;
-        setLang(bl);
-        document.documentElement.dir = bl === "ar" ? "rtl" : "ltr";
-        document.documentElement.lang = bl;
-      }
-    }
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = lang;
     setIsReady(true);
   }, []);
 

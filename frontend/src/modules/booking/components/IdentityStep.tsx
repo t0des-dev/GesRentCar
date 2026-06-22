@@ -5,6 +5,15 @@ import { cn } from "@/shared/utils";
 import { ScanLine, Camera, Loader2, ShieldCheck, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookingStepProps } from "@/types/booking";
+import type { BookingClient } from "@/types/booking";
+
+interface IdentityField {
+  k: keyof BookingClient;
+  l: string;
+  p: string;
+  t?: string;
+  span?: string;
+}
 
 interface IdentityStepProps extends BookingStepProps {
   isScanning: boolean;
@@ -104,7 +113,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                 <input 
                   type="file" 
                   accept="image/*" 
-                  onChange={(e) => handleScan(e, scanner.type as any)} 
+                  onChange={(e) => handleScan(e, scanner.type as "cin" | "license")} 
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
                   disabled={isScanning} 
                 />
@@ -114,18 +123,18 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                   className={cn(
                     "flex flex-col items-center gap-3 px-8 py-6 rounded-2xl font-semibold transition-all border text-center min-w-[180px]", 
                     isScanning ? "bg-slate-200 text-slate-500 border-transparent cursor-not-allowed" : 
-                    (booking.client as any)[scanner.field] ? "bg-emerald-500 text-white border-emerald-400" : 
+                    (booking.client[scanner.field as keyof BookingClient]) ? "bg-emerald-500 text-white border-emerald-400" : 
                     "bg-white text-slate-900 border-slate-200 hover:border-primary/50"
                   )}
                 >
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                    (booking.client as any)[scanner.field] ? "bg-white/20" : "bg-slate-50"
+                    (booking.client[scanner.field as keyof BookingClient]) ? "bg-white/20" : "bg-slate-50"
                   )}>
                     {isScanning ? <Loader2 className="animate-spin" size={20}/> : <scanner.icon size={20}/>}
                   </div>
                   <span className="text-xs uppercase tracking-wider">
-                    {(booking.client as any)[scanner.field] ? `${scanner.label} OK` : scanner.label}
+                    {(booking.client[scanner.field as keyof BookingClient]) ? `${scanner.label} OK` : scanner.label}
                   </span>
                 </motion.div>
               </div>
@@ -164,11 +173,11 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
         </div>
         
         {[ 
-          { k: "name", l: "Nom Complet", p: "Ex: John Doe" }, 
-          { k: "email", l: "Adresse Email", p: "Ex: contact@premium.com", t: "email" }, 
-          { k: "phone", l: "Téléphone Mobile", p: "Ex: +212 6 00 00 00 00", t: "tel" }, 
-          { k: "cin", l: "Numéro CIN / Passeport", p: "Ex: AB123456" }, 
-          { k: "licenseNumber", l: "Numéro de Permis", p: "Ex: 12345678", span: "md:col-span-2" } 
+          { k: "name" as const, l: "Nom Complet", p: "Ex: John Doe" }, 
+          { k: "email" as const, l: "Adresse Email", p: "Ex: contact@premium.com", t: "email" }, 
+          { k: "phone" as const, l: "Téléphone Mobile", p: "Ex: +212 6 00 00 00 00", t: "tel" }, 
+          { k: "cin" as const, l: "Numéro CIN / Passeport", p: "Ex: AB123456" }, 
+          { k: "licenseNumber" as const, l: "Numéro de Permis", p: "Ex: 12345678", span: "md:col-span-2" } 
         ].map((f) => (
           <div key={f.k} className={cn("space-y-2", f.span || "")}>
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -180,7 +189,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
             <input 
               type={f.t || "text"} 
               placeholder={f.p} 
-              value={(booking.client as any)[f.k]} 
+              value={booking.client[f.k] ?? ""}
               onChange={(e) => update("client", { ...booking.client, [f.k]: e.target.value })} 
               className={cn(
                 "w-full bg-slate-50 border border-slate-100 rounded-xl px-6 py-4 font-medium text-slate-900 focus:bg-white focus:border-primary/20 outline-none transition-all duration-200 placeholder:text-slate-300", 

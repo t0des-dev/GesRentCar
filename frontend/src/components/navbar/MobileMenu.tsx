@@ -6,14 +6,28 @@ import { User, Crown } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { Button } from "@/shared/ui/button";
 
+interface MobileLang {
+  code: "fr" | "en" | "ar";
+  label: string;
+}
+
+interface MobileMenuLink {
+  label: string;
+  url: string;
+}
+
+interface MobileMenuSession {
+  user?: { name?: string };
+}
+
 interface MobileMenuProps {
   isOpen: boolean;
   setIsOpen: (v: boolean) => void;
-  links: any[];
-  languages: any[];
+  links: MobileMenuLink[];
+  languages: MobileLang[];
   lang: string;
-  switchLang: (v: any) => void;
-  session: any;
+  switchLang: (v: "fr" | "en" | "ar") => void;
+  session: MobileMenuSession | null;
   signOut: () => void;
   t: (key: string) => string;
 }
@@ -50,7 +64,7 @@ export default function MobileMenu({
             </div>
 
             <div className="p-6 space-y-1">
-              {links.map((link: any, i: number) => (
+              {links.map((link, i) => (
                 <Link
                   key={i}
                   href={link.url}

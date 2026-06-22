@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 interface PersonalInfoFormProps {
   data: { name: string; email: string };
-  setData: (data: any) => void;
+  setData: (data: { name: string; email: string }) => void;
   onSubmit: (e: React.FormEvent) => void;
   loading: boolean;
 }

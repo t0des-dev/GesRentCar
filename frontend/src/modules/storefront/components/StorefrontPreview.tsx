@@ -2,11 +2,12 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 import { 
-  Car, Calendar, Shield, Star, MapPin, 
-  Phone, Mail, Globe as FacebookIcon, Camera as InstagramIcon, MessageCircle, 
-  Menu, Search, User, ChevronRight, Globe
+  Shield, Star, MapPin, 
+  Phone, Mail, Globe as FacebookIcon, Camera as InstagramIcon, 
+  Menu, ChevronRight
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import type { StorefrontForm } from "@/types/storefront";
@@ -41,7 +42,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
         )}>
           <div className="flex items-center gap-2">
             {form.logo_url ? (
-              <img src={form.logo_url} className="h-7 w-7 object-contain" alt="Logo" />
+              <Image src={form.logo_url} width={28} height={28} className="h-7 w-7 object-contain" alt="Logo" />
             ) : (
               <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white font-bold italic text-xs">V</div>
             )}
@@ -72,10 +73,12 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
               case "hero":
                 return (
                   <section id="preview-section-hero" key="hero" className="relative h-[350px] flex flex-col items-center justify-center text-center px-6 overflow-hidden -mt-14">
-                    <img 
+                    <Image 
                       src={getImageUrl(form.hero_image_url) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"} 
                       className="absolute inset-0 w-full h-full object-cover"
                       alt="Hero"
+                      width={1000}
+                      height={600}
                     />
                     <div className="absolute inset-0 bg-slate-900/30" />
                     
@@ -125,7 +128,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                     <div className="space-y-3">
                         <div className="bg-white rounded-2xl p-4 border border-slate-200/60 shadow-sm">
                           <div className="h-28 bg-slate-100 rounded-xl mb-3 overflow-hidden">
-                              <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" className="w-full h-full object-cover" />
+                              <Image src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" width={400} height={300} className="w-full h-full object-cover" alt="Featured vehicle" />
                           </div>
                           <div className="flex justify-between items-center">
                               <div>
@@ -155,7 +158,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                          <div key={idx} className="flex items-start gap-3">
                             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 overflow-hidden">
                                {f.image ? (
-                                  <img src={f.image} alt={f.title} className="w-full h-full object-cover" />
+                                   <Image src={f.image} alt={f.title} width={36} height={36} className="w-full h-full object-cover" />
                                ) : (
                                   <Shield size={16} />
                                )}
@@ -238,7 +241,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
            <div className="space-y-3">
               <div className="flex items-center gap-2">
                 {form.logo_url ? (
-                  <img src={form.logo_url} className="h-6 w-6 object-contain" alt="Logo" />
+                  <Image src={form.logo_url} width={24} height={24} className="h-6 w-6 object-contain" alt="Logo" />
                 ) : (
                   <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center text-white font-bold italic text-xs">V</div>
                 )}

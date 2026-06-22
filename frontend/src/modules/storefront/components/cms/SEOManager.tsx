@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Globe, Share2, MousePointer2, Type, Tag, Eye } from "lucide-react";
+import { Search, Share2 } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/shared/utils";
 import AssetUpload from "@/components/AssetUpload";
 
@@ -93,7 +94,7 @@ export default function SEOManager({ config, onChange }: SEOManagerProps) {
              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                 <div className="aspect-[1.91/1] bg-slate-100 relative">
                    {config.og_image ? (
-                     <img src={config.og_image} className="w-full h-full object-cover" alt="OG Preview" />
+                      <Image src={config.og_image} width={600} height={315} className="w-full h-full object-cover" alt="OG Preview" />
                    ) : (
                      <div className="absolute inset-0 flex items-center justify-center text-slate-300 font-black text-[10px] uppercase">Aperçu image</div>
                    )}

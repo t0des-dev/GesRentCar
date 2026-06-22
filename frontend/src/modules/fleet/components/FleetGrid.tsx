@@ -5,13 +5,14 @@ import { ChevronDown, Star } from "lucide-react";
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
 import { cn } from "@/shared/utils";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import type { Vehicle } from "@/lib/api/vehicles";
 
 interface FleetGridProps {
-  vehicles: any[];
+  vehicles: Vehicle[];
   loading: boolean;
   hasMore: boolean;
   onLoadMore: () => void;
-  onQuickView: (vehicle: any) => void;
+  onQuickView: (vehicle: Vehicle) => void;
   layoutView?: "grid" | "list";
 }
 
@@ -89,11 +90,10 @@ export default function FleetGrid({
                     className={getBentoHeight(idx, layoutView === "list")}
                     onQuickView={() => onQuickView({
                       ...v,
-                      price: v.price_per_day,
                       seats: v.seats ?? 5,
-                      fuel: v.fuel_type || "Diesel",
+                      fuel_type: v.fuel_type || "Diesel",
                       transmission: v.transmission || "Automatic",
-                      imageUrl: v.image_url ?? undefined
+                      image_url: v.image_url ?? null
                     })}
                   />
                 </motion.div>

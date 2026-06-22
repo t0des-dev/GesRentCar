@@ -22,7 +22,7 @@ export interface BookingState {
 
 export interface BookingStepProps {
   booking: BookingState;
-  update: (key: keyof BookingState, val: any) => void;
+  update: <K extends keyof BookingState>(key: K, val: BookingState[K]) => void;
   next?: () => void;
   prev?: () => void;
 }

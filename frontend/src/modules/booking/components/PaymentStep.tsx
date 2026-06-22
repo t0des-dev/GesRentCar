@@ -152,7 +152,7 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
                 <motion.div key="on_site" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full text-center space-y-6">
                   <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100/50">
                     <p className="text-emerald-700 font-medium text-sm leading-relaxed max-w-sm mx-auto">
-                      Vous avez choisi de régler le montant total ou l'acompte directement en agence lors de la prise en charge. 
+                      Vous avez choisi de régler le montant total ou l&apos;acompte directement en agence lors de la prise en charge. 
                       <br/><br/>
                       <span className="text-xs opacity-70">Votre réservation sera confirmée immédiatement après validation.</span>
                     </p>

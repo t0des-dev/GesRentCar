@@ -3,14 +3,16 @@
 import { cn } from "@/shared/utils";
 import { motion } from "framer-motion";
 
+type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";
+
 interface ReservationTabsProps {
   activeTab: string;
-  setActiveTab: (tab: any) => void;
-  reservations: any[];
+  setActiveTab: (tab: "all" | ReservationStatus) => void;
+  reservations: { status: string }[];
 }
 
 export default function ReservationTabs({ activeTab, setActiveTab, reservations }: ReservationTabsProps) {
-  const TABS: { key: string; label: string }[] = [
+  const TABS: { key: "all" | ReservationStatus; label: string }[] = [
     { key: "all",             label: "Vue d'ensemble" },
     { key: "active",          label: "En mission" },
     { key: "confirmed",       label: "Réservations" },
@@ -25,7 +27,7 @@ export default function ReservationTabs({ activeTab, setActiveTab, reservations 
       transition={{ delay: 0.2, duration: 0.6 }}
       className="flex flex-wrap gap-3 mb-12 pb-6 border-b-2 border-border"
     >
-      {TABS.map((tab, idx) => {
+      {TABS.map((tab) => {
         const count = tab.key !== "all" ? reservations.filter(r => r.status === tab.key).length : reservations.length;
         const isActive = activeTab === tab.key;
 

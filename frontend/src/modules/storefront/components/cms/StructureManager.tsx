@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { Layers, Settings, Bot, Quote, ChevronRight, Edit3, ArrowLeft, Search } from "lucide-react";
+import { Layers, Settings, Bot, ChevronRight, Edit3, ArrowLeft, Search } from "lucide-react";
 import SectionReorder from "./SectionReorder";
 import SectionContentEditor from "./SectionContentEditor";
-import type { StorefrontForm } from "@/types/storefront";
+import type { StorefrontForm, StatsConfig, ConciergeConfig } from "@/types/storefront";
 
 interface StructureManagerProps {
   form: StorefrontForm;
@@ -45,7 +45,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
         <SectionContentEditor
           sectionId="stats"
           content={form.stats_config ?? {}}
-          onChange={(v) => setForm({ ...form, stats_config: v as any })}
+          onChange={(v) => setForm({ ...form, stats_config: v as StatsConfig })}
         />
       ),
     },
@@ -55,7 +55,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
         <SectionContentEditor
           sectionId="concierge"
           content={form.concierge_config ?? {}}
-          onChange={(v) => setForm({ ...form, concierge_config: v as any })}
+          onChange={(v) => setForm({ ...form, concierge_config: v as ConciergeConfig })}
         />
       ),
     },
@@ -81,7 +81,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
       );
     }
 
-    const sectionContent = key ? (form.sections_content as any)[key] : null;
+    const sectionContent = key ? (form.sections_content as unknown as Record<string, unknown>)[key] : null;
     if (sectionContent === undefined) return null;
 
     const isHero = selectedSection === "hero" || key === "hero";
@@ -113,12 +113,12 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
         </div>
         <SectionContentEditor
           sectionId={key!}
-          content={sectionContent}
+          content={(sectionContent ?? {}) as Record<string, unknown>}
           extraFields={extraFields}
           onChange={(newContent) => {
             setForm({
               ...form,
-              sections_content: { ...form.sections_content, [key!]: newContent } as any,
+              sections_content: { ...form.sections_content, [key!]: newContent } as StorefrontForm['sections_content'],
             });
           }}
         />
@@ -131,7 +131,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
       <div className="bg-white p-10 rounded-[40px] border border-slate-200/60 shadow-sm space-y-10">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-lg"><Layers size={24} /></div>
-          <div><h3 className="text-2xl font-black text-slate-900 tracking-tight">Structure de l'Accueil</h3></div>
+          <div><h3 className="text-2xl font-black text-slate-900 tracking-tight">Structure de l&apos;Accueil</h3></div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
@@ -143,7 +143,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
                     Configuration Flux
                   </h4>
                   <p className="text-[10px] text-slate-500 font-medium mt-2 leading-relaxed">
-                    Glissez-déposez les sections pour réorganiser l'ordre d'affichage sur la page d'accueil de la vitrine B2C. Cliquez sur une section pour la modifier.
+                    Glissez-déposez les sections pour réorganiser l&apos;ordre d&apos;affichage sur la page d&apos;accueil de la vitrine B2C. Cliquez sur une section pour la modifier.
                   </p>
                 </div>
                 <SectionReorder

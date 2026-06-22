@@ -65,6 +65,7 @@ export default function FleetPage() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { 
     if (!checking && user) fetchVehicles(); 
   }, [fetchVehicles, checking, user]);

@@ -54,7 +54,7 @@ export default function Navbar() {
     { label: t("nav_contact"), url: "/contact" }
   ];
 
-  const languages = [
+  const languages: { code: "fr" | "en" | "ar"; label: string }[] = [
     { code: "fr", label: "Français" },
     { code: "en", label: "English" },
     { code: "ar", label: "العربية" }

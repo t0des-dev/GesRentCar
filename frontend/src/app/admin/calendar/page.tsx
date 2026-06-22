@@ -37,6 +37,7 @@ export default function CalendarPage() {
     finally { setLoading(false); }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (!checking && user) fetchData(); }, [checking, user]);
 
   const getReservationForDay = (vehicleId: number, day: Date) => {

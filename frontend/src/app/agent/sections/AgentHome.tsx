@@ -16,6 +16,7 @@ export default function AgentHome({ onNewRental }: { onNewRental: () => void }) 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     const u = localStorage.getItem("vectoria_user");
     if (u) setUser(JSON.parse(u));

@@ -3,6 +3,7 @@
 import { motion, Variants } from "framer-motion";
 import type { LifestyleImage } from "@/types/storefront";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 
 export const DEFAULT_GALLERY_IMAGES: LifestyleImage[] = [
@@ -83,7 +84,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* 2. Image 1 */}
           {imagesToRender[0] && (
             <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-2 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[300px] md:min-h-0 border border-slate-200/50">
-               <img src={getImageUrl(imagesToRender[0].url) || imagesToRender[0].url} alt="Gallery image 1" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
+               <Image src={getImageUrl(imagesToRender[0].url) || imagesToRender[0].url} alt="Gallery image 1" width={600} height={800} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
           )}
@@ -101,7 +102,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* 4. Image 2 */}
           {imagesToRender[1] && (
             <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
-               <img src={getImageUrl(imagesToRender[1].url) || imagesToRender[1].url} alt="Gallery image 2" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
+               <Image src={getImageUrl(imagesToRender[1].url) || imagesToRender[1].url} alt="Gallery image 2" width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
           )}
@@ -109,7 +110,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* 5. Image 3 (Wide) */}
           {imagesToRender[2] && (
             <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
-               <img src={getImageUrl(imagesToRender[2].url) || imagesToRender[2].url} alt="Gallery image 3" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
+               <Image src={getImageUrl(imagesToRender[2].url) || imagesToRender[2].url} alt="Gallery image 3" width={1200} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
           )}
@@ -126,7 +127,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* 7. Image 4 */}
           {imagesToRender[3] && (
             <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
-               <img src={getImageUrl(imagesToRender[3].url) || imagesToRender[3].url} alt="Gallery image 4" className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
+               <Image src={getImageUrl(imagesToRender[3].url) || imagesToRender[3].url} alt="Gallery image 4" width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
           )}
@@ -134,7 +135,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* Render extra images dynamically if the user adds more in CMS */}
           {imagesToRender.slice(4).map((img, i) => (
             <motion.div variants={itemVariants} key={`img-${i}`} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
-              <img src={getImageUrl(img.url) || img.url} alt={`Gallery extra ${i}`} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
+              <Image src={getImageUrl(img.url) || img.url} alt={`Gallery extra ${i}`} width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
           ))}

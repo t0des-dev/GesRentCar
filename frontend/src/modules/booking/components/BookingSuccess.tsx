@@ -3,7 +3,6 @@
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import styles from "../../../app/search/[id]/page.module.css";
 
 export default function BookingSuccess() {
   return (
@@ -20,7 +19,7 @@ export default function BookingSuccess() {
         Votre demande est en cours de traitement. Notre équipe vous contactera par SMS dans les plus brefs délais pour confirmer les détails.
       </p>
       <Link href="/" className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
-        Retour à l'accueil <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+        Retour à l&apos;accueil <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
       </Link>
     </motion.div>
   );

@@ -15,8 +15,6 @@ export default function AnalyticsDashboard() {
   const [revenueData, setRevenueData] = useState([]);
   const [profitabilityData, setProfitabilityData] = useState([]);
 
-  useEffect(() => { fetchData(); }, []);
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -35,6 +33,8 @@ export default function AnalyticsDashboard() {
     } catch (err) { console.error('Error fetching analytics data', err); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => { fetchData(); }, []);
 
   if (loading) {
     return (

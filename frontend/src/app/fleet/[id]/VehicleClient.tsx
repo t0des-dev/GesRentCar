@@ -17,13 +17,14 @@ export default function VehicleClient() {
   const [vehicle, setVehicle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const [pickupDate, setPickupDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
-
-  useEffect(() => {
-    setPickupDate(localStorage.getItem('vrc_search_start') || "");
-    setReturnDate(localStorage.getItem('vrc_search_end') || "");
-  }, []);
+  const [pickupDate, setPickupDate] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem('vrc_search_start') || "";
+  });
+  const [returnDate, setReturnDate] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem('vrc_search_end') || "";
+  });
 
   useEffect(() => {
     const fetchVehicle = async () => {

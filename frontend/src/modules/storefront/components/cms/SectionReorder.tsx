@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, Reorder } from "framer-motion";
+import { Reorder } from "framer-motion";
 import { 
   GripVertical, Eye, EyeOff, Edit3, Image as ImageIcon, Activity, Star, 
   ShieldCheck, MessageSquareQuote, Sparkles, Camera, MapPin, Bot, 

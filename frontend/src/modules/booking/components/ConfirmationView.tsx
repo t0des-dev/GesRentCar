@@ -6,12 +6,17 @@ import { BookingState } from "@/types/booking";
 import confetti from "canvas-confetti";
 import { fmt } from "@/shared/utils/format";
 
+interface ConfirmationVehicle {
+  brand?: string;
+  model?: string;
+}
+
 interface ConfirmationViewProps {
   booking: BookingState;
   reservationId: number | null;
   deposit: number;
   total: number;
-  vehicle: any;
+  vehicle?: ConfirmationVehicle | null;
 }
 
 export default function ConfirmationView({ booking, reservationId, deposit, total, vehicle }: ConfirmationViewProps) {
@@ -22,7 +27,7 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
 
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-    const interval: any = setInterval(function() {
+    const interval = setInterval(function() {
       const timeLeft = animationEnd - Date.now();
 
       if (timeLeft <= 0) {
@@ -103,7 +108,7 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
             href="/"
             className="btn-secondary w-full"
           >
-            Retourner à l'accueil
+            Retourner à l&apos;accueil
           </a>
         </div>
       </div>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, Reorder } from "framer-motion";
-import { Plus, Trash2, GripVertical, Upload } from "lucide-react";
+import Image from "next/image";
+import { Plus, Trash2, GripVertical } from "lucide-react";
 import AssetUpload from "@/components/AssetUpload";
 import { getImageUrl } from "@/shared/utils/image";
 
@@ -215,7 +216,7 @@ function ReorderableArrayEditor({
               <GripVertical size={16} className="text-slate-300 shrink-0" />
               {thumbnailKey && item[thumbnailKey] && (
                 <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100">
-                  <img src={getImageUrl(item[thumbnailKey])} className="w-full h-full object-cover" alt="" />
+                  <Image src={getImageUrl(item[thumbnailKey]) || ""} width={40} height={40} className="w-full h-full object-cover" alt="" />
                 </div>
               )}
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">#{idx + 1}</span>
@@ -274,10 +275,9 @@ const sectionLabels: Record<string, string> = {
 };
 
 export default function SectionContentEditor({ sectionId, content, onChange, extraFields }: SectionContentEditorProps) {
+  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
   const fields = sectionFields[sectionId];
   if (!fields) return <p className="text-sm text-slate-400 italic">Aucun champ éditable pour cette section.</p>;
-
-  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
@@ -392,7 +392,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
       {/* Why Us — features array */}
       {sectionId === "why_us" && (
         <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Cartes d'avantages</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Cartes d&apos;avantages</label>
           <ReorderableArrayEditor
             items={content?.features ?? []}
             onChange={(items) => onChange({ ...content, features: items })}
@@ -424,7 +424,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
           </div>
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">
-              Cartes d'expérience <span className="text-slate-300 normal-case">(Lifestyle Items)</span>
+              Cartes d&apos;expérience <span className="text-slate-300 normal-case">(Lifestyle Items)</span>
             </label>
             <ReorderableArrayEditor
               items={content?.lifestyles ?? []}

@@ -8,7 +8,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { Loader2, Lock, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, Lock, AlertCircle } from "lucide-react";
 import { stripeService } from "@/lib/api/stripe";
 import { fmt } from "@/shared/utils/format";
 
@@ -167,6 +167,7 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
   const [initError, setInitError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!deposit || !bookingPayload.vehicle_id) {
       setLoading(false);

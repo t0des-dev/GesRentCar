@@ -20,6 +20,7 @@ export default function AdminSettings() {
   const [passwordForm, setPasswordForm] = useState({ current_password: '', password: '', password_confirmation: '' });
   const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     const storedUser = localStorage.getItem('vectoria_user');
     if (storedUser) {

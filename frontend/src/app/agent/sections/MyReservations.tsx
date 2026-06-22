@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Car, Calendar, Search, Filter, ChevronDown, ChevronUp, DollarSign, Loader2, CheckCircle2, User, Hash, Tag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
@@ -18,7 +18,6 @@ const STATUS_MAP: Record<string, { label: string, style: string }> = {
 
 export default function MyReservations() {
   const [reservations, setReservations] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -35,7 +34,6 @@ export default function MyReservations() {
       const d = await r.json();
       const list = Array.isArray(d) ? d : d.data ?? [];
       setReservations(list);
-      setFiltered(list);
     } finally {
       setLoading(false);
     }
@@ -68,7 +66,7 @@ export default function MyReservations() {
     }
   };
 
-  useEffect(() => {
+  const filtered = useMemo(() => {
     let list = reservations;
     if (statusFilter !== "all") list = list.filter((r) => r.status === statusFilter);
     if (search) {
@@ -79,7 +77,7 @@ export default function MyReservations() {
         String(r.id).includes(q)
       );
     }
-    setFiltered(list);
+    return list;
   }, [search, statusFilter, reservations]);
 
   return (

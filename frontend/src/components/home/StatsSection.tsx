@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { cn } from "@/shared/utils";
 import * as Icons from "lucide-react";
+import type { ComponentType } from "react";
 
-export default function StatsSection({ content }: { content: any }) {
+import type { StatsConfig, StatItem } from "@/types/storefront";
+
+export default function StatsSection({ content }: { content: Partial<StatsConfig> }) {
   const items = content?.items || [];
   const columns = parseInt(content?.columns || "4");
   const theme = content?.theme || "dark";
@@ -36,7 +39,8 @@ export default function StatsSection({ content }: { content: any }) {
           columns === 3 ? "grid-cols-2 md:grid-cols-3" : 
           "grid-cols-2 md:grid-cols-4"
         )}>
-          {items.map((s: any, idx: number) => {
+          {items.map((s: StatItem, idx: number) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const IconComponent = s.icon && (Icons as any)[s.icon] ? (Icons as any)[s.icon] : null;
             const colorClass = isDark ? "text-primary-400" : "text-primary-600";
             

@@ -5,6 +5,7 @@ import { cn } from "@/shared/utils";
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 import { Button } from "@/shared/ui/button";
 
@@ -43,10 +44,12 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
 
         {/* Left: Gallery */}
         <div className="flex-1 relative bg-slate-100 min-h-[400px] group">
-          <img 
+          <Image 
             src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
             alt={vehicle.model}
+            width={1200}
+            height={800}
           />
           
           {/* 360 View Dummy Button */}
@@ -65,7 +68,7 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                   i === 1 ? "border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]" : "border-white/20 opacity-60 hover:opacity-100"
                 )}
               >
-                <img src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} className="w-full h-full object-cover" alt="" />
+                <Image src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} width={64} height={48} className="w-full h-full object-cover" alt="" />
               </button>
             ))}
           </div>

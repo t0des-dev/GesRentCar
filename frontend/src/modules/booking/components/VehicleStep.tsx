@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { cn } from "@/shared/utils";
-import { Car, Loader2, Maximize2, RotateCcw, ChevronRight, Users, Settings2, Fuel, Star } from "lucide-react";
+import { Car, Loader2, RotateCcw, ChevronRight, Users, Settings2, Fuel, Star } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface VehicleStepProps extends BookingStepProps {
   isLoading: boolean;
@@ -12,7 +13,7 @@ interface VehicleStepProps extends BookingStepProps {
   onNext: () => void;
 }
 
-export default function VehicleStep({ booking, update, isLoading, vehicles, onPreview, onNext }: VehicleStepProps) {
+export default function VehicleStep({ booking, update, isLoading, vehicles, onPreview: _onPreview, onNext }: VehicleStepProps) {
   return (
     <div className="space-y-8">
       {isLoading ? (
@@ -51,7 +52,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onPr
                     "relative overflow-hidden",
                     isSelected ? "lg:w-3/5 h-[400px]" : "h-64"
                   )}>
-                    <img src={v.img} alt={v.model} className="w-full h-full object-cover" />
+                    <Image src={v.img} alt={v.model} width={800} height={500} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
                     
                     <div className="absolute top-6 left-6 flex gap-2">

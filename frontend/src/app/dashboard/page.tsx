@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const { data: apiReservations, isLoading: reservationsLoading } = useMyReservations();
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
   
   const RESERVATIONS: Reservation[] = useMemo(() => (apiReservations as any)?.data ?? [], [apiReservations]);

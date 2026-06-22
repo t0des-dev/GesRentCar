@@ -28,7 +28,6 @@ const VehicleComparator = dynamic(() => import("@/modules/fleet/components/Vehic
 const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"));
 
 import JsonLd from "@/components/SEO/JsonLd";
-import { useEffect } from "react";
 
 const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
   hero: "h-screen",
@@ -60,19 +59,19 @@ export default function HomeClient() {
   const router = useRouter();
   const { t, lang } = useTranslation();
   const storefront = useStorefront();
-  const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [location, setLocation] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("vrc_search_location") || "";
+  });
+  const [startDate, setStartDate] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("vrc_search_start") || "";
+  });
+  const [endDate, setEndDate] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("vrc_search_end") || "";
+  });
   const [scrollPercent, setScrollPercent] = useState(0);
-
-  useEffect(() => {
-    const savedLocation = localStorage.getItem("vrc_search_location");
-    const savedStart = localStorage.getItem("vrc_search_start");
-    const savedEnd = localStorage.getItem("vrc_search_end");
-    if (savedLocation) setLocation(savedLocation);
-    if (savedStart) setStartDate(savedStart);
-    if (savedEnd) setEndDate(savedEnd);
-  }, []);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });

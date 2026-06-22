@@ -9,15 +9,35 @@ import {
 import { cn } from "@/shared/utils";
 import { useState, useMemo } from "react";
 
+import type { LucideIcon } from "lucide-react";
+
+interface SidebarItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  subItems?: { label: string; href: string }[];
+}
+
+interface SidebarGroup {
+  id: string;
+  title: string;
+  items: SidebarItem[];
+}
+
+interface AdminSidebarUser {
+  name?: string;
+  role?: string;
+}
+
 interface AdminSidebarProps {
-  groups: any[];
+  groups: SidebarGroup[];
   pathname: string;
   isCollapsed: boolean;
   setIsCollapsed: (v: boolean) => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (v: boolean) => void;
   onLogout: () => void;
-  user: any;
+  user?: AdminSidebarUser | null;
 }
 
 export default function AdminSidebar({ 
@@ -33,9 +53,9 @@ export default function AdminSidebar({
   const filteredGroups = useMemo(() => {
     if (!search) return groups;
     return groups.map(group => {
-      const filteredItems = group.items.filter((item: any) => 
+      const filteredItems = group.items.filter((item: SidebarItem) => 
         item.label.toLowerCase().includes(search.toLowerCase()) ||
-        item.subItems?.some((sub: any) => sub.label.toLowerCase().includes(search.toLowerCase()))
+        item.subItems?.some((sub) => sub.label.toLowerCase().includes(search.toLowerCase()))
       );
       return { ...group, items: filteredItems };
     }).filter(g => g.items.length > 0);
@@ -95,8 +115,8 @@ export default function AdminSidebar({
             )}
             
             <div className="space-y-1">
-              {group.items.map((item: any) => {
-                const isActive = pathname === item.href || item.subItems?.some((sub:any) => pathname === sub.href);
+              {group.items.map((item: SidebarItem) => {
+                const isActive = pathname === item.href || item.subItems?.some((sub) => pathname === sub.href);
                 const hasSubItems = item.subItems && item.subItems.length > 0;
                 const isOpen = openMenus.includes(item.label) || isActive;
 
@@ -148,7 +168,7 @@ export default function AdminSidebar({
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden ml-4 pl-4 border-l border-border mt-1 space-y-1"
                           >
-                            {item.subItems.map((sub: any) => {
+                            {item.subItems?.map((sub) => {
                               const isSubActive = pathname === sub.href;
                               return (
                                 <Link 

@@ -35,6 +35,7 @@ export default function ReservationsPage() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!checking && user) {
       fetchData();

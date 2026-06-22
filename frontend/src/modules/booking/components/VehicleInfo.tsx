@@ -34,11 +34,11 @@ export default function VehicleInfo({ vehicle, image }: VehicleInfoProps) {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">L'Expérience {vehicle.brand}</h2>
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">L&apos;Expérience {vehicle.brand}</h2>
         <p className="text-slate-500 leading-relaxed">
-          La {vehicle.brand} {vehicle.model} redéfinit les standards de l'excellence automobile. 
+          La {vehicle.brand} {vehicle.model} redéfinit les standards de l&apos;excellence automobile. 
           Chaque courbe de sa carrosserie et chaque détail de son habitacle ont été conçus pour offrir 
-          une expérience de conduite immersive et luxueuse. Profitez d'un confort souverain pour vos longs trajets au Maroc.
+          une expérience de conduite immersive et luxueuse.           Profitez d&apos;un confort souverain pour vos longs trajets au Maroc.
         </p>
       </div>
     </div>

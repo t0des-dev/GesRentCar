@@ -9,12 +9,15 @@ import { ArrowLeft, Car, Calendar as CalendarIcon, Wrench, ShieldAlert, Activity
 import Link from "next/link";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import type { Vehicle } from "@/types/admin";
+import type { Maintenance } from "@/types/admin";
+import type { Reservation } from "@/types/admin";
 
 export default function VehicleDashboardPage() {
   const params = useParams();
   const router = useRouter();
   const { checking } = useAuthGuard("admin");
-  const [vehicle, setVehicle] = useState<any>(null);
+  const [vehicle, setVehicle] = useState<Vehicle & { reservations?: Reservation[]; maintenances?: Maintenance[]; commission_rate?: number; agent?: { name: string } } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -153,7 +156,7 @@ export default function VehicleDashboardPage() {
 
              <div className="space-y-3">
                {vehicle.reservations && vehicle.reservations.length > 0 ? (
-                 vehicle.reservations.map((res: any) => (
+                  vehicle.reservations.map((res) => (
                    <div key={res.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-surface-1 hover:border-primary/30 transition-colors">
                      <div className="mb-2 sm:mb-0">
                        <span className="text-[10px] font-bold uppercase text-ink-3 block mb-1">
@@ -194,12 +197,12 @@ export default function VehicleDashboardPage() {
 
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                {vehicle.maintenances && vehicle.maintenances.length > 0 ? (
-                 vehicle.maintenances.map((m: any) => (
+                  vehicle.maintenances.map((m) => (
                    <div key={m.id} className="p-4 rounded-xl border border-border bg-surface-1 flex flex-col justify-between">
                      <div>
                        <span className="text-[10px] font-bold uppercase text-amber-600 mb-1 block">{m.type}</span>
                        <p className="text-sm font-bold text-ink-1 mb-2 line-clamp-2">{m.description}</p>
-                       <span className="text-xs text-ink-3">{new Date(m.date).toLocaleDateString()} • {m.mileage} KM</span>
+                        <span className="text-xs text-ink-3">{m.date ? new Date(m.date).toLocaleDateString() : "N/A"} • {m.mileage ?? "N/A"} KM</span>
                      </div>
                      <div className="mt-4 pt-3 border-t border-border/50 text-right">
                        <span className="text-sm font-black text-red-600">-{fmt(m.cost)} DH</span>

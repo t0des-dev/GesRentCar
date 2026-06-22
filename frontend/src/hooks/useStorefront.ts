@@ -1,7 +1,7 @@
 "use client";
 
 import { useAgency, DEFAULT_SECTIONS_CONTENT } from "@/hooks/useAgency";
-import type { SectionsContent } from "@/types/storefront";
+import type { SectionsContent, Testimonial, StatItem, SectionOrder } from "@/types/storefront";
 import { DEFAULT_GALLERY_IMAGES, DEFAULT_GALLERY_STATS } from "@/components/LifestyleGallery";
 
 export interface StorefrontData {
@@ -16,10 +16,10 @@ export interface StorefrontData {
   faq_config: { q: string; a: string }[];
   features_config: { icon: string; title: string; desc: string }[];
   concierge_config: { title: string; text: string; badge: string };
-  testimonials: any[];
-  stats_config: { columns?: string; theme?: string; height?: string; text_size?: string; text_color?: string; items: any[] };
+  testimonials: Testimonial[];
+  stats_config: { columns?: string; theme?: string; height?: string; text_size?: string; text_color?: string; items: StatItem[] };
   sections_config: Record<string, boolean | undefined>;
-  sections_order?: any[];
+  sections_order?: SectionOrder[];
 }
 
 // Ensure DEFAULT_SECTIONS_CONTENT has all required fields with proper defaults
@@ -70,7 +70,7 @@ export function useStorefront(): StorefrontData {
   let statsItems = agency.stats_config?.items;
   if (!statsItems || statsItems.length === 0) {
     if (agency.stats_config && ('label_1' in agency.stats_config || 'value_1' in agency.stats_config)) {
-      const legacy = agency.stats_config as any;
+      const legacy = agency.stats_config as Record<string, string | undefined>;
       statsItems = [];
       if (legacy.label_1 || legacy.value_1) statsItems.push({ id: "s1", label: legacy.label_1 || "Clients", value: legacy.value_1 || "-", icon: "Users", color: "primary" });
       if (legacy.label_2 || legacy.value_2) statsItems.push({ id: "s2", label: legacy.label_2 || "Véhicules", value: legacy.value_2 || "-", icon: "Car", color: "indigo" });
@@ -95,7 +95,7 @@ export function useStorefront(): StorefrontData {
     about_text_en: agency.about_text_en || "",
     about_text_ar: agency.about_text_ar || "",
     sections_content: content,
-    faq_config: agency.faq_config || content.faq as any,
+    faq_config: agency.faq_config || (content.faq as unknown as { q: string; a: string }[]),
     features_config: agency.features_config || [],
     concierge_config: {
       title: agency.concierge_config?.title || "Besoin d'aide pour choisir ?",

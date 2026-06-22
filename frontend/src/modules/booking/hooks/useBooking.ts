@@ -3,48 +3,58 @@
 import { useState, useMemo, useEffect } from "react";
 import { BookingState } from "@/types/booking";
 
+interface BookingVehicle {
+  id: number;
+  price: number;
+  brand?: string;
+  model?: string;
+  type?: string;
+  img?: string;
+}
 
-
-export function useBooking(initialVehicles: any[] = []) {
+export function useBooking(initialVehicles: BookingVehicle[] = []) {
   const [step, setStep] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
   const [reservationId, setReservationId] = useState<number | null>(null);
-  const [previewVehicle, setPreviewVehicle] = useState<any>(null);
+  const [previewVehicle, setPreviewVehicle] = useState<BookingVehicle | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
 
-  const [booking, setBooking] = useState<BookingState>({
-    vehicleId: null, startDate: "", endDate: "", location: "", 
-    flexibility: "best_price", mileage: "limited",
-    client: { 
-      name: "", email: "", phone: "", cin: "", licenseNumber: "",
-      cinImageUrl: "", licenseImageUrl: "", verified: false 
-    },
-    paymentMethod: "deposit_card",
+  const [booking, setBooking] = useState<BookingState>(() => {
+    if (typeof window === "undefined") {
+      return {
+        vehicleId: null, startDate: "", endDate: "", location: "", 
+        flexibility: "best_price", mileage: "limited",
+        client: { 
+          name: "", email: "", phone: "", cin: "", licenseNumber: "",
+          cinImageUrl: "", licenseImageUrl: "", verified: false 
+        },
+        paymentMethod: "deposit_card",
+      };
+    }
+    const params = new URLSearchParams(window.location.search);
+    return {
+      vehicleId: params.get("vehicle") ? Number(params.get("vehicle")) : null,
+      startDate: params.get("start_date") || localStorage.getItem('vrc_search_start') || "",
+      endDate: params.get("end_date") || localStorage.getItem('vrc_search_end') || "",
+      location: params.get("location") || localStorage.getItem('vrc_search_location') || "",
+      flexibility: "best_price", mileage: "limited",
+      client: { 
+        name: "", email: "", phone: "", cin: "", licenseNumber: "",
+        cinImageUrl: "", licenseImageUrl: "", verified: false 
+      },
+      paymentMethod: "deposit_card",
+    };
   });
 
   useEffect(() => {
-    // Read from URL and localStorage to prepopulate booking
     const params = new URLSearchParams(window.location.search);
-    const vId = params.get("vehicle");
-    const sDate = params.get("start_date") || localStorage.getItem('vrc_search_start') || "";
-    const eDate = params.get("end_date") || localStorage.getItem('vrc_search_end') || "";
-    const loc = params.get("location") || localStorage.getItem('vrc_search_location') || "";
-
-    setBooking(prev => ({
-      ...prev,
-      vehicleId: vId ? Number(vId) : prev.vehicleId,
-      startDate: sDate,
-      endDate: eDate,
-      location: loc
-    }));
-
-    if (vId) {
-      setStep(1); // Auto advance to period step if vehicle is already selected
+    if (params.get("vehicle")) {
+      setStep(1);
     }
   }, []);
 
-  const update = (key: keyof BookingState, val: any) => setBooking(prev => ({ ...prev, [key]: val }));
+  const update = <K extends keyof BookingState>(key: K, val: BookingState[K]) => setBooking(prev => ({ ...prev, [key]: val }));
 
   const vehicle = initialVehicles.find(v => v.id === booking.vehicleId);
 

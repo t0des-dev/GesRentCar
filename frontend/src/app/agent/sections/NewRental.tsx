@@ -14,6 +14,14 @@ const API = "http://localhost:8000/api/v1";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 type ClientData = { name: string; cin: string; license?: string; email?: string; phone?: string; };
+
+interface ReservationData {
+  id?: number;
+  start_date?: string;
+  end_date?: string;
+  total_price?: number;
+  status?: string;
+}
 type Vehicle = { id: number; brand: string; model: string; plate: string; price_per_day: number; dynamic_price: number; type: string; };
 
 const STEPS = [
@@ -40,7 +48,7 @@ export default function NewRental() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [reservation, setReservation] = useState<any>(null);
+  const [reservation, setReservation] = useState<ReservationData | null>(null);
 
   const { lang } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -88,8 +96,8 @@ export default function NewRental() {
       } else {
         throw new Error(data.message || "Erreur d'analyse OCR.");
       }
-    } catch (err: any) {
-      setError(err.message || "Impossible de contacter le service OCR.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Impossible de contacter le service OCR.");
     }
     finally { setScanning(false); }
   };
@@ -112,7 +120,7 @@ export default function NewRental() {
       const vData = await vRes.json();
       setVehicles(Array.isArray(vData) ? vData : []);
       setStep(3);
-    } catch (e: any) { setError(e.message); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : "Erreur inconnue"); }
     finally { setSaving(false); }
   };
 
@@ -138,7 +146,7 @@ export default function NewRental() {
       if (!res.ok) throw new Error(data.message || "Erreur de réservation.");
       setReservation(data);
       setStep(4);
-    } catch (e: any) { setError(e.message); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : "Erreur inconnue"); }
     finally { setSaving(false); }
   };
 
@@ -338,7 +346,7 @@ export default function NewRental() {
                       </label>
                       <input
                         type={type}
-                        value={(clientData as any)[key]}
+                        value={clientData[key as keyof ClientData] ?? ""}
                         onChange={(e) => setClientData({ ...clientData, [key]: e.target.value })}
                         placeholder={ph}
                         className="input-premium w-full px-5 py-3.5 text-sm"

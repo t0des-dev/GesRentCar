@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Check, Download, Loader2, AlertCircle, FileText, Calendar, Wallet, Car, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
@@ -11,6 +11,15 @@ import SignaturePad from "@/components/SignaturePad";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+
+function TransactionId() {
+  const id = useMemo(() => Math.random().toString(36).substr(2, 9).toUpperCase(), []);
+  return (
+    <p className="text-[10px] text-slate-300 font-semibold uppercase tracking-widest">
+      ID TRANSACTION : {id}
+    </p>
+  );
+}
 
 export default function ContractSignClient() {
   const { id } = useParams();
@@ -193,9 +202,7 @@ export default function ContractSignClient() {
                   </div>
 
                   <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-                     <p className="text-[10px] text-slate-300 font-semibold uppercase tracking-widest">
-                       ID TRANSACTION : {Math.random().toString(36).substr(2, 9).toUpperCase()}
-                     </p>
+                     <TransactionId />
                      <p className="text-[10px] text-slate-300 font-semibold uppercase tracking-widest">
                        Certifié par VectoriaSecure
                      </p>

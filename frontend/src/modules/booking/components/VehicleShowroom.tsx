@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/shared/utils";
 import { X, Rotate3d, ChevronRight } from "lucide-react";
 
@@ -21,9 +22,11 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: any; 
             "absolute inset-0 transition-all duration-700",
             is360 ? "scale-110 rotate-1" : "scale-100"
           )}>
-            <img 
+            <Image 
               src={vehicle.img} 
               alt={vehicle.model} 
+              width={1200}
+              height={800}
               className={cn(
                 "w-full h-full object-cover transition-transform duration-[10s] linear",
                 is360 ? "scale-110" : ""
@@ -73,7 +76,7 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: any; 
           
           <div className="space-y-4 mb-8">
             <p className="text-slate-500 leading-relaxed italic border-l-4 border-slate-100 pl-5">
-              "{vehicle.desc}"
+              &quot;{vehicle.desc}&quot;
             </p>
             
             <div className="grid grid-cols-2 gap-2">

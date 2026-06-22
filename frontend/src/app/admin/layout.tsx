@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 import AdminSidebar from "@/modules/admin/components/layout/AdminSidebar";
 import AdminTopbar from "@/modules/admin/components/layout/AdminTopbar";
@@ -43,14 +43,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const { user } = useAuthGuard("admin");
   const { logout } = useAuth();
-  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const activeGroupId = useMemo(() => {
+    const group = MENU_GROUPS.find(g => g.items.some(i => pathname === i.href || (pathname.startsWith(i.href) && i.href !== "/admin")));
+    return group?.id || "general";
+  }, [pathname]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const group = MENU_GROUPS.find(g => g.items.some(i => pathname === i.href || (pathname.startsWith(i.href) && i.href !== "/admin")));
-    setActiveGroupId(group?.id || "general");
-  }, [pathname]);
 
   const handleLogout = () => {
     logout();

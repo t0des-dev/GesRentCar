@@ -1,12 +1,22 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Car, MapPin, Calendar, Download, ChevronRight, CheckCircle, XCircle, AlertCircle, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import type { LucideIcon } from "lucide-react";
 
-const STATUS_CONFIG: any = {
+interface StatusConfig {
+  label: string;
+  icon: LucideIcon;
+  bg: string;
+  border: string;
+  text: string;
+}
+
+const STATUS_CONFIG: Record<string, StatusConfig> = {
   confirmed:       { label: "Confirmée",       icon: CheckCircle,  bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
   active:          { label: "En cours",        icon: Car,          bg: "from-primary/30 to-primary/10", border: "border-primary/40", text: "text-primary" },
   completed:       { label: "Terminée",        icon: CheckCircle,  bg: "from-blue-500/30 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-400" },
@@ -30,10 +40,26 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";
+
+interface ReservationListItem {
+  id: number;
+  vehicle: string;
+  plate: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  depositAmount: number;
+  status: ReservationStatus;
+  paidAmount: number;
+  hasContract: boolean;
+  img?: string;
+}
+
 interface ReservationListProps {
-  reservations: any[];
+  reservations: ReservationListItem[];
   loading: boolean;
-  onSelect: (r: any) => void;
+  onSelect: (r: ReservationListItem) => void;
 }
 
 export default function ReservationList({ reservations, loading, onSelect }: ReservationListProps) {
@@ -59,7 +85,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
       >
         <Car size={72} className="mx-auto mb-8 text-gold/30" />
         <h3 className="text-2xl font-bold text-ink-1 mb-3 font-serif">Le garage est vide.</h3>
-        <p className="text-ink-2 max-w-sm mx-auto mb-8 font-light">Votre prochaine aventure n'attend que vous. Explorez notre collection exclusive.</p>
+        <p className="text-ink-2 max-w-sm mx-auto mb-8 font-light">Votre prochaine aventure n&apos;attend que vous. Explorez notre collection exclusive.</p>
         <Link href="/fleet" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-8 py-4 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all">
           Découvrir la flotte <ArrowRight size={16} strokeWidth={3} />
         </Link>
@@ -85,10 +111,12 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
         >
           {/* Image */}
           <div className="w-full lg:w-80 h-56 lg:h-auto relative overflow-hidden shrink-0">
-            <img
+            <Image
               src={res.img || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop"}
               alt={res.vehicle}
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              width={1000}
+              height={600}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-surface-0/90 to-transparent flex items-start p-6">
               <StatusBadge status={res.status} />

@@ -19,6 +19,7 @@ export default function ProfitabilityTable({ data: initialData }: { data?: Vehic
   const [data, setData] = useState<VehicleProfit[]>(initialData || []);
   const [loading, setLoading] = useState(!initialData);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!initialData) {
       api.get("/stats/profitability")

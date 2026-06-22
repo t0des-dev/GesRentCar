@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
@@ -38,7 +38,6 @@ export const metadata: Metadata = {
   title: "VectoriaRentCar - Premium Car Rental",
   description: "Location de véhicules premium au Maroc. Flotte d'exception, service conciergerie 24/7.",
   manifest: "/manifest.json",
-  themeColor: "#D4AF37",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -65,6 +64,10 @@ export const metadata: Metadata = {
     description: "Premium car rental ecosystem.",
     images: ["/og-image.jpg"],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#D4AF37",
 };
 
 

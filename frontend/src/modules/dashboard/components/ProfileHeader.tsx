@@ -1,12 +1,12 @@
 "use client";
 
-import { Crown, User, Shield, LogOut, Settings, CreditCard } from "lucide-react";
+import { Crown, User, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/modules/auth/context/context";
 import { motion } from "framer-motion";
 
 interface ProfileHeaderProps {
-  session: any;
+  session: { user?: { name?: string } } | null;
 }
 
 export default function ProfileHeader({ session }: ProfileHeaderProps) {

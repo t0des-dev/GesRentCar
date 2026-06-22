@@ -45,8 +45,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    let cancelled = false;
+    (async () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("vectoria_token") : null;
+      if (!token) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+      try {
+        await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+        const res = await api.get("/user");
+        if (!cancelled) setUser(res.data);
+      } catch {
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const login = async (email: string, password: string) => {
     await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });

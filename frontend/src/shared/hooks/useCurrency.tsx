@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 type Currency = "MAD" | "EUR" | "USD";
 
@@ -28,21 +28,18 @@ const SYMBOLS: Record<Currency, string> = {
 };
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>("MAD");
-
-  useEffect(() => {
+  const [currency, setCurrency] = useState<Currency>(() => {
+    if (typeof window === "undefined") return "MAD";
     const saved = localStorage.getItem("vectoria_currency") as Currency;
-    if (saved && ["MAD", "EUR", "USD"].includes(saved)) {
-      setCurrency(saved);
-    }
-  }, []);
+    return saved && ["MAD", "EUR", "USD"].includes(saved) ? saved : "MAD";
+  });
 
   const handleSetCurrency = (c: Currency) => {
     setCurrency(c);
     localStorage.setItem("vectoria_currency", c);
   };
 
-  const convert = (amount: number, from: Currency = "MAD") => {
+  const convert = (amount: number, _from: Currency = "MAD") => {
     const safe = typeof amount === "number" && !isNaN(amount) ? amount : 0;
     const converted = safe * RATES[currency];
     const formatted = new Intl.NumberFormat("fr-FR", {

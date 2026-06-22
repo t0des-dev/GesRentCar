@@ -30,6 +30,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
   
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (isOpen) {
       api.get('/vehicles').then(res => {

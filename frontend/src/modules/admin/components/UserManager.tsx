@@ -14,8 +14,6 @@ export default function UserManager() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
 
-  useEffect(() => { fetchUsers(); }, []);
-
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -24,6 +22,8 @@ export default function UserManager() {
     } catch (err) { console.error("Error fetching users", err); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => { fetchUsers(); }, []);
 
   const handleSaveUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
