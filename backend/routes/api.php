@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CmiController;
 use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\ContractController;
+use App\Http\Controllers\Api\DemoController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ExportController;
@@ -171,6 +172,11 @@ $apiRoutes = function () {
             Route::post('/users', [UserController::class, 'store']);
             Route::put('/users/{user}', [UserController::class, 'update']);
             Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+            // Demo data management
+            Route::get('/admin/demo/stats', [DemoController::class, 'stats']);
+            Route::post('/admin/demo/populate', [DemoController::class, 'populate']);
+            Route::post('/admin/demo/clear', [DemoController::class, 'clear']);
         });
     });
 };

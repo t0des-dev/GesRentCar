@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList
+  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList, FlaskConical
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
@@ -34,6 +34,7 @@ const MENU_GROUPS = [
       { icon: Users, label: "Utilisateurs", href: "/admin/users" },
       { icon: Palette, label: "Storefront", href: "/admin/storefront" },
       { icon: Settings, label: "Paramètres", href: "/admin/settings" },
+      { icon: FlaskConical, label: "Données de Démo", href: "/admin/demo" },
     ]
   }
 ];
