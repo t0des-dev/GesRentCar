@@ -302,8 +302,8 @@ MSG;
 
         // 2. Check Maintenance (based on km)
         // This usually happens during vehicle return, but we can do a general check
-        $dueMaintenances = Maintenance::where('status', 'scheduled')
-            ->where('next_due_date', '<=', $warningLimit)
+        $dueMaintenances = Maintenance::where('status', 'pending')
+            ->where('next_due', '<=', $warningLimit)
             ->get();
 
         foreach ($dueMaintenances as $m) {

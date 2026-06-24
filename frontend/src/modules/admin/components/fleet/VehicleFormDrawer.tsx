@@ -14,7 +14,7 @@ interface VehicleFormDrawerProps {
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
   submitting: boolean;
-  categoryPrices: Record<string, number>;
+  categoryPrices: Record<string, any>;
 }
 
 export default function VehicleFormDrawer({

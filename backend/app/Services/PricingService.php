@@ -143,7 +143,7 @@ class PricingService
         // ── 4. Tarifs longue durée (appliqués EN PLUS si aucune autre raison) ─
         //    Les réductions longue durée sont prioritaires sur les majorations
         //    uniquement quand il n'y a pas de forte demande / haute saison.
-        if (! $reason && $days >= 1) {
+        if ((! $reason || $reason === 'Tarif weekend') && $days >= 1) {
             foreach (self::LONG_STAY_TIERS as $tier) {
                 if ($days >= $tier['days']) {
                     $multiplier = $tier['multiplier'];

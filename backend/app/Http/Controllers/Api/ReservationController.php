@@ -208,7 +208,7 @@ class ReservationController extends Controller
     public function update(Request $request, Reservation $reservation)
     {
         $validated = $request->validate([
-            'status' => 'sometimes|string|in:pending,confirmed,ongoing,completed,cancelled,attente_paiement,pending_partner',
+            'status' => 'sometimes|string|in:pending,pending_payment,confirmed,ongoing,completed,cancelled,attente_paiement,pending_partner',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after:start_date',
             'vehicle_id' => 'sometimes|exists:vehicles,id',
@@ -271,7 +271,7 @@ class ReservationController extends Controller
             return response()->json(['message' => 'Statut de réservation invalide.'], 422);
         }
 
-        $reservation->update(['status' => 'attente_paiement']);
+        $reservation->update(['status' => 'pending_payment']);
 
         $contractCtrl = new ContractController($this->notificationService);
         $contractCtrl->generate($reservation);

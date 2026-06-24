@@ -42,7 +42,7 @@ class AvailabilityEngine
 
             // Check for overlaps with active or pending reservations
             $hasOverlap = Reservation::where('vehicle_id', $vehicleId)
-                ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'active'])
+                ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
                 ->where(function ($query) use ($start, $end) {
                     $query->whereBetween('start_date', [$start, $end])
                         ->orWhereBetween('end_date', [$start, $end])
@@ -84,7 +84,7 @@ class AvailabilityEngine
         $end = Carbon::parse($endDate);
 
         return ! Reservation::where('vehicle_id', $vehicleId)
-            ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'active'])
+            ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('start_date', [$start, $end])
                     ->orWhereBetween('end_date', [$start, $end])

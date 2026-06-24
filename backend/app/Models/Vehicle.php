@@ -72,7 +72,7 @@ class Vehicle extends Model
     public function scopeAvailable($query, $start, $end)
     {
         return $query->whereDoesntHave('reservations', function ($q) use ($start, $end) {
-            $q->whereIn('status', ['confirmed', 'ongoing'])
+            $q->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
                 ->where(function ($query) use ($start, $end) {
                     $query->whereBetween('start_date', [$start, $end])
                         ->orWhereBetween('end_date', [$start, $end])
@@ -90,7 +90,7 @@ class Vehicle extends Model
     public function isAvailable($start, $end): bool
     {
         return ! $this->reservations()
-            ->whereIn('status', ['confirmed', 'ongoing'])
+            ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('start_date', [$start, $end])
                     ->orWhereBetween('end_date', [$start, $end])
