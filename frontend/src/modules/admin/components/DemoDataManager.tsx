@@ -6,8 +6,7 @@ import {
   Car, Users, CalendarCheck, CreditCard, Wrench, Receipt, FileText, ClipboardList,
   Play, Trash2, AlertTriangle, CheckCircle, Loader2, RefreshCw, Database, Info
 } from "lucide-react";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import api from "@/shared/services/client";
 
 interface DemoStats {
   vehicles: number;
@@ -60,16 +59,9 @@ export default function DemoDataManager() {
   const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${API_BASE}/api/admin/demo/stats`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
-      }
+      const res = await api.get("/admin/demo/stats");
+      setStats(res.data);
     } catch {
-      // Stats not critical, use zeroes
       setStats({ vehicles: 0, clients: 0, reservations: 0, payments: 0, maintenances: 0, expenses: 0, invoices: 0, contracts: 0 });
     } finally {
       setLoading(false);
@@ -82,20 +74,12 @@ export default function DemoDataManager() {
     setConfirmAction(null);
     setActionLoading(action);
     try {
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${API_BASE}/api/admin/demo/${action}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json", "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        showToast("success", data.message || (action === "populate" ? "Données de démo initialisées !" : "Données de démo supprimées !"));
-        await fetchStats();
-      } else {
-        showToast("error", data.message || "Une erreur est survenue.");
-      }
-    } catch {
-      showToast("error", "Impossible de contacter le serveur.");
+      const res = await api.post(`/admin/demo/${action}`);
+      showToast("success", res.data?.message || (action === "populate" ? "Données de démo initialisées !" : "Données de démo supprimées !"));
+      await fetchStats();
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      showToast("error", msg || "Une erreur est survenue.");
     } finally {
       setActionLoading(null);
     }
