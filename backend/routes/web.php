@@ -14,4 +14,4 @@ Route::get('/{any}', function () {
         return response()->file($file);
     }
     abort(404);
-})->where('any', '^(?!api).*$');
+})->where('any', '^(?!api|filament-admin|livewire).*$');
