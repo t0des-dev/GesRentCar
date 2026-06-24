@@ -27,7 +27,7 @@ class ManageDemoData extends Page
 
     protected static ?string $title = 'Gestion des Données de Démo';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Configuration';
+    protected static string|\UnitEnum|null $navigationGroup = null;
 
     protected static ?int $navigationSort = 4;
 
