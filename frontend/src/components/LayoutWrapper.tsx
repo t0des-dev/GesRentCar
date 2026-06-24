@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConciergeAI from "@/modules/ai/components/ConciergeAI";
-import CustomCursor from "@/components/CustomCursor";
 import { useAgency } from "@/hooks/useAgency";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -14,7 +13,6 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <CustomCursor />
       {!isAdmin && <Navbar />}
       <div className="flex flex-col" style={{ 
         minHeight: !isAdmin ? 'calc(100vh - 70px)' : '100vh', 
