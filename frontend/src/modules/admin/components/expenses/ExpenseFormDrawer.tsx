@@ -113,7 +113,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-ink-1/40 backdrop-blur-sm z-40"
           />
 
           {/* Drawer */}
@@ -122,21 +122,21 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-            className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+            className="fixed inset-y-0 right-0 w-full max-w-md bg-surface-0 shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-surface-2 bg-surface-1/50">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">
+                <h2 className="text-lg font-bold text-ink-1">
                   {expense ? "Modifier la dépense" : "Nouvelle dépense"}
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-ink-2">
                   Remplissez les détails de la transaction
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                className="p-2 text-ink-3 hover:text-ink-2 hover:bg-surface-2 rounded-xl transition-colors"
               >
                 <X size={20} />
               </button>
@@ -148,7 +148,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Titre de la dépense</label>
+                    <label className="block text-sm font-semibold text-ink-2 mb-1">Titre de la dépense</label>
                     <input
                       type="text"
                       required
@@ -161,7 +161,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Montant (DH)</label>
+                      <label className="block text-sm font-semibold text-ink-2 mb-1">Montant (DH)</label>
                       <input
                         type="number"
                         required
@@ -173,7 +173,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Date</label>
+                      <label className="block text-sm font-semibold text-ink-2 mb-1">Date</label>
                       <input
                         type="date"
                         required
@@ -185,7 +185,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Catégorie</label>
+                    <label className="block text-sm font-semibold text-ink-2 mb-1">Catégorie</label>
                     <select
                       className="input-premium w-full"
                       value={formData.category}
@@ -209,7 +209,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
 
                   {["fuel", "maintenance", "parts", "insurance"].includes(formData.category) && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Véhicule associé (Optionnel)</label>
+                      <label className="block text-sm font-semibold text-ink-2 mb-1">Véhicule associé (Optionnel)</label>
                       <select
                         className="input-premium w-full"
                         value={formData.vehicle_id}
@@ -226,7 +226,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                   )}
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Méthode de paiement</label>
+                    <label className="block text-sm font-semibold text-ink-2 mb-1">Méthode de paiement</label>
                     <select
                       className="input-premium w-full"
                       value={formData.payment_method}
@@ -240,7 +240,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Notes</label>
+                    <label className="block text-sm font-semibold text-ink-2 mb-1">Notes</label>
                     <textarea
                       className="input-premium w-full min-h-[80px] resize-y"
                       placeholder="Détails supplémentaires..."
@@ -250,8 +250,8 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Facture / Reçu</label>
-                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+                    <label className="block text-sm font-semibold text-ink-2 mb-1">Facture / Reçu</label>
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-surface-3 border-dashed rounded-xl bg-surface-1 hover:bg-surface-2 transition-colors cursor-pointer relative">
                       <input
                         type="file"
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -259,13 +259,13 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                         onChange={e => setReceiptFile(e.target.files?.[0] || null)}
                       />
                       <div className="space-y-1 text-center">
-                        <Upload className="mx-auto h-12 w-12 text-slate-400" />
-                        <div className="flex text-sm text-slate-600 justify-center">
+                        <Upload className="mx-auto h-12 w-12 text-ink-3" />
+                        <div className="flex text-sm text-ink-2 justify-center">
                           <span className="font-medium text-primary hover:text-primary-dark">
                             {receiptFile ? receiptFile.name : "Téléverser un fichier"}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-500">PNG, JPG, PDF jusqu&apos;a 5MB</p>
+                        <p className="text-xs text-ink-2">PNG, JPG, PDF jusqu&apos;a 5MB</p>
                       </div>
                     </div>
                   </div>
@@ -275,12 +275,12 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-100 bg-white">
+            <div className="p-4 border-t border-surface-2 bg-surface-0">
               <button
                 type="submit"
                 form="expense-form"
                 disabled={loading}
-                className="w-full h-12 bg-slate-900 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-50"
+                className="w-full h-12 bg-ink-1 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-ink-2 transition-all disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

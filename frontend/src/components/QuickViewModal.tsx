@@ -32,18 +32,18 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink-1/80 backdrop-blur-md" onClick={onClose} />
       
-      <div className="relative w-full max-w-6xl bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-500">
+      <div className="relative w-full max-w-6xl bg-surface-0 rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-500">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white md:text-slate-900 p-2 rounded-full transition-all"
+          className="absolute top-6 right-6 z-10 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white md:text-ink-1 p-2 rounded-full transition-all"
         >
           <X size={24} />
         </button>
 
         {/* Left: Gallery */}
-        <div className="flex-1 relative bg-slate-100 min-h-[400px] group">
+        <div className="flex-1 relative bg-surface-2 min-h-[400px] group">
           <Image 
             src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
@@ -53,7 +53,7 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
           />
           
           {/* 360 View Dummy Button */}
-          <button className="absolute top-8 left-8 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold text-slate-900 flex items-center gap-2 shadow-lg hover:bg-white transition-all hover:scale-105 border border-white/20">
+          <button className="absolute top-8 left-8 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold text-ink-1 flex items-center gap-2 shadow-lg hover:bg-white transition-all hover:scale-105 border border-white/20">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
             Vue 360° Intérieur
           </button>
@@ -79,12 +79,12 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
           <div className="space-y-8">
             <div>
               <p className="text-primary font-black text-xs uppercase tracking-[0.2em] mb-2">{vehicle.brand}</p>
-              <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">{vehicle.model}</h2>
+              <h2 className="text-4xl font-black text-ink-1 tracking-tight mb-4">{vehicle.model}</h2>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5 bg-yellow-400/10 text-yellow-600 px-3 py-1 rounded-full text-xs font-black">
                   <Star size={14} fill="currentColor" /> {vehicle.rating || 4.9}
                 </div>
-                <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t(`cat_${vehicle.type.toLowerCase()}`)}</span>
+                <span className="text-ink-3 text-xs font-bold uppercase tracking-widest">{t(`cat_${vehicle.type.toLowerCase()}`)}</span>
               </div>
             </div>
 
@@ -96,20 +96,20 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                 { icon: Fuel, label: t("qv_fuel"), value: vehicle.fuel },
                 { icon: ShieldCheck, label: t("qv_security"), value: "Premium" },
               ].map((s, i) => (
-                <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col gap-1">
+                <div key={i} className="bg-surface-1 p-4 rounded-2xl border border-surface-2 flex flex-col gap-1">
                   <s.icon size={16} className="text-primary mb-2" />
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{s.label}</span>
-                  <span className="text-sm font-bold text-slate-900">{s.value}</span>
+                  <span className="text-[10px] font-black uppercase text-ink-3 tracking-widest">{s.label}</span>
+                  <span className="text-sm font-bold text-ink-1">{s.value}</span>
                 </div>
               ))}
             </div>
 
-            <div className="h-px bg-slate-100" />
+            <div className="h-px bg-surface-2" />
 
             <div>
               <div className="flex items-baseline gap-2 mb-8">
-                <span className="text-5xl font-black text-slate-900">{vehicle.price}</span>
-                <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">{t("currency_day")}</span>
+                <span className="text-5xl font-black text-ink-1">{vehicle.price}</span>
+                <span className="text-ink-3 font-bold uppercase text-xs tracking-widest">{t("currency_day")}</span>
               </div>
 
               <div className="grid grid-cols-1 gap-4">

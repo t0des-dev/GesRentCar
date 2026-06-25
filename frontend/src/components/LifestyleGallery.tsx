@@ -43,7 +43,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
   const statsToRender = (content?.stats && content.stats.length > 0) ? content.stats : DEFAULT_GALLERY_STATS;
 
   return (
-    <section className="py-24 bg-slate-50 relative overflow-hidden">
+    <section className="py-24 bg-surface-1 relative overflow-hidden">
       {/* Premium Decorative Backgrounds */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
@@ -66,16 +66,16 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
               <span className="w-8 h-[2px] bg-primary/40 rounded-full" />
               {content?.subtitle || "L'Expérience"}
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight mb-8 leading-[1.05]">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-ink-1 tracking-tight mb-8 leading-[1.05]">
               {content?.title || <>Bien plus qu'un <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-600 italic font-serif">simple trajet</span>.</>}
             </h2>
-            <p className="text-lg text-slate-500 leading-relaxed font-medium mb-10 max-w-md">
+            <p className="text-lg text-ink-2 leading-relaxed font-medium mb-10 max-w-md">
               {content?.text || "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception. De la précision mécanique au confort absolu."}
             </p>
             
-            <div className="mt-auto flex items-center gap-4 text-sm font-bold text-slate-900 uppercase tracking-widest group-hover:text-primary transition-colors cursor-pointer w-max">
+            <div className="mt-auto flex items-center gap-4 text-sm font-bold text-ink-1 uppercase tracking-widest group-hover:text-primary transition-colors cursor-pointer w-max">
               Découvrir la flotte
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-primary/10 group-hover:translate-x-2 transition-all duration-300">
+              <div className="w-10 h-10 rounded-full bg-surface-2 flex items-center justify-center group-hover:bg-primary/10 group-hover:translate-x-2 transition-all duration-300">
                 <ArrowRight size={16} />
               </div>
             </div>
@@ -83,7 +83,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* 2. Image 1 */}
           {imagesToRender[0] && (
-            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-2 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[300px] md:min-h-0 border border-slate-200/50">
+            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-2 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-surface-3 min-h-[300px] md:min-h-0 border border-surface-3/50">
                <Image src={getImageUrl(imagesToRender[0].url) || imagesToRender[0].url} alt="Gallery image 1" width={600} height={800} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
@@ -91,7 +91,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* 3. Stat 1 - Dark Premium */}
           {statsToRender[0] && (
-            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group shadow-xl">
+            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 bg-gradient-to-br from-ink-1 to-ink-2 rounded-[2.5rem] p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group shadow-xl">
                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay" />
                <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                <h4 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 mb-2 relative z-10">{statsToRender[0].value}</h4>
@@ -101,7 +101,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* 4. Image 2 */}
           {imagesToRender[1] && (
-            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
+            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-surface-3 min-h-[250px] md:min-h-0 border border-surface-3/50">
                <Image src={getImageUrl(imagesToRender[1].url) || imagesToRender[1].url} alt="Gallery image 2" width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
@@ -109,7 +109,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* 5. Image 3 (Wide) */}
           {imagesToRender[2] && (
-            <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
+            <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-surface-3 min-h-[250px] md:min-h-0 border border-surface-3/50">
                <Image src={getImageUrl(imagesToRender[2].url) || imagesToRender[2].url} alt="Gallery image 3" width={1200} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
@@ -126,7 +126,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* 7. Image 4 */}
           {imagesToRender[3] && (
-            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
+            <motion.div variants={itemVariants} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-surface-3 min-h-[250px] md:min-h-0 border border-surface-3/50">
                <Image src={getImageUrl(imagesToRender[3].url) || imagesToRender[3].url} alt="Gallery image 4" width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
@@ -134,7 +134,7 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
 
           {/* Render extra images dynamically if the user adds more in CMS */}
           {imagesToRender.slice(4).map((img, i) => (
-            <motion.div variants={itemVariants} key={`img-${i}`} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-slate-200 min-h-[250px] md:min-h-0 border border-slate-200/50">
+            <motion.div variants={itemVariants} key={`img-${i}`} className="md:col-span-1 md:row-span-1 rounded-[2.5rem] overflow-hidden relative group shadow-sm bg-surface-3 min-h-[250px] md:min-h-0 border border-surface-3/50">
               <Image src={getImageUrl(img.url) || img.url} alt={`Gallery extra ${i}`} width={600} height={400} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
             </motion.div>
@@ -143,8 +143,8 @@ export default function LifestyleGallery({ content = {} }: { content?: { subtitl
           {/* Render extra stats dynamically if the user adds more in CMS */}
           {statsToRender.slice(2).map((stat, i) => (
             <motion.div variants={itemVariants} key={`stat-${i}`} className="md:col-span-1 md:row-span-1 bg-white/70 backdrop-blur-xl border border-white/50 rounded-[2.5rem] p-8 flex flex-col justify-center items-center text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-              <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-900 to-slate-600 mb-2">{stat.value}</h4>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.25em]">{stat.label}</p>
+              <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-ink-1 to-ink-3 mb-2">{stat.value}</h4>
+              <p className="text-[10px] font-bold text-ink-2 uppercase tracking-[0.25em]">{stat.label}</p>
             </motion.div>
           ))}
 

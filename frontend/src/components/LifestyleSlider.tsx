@@ -62,35 +62,35 @@ export default function LifestyleSlider({ content = {} }: {
   const activeMoment = testimonials[current];
 
   return (
-    <section className="py-24 bg-slate-50 relative overflow-hidden">
+    <section className="py-24 bg-surface-1 relative overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-start">
             <div className="w-full md:w-1/3">
-              <div className="inline-flex items-center gap-2 bg-white border border-slate-100 px-5 py-1.5 rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 bg-surface-0 border border-surface-2 px-5 py-1.5 rounded-full mb-6">
                 <Play size={14} className="text-primary" />
-                <span className="text-xs font-semibold text-slate-500">{content?.badge || "Avis Clients"}</span>
+                <span className="text-xs font-semibold text-ink-2">{content?.badge || "Avis Clients"}</span>
               </div>
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">
+              <h2 className="text-3xl font-bold text-ink-1 tracking-tight mb-4">
                 {content?.heading || "Ce que disent nos clients"}
               </h2>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-sm text-ink-2 leading-relaxed">
                 {content?.description || "Découvrez les expériences de ceux qui nous ont fait confiance."}
               </p>
             </div>
 
             <div className="w-full md:w-2/3 space-y-6" key={current}>
-              <div className="bg-white rounded-3xl border border-slate-100/80 p-8 md:p-10 shadow-sm">
+              <div className="bg-surface-0 rounded-3xl border border-surface-2/80 p-8 md:p-10 shadow-sm">
                 <Quote size={32} className="text-primary/20 mb-4" />
-                <p className="text-xl font-medium text-slate-900 leading-relaxed mb-8 italic">
+                <p className="text-xl font-medium text-ink-1 leading-relaxed mb-8 italic">
                   &ldquo;{activeMoment.text}&rdquo;
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-surface-2 shrink-0">
                     <img src={getImageUrl(activeMoment.image) || activeMoment.image} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{activeMoment.user}</p>
+                    <p className="font-semibold text-ink-1">{activeMoment.user}</p>
                     <p className="text-xs text-primary font-medium">{activeMoment.role}</p>
                   </div>
                 </div>
@@ -106,7 +106,7 @@ export default function LifestyleSlider({ content = {} }: {
                     key={i}
                     className={cn(
                       "h-1.5 transition-all duration-500 rounded-full",
-                      i === current ? "w-8 bg-primary" : "w-1.5 bg-slate-200"
+                      i === current ? "w-8 bg-primary" : "w-1.5 bg-surface-3"
                     )}
                   />
                 ))}
@@ -114,13 +114,13 @@ export default function LifestyleSlider({ content = {} }: {
               <div className="flex gap-3">
                 <button
                   onClick={() => setCurrent(prev => (prev - 1 + testimonials.length) % testimonials.length)}
-                  className="w-10 h-10 rounded-full border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-white hover:border-slate-300 transition-all"
+                  className="w-10 h-10 rounded-full border border-surface-2 text-ink-2 flex items-center justify-center hover:bg-surface-0 hover:border-surface-3 transition-all"
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <button
                   onClick={() => setCurrent(prev => (prev + 1) % testimonials.length)}
-                  className="w-10 h-10 rounded-full border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-white hover:border-slate-300 transition-all"
+                  className="w-10 h-10 rounded-full border border-surface-2 text-ink-2 flex items-center justify-center hover:bg-surface-0 hover:border-surface-3 transition-all"
                 >
                   <ChevronRight size={18} />
                 </button>

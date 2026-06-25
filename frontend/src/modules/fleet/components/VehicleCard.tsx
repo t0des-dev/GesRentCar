@@ -54,7 +54,7 @@ export default function VehicleCard({
     >
 
       {/* Image Container */}
-      <div className={cn("relative bg-slate-50 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
+      <div className={cn("relative bg-surface-1 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}

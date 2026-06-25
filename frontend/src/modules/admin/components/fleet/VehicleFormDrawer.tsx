@@ -53,7 +53,7 @@ export default function VehicleFormDrawer({
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }} 
         onClick={onClose}
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100]" 
+        className="fixed inset-0 bg-ink-1/40 backdrop-blur-sm z-[100]" 
       />
 
       {/* Drawer */}
@@ -62,25 +62,25 @@ export default function VehicleFormDrawer({
         animate={{ x: 0 }} 
         exit={{ x: "100%" }} 
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 right-0 w-full md:w-[600px] xl:w-[700px] bg-white shadow-2xl z-[101] flex flex-col"
+        className="fixed inset-y-0 right-0 w-full md:w-[600px] xl:w-[700px] bg-surface-0 shadow-2xl z-[101] flex flex-col"
       >
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
+        <div className="flex items-center justify-between p-6 border-b border-surface-2 bg-surface-0">
           <div>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">{vehicle?.id ? "Modifier l'actif" : "Nouvel Actif"}</h3>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-1">{vehicle?.brand} {vehicle?.model}</p>
+            <h3 className="text-xl font-black text-ink-1 tracking-tight">{vehicle?.id ? "Modifier l'actif" : "Nouvel Actif"}</h3>
+            <p className="text-xs font-semibold uppercase tracking-wider text-ink-3 mt-1">{vehicle?.brand} {vehicle?.model}</p>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 transition-colors rounded-xl">
+          <button onClick={onClose} className="p-2 text-ink-3 hover:text-ink-1 bg-surface-1 hover:bg-surface-2 transition-colors rounded-xl">
             <X size={20} />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex px-6 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex px-6 border-b border-surface-2 bg-surface-1/50">
           {tabs.map(tab => (
             <button 
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors ${activeTab === tab.id ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-700"}`}
+              className={`flex items-center gap-2 px-4 py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors ${activeTab === tab.id ? "border-primary text-primary" : "border-transparent text-ink-2 hover:text-ink-1"}`}
             >
               <tab.icon size={14} />
               {tab.label}
@@ -95,19 +95,19 @@ export default function VehicleFormDrawer({
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Marque</label>
-                    <input required type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.brand} onChange={e => setVehicle({...vehicle, brand: e.target.value})} placeholder="Ex: Mercedes-Benz" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Marque</label>
+                    <input required type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.brand} onChange={e => setVehicle({...vehicle, brand: e.target.value})} placeholder="Ex: Mercedes-Benz" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Modèle</label>
-                    <input required type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.model} onChange={e => setVehicle({...vehicle, model: e.target.value})} placeholder="Ex: Classe S" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Modèle</label>
+                    <input required type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.model} onChange={e => setVehicle({...vehicle, model: e.target.value})} placeholder="Ex: Classe S" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Catégorie</label>
-                    <select className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.category || "standard"} onChange={e => handleCategoryChange(e.target.value)}>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Catégorie</label>
+                    <select className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.category || "standard"} onChange={e => handleCategoryChange(e.target.value)}>
                       <option value="eco">Économique</option>
                       <option value="standard">Standard</option>
                       <option value="suv">SUV / 4x4</option>
@@ -116,15 +116,15 @@ export default function VehicleFormDrawer({
                     </select>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Prix par jour (DH)</label>
-                    <input required type="number" className="input-premium bg-slate-50 border-slate-200 focus:bg-white text-lg font-black text-primary" value={vehicle.price_per_day} onChange={e => setVehicle({...vehicle, price_per_day: e.target.value})} />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Prix par jour (DH)</label>
+                    <input required type="number" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 text-lg font-black text-primary" value={vehicle.price_per_day} onChange={e => setVehicle({...vehicle, price_per_day: e.target.value})} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Carburant</label>
-                    <select className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.fuel_type || "Diesel"} onChange={e => setVehicle({...vehicle, fuel_type: e.target.value})}>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Carburant</label>
+                    <select className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.fuel_type || "Diesel"} onChange={e => setVehicle({...vehicle, fuel_type: e.target.value})}>
                       <option value="Diesel">Diesel</option>
                       <option value="Essence">Essence</option>
                       <option value="Hybride">Hybride</option>
@@ -132,19 +132,19 @@ export default function VehicleFormDrawer({
                     </select>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Boîte / Puissance</label>
-                    <input type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.horsepower || ""} onChange={e => setVehicle({...vehicle, horsepower: e.target.value})} placeholder="Ex: Auto / 250 CV" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Boîte / Puissance</label>
+                    <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.horsepower || ""} onChange={e => setVehicle({...vehicle, horsepower: e.target.value})} placeholder="Ex: Auto / 250 CV" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Année</label>
-                    <input type="number" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.year || ""} onChange={e => setVehicle({...vehicle, year: e.target.value})} placeholder="Ex: 2024" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Année</label>
+                    <input type="number" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.year || ""} onChange={e => setVehicle({...vehicle, year: e.target.value})} placeholder="Ex: 2024" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Couleur</label>
-                    <input type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.color || ""} onChange={e => setVehicle({...vehicle, color: e.target.value})} placeholder="Ex: Noir Obsidienne" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Couleur</label>
+                    <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.color || ""} onChange={e => setVehicle({...vehicle, color: e.target.value})} placeholder="Ex: Noir Obsidienne" />
                   </div>
                 </div>
               </div>
@@ -153,9 +153,9 @@ export default function VehicleFormDrawer({
             {activeTab === "images" && (
               <div className="space-y-8">
                 <div className="flex flex-col gap-3">
-                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Image Principale (Cover)</label>
-                   <div className="flex flex-col items-center gap-4 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                      <div className="w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-white relative group">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Image Principale (Cover)</label>
+                   <div className="flex flex-col items-center gap-4 p-6 bg-surface-1 rounded-2xl border-2 border-dashed border-surface-3">
+                      <div className="w-full aspect-video rounded-xl overflow-hidden border border-surface-3 bg-surface-0 relative group">
                         <Image
                           src={vehicle.new_image ? URL.createObjectURL(vehicle.new_image) : (vehicle.image_url ? getImageUrl(vehicle.image_url) || 'https://placehold.co/800x450?text=Aucune+Image' : 'https://placehold.co/800x450?text=Aucune+Image')}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -163,7 +163,7 @@ export default function VehicleFormDrawer({
                           width={800}
                           height={450}
                         />
-                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="absolute inset-0 bg-ink-1/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                            <button type="button" onClick={() => document.getElementById('main_image')?.click()} className="btn-primary shadow-xl">
                               Remplacer
                            </button>
@@ -182,10 +182,10 @@ export default function VehicleFormDrawer({
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Galerie Complète</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Galerie Complète</label>
                   <div className="grid grid-cols-3 gap-3">
                     {vehicle?.photos?.map((url: string, i: number) => (
-                      <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group">
+                      <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-surface-3 group">
                         <Image src={getImageUrl(url) || url} alt="Gallery" width={200} height={200} className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -200,7 +200,7 @@ export default function VehicleFormDrawer({
                         </button>
                       </div>
                     ))}
-                    <label className="aspect-square border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-primary/5 hover:text-primary transition-all text-slate-400 group">
+                    <label className="aspect-square border-2 border-dashed border-surface-3 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-primary/5 hover:text-primary transition-all text-ink-3 group">
                       <input
                         type="file"
                         multiple
@@ -235,49 +235,49 @@ export default function VehicleFormDrawer({
               <div className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2"><Calendar size={12} /> Immatriculation</label>
-                    <input required type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white font-mono uppercase font-bold text-slate-900" value={vehicle.plate} onChange={e => setVehicle({...vehicle, plate: e.target.value})} placeholder="12345 | A | 1" />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2 flex items-center gap-2"><Calendar size={12} /> Immatriculation</label>
+                    <input required type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 font-mono uppercase font-bold text-ink-1" value={vehicle.plate} onChange={e => setVehicle({...vehicle, plate: e.target.value})} placeholder="12345 | A | 1" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Kilométrage (KM)</label>
-                    <input type="number" className="input-premium bg-slate-50 border-slate-200 focus:bg-white font-mono" value={vehicle.mileage || ""} onChange={e => setVehicle({...vehicle, mileage: e.target.value})} />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Kilométrage (KM)</label>
+                    <input type="number" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 font-mono" value={vehicle.mileage || ""} onChange={e => setVehicle({...vehicle, mileage: e.target.value})} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Statut</label>
-                    <select className="input-premium bg-slate-50 border-slate-200 focus:bg-white font-bold" value={vehicle.status} onChange={e => setVehicle({...vehicle, status: e.target.value})}>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Statut</label>
+                    <select className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 font-bold" value={vehicle.status} onChange={e => setVehicle({...vehicle, status: e.target.value})}>
                       <option value="available" className="text-emerald-600">🟢 Disponible</option>
                       <option value="rented" className="text-blue-600">🔵 En Location</option>
                       <option value="maintenance" className="text-amber-600">🟠 En Maintenance</option>
                     </select>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Appartenance</label>
-                    <select className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.type} onChange={e => setVehicle({...vehicle, type: e.target.value})}>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Appartenance</label>
+                    <select className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.type} onChange={e => setVehicle({...vehicle, type: e.target.value})}>
                       <option value="internal">Flotte Interne (Vectoria)</option>
                       <option value="collaborator">Partenaire / Investisseur</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-900 flex items-center gap-2 mb-4">
+                <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-4">
                      <ShieldCheck size={16} className="text-primary" /> Validité Papiers
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Assurance</label>
-                      <input type="date" className="input-premium bg-white border-slate-200 h-10 px-3 text-xs" value={vehicle.insurance_date || ""} onChange={e => setVehicle({...vehicle, insurance_date: e.target.value})} />
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Assurance</label>
+                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.insurance_date || ""} onChange={e => setVehicle({...vehicle, insurance_date: e.target.value})} />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Visite Tech.</label>
-                      <input type="date" className="input-premium bg-white border-slate-200 h-10 px-3 text-xs" value={vehicle.tech_inspection_date || ""} onChange={e => setVehicle({...vehicle, tech_inspection_date: e.target.value})} />
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Visite Tech.</label>
+                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.tech_inspection_date || ""} onChange={e => setVehicle({...vehicle, tech_inspection_date: e.target.value})} />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Vignette</label>
-                      <input type="date" className="input-premium bg-white border-slate-200 h-10 px-3 text-xs" value={vehicle.vignette_date || ""} onChange={e => setVehicle({...vehicle, vignette_date: e.target.value})} />
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Vignette</label>
+                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.vignette_date || ""} onChange={e => setVehicle({...vehicle, vignette_date: e.target.value})} />
                     </div>
                   </div>
                 </div>
@@ -287,19 +287,19 @@ export default function VehicleFormDrawer({
             {activeTab === "seo" && (
               <div className="space-y-6">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Meta Titre (SEO)</label>
-                  <input type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.seo_title || ""} onChange={e => setVehicle({...vehicle, seo_title: e.target.value})} placeholder="Ex: Louez la Mercedes Classe S à Marrakech | Vectoria" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Meta Titre (SEO)</label>
+                  <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.seo_title || ""} onChange={e => setVehicle({...vehicle, seo_title: e.target.value})} placeholder="Ex: Louez la Mercedes Classe S à Marrakech | Vectoria" />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Meta Description</label>
-                  <textarea className="input-premium bg-slate-50 border-slate-200 focus:bg-white min-h-[100px] py-3" value={vehicle.seo_description || ""} onChange={e => setVehicle({...vehicle, seo_description: e.target.value})} placeholder="Ex: Profitez du luxe ultime avec notre Mercedes Classe S..." />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Meta Description</label>
+                  <textarea className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 min-h-[100px] py-3" value={vehicle.seo_description || ""} onChange={e => setVehicle({...vehicle, seo_description: e.target.value})} placeholder="Ex: Profitez du luxe ultime avec notre Mercedes Classe S..." />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">URL Image (WhatsApp / Facebook)</label>
-                  <input type="text" className="input-premium bg-slate-50 border-slate-200 focus:bg-white" value={vehicle.og_image_url || ""} onChange={e => setVehicle({...vehicle, og_image_url: e.target.value})} placeholder="Lien direct vers l'image OpenGraph" />
-                  <p className="text-[10px] text-slate-400">Si laissé vide, la plateforme utilisera l'image principale automatiquement.</p>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">URL Image (WhatsApp / Facebook)</label>
+                  <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.og_image_url || ""} onChange={e => setVehicle({...vehicle, og_image_url: e.target.value})} placeholder="Lien direct vers l'image OpenGraph" />
+                  <p className="text-[10px] text-ink-3">Si laissé vide, la plateforme utilisera l'image principale automatiquement.</p>
                 </div>
               </div>
             )}
@@ -308,9 +308,9 @@ export default function VehicleFormDrawer({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100 bg-white mt-auto">
+        <div className="p-6 border-t border-surface-2 bg-surface-0 mt-auto">
           <div className="flex items-center justify-end gap-3">
-             <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-50 transition-colors">
+             <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl font-bold text-sm text-ink-2 hover:bg-surface-1 transition-colors">
                Annuler
              </button>
              <button
