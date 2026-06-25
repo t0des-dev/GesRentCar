@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { hexToHsl } from "@/shared/utils";
+import { hexToHsl, hexToHslLight, hexToHslDark } from "@/shared/utils";
 import api from "@/shared/services/client";
 import { useEffect, useMemo } from "react";
 import type { SectionsContent } from "@/types/storefront";
@@ -371,7 +371,13 @@ export function useAgency() {
     const root = document.documentElement;
 
     if (config.primary_color) {
-      root.style.setProperty("--primary", hexToHsl(config.primary_color));
+      const hsl = hexToHsl(config.primary_color);
+      root.style.setProperty("--primary", hsl);
+      root.style.setProperty("--accent", hsl);
+      root.style.setProperty("--ring", hsl);
+      root.style.setProperty("--gold", hsl);
+      root.style.setProperty("--gold-light", hexToHslLight(config.primary_color, 35));
+      root.style.setProperty("--gold-dark", hexToHslDark(config.primary_color, 12));
     }
     if (config.theme_config?.border_radius) {
       root.style.setProperty("--radius", config.theme_config.border_radius);

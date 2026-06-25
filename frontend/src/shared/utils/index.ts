@@ -45,3 +45,23 @@ export function hexToHsl(hex: string): string {
 
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }
+
+/**
+ * Returns a lighter variant of a hex color (HSL format)
+ * Used for light backgrounds, tints, hover states
+ */
+export function hexToHslLight(hex: string, lighten: number = 40): string {
+  const hsl = hexToHsl(hex);
+  const [h, s, l] = hsl.split(' ').map(v => parseInt(v));
+  return `${h} ${s}% ${Math.min(95, l + lighten)}%`;
+}
+
+/**
+ * Returns a darker variant of a hex color (HSL format)
+ * Used for dark backgrounds, hover states, shadows
+ */
+export function hexToHslDark(hex: string, darken: number = 15): string {
+  const hsl = hexToHsl(hex);
+  const [h, s, l] = hsl.split(' ').map(v => parseInt(v));
+  return `${h} ${s}% ${Math.max(5, l - darken)}%`;
+}
