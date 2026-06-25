@@ -109,8 +109,14 @@ const translations = {
     cat_compact: "Compacte",
     cat_luxury: "Luxe",
     cat_internal: "Interne",
+    cat_collaborator: "Collaborateur",
+    cat_economy: "Économique",
+    cat_utility: "Utilitaire",
+    cat_standard: "Standard",
     trans_automatic: "Automatique",
+    trans_automatique: "Automatique",
     trans_manual: "Manuelle",
+    trans_manuelle: "Manuelle",
 
     // Contact Page
     contact_title: "Contactez-nous",
@@ -260,8 +266,14 @@ const translations = {
     cat_compact: "Compact",
     cat_luxury: "Luxury",
     cat_internal: "Internal",
+    cat_collaborator: "Collaborator",
+    cat_economy: "Economy",
+    cat_utility: "Utility",
+    cat_standard: "Standard",
     trans_automatic: "Automatic",
+    trans_automatique: "Automatic",
     trans_manual: "Manual",
+    trans_manuelle: "Manual",
 
     // Contact Page
     contact_title: "Contact Us",
@@ -411,8 +423,14 @@ const translations = {
     cat_compact: "مدمجة",
     cat_luxury: "فاخرة",
     cat_internal: "داخلي",
+    cat_collaborator: "شريك",
+    cat_economy: "اقتصادي",
+    cat_utility: "خدمة",
+    cat_standard: "قياسي",
     trans_automatic: "أوتوماتيك",
+    trans_automatique: "أوتوماتيك",
     trans_manual: "يدوي",
+    trans_manuelle: "يدوي",
 
     // Contact Page
     contact_title: "اتصل بنا",
