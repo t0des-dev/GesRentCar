@@ -175,7 +175,7 @@ export default function VehicleCard({
         </div>
 
         {/* Actions — Compare & Reserve */}
-        <div className="flex items-center gap-2 mt-auto pt-2">
+        <div className="flex items-center gap-2.5 mt-auto pt-3">
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -185,23 +185,25 @@ export default function VehicleCard({
             variant={isSelected ? "gold" : "outline"}
             size="sm"
             className={cn(
-              "text-[10px] sm:text-xs font-bold uppercase tracking-wider",
-              !isSelected && "bg-surface-1 text-ink-2 border-border hover:border-gold hover:text-gold hover:bg-gold/5"
+              "h-9 px-3.5 rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all duration-300",
+              isSelected
+                ? "bg-gold text-white border-gold shadow-md shadow-gold/20 hover:shadow-lg hover:shadow-gold/30"
+                : "bg-surface-0 text-ink-3 border-border hover:border-gold/50 hover:text-gold hover:bg-gold/5 hover:shadow-md hover:shadow-gold/10"
             )}
           >
-            {isSelected && <Check size={14} />}
+            {isSelected && <Check size={13} strokeWidth={3} />}
             {t("compare") || "Compare"}
           </Button>
 
           <Button
             variant="gold"
             size="sm"
-            className="flex-1 text-xs font-bold uppercase tracking-wider group-hover:shadow-lg transition-all"
+            className="flex-1 h-9 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
             asChild
           >
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-1.5">
               Réserver
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
             </span>
           </Button>
         </div>
