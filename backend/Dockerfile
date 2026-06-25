@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libwebp-dev \
     libfreetype6-dev \
-    postgresql-client
+    postgresql-client \
+    procps
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
