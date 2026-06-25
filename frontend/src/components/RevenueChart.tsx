@@ -23,7 +23,7 @@ const RevenueChart = memo(function RevenueChart({ data }: { data: RevenueData[] 
 
   return (
     <div style={{ width: '100%', height: 300, marginTop: '1rem' }}>
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
           <XAxis 

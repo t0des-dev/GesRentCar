@@ -8,11 +8,11 @@ services:
     container_name: gesrentcar-backend
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep php-fpm | grep -q grep || exit 1"]
+      test: ["CMD-SHELL", "pgrep php-fpm > /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     volumes:
       - ./backend/storage:/var/www/storage
     environment:
