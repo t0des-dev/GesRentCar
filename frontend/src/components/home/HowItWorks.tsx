@@ -28,7 +28,7 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
       ];
 
   return (
-    <section className="py-24 bg-white" aria-labelledby="how-it-works-heading">
+    <section className="py-24 bg-surface-0" aria-labelledby="how-it-works-heading">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <motion.p
@@ -58,8 +58,8 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
                 {num}
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 mb-1.5">{title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed max-w-xs">{desc}</p>
+                <h3 className="font-bold text-ink-1 mb-1.5">{title}</h3>
+                <p className="text-sm text-ink-2 leading-relaxed max-w-xs">{desc}</p>
               </div>
             </motion.div>
           ))}

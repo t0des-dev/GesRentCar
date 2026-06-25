@@ -26,7 +26,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
   return (
     <section className={cn(
       heightClass, "border-y relative overflow-hidden",
-      isDark ? "bg-slate-950 border-slate-800/50" : "bg-white border-slate-100"
+      isDark ? "bg-ink-1 border-ink-2/50" : "bg-surface-0 border-surface-2"
     )}>
       {isDark && (
         <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dcbp6v7p3/image/upload/v1714859000/grain_texture_w4f4q4.png')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
@@ -56,7 +56,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                 {IconComponent && (
                   <div className={cn(
                     "mb-4 p-3 rounded-2xl transition-all duration-300",
-                    isDark ? "bg-slate-900 group-hover:bg-slate-800" : "bg-slate-50 group-hover:bg-slate-100"
+                    isDark ? "bg-ink-2 group-hover:bg-ink-3" : "bg-surface-1 group-hover:bg-surface-2"
                   )}>
                     <IconComponent className={colorClass} size={24} />
                   </div>
@@ -64,7 +64,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                 <p 
                   className={cn(
                     sizeClass, "font-bold mb-2 tracking-tight transition-colors duration-300",
-                    isDark ? "text-white group-hover:text-primary-100" : "text-slate-900 group-hover:text-primary-900"
+                    isDark ? "text-white group-hover:text-primary-100" : "text-ink-1 group-hover:text-primary-900"
                   )}
                   style={{ color: textColor || undefined }}
                 >
@@ -72,7 +72,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                 </p>
                 <p className={cn(
                   "text-[10px] md:text-xs font-semibold uppercase tracking-wider",
-                  isDark ? "text-slate-500" : "text-slate-500"
+                  "text-ink-2"
                 )}>
                   {s.label}
                 </p>

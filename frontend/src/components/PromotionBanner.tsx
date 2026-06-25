@@ -28,9 +28,9 @@ export default function PromotionBanner({ content = {} }: PromotionBannerProps) 
   const footer_items = content?.footer_items || ["Paiement sécurisé", "Conciergerie 24/7"];
 
   return (
-    <section className="py-24 bg-slate-950 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-950" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+    <section className="py-24 bg-ink-1 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-ink-1 via-ink-1 to-ink-1" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
@@ -41,7 +41,7 @@ export default function PromotionBanner({ content = {} }: PromotionBannerProps) 
             className="inline-flex items-center gap-2.5 px-4 py-2 bg-white/5 rounded-full border border-white/10 mb-8"
           >
             <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink-3">
               {badge}
             </span>
           </motion.div>
@@ -62,7 +62,7 @@ export default function PromotionBanner({ content = {} }: PromotionBannerProps) 
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-base md:text-lg text-slate-400 leading-relaxed max-w-lg mx-auto mb-10"
+            className="text-base md:text-lg text-ink-3 leading-relaxed max-w-lg mx-auto mb-10"
           >
             {description}
           </motion.p>
@@ -81,7 +81,7 @@ export default function PromotionBanner({ content = {} }: PromotionBannerProps) 
               {cta_text}
               <ArrowRight size={16} />
             </Link>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-2">
               {side_note}
             </span>
           </motion.div>
@@ -91,12 +91,12 @@ export default function PromotionBanner({ content = {} }: PromotionBannerProps) 
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="flex items-center justify-center gap-8 mt-12 pt-12 border-t border-slate-800/50"
+            className="flex items-center justify-center gap-8 mt-12 pt-12 border-t border-border/50"
           >
             {footer_items.map((item, idx) => (
               <div key={idx} className="flex items-center gap-3">
-                {idx === 0 ? <Shield size={18} className="text-slate-600" /> : <Award size={18} className="text-slate-600" />}
-                <span className="text-xs text-slate-500">{item}</span>
+                {idx === 0 ? <Shield size={18} className="text-ink-4" /> : <Award size={18} className="text-ink-4" />}
+                <span className="text-xs text-ink-2">{item}</span>
               </div>
             ))}
           </motion.div>

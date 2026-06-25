@@ -38,7 +38,7 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
         )}
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/60" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink-1 via-ink-1/40 to-ink-1/60" />
 
       {heroVideo && (
         <button

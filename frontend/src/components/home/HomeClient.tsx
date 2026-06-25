@@ -48,7 +48,7 @@ function SectionSkeleton({ id, className }: { id?: string; className?: string })
   const height = className ?? SECTION_SKELETON_HEIGHTS[id ?? ""] ?? "h-96";
   return (
     <div
-      className={`bg-slate-100 animate-pulse rounded-2xl ${height}`}
+      className={`bg-surface-2 animate-pulse rounded-2xl ${height}`}
       role="presentation"
       aria-hidden="true"
     />

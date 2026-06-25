@@ -84,7 +84,7 @@ export default function HeroSearchForm({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-[calc(100%+8px)] left-0 w-full bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden z-50 shadow-2xl"
+                  className="absolute top-[calc(100%+8px)] left-0 w-full bg-ink-1/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden z-50 shadow-2xl"
                 >
                   <div className="p-2 space-y-1">
                     {PREDEFINED_LOCATIONS.map((loc) => (

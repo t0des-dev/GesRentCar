@@ -48,7 +48,7 @@ export default function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950 will-change-transform"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-ink-1 will-change-transform"
       style={{ minHeight: "100dvh" }}
     >
       <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03] bg-[url('https://res.cloudinary.com/dcbp6v7p3/image/upload/v1714859000/grain_texture_w4f4q4.png')] mix-blend-overlay" />

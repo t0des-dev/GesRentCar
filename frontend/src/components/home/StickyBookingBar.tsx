@@ -48,19 +48,19 @@ export default function StickyBookingBar({
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
         >
-          <div className="bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-4 py-3">
+          <div className="bg-ink-1/95 backdrop-blur-xl border-t border-border px-4 py-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex-1 flex items-center gap-2.5 bg-slate-800 rounded-xl px-4 py-3 text-slate-400 text-sm"
+                className="flex-1 flex items-center gap-2.5 bg-ink-2 rounded-xl px-4 py-3 text-ink-3 text-sm"
               >
                 <MapPin size={16} className="text-primary shrink-0" />
                 <span className="truncate text-white/70">{location || placeholder}</span>
                 {startDate && (
                   <>
-                    <span className="text-slate-600">|</span>
+                    <span className="text-ink-4">|</span>
                     <Calendar size={14} className="text-primary/60 shrink-0" />
-                    <span className="truncate text-xs text-slate-400">
+                    <span className="truncate text-xs text-ink-3">
                       {new Date(startDate).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
                       {endDate && ` - ${new Date(endDate).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}`}
                     </span>
@@ -87,18 +87,18 @@ export default function StickyBookingBar({
                   className="overflow-hidden"
                 >
                   <div className="pt-4 pb-2 space-y-3">
-                    <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-3 bg-ink-2 rounded-xl px-4 py-3">
                       <MapPin size={16} className="text-primary shrink-0" />
                       <input
                         type="text"
                         placeholder={placeholder}
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="bg-transparent text-white text-sm w-full focus:outline-none placeholder:text-slate-500"
+                        className="bg-transparent text-white text-sm w-full focus:outline-none placeholder:text-ink-3"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-ink-2 rounded-xl px-4 py-3">
                         <Calendar size={16} className="text-primary/60 shrink-0" />
                         <input
                           type="date"
@@ -108,7 +108,7 @@ export default function StickyBookingBar({
                           className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
                         />
                       </div>
-                      <div className="flex items-center gap-3 bg-slate-800 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 bg-ink-2 rounded-xl px-4 py-3">
                         <Calendar size={16} className="text-primary/60 shrink-0" />
                         <input
                           type="date"

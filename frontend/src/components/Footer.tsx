@@ -196,7 +196,7 @@ export default function Footer() {
                 </Button>
               </form>
               {subscribeStatus === "success" && (
-                <p className="text-xs text-emerald-600 font-medium">✓ Merci de votre inscription !</p>
+                <p className="text-xs text-success font-medium">✓ Merci de votre inscription !</p>
               )}
             </div>
           </div>

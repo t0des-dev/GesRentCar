@@ -17,7 +17,7 @@ export default function CtaBanner({ content = {} }: CtaBannerProps) {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 bg-slate-950 relative overflow-hidden border-t border-slate-800/50" aria-labelledby="cta-heading">
+    <section className="py-24 bg-ink-1 relative overflow-hidden border-t border-ink-1/50" aria-labelledby="cta-heading">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
       <div className="container mx-auto px-6 text-center relative z-10">
@@ -27,7 +27,7 @@ export default function CtaBanner({ content = {} }: CtaBannerProps) {
         <h2 id="cta-heading" className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
           {t("cta_title")}
         </h2>
-        <p className="text-base text-slate-400 max-w-md mx-auto mb-10 leading-relaxed">
+        <p className="text-base text-ink-3 max-w-md mx-auto mb-10 leading-relaxed">
           {t("cta_desc")}
         </p>
         <Button asChild variant="default" size="lg" className="rounded-full px-8 py-6 h-auto text-xs">
