@@ -91,7 +91,7 @@ export default function ExpensesPage() {
   if (checking) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Verification de la session...</p>
+      <p className="text-ink-3 font-black uppercase text-[10px] tracking-widest">Verification de la session...</p>
     </div>
   );
 
@@ -109,9 +109,9 @@ export default function ExpensesPage() {
             <div className="w-10 h-10 rounded-lg bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
               <Wallet size={20} className="text-primary" strokeWidth={2} />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">Tresorerie</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-ink-1 tracking-tight">Tresorerie</h1>
           </div>
-          <p className="text-slate-500 text-lg font-light">Suivez, analysez et gerez toutes les depenses de votre flotte.</p>
+          <p className="text-ink-2 text-lg font-light">Suivez, analysez et gerez toutes les depenses de votre flotte.</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -130,17 +130,17 @@ export default function ExpensesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="card-premium bg-gradient-to-br from-slate-900 to-slate-800 text-white p-7 flex flex-col justify-between"
+          className="card-premium bg-gradient-to-br from-ink-1 to-ink-2 text-white p-7 flex flex-col justify-between"
         >
           <div className="flex items-center gap-3 mb-5">
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
               <TrendingUp size={18} className="text-primary" />
             </div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total depenses</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Total depenses</h3>
           </div>
           <div>
-            <p className="text-4xl font-black tracking-tight">{fmt(totalAmount)} <span className="text-lg font-bold text-slate-500">DH</span></p>
-            <p className="text-xs text-slate-400 mt-3">Periode selectionnee &middot; {filteredExpenses.length} depenses</p>
+            <p className="text-4xl font-black tracking-tight">{fmt(totalAmount)} <span className="text-lg font-bold text-ink-2">DH</span></p>
+            <p className="text-xs text-ink-3 mt-3">Periode selectionnee &middot; {filteredExpenses.length} depenses</p>
           </div>
         </motion.div>
 
@@ -155,17 +155,17 @@ export default function ExpensesPage() {
             <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
               <AlertTriangle size={18} className="text-red-500" />
             </div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Plus grosse depense</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Plus grosse depense</h3>
           </div>
           <div className="min-h-[60px] flex flex-col justify-center">
             {highestExpense ? (
               <>
-                <p className="text-lg font-bold text-slate-900 truncate">{highestExpense.title}</p>
+                <p className="text-lg font-bold text-ink-1 truncate">{highestExpense.title}</p>
                 <p className="text-2xl font-black text-red-500 mt-1">{fmt(Number(highestExpense.amount))} DH</p>
-                <p className="text-xs text-slate-400 mt-2">{new Date(highestExpense.expense_date).toLocaleDateString('fr-FR')} &middot; {categoriesCount} categories</p>
+                <p className="text-xs text-ink-3 mt-2">{new Date(highestExpense.expense_date).toLocaleDateString('fr-FR')} &middot; {categoriesCount} categories</p>
               </>
             ) : (
-              <p className="text-sm text-slate-400 italic">Aucune donnee</p>
+              <p className="text-sm text-ink-3 italic">Aucune donnee</p>
             )}
           </div>
         </motion.div>
@@ -186,13 +186,13 @@ export default function ExpensesPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.4 }}
-        className="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-2 mb-8 items-center"
+        className="bg-surface-0 rounded-2xl p-2 shadow-sm border border-surface-2 flex flex-col md:flex-row gap-2 mb-8 items-center"
       >
-        <div className="flex-1 flex items-center gap-3 px-4 w-full h-12 border-b md:border-b-0 md:border-r border-slate-100">
-          <Search size={18} className="text-slate-400 shrink-0" />
+        <div className="flex-1 flex items-center gap-3 px-4 w-full h-12 border-b md:border-b-0 md:border-r border-surface-2">
+          <Search size={18} className="text-ink-3 shrink-0" />
           <input
             type="text"
-            className="w-full bg-transparent border-none focus:outline-none text-sm font-semibold text-slate-900 placeholder:text-slate-400"
+            className="w-full bg-transparent border-none focus:outline-none text-sm font-semibold text-ink-1 placeholder:text-ink-3"
             placeholder="Rechercher une depense..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -202,15 +202,15 @@ export default function ExpensesPage() {
         <div className="flex items-center gap-2 px-2 w-full md:w-auto">
           <input
             type="month"
-            className="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-100 text-slate-700 text-xs font-bold h-10 px-4 rounded-xl outline-none cursor-pointer transition-colors"
+            className="appearance-none bg-surface-1 hover:bg-surface-2 border border-surface-2 text-ink-1 text-xs font-bold h-10 px-4 rounded-xl outline-none cursor-pointer transition-colors"
             value={monthFilter}
             onChange={e => setMonthFilter(e.target.value)}
           />
 
           <div className="relative group flex items-center">
-            <Filter size={14} className="absolute left-3 text-slate-400 group-hover:text-primary transition-colors pointer-events-none" />
+            <Filter size={14} className="absolute left-3 text-ink-3 group-hover:text-primary transition-colors pointer-events-none" />
             <select
-              className="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider h-10 pl-9 pr-8 rounded-xl outline-none cursor-pointer transition-colors w-full md:w-auto"
+              className="appearance-none bg-surface-1 hover:bg-surface-2 border border-surface-2 text-ink-1 text-xs font-bold uppercase tracking-wider h-10 pl-9 pr-8 rounded-xl outline-none cursor-pointer transition-colors w-full md:w-auto"
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
             >
@@ -238,7 +238,7 @@ export default function ExpensesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
+              <tr className="bg-surface-1 text-[10px] font-black uppercase tracking-widest text-ink-3 border-b border-surface-2">
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Description</th>
                 <th className="px-6 py-4">Categorie</th>
@@ -248,22 +248,22 @@ export default function ExpensesPage() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="text-sm font-medium text-slate-700 divide-y divide-slate-50">
+            <tbody className="text-sm font-medium text-ink-1 divide-y divide-surface-1">
               <AnimatePresence>
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-16 text-center">
                       <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-                      <p className="text-xs text-slate-400 mt-3 uppercase tracking-widest font-semibold">Chargement...</p>
+                      <p className="text-xs text-ink-3 mt-3 uppercase tracking-widest font-semibold">Chargement...</p>
                     </td>
                   </tr>
                 ) : filteredExpenses.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-16 text-center">
-                      <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                        <AlertTriangle size={20} className="text-slate-400" />
+                      <div className="w-12 h-12 rounded-xl bg-surface-2 flex items-center justify-center mx-auto mb-3">
+                        <AlertTriangle size={20} className="text-ink-3" />
                       </div>
-                      <p className="text-sm text-slate-400 italic">Aucune depense trouvee.</p>
+                      <p className="text-sm text-ink-3 italic">Aucune depense trouvee.</p>
                     </td>
                   </tr>
                 ) : (
@@ -273,28 +273,28 @@ export default function ExpensesPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="hover:bg-slate-50/60 transition-colors group"
+                      className="hover:bg-surface-1/60 transition-colors group"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-semibold">
+                      <td className="px-6 py-4 whitespace-nowrap text-ink-2 text-xs font-semibold">
                         {new Date(exp.expense_date).toLocaleDateString('fr-FR')}
                       </td>
-                      <td className="px-6 py-4 font-bold text-slate-900 cursor-pointer hover:text-primary transition-colors" onClick={() => { setCurrentExpense(exp); setShowDrawer(true); }}>
+                      <td className="px-6 py-4 font-bold text-ink-1 cursor-pointer hover:text-primary transition-colors" onClick={() => { setCurrentExpense(exp); setShowDrawer(true); }}>
                         {exp.title}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-surface-2 text-ink-2">
                           {exp.category}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-xs">
                         {exp.vehicle ? (
-                          <span className="font-semibold text-slate-700">{exp.vehicle.brand} {exp.vehicle.model}</span>
+                          <span className="font-semibold text-ink-1">{exp.vehicle.brand} {exp.vehicle.model}</span>
                         ) : (
-                          <span className="text-slate-300">-</span>
+                          <span className="text-ink-4">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 font-black text-slate-900 tabular-nums">
-                        {fmt(Number(exp.amount))} <span className="text-xs font-semibold text-slate-400">DH</span>
+                      <td className="px-6 py-4 font-black text-ink-1 tabular-nums">
+                        {fmt(Number(exp.amount))} <span className="text-xs font-semibold text-ink-3">DH</span>
                       </td>
                       <td className="px-6 py-4">
                         {exp.receipt_url ? (
@@ -302,13 +302,13 @@ export default function ExpensesPage() {
                             <FileText size={14} /> Voir
                           </a>
                         ) : (
-                          <span className="text-slate-300 text-xs">-</span>
+                          <span className="text-ink-4 text-xs">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-right space-x-1">
                         <button
                           onClick={() => handleDelete(exp.id)}
-                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                          className="p-2 text-ink-3 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                         >
                           <Trash2 size={16} />
                         </button>

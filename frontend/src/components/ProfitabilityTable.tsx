@@ -35,7 +35,7 @@ export default function ProfitabilityTable({ data: initialData }: { data?: Vehic
   if (loading) return (
     <div className="p-20 text-center flex flex-col items-center gap-4">
       <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Calcul du ROI en cours...</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">Calcul du ROI en cours...</p>
     </div>
   );
 
@@ -43,35 +43,35 @@ export default function ProfitabilityTable({ data: initialData }: { data?: Vehic
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-slate-100">
-            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Véhicule</th>
-            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Revenus Bruts</th>
-            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Charges (Maint.)</th>
-            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Profit Net</th>
-            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Marge %</th>
+          <tr className="border-b border-surface-2">
+            <th className="px-6 py-4 text-[10px] font-black text-ink-3 uppercase tracking-widest">Véhicule</th>
+            <th className="px-6 py-4 text-[10px] font-black text-ink-3 uppercase tracking-widest text-right">Revenus Bruts</th>
+            <th className="px-6 py-4 text-[10px] font-black text-ink-3 uppercase tracking-widest text-right">Charges (Maint.)</th>
+            <th className="px-6 py-4 text-[10px] font-black text-ink-3 uppercase tracking-widest text-right">Profit Net</th>
+            <th className="px-6 py-4 text-[10px] font-black text-ink-3 uppercase tracking-widest text-right">Marge %</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50">
+        <tbody className="divide-y divide-surface-1">
           {data.map((v, i) => {
             const margin = v.total_revenue > 0 ? (v.net_profit / v.total_revenue) * 100 : 0;
             return (
-              <tr key={v.plate} className="group hover:bg-slate-50 transition-all duration-300">
+              <tr key={v.plate} className="group hover:bg-surface-1 transition-all duration-300">
                 <td className="px-6 py-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-surface-2 flex items-center justify-center text-ink-3 group-hover:text-primary transition-colors">
                       <Car size={18} />
                     </div>
                     <div>
-                      <p className="font-black text-slate-900 tracking-tight leading-none mb-1">{v.brand} {v.model}</p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{v.plate}</p>
+                      <p className="font-black text-ink-1 tracking-tight leading-none mb-1">{v.brand} {v.model}</p>
+                      <p className="text-[10px] text-ink-3 font-bold uppercase tracking-widest">{v.plate}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-6 text-right font-bold text-slate-700">
-                  {fmt(v.total_revenue)} <span className="text-[10px] text-slate-400">DH</span>
+                <td className="px-6 py-6 text-right font-bold text-ink-1">
+                  {fmt(v.total_revenue)} <span className="text-[10px] text-ink-3">DH</span>
                 </td>
                 <td className="px-6 py-6 text-right font-bold text-rose-500/80">
-                  -{fmt(v.total_costs)} <span className="text-[10px] text-slate-300">DH</span>
+                  -{fmt(v.total_costs)} <span className="text-[10px] text-ink-4">DH</span>
                 </td>
                 <td className="px-6 py-6 text-right">
                   <div className={cn(
@@ -85,7 +85,7 @@ export default function ProfitabilityTable({ data: initialData }: { data?: Vehic
                 <td className="px-6 py-6 text-right">
                   <div className={cn(
                     "inline-flex px-3 py-1 rounded-lg text-[10px] font-black tracking-widest uppercase",
-                    margin > 50 ? "bg-emerald-50 text-emerald-600" : margin > 20 ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"
+                    margin > 50 ? "bg-emerald-50 text-emerald-600" : margin > 20 ? "bg-blue-50 text-blue-600" : "bg-surface-2 text-ink-2"
                   )}>
                     {margin.toFixed(1)}%
                   </div>

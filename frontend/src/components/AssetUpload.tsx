@@ -56,7 +56,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
 
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
+      <label className="text-[10px] font-black uppercase tracking-widest text-ink-3 ml-1">{label}</label>
       
       <div 
         onClick={() => fileInputRef.current?.click()}
@@ -66,7 +66,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
         onDrop={handleDrop}
         className={cn(
           "relative group cursor-pointer border-2 border-dashed rounded-[32px] transition-all duration-500 overflow-hidden",
-          dragActive ? "border-primary bg-primary/5" : "border-slate-200 bg-slate-50/50 hover:border-slate-300 hover:bg-slate-50",
+          dragActive ? "border-primary bg-primary/5" : "border-surface-3 bg-surface-1/50 hover:border-surface-3 hover:bg-surface-1",
           currentUrl ? "h-48" : "h-32"
         )}
       >
@@ -81,7 +81,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
         {currentUrl ? (
           <div className="absolute inset-0 w-full h-full">
             <img src={getImageUrl(currentUrl)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Asset" />
-            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-ink-1/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                <Upload className="text-white" size={24} />
                <span className="text-white text-[10px] font-black uppercase tracking-widest">Changer l'image</span>
             </div>
@@ -90,7 +90,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400 group-hover:text-primary transition-colors">
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-ink-3 group-hover:text-primary transition-colors">
             {uploading ? (
               <Loader2 className="animate-spin" size={24} />
             ) : (

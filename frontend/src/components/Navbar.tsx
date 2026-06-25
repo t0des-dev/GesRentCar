@@ -99,7 +99,7 @@ export default function Navbar() {
             {/* Dark Mode Toggle */}
             <div className={cn(
               "transition-all duration-300",
-              isScrolled ? "text-slate-900" : "text-white/75 hover:text-white"
+              isScrolled ? "text-ink-1" : "text-white/75 hover:text-white"
             )}>
               <ThemeToggle />
             </div>
@@ -114,7 +114,7 @@ export default function Navbar() {
             className={cn(
               "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
               isScrolled 
-                ? "bg-slate-100 text-slate-800 hover:bg-slate-200" 
+                ? "bg-surface-2 text-ink-1 hover:bg-surface-3" 
                 : "bg-white/12 text-white hover:bg-white/20 hover:text-white"
             )}
             aria-label="Toggle menu"
@@ -148,7 +148,7 @@ function CurrencySwitcher({
         className={cn(
           "px-3 py-1.5 rounded-lg transition-all duration-300 text-xs font-semibold tracking-wide",
           isScrolled
-            ? "text-slate-900 hover:text-black hover:bg-slate-100 font-semibold"
+            ? "text-ink-1 hover:text-ink-1 hover:bg-surface-2 font-semibold"
             : "text-white/75 hover:text-white hover:bg-white/12"
         )}
       >
@@ -157,7 +157,7 @@ function CurrencySwitcher({
       {currencyOpen && (
         <div className={cn(
           "absolute right-0 mt-2 w-40 rounded-xl overflow-hidden z-[60] shadow-lg border",
-          "bg-white dark:bg-slate-800 border-border-subtle"
+          "bg-surface-0 dark:bg-ink-2 border-border-subtle"
         )}>
           {["MAD", "EUR", "USD"].map((c) => (
             <button
