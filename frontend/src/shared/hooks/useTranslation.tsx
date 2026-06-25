@@ -108,6 +108,7 @@ const translations = {
     cat_sport: "Sport",
     cat_compact: "Compacte",
     cat_luxury: "Luxe",
+    cat_internal: "Interne",
     trans_automatic: "Automatique",
     trans_manual: "Manuelle",
 
@@ -258,6 +259,7 @@ const translations = {
     cat_sport: "Sport",
     cat_compact: "Compact",
     cat_luxury: "Luxury",
+    cat_internal: "Internal",
     trans_automatic: "Automatic",
     trans_manual: "Manual",
 
@@ -408,6 +410,7 @@ const translations = {
     cat_sport: "رياضية",
     cat_compact: "مدمجة",
     cat_luxury: "فاخرة",
+    cat_internal: "داخلي",
     trans_automatic: "أوتوماتيك",
     trans_manual: "يدوي",
 
