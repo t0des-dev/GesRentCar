@@ -1,8 +1,38 @@
 
 services:
+  # Database — starts first, others wait for healthy status
+  db:
+    image: postgres:15-alpine
+    container_name: gesrentcar-db
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d vectoria"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    environment:
+      - POSTGRES_DB=vectoria
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: gesrentcar-redis
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   # Backend API (PHP-FPM)
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: gesrentcar-backend
@@ -12,7 +42,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 30s
+      start_period: 60s
     volumes:
       - ./backend/storage:/var/www/storage
     environment:
@@ -27,8 +57,10 @@ services:
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   # Queue Worker
   worker:
@@ -49,9 +81,10 @@ services:
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
-  # Scheduler (cron tasks: backups, maintenance alerts, abandoned reservations)
+  # Scheduler (cron tasks)
   scheduler:
     build: ./backend
     container_name: gesrentcar-scheduler
@@ -76,7 +109,8 @@ services:
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-eu-west-1}
       - AWS_ENDPOINT=${AWS_ENDPOINT:-}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
   # Frontend (Next.js Standalone)
   frontend:
@@ -86,7 +120,8 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
   # Nginx (Reverse Proxy & Static Server)
   web:
@@ -98,7 +133,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     ports:
       - "8080:80"
     volumes:
@@ -106,26 +141,10 @@ services:
       - ./backend/storage/app/public:/var/www/storage/app/public
       - ./backend/public:/var/www/public
     depends_on:
-      - frontend
-      - backend
-
-  # Database
-  db:
-    image: postgres:15-alpine
-    container_name: gesrentcar-db
-    restart: always
-    environment:
-      - POSTGRES_DB=vectoria
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=secret
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  # Redis
-  redis:
-    image: redis:7-alpine
-    container_name: gesrentcar-redis
-    restart: always
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
 
 volumes:
   pgdata:

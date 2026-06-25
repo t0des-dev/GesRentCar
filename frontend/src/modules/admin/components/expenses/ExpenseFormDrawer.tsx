@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Save, Upload } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Expense, Vehicle } from "@/types/admin";
 import api from "@/shared/services/client";
 import { toast } from "react-hot-toast";
@@ -30,7 +30,6 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
   
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (isOpen) {
       api.get('/vehicles').then(res => {
@@ -38,7 +37,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
       }).catch(console.error);
       
       if (expense) {
-        setFormData({
+        setFormData({ // eslint-disable-line react-hooks/set-state-in-effect
           title: expense.title,
           amount: expense.amount.toString(),
           expense_date: expense.expense_date,
@@ -266,7 +265,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
                             {receiptFile ? receiptFile.name : "Téléverser un fichier"}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-500">PNG, JPG, PDF jusqu'à 5MB</p>
+                        <p className="text-xs text-slate-500">PNG, JPG, PDF jusqu&apos;a 5MB</p>
                       </div>
                     </div>
                   </div>

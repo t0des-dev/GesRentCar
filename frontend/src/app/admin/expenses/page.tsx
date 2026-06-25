@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
-import { Plus, Search, Filter, Trash2, FileText, Download } from "lucide-react";
+import { Plus, Search, Filter, Trash2, FileText } from "lucide-react";
 import api from "@/shared/services/client";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,7 +37,8 @@ export default function ExpensesPage() {
           category: categoryFilter !== 'all' ? categoryFilter : undefined
         }
       });
-      setExpenses(res.data);
+      const raw = res.data;
+      setExpenses(Array.isArray(raw) ? raw : raw?.data ?? []);
     } catch {
       toast.error("Erreur de synchronisation des dépenses.");
     } finally {
@@ -45,9 +46,8 @@ export default function ExpensesPage() {
     }
   }, [monthFilter, categoryFilter]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    if (!checking && user) fetchExpenses();
+    if (!checking && user) fetchExpenses(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [fetchExpenses, checking, user]);
 
   const handleDelete = async (id: number) => {
