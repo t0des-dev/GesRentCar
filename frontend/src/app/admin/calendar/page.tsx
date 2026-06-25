@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import api from "@/shared/services/client";
 
+import { notifyError } from "@/components/Notifications";
+
 // Modular Components
 import CalendarHeader from "@/modules/admin/components/calendar/CalendarHeader";
 import CalendarGrid from "@/modules/admin/components/calendar/CalendarGrid";
@@ -33,7 +35,7 @@ export default function CalendarPage() {
       const [resRes, vehRes] = await Promise.all([api.get('/stats/calendar'), api.get('/vehicles')]);
       setData(resRes.data);
       setVehicles(Array.isArray(vehRes.data) ? vehRes.data : vehRes.data.data || []);
-    } catch { alert("Erreur de chargement."); }
+    } catch { notifyError("Erreur de chargement des donnees."); }
     finally { setLoading(false); }
   };
 
@@ -64,7 +66,7 @@ export default function CalendarPage() {
     try {
       await api.put(`/reservations/${res.id}`, { vehicle_id: targetVehicleId, start_date: newStart.toISOString().split('T')[0], end_date: newEnd.toISOString().split('T')[0] });
       fetchData();
-    } catch (err: any) { alert(err.response?.data?.message || "Conflit de disponibilité."); }
+    } catch (err: any) { notifyError(err.response?.data?.message || "Conflit de disponibilite."); }
   };
 
   if (checking || loading) return (

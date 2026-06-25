@@ -7,6 +7,7 @@ import api from "@/shared/services/client";
 import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 import { useState } from "react";
+import { notifyError } from "@/components/Notifications";
 
 interface VehicleFormDrawerProps {
   vehicle: any;
@@ -216,9 +217,9 @@ export default function VehicleFormDrawer({
                                 headers: { "Content-Type": "multipart/form-data" }
                               });
                               setVehicle({ ...vehicle, photos: res.data.photos });
-                            } catch (err) { alert("Erreur upload photos"); }
+                            } catch (err) { notifyError("Erreur lors de l'upload des photos"); }
                           } else {
-                            alert("Veuillez d'abord sauvegarder le véhicule avant d'ajouter une galerie.");
+                            notifyError("Veuillez d'abord sauvegarder le vehicule avant d'ajouter une galerie.");
                           }
                         }}
                       />

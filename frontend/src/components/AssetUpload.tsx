@@ -5,6 +5,7 @@ import { Upload, ImageIcon, Loader2, CheckCircle2, X } from "lucide-react";
 import api from "@/shared/services/client";
 import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
+import { notifyError } from "@/components/Notifications";
 
 interface AssetUploadProps {
   type: "logo" | "hero" | "favicon";
@@ -31,7 +32,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
       onUploadComplete(res.data.url);
     } catch (err) {
       console.error("Upload error", err);
-      alert("Erreur lors du téléchargement.");
+      notifyError("Erreur lors du telechargement.");
     } finally {
       setUploading(false);
     }

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { X, Wrench } from "lucide-react";
 import { Maintenance, Vehicle } from "@/types/admin";
 import api from "@/shared/services/client";
+import { notifyError } from "@/components/Notifications";
 
 interface MaintenanceModalProps {
   vehicle: Vehicle | null;
@@ -31,7 +32,7 @@ export default function MaintenanceModal({ vehicle, maintenances, onClose, onRef
       });
       onRefresh();
     } catch (err) {
-      alert("Erreur lors de l'enregistrement.");
+      notifyError("Erreur lors de l'enregistrement.");
     }
   };
 

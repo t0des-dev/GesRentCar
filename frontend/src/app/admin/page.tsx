@@ -14,6 +14,7 @@ import FleetCalendar from "@/modules/admin/components/dashboard/FleetCalendar";
 import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationDrawer";
 import MaintenanceAlerts from "@/modules/admin/components/dashboard/MaintenanceAlerts";
 import { PerformanceCharts, PopularModels } from "@/modules/admin/components/dashboard/DashboardAnalytics";
+import { notifyError } from "@/components/Notifications";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
   const handleGenerateContract = async (id: number) => {
     setActionLoading(id);
     try { await api.post(`/reservations/${id}/contract`); await fetchData(); }
-    catch { alert("Erreur génération"); } finally { setActionLoading(null); }
+    catch { notifyError("Erreur lors de la generation du contrat."); } finally { setActionLoading(null); }
   };
 
   const handleExport = () => {

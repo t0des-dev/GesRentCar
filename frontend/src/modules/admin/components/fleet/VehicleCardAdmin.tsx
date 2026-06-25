@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Car, Camera, Star, Fuel, TrendingUp, Edit, Trash2, Loader2, ShieldAlert, Wrench, Activity } from "lucide-react";
 import { cn } from "@/shared/utils";
@@ -8,6 +9,7 @@ import { getImageUrl } from "@/shared/utils/image";
 import { Vehicle } from "@/types/admin";
 import Link from "next/link";
 import api from "@/shared/services/client";
+import { ConfirmDialog } from "@/components/Notifications";
 
 interface VehicleCardAdminProps {
   vehicle: Vehicle;
@@ -33,6 +35,7 @@ export default function VehicleCardAdmin({
 }: VehicleCardAdminProps) {
   const roi = (vehicle.total_revenue || 0) - (vehicle.total_maintenance_cost || 0);
   const isStar = roi > 50000;
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const checkExpiry = (dateStr?: string) => {
     if (!dateStr) return 0;
@@ -47,7 +50,11 @@ export default function VehicleCardAdmin({
   const vigDanger = checkExpiry(vehicle.vignette_date);
 
   const handleKillSwitch = async () => {
-    if (!confirm("Passer ce véhicule en maintenance d'urgence ?")) return;
+    setConfirmOpen(true);
+  };
+
+  const confirmKillSwitch = async () => {
+    setConfirmOpen(false);
     try {
       await api.put(`/vehicles/${vehicle.id}`, { status: 'maintenance' });
       window.location.reload();
@@ -57,6 +64,7 @@ export default function VehicleCardAdmin({
   };
 
   return (
+    <>
     <motion.div
       layout
       initial={{ opacity: 0, y: 30 }}
@@ -215,5 +223,17 @@ export default function VehicleCardAdmin({
         </div>
       </div>
     </motion.div>
+
+    <ConfirmDialog
+      open={confirmOpen}
+      title="Maintenance d'urgence"
+      message="Passer ce vehicule en maintenance d'urgence ?"
+      confirmLabel="Confirmer"
+      cancelLabel="Annuler"
+      variant="warning"
+      onConfirm={confirmKillSwitch}
+      onCancel={() => setConfirmOpen(false)}
+    />
+    </>
   );
 }

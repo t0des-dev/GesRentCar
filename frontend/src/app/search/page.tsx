@@ -4,6 +4,7 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useState, useEffect } from "react";
 import { Search, Calendar, Filter, Loader2, AlertCircle, Car } from "lucide-react";
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
+import { notifyError } from "@/components/Notifications";
 import styles from "./page.module.css";
 
 const API = "http://localhost:8000/api/v1";
@@ -62,7 +63,7 @@ export default function SearchPage() {
 
   const handleSearch = () => {
     if (!startDate || !endDate) {
-      alert("Veuillez sélectionner les dates de début et de fin.");
+      notifyError("Veuillez selectionner les dates de debut et de fin.");
       return;
     }
     fetchVehicles(); // Dans une vraie app, on passerait les dates en query params

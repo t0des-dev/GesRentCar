@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Expense } from "@/types/admin";
 import ExpenseFormDrawer from "@/modules/admin/components/expenses/ExpenseFormDrawer";
 import ExpensesChart from "@/modules/admin/components/expenses/ExpensesChart";
+import { ConfirmDialog } from "@/components/Notifications";
 import { toast } from "react-hot-toast";
 import { fmt } from "@/shared/utils/format";
 
@@ -18,6 +19,9 @@ export default function ExpensesPage() {
   const [loading, setLoading] = useState(true);
   const [showDrawer, setShowDrawer] = useState(false);
   const [currentExpense, setCurrentExpense] = useState<Expense | null>(null);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -51,14 +55,16 @@ export default function ExpensesPage() {
   }, [fetchExpenses, checking, user]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Voulez-vous vraiment supprimer cette depense ?")) return;
-    try {
-      await api.delete(`/expenses/${id}`);
-      toast.success("Depense supprimee.");
-      fetchExpenses();
-    } catch {
-      toast.error("Erreur lors de la suppression.");
-    }
+    setPendingAction(() => async () => {
+      try {
+        await api.delete(`/expenses/${id}`);
+        toast.success("Depense supprimee.");
+        fetchExpenses();
+      } catch {
+        toast.error("Erreur lors de la suppression.");
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const filteredExpenses = useMemo(() => {
@@ -321,6 +327,17 @@ export default function ExpensesPage() {
         onClose={() => setShowDrawer(false)}
         expense={currentExpense}
         onSave={fetchExpenses}
+      />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Supprimer la depense"
+        message="Voulez-vous vraiment supprimer cette depense ?"
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        onConfirm={() => { pendingAction(); setConfirmOpen(false); }}
+        onCancel={() => setConfirmOpen(false)}
       />
     </>
   );

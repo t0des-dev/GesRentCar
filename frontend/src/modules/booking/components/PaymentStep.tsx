@@ -8,6 +8,7 @@ import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 import { CmiCheckout } from "@/modules/payments/components/CmiCheckout";
 import { reservationService } from "@/lib/api/reservations";
 import { motion, AnimatePresence } from "framer-motion";
+import { notifyError } from "@/components/Notifications";
 
 interface PaymentStepProps {
   booking: BookingState;
@@ -60,7 +61,7 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
       onSuccess(res.id);
     } catch (err) {
       console.error("OnSite Reservation Error", err);
-      alert("Une erreur est survenue lors de la réservation.");
+      notifyError("Une erreur est survenue lors de la reservation.");
     } finally {
       setLoading(false);
     }

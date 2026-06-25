@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import api from "@/shared/services/client";
+import { ConfirmDialog, notifyError } from "@/components/Notifications";
 
 // Modular Components
 import UserTable from "./users/UserTable";
@@ -13,6 +14,8 @@ export default function UserManager() {
   const [users, setUsers] = useState<any[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -35,15 +38,16 @@ export default function UserManager() {
       else { await api.post("/users", data); }
       setShowUserModal(false);
       fetchUsers();
-    } catch (err: any) { alert(err.response?.data?.message || "Erreur"); }
+    } catch (err: any) { notifyError(err.response?.data?.message || "Erreur lors de la sauvegarde."); }
     finally { setLoading(false); }
   };
 
   const handleDeleteUser = async (id: number) => {
-    if(confirm('Supprimer cet utilisateur ?')) {
+    setPendingAction(() => async () => {
       try { await api.delete(`/users/${id}`); fetchUsers(); }
-      catch(err: any) { alert(err.response?.data?.message || "Erreur"); }
-    }
+      catch(err: any) { notifyError(err.response?.data?.message || "Erreur lors de la suppression."); }
+    });
+    setConfirmOpen(true);
   };
 
   return (
@@ -73,6 +77,17 @@ export default function UserManager() {
         editingUser={editingUser} 
         onSave={handleSaveUser} 
         loading={loading} 
+      />
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Supprimer l'utilisateur"
+        message="Supprimer cet utilisateur ?"
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        onConfirm={() => { pendingAction(); setConfirmOpen(false); }}
+        onCancel={() => setConfirmOpen(false)}
       />
     </div>
   );

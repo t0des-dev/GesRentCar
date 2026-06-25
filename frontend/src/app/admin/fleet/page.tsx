@@ -6,6 +6,7 @@ import { useAgency } from "@/hooks/useAgency";
 import { Plus } from "lucide-react";
 import api from "@/shared/services/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { ConfirmDialog } from "@/components/Notifications";
 import { toast } from "react-hot-toast";
 
 // Types
@@ -43,6 +44,13 @@ export default function FleetPage() {
   // Notification States
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  // Confirm Dialog States
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmVariant, setConfirmVariant] = useState<"danger" | "warning" | "info">("danger");
 
   const showSuccess = (msg: string) => {
     toast.success(msg);
@@ -105,45 +113,60 @@ export default function FleetPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Voulez-vous vraiment supprimer ce véhicule définitivement ?")) return;
-    setDeletingId(id);
-    try {
-      await api.delete(`/vehicles/${id}`);
-      showSuccess("Véhicule supprimé.");
-      fetchVehicles();
-    } catch {
-      showError("Erreur lors de la suppression.");
-    } finally {
-      setDeletingId(null);
-    }
+    setPendingAction(() => async () => {
+      setDeletingId(id);
+      try {
+        await api.delete(`/vehicles/${id}`);
+        showSuccess("Véhicule supprimé.");
+        fetchVehicles();
+      } catch {
+        showError("Erreur lors de la suppression.");
+      } finally {
+        setDeletingId(null);
+      }
+    });
+    setConfirmTitle("Supprimer le vehicule");
+    setConfirmMessage("Voulez-vous vraiment supprimer ce vehicule definitivement ?");
+    setConfirmVariant("danger");
+    setConfirmOpen(true);
   };
 
   const handleBulkDelete = async () => {
-    if (!confirm(`Supprimer définitivement ${selectedIds.length} véhicule(s) ?`)) return;
-    setLoading(true);
-    try {
-      await Promise.all(selectedIds.map(id => api.delete(`/vehicles/${id}`)));
-      showSuccess(`${selectedIds.length} véhicule(s) supprimé(s).`);
-      setSelectedIds([]);
-      fetchVehicles();
-    } catch {
-      showError("Erreur lors de la suppression de groupe.");
-      setLoading(false);
-    }
+    setPendingAction(() => async () => {
+      setLoading(true);
+      try {
+        await Promise.all(selectedIds.map(id => api.delete(`/vehicles/${id}`)));
+        showSuccess(`${selectedIds.length} véhicule(s) supprimé(s).`);
+        setSelectedIds([]);
+        fetchVehicles();
+      } catch {
+        showError("Erreur lors de la suppression de groupe.");
+        setLoading(false);
+      }
+    });
+    setConfirmTitle("Supprimer les vehicules");
+    setConfirmMessage(`Supprimer definitivement ${selectedIds.length} vehicule(s) ?`);
+    setConfirmVariant("danger");
+    setConfirmOpen(true);
   };
 
   const handleBulkStatusChange = async (newStatus: string) => {
-    if (!confirm(`Changer le statut de ${selectedIds.length} véhicule(s) en ${newStatus} ?`)) return;
-    setLoading(true);
-    try {
-      await Promise.all(selectedIds.map(id => api.put(`/vehicles/${id}`, { status: newStatus })));
-      showSuccess(`Statut mis à jour pour ${selectedIds.length} véhicule(s).`);
-      setSelectedIds([]);
-      fetchVehicles();
-    } catch {
-      showError("Erreur lors de la mise à jour de groupe.");
-      setLoading(false);
-    }
+    setPendingAction(() => async () => {
+      setLoading(true);
+      try {
+        await Promise.all(selectedIds.map(id => api.put(`/vehicles/${id}`, { status: newStatus })));
+        showSuccess(`Statut mis à jour pour ${selectedIds.length} véhicule(s).`);
+        setSelectedIds([]);
+        fetchVehicles();
+      } catch {
+        showError("Erreur lors de la mise à jour de groupe.");
+        setLoading(false);
+      }
+    });
+    setConfirmTitle("Changer le statut");
+    setConfirmMessage(`Changer le statut de ${selectedIds.length} vehicule(s) en ${newStatus} ?`);
+    setConfirmVariant("warning");
+    setConfirmOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -331,6 +354,17 @@ export default function FleetPage() {
           onRefresh={() => { fetchMaintenances(currentVehicle.id); fetchVehicles(); }} 
         />
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title={confirmTitle}
+        message={confirmMessage}
+        confirmLabel="Confirmer"
+        cancelLabel="Annuler"
+        variant={confirmVariant}
+        onConfirm={() => { pendingAction(); setConfirmOpen(false); }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </>
   );
 }

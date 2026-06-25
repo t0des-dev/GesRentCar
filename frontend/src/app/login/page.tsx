@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, UserCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
+import { notifyInfo } from "@/components/Notifications";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -206,7 +207,7 @@ export default function LoginPage() {
                     href="#forgot" 
                     onClick={(e) => { 
                       e.preventDefault(); 
-                      alert("Fonctionnalité de récupération en cours de développement. Veuillez utiliser les comptes de démonstration pour le test."); 
+                      notifyInfo("Fonctionnalite de recuperation en cours de developpement. Veuillez utiliser les comptes de demonstration."); 
                     }} 
                     className="text-xs font-semibold text-gold hover:text-gold-dark hover:underline transition-colors"
                   >

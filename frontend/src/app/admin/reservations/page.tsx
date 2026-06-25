@@ -6,6 +6,7 @@ import api from "@/shared/services/client";
 import { Reservation } from "@/types/admin";
 import { motion } from "framer-motion";
 import { RefreshCw, Download, ClipboardList } from "lucide-react";
+import { notifyError } from "@/components/Notifications";
 
 // Components
 import ReservationsTable from "@/modules/admin/components/dashboard/ReservationsTable";
@@ -61,7 +62,7 @@ export default function ReservationsPage() {
       await fetchData();
     } catch (err) {
       console.error(`Error generating contract for reservation ${id}`, err);
-      alert("Erreur génération");
+      notifyError("Erreur lors de la generation du contrat.");
     } finally {
       setActionLoading(null);
     }
