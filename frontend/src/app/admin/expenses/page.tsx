@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
-import { Plus, Search, Filter, Trash2, FileText } from "lucide-react";
+import { Plus, Search, Filter, Trash2, FileText, Wallet, TrendingUp, AlertTriangle } from "lucide-react";
 import api from "@/shared/services/client";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,7 +40,7 @@ export default function ExpensesPage() {
       const raw = res.data;
       setExpenses(Array.isArray(raw) ? raw : raw?.data ?? []);
     } catch {
-      toast.error("Erreur de synchronisation des dépenses.");
+      toast.error("Erreur de synchronisation des depenses.");
     } finally {
       setLoading(false);
     }
@@ -51,10 +51,10 @@ export default function ExpensesPage() {
   }, [fetchExpenses, checking, user]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Voulez-vous vraiment supprimer cette dépense ?")) return;
+    if (!confirm("Voulez-vous vraiment supprimer cette depense ?")) return;
     try {
       await api.delete(`/expenses/${id}`);
-      toast.success("Dépense supprimée.");
+      toast.success("Depense supprimee.");
       fetchExpenses();
     } catch {
       toast.error("Erreur lors de la suppression.");
@@ -62,8 +62,8 @@ export default function ExpensesPage() {
   };
 
   const filteredExpenses = useMemo(() => {
-    return expenses.filter(e => 
-      e.title.toLowerCase().includes(search.toLowerCase()) || 
+    return expenses.filter(e =>
+      e.title.toLowerCase().includes(search.toLowerCase()) ||
       (e.vehicle && (`${e.vehicle.brand} ${e.vehicle.model}`).toLowerCase().includes(search.toLowerCase())) ||
       (e.notes && e.notes.toLowerCase().includes(search.toLowerCase()))
     );
@@ -78,71 +78,129 @@ export default function ExpensesPage() {
     return filteredExpenses.reduce((max, exp) => Number(exp.amount) > Number(max.amount) ? exp : max, filteredExpenses[0]);
   }, [filteredExpenses]);
 
-  if (checking) return null;
+  const categoriesCount = useMemo(() => {
+    return new Set(filteredExpenses.map(e => e.category)).size;
+  }, [filteredExpenses]);
+
+  if (checking) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Verification de la session...</p>
+    </div>
+  );
 
   return (
     <>
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary mb-2">Trésorerie</p>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Gestion des <span className="italic text-primary">Dépenses</span></h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <button onClick={() => { setCurrentExpense(null); setShowDrawer(true); }} className="btn-primary">
-            <Plus size={16} /> Nouvelle Dépense
-          </button>
-        </div>
-      </header>
-
-      {/* KPIs & Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-1 flex flex-col gap-6">
-          <div className="card-premium bg-slate-900 text-white flex-1 flex flex-col justify-center">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Total des dépenses</h3>
-            <p className="text-4xl font-black">{fmt(totalAmount)} <span className="text-xl font-bold text-slate-500">DH</span></p>
-            <p className="text-xs text-slate-400 mt-2">Pour la période sélectionnée</p>
+      {/* ── Header ── */}
+      <motion.header
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-10"
+      >
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
+              <Wallet size={20} className="text-primary" strokeWidth={2} />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">Tresorerie</h1>
           </div>
-          
-          <div className="card-premium flex-1 flex flex-col justify-center">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Plus grosse dépense</h3>
+          <p className="text-slate-500 text-lg font-light">Suivez, analysez et gerez toutes les depenses de votre flotte.</p>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => { setCurrentExpense(null); setShowDrawer(true); }}
+          className="btn-primary"
+        >
+          <Plus size={16} /> Nouvelle Depense
+        </motion.button>
+      </motion.header>
+
+      {/* ── KPIs & Chart ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        {/* KPI 1 — Total */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="card-premium bg-gradient-to-br from-slate-900 to-slate-800 text-white p-7 flex flex-col justify-between"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+              <TrendingUp size={18} className="text-primary" />
+            </div>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total depenses</h3>
+          </div>
+          <div>
+            <p className="text-4xl font-black tracking-tight">{fmt(totalAmount)} <span className="text-lg font-bold text-slate-500">DH</span></p>
+            <p className="text-xs text-slate-400 mt-3">Periode selectionnee &middot; {filteredExpenses.length} depenses</p>
+          </div>
+        </motion.div>
+
+        {/* KPI 2 — Plus grosse depense */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="card-premium p-7 flex flex-col justify-between"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
+              <AlertTriangle size={18} className="text-red-500" />
+            </div>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Plus grosse depense</h3>
+          </div>
+          <div className="min-h-[60px] flex flex-col justify-center">
             {highestExpense ? (
               <>
-                <p className="text-xl font-bold text-slate-900 truncate">{highestExpense.title}</p>
-                <p className="text-lg font-black text-red-500">{fmt(Number(highestExpense.amount))} DH</p>
-                <p className="text-xs text-slate-500 mt-1">{new Date(highestExpense.expense_date).toLocaleDateString('fr-FR')}</p>
+                <p className="text-lg font-bold text-slate-900 truncate">{highestExpense.title}</p>
+                <p className="text-2xl font-black text-red-500 mt-1">{fmt(Number(highestExpense.amount))} DH</p>
+                <p className="text-xs text-slate-400 mt-2">{new Date(highestExpense.expense_date).toLocaleDateString('fr-FR')} &middot; {categoriesCount} categories</p>
               </>
             ) : (
-              <p className="text-sm text-slate-500 italic">Aucune donnée</p>
+              <p className="text-sm text-slate-400 italic">Aucune donnee</p>
             )}
           </div>
-        </div>
-        
-        <div className="lg:col-span-2">
+        </motion.div>
+
+        {/* Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="lg:col-span-1"
+        >
           <ExpensesChart expenses={filteredExpenses} />
-        </div>
+        </motion.div>
       </div>
 
-      {/* Toolbar */}
-      <div className="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-2 mb-6 items-center">
+      {/* ── Toolbar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-2 mb-8 items-center"
+      >
         <div className="flex-1 flex items-center gap-3 px-4 w-full h-12 border-b md:border-b-0 md:border-r border-slate-100">
           <Search size={18} className="text-slate-400 shrink-0" />
           <input
             type="text"
             className="w-full bg-transparent border-none focus:outline-none text-sm font-semibold text-slate-900 placeholder:text-slate-400"
-            placeholder="Rechercher une dépense..."
+            placeholder="Rechercher une depense..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
-        
+
         <div className="flex items-center gap-2 px-2 w-full md:w-auto">
-          <input 
+          <input
             type="month"
             className="appearance-none bg-slate-50 hover:bg-slate-100 border border-slate-100 text-slate-700 text-xs font-bold h-10 px-4 rounded-xl outline-none cursor-pointer transition-colors"
             value={monthFilter}
             onChange={e => setMonthFilter(e.target.value)}
           />
-          
+
           <div className="relative group flex items-center">
             <Filter size={14} className="absolute left-3 text-slate-400 group-hover:text-primary transition-colors pointer-events-none" />
             <select
@@ -150,10 +208,10 @@ export default function ExpensesPage() {
               value={categoryFilter}
               onChange={e => setCategoryFilter(e.target.value)}
             >
-              <option value="all">Toutes Catégories</option>
+              <option value="all">Toutes Categories</option>
               <option value="fuel">Carburant</option>
               <option value="maintenance">Entretien</option>
-              <option value="parts">Pièces</option>
+              <option value="parts">Pieces</option>
               <option value="insurance">Assurance</option>
               <option value="rent">Loyer</option>
               <option value="salary">Salaires</option>
@@ -162,76 +220,87 @@ export default function ExpensesPage() {
             </select>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* List */}
-      <div className="card-premium p-0 overflow-hidden">
+      {/* ── Table ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="card-premium p-0 overflow-hidden"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
-                <th className="p-4 pl-6">Date</th>
-                <th className="p-4">Description</th>
-                <th className="p-4">Catégorie</th>
-                <th className="p-4">Véhicule</th>
-                <th className="p-4">Montant</th>
-                <th className="p-4">Justificatif</th>
-                <th className="p-4 text-right pr-6">Actions</th>
+                <th className="px-6 py-4">Date</th>
+                <th className="px-6 py-4">Description</th>
+                <th className="px-6 py-4">Categorie</th>
+                <th className="px-6 py-4">Vehicule</th>
+                <th className="px-6 py-4">Montant</th>
+                <th className="px-6 py-4">Justificatif</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="text-sm font-medium text-slate-700 divide-y divide-slate-100">
+            <tbody className="text-sm font-medium text-slate-700 divide-y divide-slate-50">
               <AnimatePresence>
                 {loading ? (
-                   <tr>
-                    <td colSpan={7} className="p-12 text-center">
+                  <tr>
+                    <td colSpan={7} className="px-6 py-16 text-center">
                       <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+                      <p className="text-xs text-slate-400 mt-3 uppercase tracking-widest font-semibold">Chargement...</p>
                     </td>
                   </tr>
                 ) : filteredExpenses.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-12 text-center text-slate-400 italic">Aucune dépense trouvée.</td>
+                    <td colSpan={7} className="px-6 py-16 text-center">
+                      <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                        <AlertTriangle size={20} className="text-slate-400" />
+                      </div>
+                      <p className="text-sm text-slate-400 italic">Aucune depense trouvee.</p>
+                    </td>
                   </tr>
                 ) : (
                   filteredExpenses.map((exp) => (
-                    <motion.tr 
+                    <motion.tr
                       key={exp.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="hover:bg-slate-50/50 transition-colors group"
+                      className="hover:bg-slate-50/60 transition-colors group"
                     >
-                      <td className="p-4 pl-6 whitespace-nowrap text-slate-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-xs font-semibold">
                         {new Date(exp.expense_date).toLocaleDateString('fr-FR')}
                       </td>
-                      <td className="p-4 font-bold text-slate-900 cursor-pointer" onClick={() => { setCurrentExpense(exp); setShowDrawer(true); }}>
+                      <td className="px-6 py-4 font-bold text-slate-900 cursor-pointer hover:text-primary transition-colors" onClick={() => { setCurrentExpense(exp); setShowDrawer(true); }}>
                         {exp.title}
                       </td>
-                      <td className="p-4">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
                           {exp.category}
                         </span>
                       </td>
-                      <td className="p-4 text-xs">
+                      <td className="px-6 py-4 text-xs">
                         {exp.vehicle ? (
-                          <span className="font-semibold">{exp.vehicle.brand} {exp.vehicle.model}</span>
+                          <span className="font-semibold text-slate-700">{exp.vehicle.brand} {exp.vehicle.model}</span>
                         ) : (
-                          <span className="text-slate-400">-</span>
+                          <span className="text-slate-300">-</span>
                         )}
                       </td>
-                      <td className="p-4 font-black text-slate-900">
-                        {fmt(Number(exp.amount))} DH
+                      <td className="px-6 py-4 font-black text-slate-900 tabular-nums">
+                        {fmt(Number(exp.amount))} <span className="text-xs font-semibold text-slate-400">DH</span>
                       </td>
-                      <td className="p-4">
+                      <td className="px-6 py-4">
                         {exp.receipt_url ? (
                           <a href={getImageUrl(exp.receipt_url) || '#'} target="_blank" rel="noreferrer" className="text-primary hover:text-primary-dark inline-flex items-center gap-1 text-xs font-bold">
                             <FileText size={14} /> Voir
                           </a>
                         ) : (
-                          <span className="text-slate-400 text-xs">-</span>
+                          <span className="text-slate-300 text-xs">-</span>
                         )}
                       </td>
-                      <td className="p-4 text-right pr-6 space-x-2">
-                        <button 
+                      <td className="px-6 py-4 text-right space-x-1">
+                        <button
                           onClick={() => handleDelete(exp.id)}
                           className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                         >
@@ -245,9 +314,9 @@ export default function ExpensesPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
 
-      <ExpenseFormDrawer 
+      <ExpenseFormDrawer
         isOpen={showDrawer}
         onClose={() => setShowDrawer(false)}
         expense={currentExpense}

@@ -61,8 +61,8 @@ export default function ExpensesChart({ expenses }: ExpensesChartProps) {
   }
 
   return (
-    <div className="h-64 w-full bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-      <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Répartition des dépenses</h3>
+    <div className="card-premium p-6 h-full flex flex-col">
+      <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Repartition des depenses</h3>
       <div className="flex-1 min-h-0 relative">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -70,9 +70,9 @@ export default function ExpensesChart({ expenses }: ExpensesChartProps) {
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={60}
+              innerRadius={55}
               outerRadius={80}
-              paddingAngle={5}
+              paddingAngle={4}
               dataKey="value"
               stroke="none"
             >
@@ -80,17 +80,17 @@ export default function ExpensesChart({ expenses }: ExpensesChartProps) {
                 <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[entry.key] || CATEGORY_COLORS.other} />
               ))}
             </Pie>
-            <Tooltip 
+            <Tooltip
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               formatter={(value: any) => [`${fmt(value)} DH`, "Montant"]}
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
-            <Legend 
-              verticalAlign="middle" 
+            <Legend
+              verticalAlign="middle"
               align="right"
               layout="vertical"
               iconType="circle"
-              wrapperStyle={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}
+              wrapperStyle={{ fontSize: '11px', fontWeight: 600, color: '#64748b', lineHeight: '24px' }}
             />
           </PieChart>
         </ResponsiveContainer>
