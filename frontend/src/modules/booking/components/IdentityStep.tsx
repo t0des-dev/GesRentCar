@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { cn } from "@/shared/utils";
-import { ScanLine, Camera, Loader2, ShieldCheck, FileText } from "lucide-react";
+import { ScanLine, Loader2, ShieldCheck, QrCode, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookingStepProps } from "@/types/booking";
-import type { BookingClient } from "@/types/booking";
-import { compressImage } from "@/shared/utils/image";
-import DocumentScanOverlay from "./DocumentScanOverlay";
+import ScanSessionQR from "./ScanSessionQR";
 
 interface IdentityStepProps extends BookingStepProps {
   isScanning: boolean;
@@ -16,70 +14,34 @@ interface IdentityStepProps extends BookingStepProps {
 
 export default function IdentityStep({ booking, update, isScanning, setIsScanning }: IdentityStepProps) {
   const [scanSuccess, setScanSuccess] = useState(false);
-  const [overlayType, setOverlayType] = useState<"cin" | "license" | null>(null);
+  const [showQR, setShowQR] = useState(false);
 
-  const handleFileScan = async (file: File, type: "cin" | "license") => {
-    setIsScanning(true);
-    setScanSuccess(false);
+  const handleScanComplete = useCallback((data: {
+    name?: string;
+    cin?: string;
+    licenseNumber?: string;
+    cinImageUrl?: string;
+    licenseImageUrl?: string;
+  }) => {
+    update("client", {
+      ...booking.client,
+      name: data.name || booking.client.name,
+      cin: data.cin || booking.client.cin,
+      licenseNumber: data.licenseNumber || booking.client.licenseNumber,
+      cinImageUrl: data.cinImageUrl || booking.client.cinImageUrl,
+      licenseImageUrl: data.licenseImageUrl || booking.client.licenseImageUrl,
+    });
 
-    const maxFileSize = 5 * 1024 * 1024;
-    if (file.size > maxFileSize) {
-      console.error("OCR Error: File too large (max 5MB)");
-      setIsScanning(false);
-      setOverlayType(null);
-      return;
-    }
+    setTimeout(() => {
+      update("client", { ...booking.client, verified: true });
+    }, 1500);
 
-    const compressed = await compressImage(file);
-    const formData = new FormData();
-    formData.append("image", compressed);
-    formData.append("type", type);
-
-    try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-      const token = typeof window !== "undefined" ? localStorage.getItem("vectoria_token") : null;
-      const res = await fetch(`${apiBase}/ocr/scan`, {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
-      if (!res.ok) {
-        console.error("OCR Error: Server responded with status", res.status);
-        return;
-      }
-      const data = await res.json();
-
-      if (data.success && data.data) {
-        update("client", {
-          ...booking.client,
-          name: data.data.name || booking.client.name,
-          cin: type === "cin" ? (data.data.id_number || booking.client.cin) : booking.client.cin,
-          licenseNumber: type === "license" ? (data.data.license_number || booking.client.licenseNumber) : booking.client.licenseNumber,
-          cinImageUrl: type === "cin" ? (data.data.image_url || booking.client.cinImageUrl) : booking.client.cinImageUrl,
-          licenseImageUrl: type === "license" ? (data.data.image_url || booking.client.licenseImageUrl) : booking.client.licenseImageUrl,
-        });
-
-        if (type === "cin" || type === "license") {
-          setTimeout(() => {
-            update("client", { ...booking.client, verified: true });
-          }, 2000);
-        }
-
-        setScanSuccess(true);
-        setTimeout(() => setScanSuccess(false), 3000);
-      }
-    } catch (err) {
-      console.error("OCR Error", err);
-    } finally {
-      setIsScanning(false);
-      setOverlayType(null);
-    }
-  };
-
-  const scanners = [
-    { type: "cin" as const, label: "Scanner CIN", icon: FileText, field: "cinImageUrl" },
-    { type: "license" as const, label: "Scanner Permis", icon: Camera, field: "licenseImageUrl" },
-  ];
+    setScanSuccess(true);
+    setTimeout(() => {
+      setScanSuccess(false);
+      setShowQR(false);
+    }, 3000);
+  }, [booking.client, update]);
 
   return (
     <div className="space-y-8">
@@ -94,48 +56,94 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
           />
         )}
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="max-w-md text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
-              <ScanLine size={14} />
-              <span className="text-xs font-semibold uppercase tracking-wider">IA Smart Verification</span>
-            </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">
-              Vérification <span className="text-primary">Instantanée</span>
-            </h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Activez votre caméra et cadrez votre document. L&apos;IA extrait vos données automatiquement.
-            </p>
-          </div>
+        <div className="relative z-10">
+          {/* Intro text */}
+          {!showQR && !scanSuccess && (
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="max-w-md text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
+                  <ScanLine size={14} />
+                  <span className="text-xs font-semibold uppercase tracking-wider">IA Smart Verification</span>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">
+                  Vérification <span className="text-primary">Instantanée</span>
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  Scannez vos documents depuis votre téléphone. Le formulaire se remplit automatiquement.
+                </p>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            {scanners.map((scanner) => (
               <motion.button
-                key={scanner.type}
                 type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => setShowQR(true)}
                 disabled={isScanning}
-                onClick={() => setOverlayType(scanner.type)}
                 className={cn(
-                  "flex flex-col items-center gap-3 px-8 py-6 rounded-2xl font-semibold transition-all border text-center min-w-[180px]",
+                  "flex flex-col items-center gap-3 px-10 py-8 rounded-2xl font-semibold transition-all border text-center min-w-[220px]",
                   isScanning ? "bg-slate-200 text-slate-500 border-transparent cursor-not-allowed" :
-                  (booking.client[scanner.field as keyof BookingClient]) ? "bg-emerald-500 text-white border-emerald-400" :
-                  "bg-white text-slate-900 border-slate-200 hover:border-primary/50"
+                  "bg-white text-slate-900 border-slate-200 hover:border-primary/50 hover:shadow-md"
                 )}
               >
-                <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                  (booking.client[scanner.field as keyof BookingClient]) ? "bg-white/20" : "bg-slate-50"
-                )}>
-                  {isScanning ? <Loader2 className="animate-spin" size={20}/> : <scanner.icon size={20}/>}
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <QrCode size={28} className="text-primary" />
                 </div>
-                <span className="text-xs uppercase tracking-wider">
-                  {(booking.client[scanner.field as keyof BookingClient]) ? `${scanner.label} OK` : scanner.label}
-                </span>
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-wider">Scanner depuis le téléphone</p>
+                  <p className="text-[10px] text-slate-400 mt-1">CIN & Permis en un scan</p>
+                </div>
               </motion.button>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {/* QR Code display */}
+          <AnimatePresence mode="wait">
+            {showQR && !scanSuccess && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Smartphone size={16} className="text-primary" />
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                      Scannez ce QR code avec votre téléphone
+                    </p>
+                  </div>
+
+                  <ScanSessionQR onComplete={handleScanComplete} />
+
+                  <button
+                    onClick={() => setShowQR(false)}
+                    className="mt-4 text-xs text-slate-400 font-semibold underline hover:text-slate-600 transition-colors"
+                  >
+                    Utiliser la caméra de cet appareil
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Success badge */}
+          <AnimatePresence>
+            {scanSuccess && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex flex-col items-center gap-4 py-8"
+              >
+                <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <ShieldCheck size={32} className="text-white" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-bold text-emerald-600 uppercase tracking-wider">Documents reçus !</p>
+                  <p className="text-xs text-slate-400 mt-1">Formulaire pré-rempli automatiquement</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Identity Verified Badge */}
@@ -165,7 +173,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
       <div className="bg-white p-10 rounded-3xl border border-slate-100/80 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 relative">
         <div className="md:col-span-2 mb-2">
           <h4 className="text-xl font-bold text-slate-900 tracking-tight">Informations Personnelles</h4>
-          <p className="text-sm text-slate-400 mt-1">Veuillez vérifier ou compléter les champs ci-dessous.</p>
+          <p className="text-sm text-slate-400 mt-1">Vérifiez ou complétez les champs ci-dessous.</p>
         </div>
 
         {[
@@ -195,17 +203,6 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
           </div>
         ))}
       </div>
-
-      {/* Fullscreen Scan Overlay */}
-      <DocumentScanOverlay
-        open={overlayType !== null}
-        onClose={() => setOverlayType(null)}
-        onCapture={(file) => {
-          if (overlayType) handleFileScan(file, overlayType);
-        }}
-        scanning={isScanning}
-        title={overlayType === "cin" ? "Carte Nationale d'Identité" : "Permis de Conduire"}
-      />
     </div>
   );
 }

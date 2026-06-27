@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\OcrController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\ScanSessionController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
@@ -93,6 +94,10 @@ $apiRoutes = function () {
 
         // Public storage files (images, etc.)
         Route::get('/storage/{path...}', [DocumentController::class, 'serve']);
+
+        // Cross-device scan: phone uploads (no auth, token-based)
+        Route::get('/scan-sessions/{token}/status', [ScanSessionController::class, 'phoneShow']);
+        Route::post('/scan-sessions/{token}/upload', [ScanSessionController::class, 'upload']);
     });
 
     // ─── Stripe (rate limited: 10 req/min per IP) ──────────────────────────────
@@ -139,6 +144,10 @@ $apiRoutes = function () {
 
         Route::post('/ocr/scan', [OcrController::class, 'scan']);
         Route::post('/ocr/analyze-damage', [OcrController::class, 'analyzeDamage']);
+
+        // Cross-device scan sessions (desktop creates, polls)
+        Route::post('/scan-sessions', [ScanSessionController::class, 'store']);
+        Route::get('/scan-sessions/{session}', [ScanSessionController::class, 'show']);
 
         // Fleet Management
         Route::post('/vehicles', [VehicleController::class, 'store']);
