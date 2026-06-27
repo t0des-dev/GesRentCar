@@ -30,11 +30,12 @@ services:
       retries: 5
       start_period: 10s
 
-  # Backend API (PHP-FPM)
+  # Backend API (PHP-FPM + Tesseract OCR)
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: backend
     container_name: gesrentcar-backend
     restart: always
     healthcheck:
@@ -62,9 +63,11 @@ services:
       redis:
         condition: service_healthy
 
-  # Queue Worker
+  # Queue Worker (no Tesseract)
   worker:
-    build: ./backend
+    build:
+      context: ./backend
+      target: base
     container_name: gesrentcar-worker
     restart: always
     command: php artisan queue:work --tries=3 --timeout=90
@@ -84,9 +87,11 @@ services:
       backend:
         condition: service_healthy
 
-  # Scheduler (cron tasks)
+  # Scheduler (cron tasks, no Tesseract)
   scheduler:
-    build: ./backend
+    build:
+      context: ./backend
+      target: base
     container_name: gesrentcar-scheduler
     restart: always
     command: >
