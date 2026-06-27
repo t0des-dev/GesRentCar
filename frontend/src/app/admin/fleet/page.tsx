@@ -18,6 +18,7 @@ import VehicleCardAdmin from "@/modules/admin/components/fleet/VehicleCardAdmin"
 import VehicleFormDrawer from "@/modules/admin/components/fleet/VehicleFormDrawer";
 import MaintenanceModal from "@/modules/admin/components/fleet/MaintenanceModal";
 import FleetKPIs from "@/modules/admin/components/fleet/FleetKPIs";
+import FleetDisplaySettings from "@/modules/admin/components/fleet/FleetDisplaySettings";
 
 export default function FleetPage() {
   const { user, checking } = useAuthGuard("admin");
@@ -281,6 +282,8 @@ export default function FleetPage() {
           </button>
         </div>
       </header>
+
+      <FleetDisplaySettings className="mb-8" />
 
       <FleetKPIs 
         total={vehicles.length}

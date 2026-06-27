@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useCallback } from "react";
+import { useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2, ArrowUpDown } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
@@ -20,13 +20,31 @@ import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
 import { motion } from "framer-motion";
 import { cn } from "@/shared/utils";
 
-const PAGE_SIZE = 6;
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_COLUMNS = 4;
+
+function getFleetSettings() {
+  if (typeof window === "undefined") return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
+  try {
+    const raw = localStorage.getItem("vrc_fleet_settings");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        pageSize: parsed.pageSize || DEFAULT_PAGE_SIZE,
+        columns: parsed.columns || DEFAULT_COLUMNS,
+      };
+    }
+  } catch {}
+  return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
+}
 
 function FleetContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
+
+  const fleetSettings = useMemo(() => getFleetSettings(), []);
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
@@ -44,7 +62,7 @@ function FleetContent() {
   const {
     sorted, isLoading, loadMore, hasMore
   } = useFleetData({
-    pageSize: PAGE_SIZE,
+    pageSize: fleetSettings.pageSize,
     search,
     filters,
     sortBy,
@@ -176,6 +194,7 @@ function FleetContent() {
               onLoadMore={loadMore}
               onQuickView={setQuickViewVehicle}
               layoutView={layoutView}
+              columns={fleetSettings.columns}
             />
           </div>
         </div>

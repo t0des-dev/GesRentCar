@@ -14,7 +14,15 @@ interface FleetGridProps {
   onLoadMore: () => void;
   onQuickView: (vehicle: Vehicle) => void;
   layoutView?: "grid" | "list";
+  columns?: number;
 }
+
+const COL_CLASSES: Record<number, string> = {
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+  5: "lg:grid-cols-5",
+};
 
 export default function FleetGrid({ 
   vehicles, 
@@ -22,7 +30,8 @@ export default function FleetGrid({
   hasMore,
   onLoadMore, 
   onQuickView,
-  layoutView = "grid"
+  layoutView = "grid",
+  columns = 4
 }: FleetGridProps) {
   const { t } = useTranslation();
 
@@ -45,7 +54,7 @@ export default function FleetGrid({
     <div className="flex-1">
 
       {loading && vehicles.length === 0 ? (
-        <div className={cn("grid gap-8", layoutView === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1")}>
+        <div className={cn("grid gap-8", layoutView === "grid" ? `grid-cols-1 md:grid-cols-2 ${COL_CLASSES[columns] || "lg:grid-cols-4"}` : "grid-cols-1")}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className={cn(
               "bg-slate-50/50 backdrop-blur-sm rounded-[1.5rem] animate-pulse border border-slate-100",
@@ -57,7 +66,7 @@ export default function FleetGrid({
         </div>
       ) : vehicles.length > 0 ? (
         <div className="space-y-16">
-          <div className={cn("grid gap-8 lg:gap-10", layoutView === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr" : "grid-cols-1")}>
+          <div className={cn("grid gap-8 lg:gap-10", layoutView === "grid" ? `grid-cols-1 md:grid-cols-2 ${COL_CLASSES[columns] || "lg:grid-cols-4"} auto-rows-fr` : "grid-cols-1")}>
             <AnimatePresence mode="popLayout">
               {vehicles.map((v, idx) => (
                   <motion.div
