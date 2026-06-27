@@ -49,6 +49,29 @@ export default function VehicleDashboardPage() {
   const isCollab = vehicle.type === 'collaborator';
   const collabCommission = isCollab ? totalRev * (Number(vehicle.commission_rate || 0) / 100) : 0;
 
+  const events = [
+    ...(vehicle.reservations || []).map(r => ({
+      id: `res-${r.id}`,
+      date: new Date(r.start_date),
+      type: "reservation",
+      title: `Réservation Réf: ${r.id}`,
+      description: `${new Date(r.start_date).toLocaleDateString()} ➔ ${new Date(r.end_date).toLocaleDateString()}`,
+      status: r.status,
+      costOrRev: Number(r.total_price),
+      isRevenue: true
+    })),
+    ...(vehicle.maintenances || []).map(m => ({
+      id: `maint-${m.id}`,
+      date: m.date ? new Date(m.date) : new Date(),
+      type: "maintenance",
+      title: `Entretien: ${m.type}`,
+      description: m.description,
+      status: "completed",
+      costOrRev: Number(m.cost),
+      isRevenue: false
+    }))
+  ].sort((a, b) => b.date.getTime() - a.date.getTime());
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-12">
       {/* HEADER */}
@@ -139,90 +162,89 @@ export default function VehicleDashboardPage() {
           </div>
         </div>
 
-        {/* COL 2 & 3: TIMELINE & MAINTENANCE */}
+        {/* COL 2 & 3: UNIFIED TIMELINE / ACTIVITY HISTORY */}
         <div className="xl:col-span-2 flex flex-col gap-6">
           
-          {/* GANTT / RESERVATIONS */}
-          <div className="bg-surface-0 rounded-2xl border-2 border-border p-6 shadow-sm flex-1">
-             <div className="flex items-center justify-between mb-6">
+          <div className="bg-surface-0 rounded-2xl border-2 border-border p-6 shadow-sm flex flex-col flex-1">
+             <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/50">
                <div className="flex items-center gap-2">
-                 <CalendarIcon className="text-primary" size={20} />
-                 <h3 className="text-lg font-black text-ink-1">Calendrier des Réservations</h3>
+                 <Activity className="text-primary" size={20} />
+                 <h3 className="text-lg font-black text-ink-1">Historique d'Activité Unifié</h3>
                </div>
-               <span className="px-3 py-1 bg-surface-1 text-ink-2 rounded text-xs font-bold">
-                 {vehicle.reservations?.length || 0} Réservations
-               </span>
+               <div className="flex gap-2">
+                 <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg text-xs font-bold">
+                   {vehicle.reservations?.length || 0} Rés.
+                 </span>
+                 <span className="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-lg text-xs font-bold">
+                   {vehicle.maintenances?.length || 0} Ent.
+                 </span>
+               </div>
              </div>
 
-             <div className="space-y-3">
-               {vehicle.reservations && vehicle.reservations.length > 0 ? (
-                  vehicle.reservations.map((res) => (
-                   <div key={res.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-surface-1 hover:border-primary/30 transition-colors">
-                     <div className="mb-2 sm:mb-0">
-                       <span className="text-[10px] font-bold uppercase text-ink-3 block mb-1">
-                         {new Date(res.start_date).toLocaleDateString()} ➔ {new Date(res.end_date).toLocaleDateString()}
-                       </span>
-                       <span className="text-sm font-black text-ink-1">Réf: {res.id}</span>
-                     </div>
-                     <div className="flex items-center gap-4">
-                       <span className={cn(
-                         "px-2 py-1 rounded text-[10px] font-bold uppercase",
-                         res.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                         res.status === 'ongoing' ? 'bg-blue-100 text-blue-700' :
-                         'bg-amber-100 text-amber-700'
-                       )}>{res.status}</span>
-                       <span className="text-sm font-black text-primary">{fmt(res.total_price)} DH</span>
-                     </div>
-                   </div>
-                 ))
+             <div className="relative pl-6 border-l-2 border-border/60 space-y-8 ml-2 flex-1">
+               {events.length > 0 ? (
+                  events.map((evt) => {
+                    const Icon = evt.type === "reservation" ? CalendarIcon : Wrench;
+                    return (
+                      <div key={evt.id} className="relative group">
+                        {/* Timeline Bullet */}
+                        <div className={cn(
+                          "absolute -left-[35px] top-1 w-5 h-5 rounded-full flex items-center justify-center border-2 bg-white transition-colors group-hover:scale-110",
+                          evt.isRevenue ? "border-emerald-500 text-emerald-600" : "border-amber-500 text-amber-600"
+                        )}>
+                          <Icon size={10} strokeWidth={2.5} />
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-surface-1 hover:border-primary/30 transition-all">
+                          <div className="mb-2 sm:mb-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] font-black uppercase text-ink-3">
+                                {evt.date.toLocaleDateString()}
+                              </span>
+                              <span className={cn(
+                                "px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider",
+                                evt.isRevenue ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                              )}>
+                                {evt.type}
+                              </span>
+                            </div>
+                            <h4 className="text-sm font-black text-ink-1">{evt.title}</h4>
+                            <p className="text-xs text-ink-3 mt-1">{evt.description}</p>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 self-end sm:self-center">
+                            {evt.type === "reservation" && (
+                              <span className={cn(
+                                "px-2 py-0.5 rounded text-[9px] font-bold uppercase",
+                                evt.status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
+                                evt.status === 'ongoing' ? 'bg-blue-50 text-blue-700' :
+                                'bg-amber-50 text-amber-700'
+                              )}>{evt.status}</span>
+                            )}
+                            <span className={cn(
+                              "text-sm font-black",
+                              evt.isRevenue ? "text-emerald-600" : "text-red-600"
+                            )}>
+                              {evt.isRevenue ? "+" : "-"}{fmt(evt.costOrRev)} DH
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
                ) : (
                  <div className="p-8 text-center text-ink-3 italic text-sm border-2 border-dashed border-border rounded-xl">
-                   Aucune réservation pour ce véhicule.
-                 </div>
-               )}
-             </div>
-          </div>
-
-          {/* MAINTENANCES & OCR LINK */}
-          <div className="bg-surface-0 rounded-2xl border-2 border-border p-6 shadow-sm flex-1">
-             <div className="flex items-center justify-between mb-6">
-               <div className="flex items-center gap-2">
-                 <Wrench className="text-amber-500" size={20} />
-                 <h3 className="text-lg font-black text-ink-1">Historique d'Entretien</h3>
-               </div>
-               <span className="px-3 py-1 bg-surface-1 text-ink-2 rounded text-xs font-bold">
-                 {vehicle.maintenances?.length || 0} Interventions
-               </span>
-             </div>
-
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               {vehicle.maintenances && vehicle.maintenances.length > 0 ? (
-                  vehicle.maintenances.map((m) => (
-                   <div key={m.id} className="p-4 rounded-xl border border-border bg-surface-1 flex flex-col justify-between">
-                     <div>
-                       <span className="text-[10px] font-bold uppercase text-amber-600 mb-1 block">{m.type}</span>
-                       <p className="text-sm font-bold text-ink-1 mb-2 line-clamp-2">{m.description}</p>
-                        <span className="text-xs text-ink-3">{m.date ? new Date(m.date).toLocaleDateString() : "N/A"} • {m.mileage ?? "N/A"} KM</span>
-                     </div>
-                     <div className="mt-4 pt-3 border-t border-border/50 text-right">
-                       <span className="text-sm font-black text-red-600">-{fmt(m.cost)} DH</span>
-                     </div>
-                   </div>
-                 ))
-               ) : (
-                 <div className="col-span-full p-8 text-center text-ink-3 italic text-sm border-2 border-dashed border-border rounded-xl">
-                   Aucun entretien enregistré.
+                   Aucune activité enregistrée pour ce véhicule.
                  </div>
                )}
              </div>
 
-             <div className="mt-6 pt-6 border-t border-border flex justify-end">
-               <button className="h-10 px-6 rounded-xl border-2 border-border text-ink-2 text-xs font-bold uppercase tracking-wider hover:bg-surface-1 flex items-center gap-2 transition">
+             <div className="mt-8 pt-6 border-t border-border flex justify-end">
+               <button className="h-10 px-6 rounded-xl border-2 border-border text-ink-2 text-xs font-bold uppercase tracking-wider hover:bg-surface-1 flex items-center gap-2 transition cursor-pointer">
                  <ImageIcon size={14} /> Voir les constats & Dommages (OCR)
                </button>
              </div>
           </div>
-
         </div>
       </div>
     </motion.div>

@@ -39,10 +39,9 @@ export default function VehicleFormDrawer({
   };
 
   const tabs = [
-    { id: "general", label: "Informations", icon: Info },
+    { id: "general", label: "Informations & SEO", icon: Info },
     { id: "images", label: "Galerie", icon: Car },
     { id: "admin", label: "Administration", icon: ShieldCheck },
-    { id: "seo", label: "SEO & Partage", icon: Globe },
   ];
 
   return (
@@ -74,13 +73,14 @@ export default function VehicleFormDrawer({
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex px-6 border-b border-surface-2 bg-surface-1/50">
+        {/* Tabs - Pill Layout */}
+        <div className="flex gap-2 px-6 py-3 border-b border-surface-2 bg-surface-1/30">
           {tabs.map(tab => (
             <button 
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors ${activeTab === tab.id ? "border-primary text-primary" : "border-transparent text-ink-2 hover:text-ink-1"}`}
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition-all rounded-xl ${activeTab === tab.id ? "bg-primary text-white shadow-md shadow-primary/10" : "bg-transparent text-ink-3 hover:text-ink-1 hover:bg-surface-2"}`}
             >
               <tab.icon size={14} />
               {tab.label}
@@ -145,6 +145,24 @@ export default function VehicleFormDrawer({
                   <div className="flex flex-col gap-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Couleur</label>
                     <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.color || ""} onChange={e => setVehicle({...vehicle, color: e.target.value})} placeholder="Ex: Noir Obsidienne" />
+                  </div>
+                </div>
+
+                <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4 mt-6">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-2">
+                     <Globe size={16} className="text-primary" /> Configuration SEO & Référencement
+                  </h4>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Meta Titre (SEO)</label>
+                    <input type="text" className="input-premium bg-surface-0 border-surface-3 focus:bg-surface-0" value={vehicle.seo_title || ""} onChange={e => setVehicle({...vehicle, seo_title: e.target.value})} placeholder="Ex: Louez la Mercedes Classe S à Marrakech | Vectoria" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Meta Description</label>
+                    <textarea className="input-premium bg-surface-0 border-surface-3 focus:bg-surface-0 min-h-[80px] py-2" value={vehicle.seo_description || ""} onChange={e => setVehicle({...vehicle, seo_description: e.target.value})} placeholder="Ex: Profitez du luxe ultime avec notre Mercedes Classe S..." />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">URL Image OpenGraph (WhatsApp / Facebook)</label>
+                    <input type="text" className="input-premium bg-surface-0 border-surface-3 focus:bg-surface-0" value={vehicle.og_image_url || ""} onChange={e => setVehicle({...vehicle, og_image_url: e.target.value})} placeholder="Lien direct vers l'image de partage" />
                   </div>
                 </div>
               </div>
@@ -262,47 +280,31 @@ export default function VehicleFormDrawer({
                   </div>
                 </div>
 
-                <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-4">
-                     <ShieldCheck size={16} className="text-primary" /> Validité Papiers
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Assurance</label>
-                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.insurance_date || ""} onChange={e => setVehicle({...vehicle, insurance_date: e.target.value})} />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Visite Tech.</label>
-                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.tech_inspection_date || ""} onChange={e => setVehicle({...vehicle, tech_inspection_date: e.target.value})} />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Vignette</label>
-                      <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.vignette_date || ""} onChange={e => setVehicle({...vehicle, vignette_date: e.target.value})} />
+                {vehicle.type !== "collaborator" && (
+                  <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-4">
+                       <ShieldCheck size={16} className="text-primary" /> Validité Papiers
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Assurance</label>
+                        <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.insurance_date || ""} onChange={e => setVehicle({...vehicle, insurance_date: e.target.value})} />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Visite Tech.</label>
+                        <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.tech_inspection_date || ""} onChange={e => setVehicle({...vehicle, tech_inspection_date: e.target.value})} />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-ink-2">Vignette</label>
+                        <input type="date" className="input-premium bg-surface-0 border-surface-3 h-10 px-3 text-xs" value={vehicle.vignette_date || ""} onChange={e => setVehicle({...vehicle, vignette_date: e.target.value})} />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
-            {activeTab === "seo" && (
-              <div className="space-y-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Meta Titre (SEO)</label>
-                  <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.seo_title || ""} onChange={e => setVehicle({...vehicle, seo_title: e.target.value})} placeholder="Ex: Louez la Mercedes Classe S à Marrakech | Vectoria" />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">Meta Description</label>
-                  <textarea className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0 min-h-[100px] py-3" value={vehicle.seo_description || ""} onChange={e => setVehicle({...vehicle, seo_description: e.target.value})} placeholder="Ex: Profitez du luxe ultime avec notre Mercedes Classe S..." />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-ink-2">URL Image (WhatsApp / Facebook)</label>
-                  <input type="text" className="input-premium bg-surface-1 border-surface-3 focus:bg-surface-0" value={vehicle.og_image_url || ""} onChange={e => setVehicle({...vehicle, og_image_url: e.target.value})} placeholder="Lien direct vers l'image OpenGraph" />
-                  <p className="text-[10px] text-ink-3">Si laissé vide, la plateforme utilisera l'image principale automatiquement.</p>
-                </div>
-              </div>
-            )}
+            {/* SEO section has been merged with General tab */}
 
           </form>
         </div>

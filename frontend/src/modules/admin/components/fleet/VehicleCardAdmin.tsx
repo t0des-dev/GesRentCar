@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Car, Camera, Star, Fuel, TrendingUp, Edit, Trash2, Loader2, ShieldAlert, Wrench, Activity } from "lucide-react";
+import { Car, Camera, Star, Fuel, TrendingUp, Edit, Trash2, Loader2, ShieldAlert, Wrench, Activity, MoreVertical } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
 import { getImageUrl } from "@/shared/utils/image";
@@ -36,6 +36,7 @@ export default function VehicleCardAdmin({
   const roi = (vehicle.total_revenue || 0) - (vehicle.total_maintenance_cost || 0);
   const isStar = roi > 50000;
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const checkExpiry = (dateStr?: string) => {
     if (!dateStr) return 0;
@@ -48,6 +49,12 @@ export default function VehicleCardAdmin({
   const insDanger = checkExpiry(vehicle.insurance_date);
   const techDanger = checkExpiry(vehicle.tech_inspection_date);
   const vigDanger = checkExpiry(vehicle.vignette_date);
+
+  const maxDanger = Math.max(insDanger, techDanger, vigDanger);
+  const insExpDate = vehicle.insurance_date ? new Date(vehicle.insurance_date).toLocaleDateString() : "Non renseignée";
+  const vigExpDate = vehicle.vignette_date ? new Date(vehicle.vignette_date).toLocaleDateString() : "Non renseignée";
+  const techExpDate = vehicle.tech_inspection_date ? new Date(vehicle.tech_inspection_date).toLocaleDateString() : "Non renseignée";
+  const paperTooltip = `Assurance: ${insExpDate}\nVignette: ${vigExpDate}\nContrôle Tech: ${techExpDate}`;
 
   const handleKillSwitch = async () => {
     setConfirmOpen(true);
@@ -72,7 +79,7 @@ export default function VehicleCardAdmin({
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: idx * 0.05, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "bg-surface-0 rounded-2xl border-2 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative",
+        "bg-surface-0 rounded-2xl border-2 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group relative",
         isSelected ? "border-primary shadow-primary/20" : "border-border/60 hover:border-primary/50"
       )}
     >
@@ -134,27 +141,25 @@ export default function VehicleCardAdmin({
            <Camera size={24} className="text-white drop-shadow-md" />
         </label>
 
-        {/* Health Rings at the bottom of the image */}
+        {/* Unified paper status badge at the bottom of the image */}
         <div className="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between">
             <div className="text-white">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 block drop-shadow-md">{vehicle.category || 'EXCELLENCE'}</span>
                 <h3 className="text-2xl font-black drop-shadow-lg">{vehicle.brand} <span className="text-primary font-bold italic">{vehicle.model}</span></h3>
             </div>
             <div className="flex gap-2">
-                {[
-                  { label: "ASS", val: insDanger },
-                  { label: "VIG", val: vigDanger },
-                  { label: "V.T", val: techDanger }
-                ].map((ring, i) => (
-                    <div key={i} className="flex flex-col items-center justify-center gap-1">
-                        <div className="w-6 h-6 rounded-full border-[3px] flex items-center justify-center bg-black/50 backdrop-blur-sm" style={{ 
-                            borderColor: ring.val > 80 ? '#ef4444' : ring.val > 40 ? '#f59e0b' : '#10b981'
-                        }}>
-                            {ring.val > 80 && <ShieldAlert size={10} className="text-white" />}
-                        </div>
-                        <span className="text-[7px] font-bold text-white/90 drop-shadow-md">{ring.label}</span>
-                    </div>
-                ))}
+                <div 
+                    title={paperTooltip}
+                    className={cn(
+                        "px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 backdrop-blur-md shadow-md border cursor-help transition-all",
+                        maxDanger > 80 ? "bg-red-500/90 text-white border-red-400" :
+                        maxDanger > 40 ? "bg-amber-500/90 text-white border-amber-400" :
+                        "bg-emerald-500/90 text-white border-emerald-400"
+                    )}
+                >
+                    <ShieldAlert size={12} />
+                    Papiers
+                </div>
             </div>
         </div>
       </div>
@@ -187,7 +192,7 @@ export default function VehicleCardAdmin({
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4 border-t border-border mt-auto">
+        <div className="flex gap-3 pt-4 border-t border-border mt-auto items-center relative">
            <Link href={`/admin/fleet/${vehicle.id}`} className="flex-1">
              <motion.button
                whileHover={{ scale: 1.02 }}
@@ -198,28 +203,53 @@ export default function VehicleCardAdmin({
                 Dashboard
              </motion.button>
            </Link>
-           <motion.button
-             whileHover={{ scale: 1.02 }}
-             whileTap={{ scale: 0.97 }}
-             className="w-11 h-11 rounded-xl flex items-center justify-center text-[10px] font-bold uppercase tracking-wider border-2 border-border bg-surface-0 text-ink-2 hover:bg-ink-1 hover:text-surface-0 hover:border-ink-1 transition-colors cursor-pointer flex-none"
-             onClick={() => onEdit(vehicle)}
-             title="Éditer le véhicule"
-           >
-              <Edit size={14} />
-           </motion.button>
-           <motion.button
-             whileHover={{ scale: 1.02 }}
-             whileTap={{ scale: 0.97 }}
-             className={cn(
-               "w-11 h-11 rounded-xl flex items-center justify-center text-[10px] font-bold uppercase tracking-wider border-2 cursor-pointer transition-colors flex-none",
-               "bg-red-50 border-red-200 text-red-600 hover:bg-red-600 hover:border-red-600 hover:text-white"
+           
+           <div className="relative flex-none">
+             <motion.button
+               whileHover={{ scale: 1.02 }}
+               whileTap={{ scale: 0.97 }}
+               className={cn(
+                 "w-11 h-11 rounded-xl flex items-center justify-center border-2 border-border bg-surface-0 text-ink-2 hover:bg-surface-1 transition-colors cursor-pointer",
+                 menuOpen ? "bg-surface-2 border-ink-1 text-ink-1" : ""
+               )}
+               onClick={() => setMenuOpen(!menuOpen)}
+               title="Plus d'actions"
+             >
+                <MoreVertical size={16} />
+             </motion.button>
+
+             {menuOpen && (
+               <>
+                 <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+                 <div className="absolute right-0 bottom-full mb-2 bg-white border border-border shadow-xl rounded-xl p-2 w-48 z-40 flex flex-col gap-1">
+                    <button
+                      onClick={() => { onEdit(vehicle); setMenuOpen(false); }}
+                      className="flex items-center gap-2.5 w-full px-3 py-2.5 hover:bg-surface-1 text-[11px] font-bold uppercase tracking-wider text-ink-2 hover:text-ink-1 rounded-lg transition-colors text-left"
+                    >
+                      <Edit size={13} />
+                      Éditer l'actif
+                    </button>
+                    {vehicle.status !== 'maintenance' && (
+                      <button
+                        onClick={() => { handleKillSwitch(); setMenuOpen(false); }}
+                        className="flex items-center gap-2.5 w-full px-3 py-2.5 hover:bg-amber-50 text-[11px] font-bold uppercase tracking-wider text-amber-600 hover:text-amber-700 rounded-lg transition-colors text-left"
+                      >
+                        <ShieldAlert size={13} />
+                        Maintenance d'urgence
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { onDelete(vehicle.id!); setMenuOpen(false); }}
+                      disabled={deletingId === vehicle.id}
+                      className="flex items-center gap-2.5 w-full px-3 py-2.5 hover:bg-red-50 text-[11px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 rounded-lg transition-colors text-left disabled:opacity-55"
+                    >
+                      {deletingId === vehicle.id ? <Loader2 className="animate-spin" size={13} /> : <Trash2 size={13} />}
+                      Supprimer l'actif
+                    </button>
+                 </div>
+               </>
              )}
-             onClick={() => onDelete(vehicle.id!)}
-             disabled={deletingId === vehicle.id}
-             title="Supprimer"
-           >
-             {deletingId === vehicle.id ? <Loader2 className="animate-spin" size={14} /> : <Trash2 size={14} />}
-           </motion.button>
+           </div>
         </div>
       </div>
     </motion.div>
