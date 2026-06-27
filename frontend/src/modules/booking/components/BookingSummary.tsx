@@ -7,6 +7,7 @@ import { ShieldCheck, Info, Calendar, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { PRICING_OPTIONS } from "@/lib/config/pricing";
 import { fmt } from "@/shared/utils/format";
+import { Loader2 } from "lucide-react";
 
 interface SummaryVehicle {
   brand?: string;
@@ -21,9 +22,10 @@ interface BookingSummaryProps {
   total: number;
   deposit: number;
   vehicle?: SummaryVehicle | null;
+  vehicleLoading?: boolean;
 }
 
-export default function BookingSummary({ booking, days, total, deposit, vehicle }: BookingSummaryProps) {
+export default function BookingSummary({ booking, days, total, deposit, vehicle, vehicleLoading }: BookingSummaryProps) {
   useCurrency();
 
   return (
@@ -37,7 +39,12 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
         </div>
 
         <div className="p-8 space-y-8">
-          {vehicle ? (
+          {vehicleLoading ? (
+            <div className="flex items-center gap-4 text-slate-400 py-5 justify-center">
+              <Loader2 size={20} className="animate-spin" />
+              <p className="text-xs font-semibold uppercase tracking-wider">Chargement...</p>
+            </div>
+          ) : vehicle ? (
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -100,7 +107,11 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
           <div className="space-y-4">
             <div className="flex justify-between items-end">
               <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider">Total Net à payer</span>
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">{fmt(total)} DH</span>
+              {vehicleLoading ? (
+                <div className="h-8 w-28 bg-slate-100 rounded-lg animate-pulse" />
+              ) : (
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">{fmt(total)} DH</span>
+              )}
             </div>
             
             <motion.div 
@@ -111,7 +122,11 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle 
                   <span className="text-emerald-700 font-semibold text-xs uppercase tracking-wider block mb-1">Acompte Immédiat (10%)</span>
                   <span className="text-xs text-emerald-600/60 italic">Pour bloquer la réservation</span>
                 </div>
-                <span className="text-xl font-bold text-emerald-700 tracking-tight">{fmt(deposit)} DH</span>
+                {vehicleLoading ? (
+                  <div className="h-7 w-24 bg-emerald-100 rounded-lg animate-pulse" />
+                ) : (
+                  <span className="text-xl font-bold text-emerald-700 tracking-tight">{fmt(deposit)} DH</span>
+                )}
               </div>
             </motion.div>
           </div>

@@ -27,6 +27,7 @@ export interface PricingResult {
 export function calculatePrice(input: PricingInput): PricingResult {
   const days = Math.max(1, input.days);
   const startDate = input.startDate ? new Date(input.startDate) : new Date();
+  const pricePerDay = typeof input.pricePerDay === "number" && !isNaN(input.pricePerDay) ? input.pricePerDay : 0;
 
   const month = startDate.getMonth() + 1;
   const dayOfWeek = startDate.getDay();
@@ -56,7 +57,7 @@ export function calculatePrice(input: PricingInput): PricingResult {
     }
   }
 
-  const dailyRate = Math.round(input.pricePerDay * multiplier * 100) / 100;
+  const dailyRate = Math.round(pricePerDay * multiplier * 100) / 100;
   const basePrice = Math.round(dailyRate * days * 100) / 100;
 
   let optionsPrice = 0;

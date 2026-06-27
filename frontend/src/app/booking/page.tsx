@@ -142,7 +142,8 @@ export default function BookingPage() {
 
           <BookingSummary 
             booking={booking} days={days} total={total} 
-            deposit={deposit} vehicle={vehicle} 
+            deposit={deposit} vehicle={vehicle}
+            vehicleLoading={isLoadingVehicles}
           />
         </div>
       </div>
