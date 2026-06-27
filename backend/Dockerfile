@@ -33,8 +33,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY --chown=www-data:www-data . /var/www
 RUN rm -f bootstrap/cache/*.php
-RUN composer config -g preferred-install auto \
-    && composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts
+RUN composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts
 RUN php artisan vendor:publish --tag=laravel-assets --ansi --force 2>/dev/null || true
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
