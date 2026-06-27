@@ -4,8 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/shared/utils";
 import { X, Rotate3d, ChevronRight } from "lucide-react";
+import { DisplayVehicle } from "@/modules/booking/hooks/useBooking";
 
-export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: any; onClose: () => void; onSelect: () => void }) {
+export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: DisplayVehicle; onClose: () => void; onSelect: () => void }) {
   const [is360, setIs360] = useState(false);
   
   if (!vehicle) return null;
@@ -22,9 +23,9 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: any; 
             "absolute inset-0 transition-all duration-700",
             is360 ? "scale-110 rotate-1" : "scale-100"
           )}>
-            <Image 
-              src={vehicle.img} 
-              alt={vehicle.model} 
+            <Image
+              src={vehicle.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
+              alt={vehicle.model || ""}
               width={1200}
               height={800}
               className={cn(
@@ -80,7 +81,7 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: any; 
             </p>
             
             <div className="grid grid-cols-2 gap-2">
-              {Object.entries(vehicle.specs).map(([key, val]) => (
+              {Object.entries(vehicle.specs || {}).map(([key, val]) => (
                 <div key={key} className="bg-slate-50 p-4 rounded-xl border border-slate-100/50">
                   <span className="block text-xs uppercase font-semibold text-slate-400 mb-1 tracking-wider">{key}</span>
                   <span className="font-semibold text-slate-900 text-sm">{val as string}</span>

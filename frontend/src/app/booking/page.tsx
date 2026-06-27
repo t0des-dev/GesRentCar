@@ -28,7 +28,7 @@ export default function BookingPage() {
 
   const displayVehicles = useMemo(() => {
     if (!vehiclesData?.data) return [];
-    return vehiclesData.data.map((v: any) => ({
+    return vehiclesData.data.map((v) => ({
       id: v.id,
       brand: v.brand,
       model: v.model,

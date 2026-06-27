@@ -4,20 +4,27 @@ import { useState, useMemo, useEffect } from "react";
 import { BookingState } from "@/types/booking";
 import { calculatePrice } from "@/shared/utils/pricing";
 
-interface BookingVehicle {
+export interface DisplayVehicle {
   id: number;
   price: number;
   brand?: string;
   model?: string;
   type?: string;
   img?: string;
+  desc?: string;
+  specs?: {
+    transmission?: string;
+    fuel?: string;
+    seats?: number;
+    mileage?: number;
+  };
 }
 
-export function useBooking(initialVehicles: BookingVehicle[] = []) {
+export function useBooking(initialVehicles: DisplayVehicle[] = []) {
   const [step, setStep] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
   const [reservationId, setReservationId] = useState<number | null>(null);
-  const [previewVehicle, setPreviewVehicle] = useState<BookingVehicle | null>(null);
+  const [previewVehicle, setPreviewVehicle] = useState<DisplayVehicle | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
 

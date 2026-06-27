@@ -14,6 +14,8 @@ import BookingSuccess from "@/modules/booking/components/BookingSuccess";
 import SignatureStep from "@/modules/booking/components/SignatureStep";
 import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 
+import { Vehicle } from "@/lib/api/vehicles";
+
 const IMAGE_MAPPING: Record<string, string> = {
   "mercedes": "/mercedes_c_class_white_1777383858811.png",
   "bmw": "/bmw_x5_black_1777383873396.png",
@@ -25,7 +27,7 @@ type BookingStep = "info" | "signature" | "payment" | "success";
 export default function SearchClient() {
   const { id } = useParams();
   const router = useRouter();
-  const [vehicle, setVehicle] = useState<any>(null);
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState<BookingStep>("info");
   const [totalPrice, setTotalPrice] = useState(0);

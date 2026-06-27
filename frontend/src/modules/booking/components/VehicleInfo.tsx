@@ -1,9 +1,10 @@
 "use client";
 
 import { Users, Fuel, Settings, ShieldCheck } from "lucide-react";
+import { Vehicle } from "@/lib/api/vehicles";
 
 interface VehicleInfoProps {
-  vehicle: any;
+  vehicle: Vehicle;
   image: string;
 }
 

@@ -4,12 +4,13 @@ import Image from "next/image";
 import { cn } from "@/shared/utils";
 import { Car, Loader2, RotateCcw, ChevronRight, Users, Settings2, Fuel, Star } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
+import { DisplayVehicle } from "@/modules/booking/hooks/useBooking";
 import { motion } from "framer-motion";
 
 interface VehicleStepProps extends BookingStepProps {
   isLoading: boolean;
-  vehicles: any[];
-  onPreview: (v: any) => void;
+  vehicles: DisplayVehicle[];
+  onPreview: (v: DisplayVehicle) => void;
   onNext: () => void;
 }
 
@@ -52,7 +53,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onPr
                     "relative overflow-hidden",
                     isSelected ? "lg:w-3/5 h-[400px]" : "h-64"
                   )}>
-                    <Image src={v.img} alt={v.model} width={800} height={500} className="w-full h-full object-cover" />
+                    <Image src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"} alt={v.model || ""} width={800} height={500} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
                     
                     <div className="absolute top-6 left-6 flex gap-2">
