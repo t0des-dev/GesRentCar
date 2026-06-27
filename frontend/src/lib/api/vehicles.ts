@@ -9,6 +9,7 @@ export interface Vehicle {
   mileage: number;
   status: "available" | "rented" | "maintenance";
   type: "internal" | "collaborator";
+  category?: string;
   image_url: string | null;
   photos: string[] | null;
   dynamic_price?: number;
@@ -77,9 +78,10 @@ export const vehicleService = {
     vehicleId: number,
     startDate: string,
     endDate: string
-  ): Promise<{ available: boolean }> {
-    const { data } = await api.get(`/vehicles/${vehicleId}/availability`, {
-      params: { start_date: startDate, end_date: endDate },
+  ): Promise<{ available: boolean; vehicle_id: number }> {
+    const { data } = await api.post(`/vehicles/${vehicleId}/availability`, {
+      start_date: startDate,
+      end_date: endDate,
     });
     return data;
   },

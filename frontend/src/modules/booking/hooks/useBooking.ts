@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { BookingState } from "@/types/booking";
+import { calculatePrice } from "@/shared/utils/pricing";
 
 interface BookingVehicle {
   id: number;
@@ -64,15 +65,18 @@ export function useBooking(initialVehicles: BookingVehicle[] = []) {
     return Math.max(1, Math.round(diff / 86400000));
   }, [booking.startDate, booking.endDate]);
 
-  const basePrice = vehicle ? vehicle.price * days : 0;
-  const isHighSeason = booking.startDate && (new Date(booking.startDate).getMonth() === 6 || new Date(booking.startDate).getMonth() === 7);
-  const dynamicBasePrice = Math.round(basePrice * (isHighSeason ? 1.15 : 1));
-  
-  const flexibilityPrice = booking.flexibility === 'flexible' ? 60 * days : 0;
-  const mileagePrice = booking.mileage === 'unlimited' ? 140 * days : 0;
+  const pricing = useMemo(() => {
+    if (!vehicle || !days) return { total: 0, basePrice: 0, dailyRate: 0, optionsPrice: 0, deposit: 0, dynamicReason: null, breakdown: [] };
+    return calculatePrice({
+      pricePerDay: vehicle.price,
+      days,
+      startDate: booking.startDate,
+      flexibility: booking.flexibility,
+      mileage: booking.mileage,
+    });
+  }, [vehicle, days, booking.startDate, booking.flexibility, booking.mileage]);
 
-  const total = dynamicBasePrice + flexibilityPrice + mileagePrice;
-  const deposit = Math.round(total * 0.1);
+  const { total, deposit } = pricing;
 
   const canNext = () => {
     if (step === 0) return booking.vehicleId !== null;

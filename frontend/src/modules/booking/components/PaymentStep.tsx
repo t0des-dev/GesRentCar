@@ -7,6 +7,7 @@ import { BookingState } from "@/types/booking";
 import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 import { CmiCheckout } from "@/modules/payments/components/CmiCheckout";
 import { reservationService } from "@/lib/api/reservations";
+import { vehicleService } from "@/lib/api/vehicles";
 import { motion, AnimatePresence } from "framer-motion";
 import { notifyError } from "@/components/Notifications";
 
@@ -35,9 +36,24 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
   const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("stripe");
   const [loading, setLoading] = useState(false);
 
+  const checkAvailability = async () => {
+    try {
+      const result = await vehicleService.checkAvailability(booking.vehicleId!, booking.startDate, booking.endDate);
+      if (!result.available) {
+        notifyError("Ce véhicule n'est plus disponible pour les dates sélectionnées.");
+        return false;
+      }
+      return true;
+    } catch {
+      return true;
+    }
+  };
+
   const handleOnSiteReservation = async () => {
     setLoading(true);
     try {
+      const available = await checkAvailability();
+      if (!available) { setLoading(false); return; }
       const res = await reservationService.create({
         vehicle_id: booking.vehicleId!,
         start_date: booking.startDate,
@@ -144,8 +160,27 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
               {selectedGateway === "cmi" && (
                 <motion.div key="cmi" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full">
                   <CmiCheckout 
-                    reservationId={reservationId || 0}
+                    bookingPayload={{
+                      vehicle_id: booking.vehicleId!,
+                      start_date: booking.startDate,
+                      end_date: booking.endDate,
+                      signature: signature || undefined,
+                      client: {
+                        name: booking.client.name,
+                        email: booking.client.email,
+                        phone: booking.client.phone,
+                        cin: booking.client.cin,
+                        license_number: booking.client.licenseNumber,
+                        cin_image_url: booking.client.cinImageUrl,
+                        license_image_url: booking.client.licenseImageUrl,
+                      },
+                      options: {
+                        flexibility: booking.flexibility,
+                        mileage: booking.mileage,
+                      },
+                    }}
                     deposit={deposit}
+                    onSuccess={(resId) => { if (resId) onSuccess(resId); }}
                   />
                 </motion.div>
               )}

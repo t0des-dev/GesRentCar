@@ -86,7 +86,7 @@ export default function ComparePage() {
             </div>
 
             {/* Vehicle columns */}
-            {vehicles.map((vehicle) => (
+            {vehicles.map((vehicle: any) => (
               <div key={vehicle.id} className="relative group flex flex-col border-x border-slate-100 first:border-l-0 last:border-r-0 md:border-b-0 border-b bg-white">
                 <button
                   onClick={() => removeFromCompare(vehicle.id)}

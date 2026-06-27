@@ -77,6 +77,7 @@ export default function FleetGrid({
                     brand={v.brand}
                     model={v.model}
                     type={v.type}
+                    category={v.category}
                     price={v.price_per_day}
                     seats={v.seats ?? 5}
                     fuel={v.fuel_type || "Diesel"}

@@ -3,6 +3,7 @@
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useState, useEffect } from "react";
 import { Search, Calendar, Filter, Loader2, AlertCircle, Car } from "lucide-react";
+import { useRouter } from "next/navigation";
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
 import { notifyError } from "@/components/Notifications";
 import styles from "./page.module.css";
@@ -27,6 +28,7 @@ const IMAGE_MAPPING: Record<string, string> = {
 
 export default function SearchPage() {
   const { t, lang } = useTranslation();
+  const router = useRouter();
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,7 +40,12 @@ export default function SearchPage() {
     setLoading(true);
     setError("");
     try {
-      const query = selectedCategory !== 'all' ? `?category=${selectedCategory}` : '';
+      const params = new URLSearchParams();
+      if (selectedCategory !== 'all') params.set('category', selectedCategory);
+      if (startDate) params.set('start_date', startDate);
+      if (endDate) params.set('end_date', endDate);
+      const qs = params.toString();
+      const query = qs ? `?${qs}` : '';
       const res = await fetch(`${API}/vehicles${query}`);
       const data = await res.json();
       
@@ -61,12 +68,22 @@ export default function SearchPage() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchVehicles(); }, [selectedCategory]);
 
+  const handleReserve = (vehicleId: number) => {
+    const searchParams = new URLSearchParams();
+    searchParams.set('vehicle', String(vehicleId));
+    if (startDate) searchParams.set('start_date', startDate);
+    if (endDate) searchParams.set('end_date', endDate);
+    router.push(`/booking?${searchParams.toString()}`);
+  };
+
   const handleSearch = () => {
     if (!startDate || !endDate) {
       notifyError("Veuillez selectionner les dates de debut et de fin.");
       return;
     }
-    fetchVehicles(); // Dans une vraie app, on passerait les dates en query params
+    localStorage.setItem('vrc_search_start', startDate);
+    localStorage.setItem('vrc_search_end', endDate);
+    fetchVehicles();
   };
 
   return (
@@ -154,6 +171,7 @@ export default function SearchPage() {
               fuel={vehicle.fuel ?? 'N/A'}
               transmission={vehicle.transmission ?? 'Automatique'}
               imageUrl={vehicle.image ?? vehicle.image_url ?? undefined}
+              onReserve={handleReserve}
             />
           ))}
         </div>

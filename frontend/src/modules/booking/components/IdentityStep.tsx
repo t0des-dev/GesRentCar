@@ -41,8 +41,10 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
 
     try {
       const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const token = typeof window !== "undefined" ? localStorage.getItem("vectoria_token") : null;
       const res = await fetch(`${apiBase}/ocr/scan`, {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
       if (!res.ok) {

@@ -80,6 +80,7 @@ $apiRoutes = function () {
 
         Route::get('/vehicles', [VehicleController::class, 'index']);
         Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+        Route::post('/vehicles/{vehicle}/availability', [VehicleController::class, 'checkAvailability']);
         Route::post('/concierge/chat', [ConciergeController::class, 'chat']);
 
         // Public reservations

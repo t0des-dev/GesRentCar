@@ -139,7 +139,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                 className={cn(
                   "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all duration-300 group cursor-pointer",
                   filters.lifestyle === ls.id
-                    ? "bg-gradient-to-br from-gold/20 to-gold/10 border-gold/60 shadow-lg shadow-gold/20 scale-[1.02]"
+                    ? "bg-gold/5 border-gold shadow-lg shadow-gold/10 scale-[1.02]"
                     : "bg-surface-1 border-border hover:border-gold/40 hover:bg-surface-2"
                 )}
               >
@@ -147,7 +147,10 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                   "transition-colors",
                   filters.lifestyle === ls.id ? "text-gold" : "text-ink-3 group-hover:text-gold"
                 )} />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-ink-2">{ls.label}</span>
+                <span className={cn(
+                  "text-[9px] font-bold uppercase tracking-widest transition-colors",
+                  filters.lifestyle === ls.id ? "text-gold font-black" : "text-ink-2"
+                )}>{ls.label}</span>
               </motion.button>
             ))}
           </motion.div>
@@ -180,7 +183,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                 className={cn(
                   "group flex items-center justify-between px-5 py-3 rounded-lg text-sm font-bold transition-all border-2 cursor-pointer",
                   filters.type === t.id
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                    ? "bg-gold text-white border-gold shadow-lg shadow-gold/25"
                     : "bg-surface-1 border-border text-ink-2 hover:border-gold/40 hover:bg-surface-2"
                 )}
               >
@@ -231,7 +234,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                 className={cn(
                   "flex flex-col items-center justify-center p-3 rounded-lg text-[10px] font-bold transition-all border-2 tracking-widest gap-1 cursor-pointer",
                   filters.transmission === tr.id
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                    ? "bg-gold text-white border-gold shadow-lg shadow-gold/25"
                     : "bg-surface-1 border-border text-ink-3 hover:border-gold/40 hover:bg-surface-2"
                 )}
               >
@@ -276,7 +279,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                 className={cn(
                   "relative w-14 h-14 flex items-center justify-center rounded-lg text-xs font-bold border-2 transition-all cursor-pointer",
                   filters.seats === s.id
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                    ? "bg-gold text-white border-gold shadow-lg shadow-gold/25"
                     : "bg-surface-1 border-border text-ink-2 hover:border-gold/40 hover:bg-surface-2"
                 )}
               >

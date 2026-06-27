@@ -13,6 +13,7 @@ interface VehicleCardProps {
   brand: string;
   model: string;
   type: string;
+  category?: string;
   price: number;
   seats: number;
   fuel: string;
@@ -26,14 +27,15 @@ interface VehicleCardProps {
   dynamicPrice?: number;
   dynamicReason?: string | null;
   onQuickView?: () => void;
+  onReserve?: (id: number) => void;
   isPopular?: boolean;
   layoutView?: "grid" | "list";
 }
 
 export default function VehicleCard({
-  id, brand, model, type, price, seats, fuel, transmission,
+  id, brand, model, type, category, price, seats, fuel, transmission,
   year, rating = 4.8, imageUrl, className, dynamicPrice,
-  dynamicReason, onQuickView, isPopular = false, layoutView = "grid",
+  dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { selectedIds, addToCompare, removeFromCompare } = useCompare();
@@ -113,10 +115,10 @@ export default function VehicleCard({
           </div>
         </div>
 
-        {/* Type Badge — Bottom Left (Gold) */}
+        {/* Category Badge — Bottom Left (Gold Glow) */}
         <div className="absolute bottom-3 left-3 z-10">
-          <span className="inline-block px-3 py-1.5 bg-gold/15 backdrop-blur text-gold text-[11px] font-bold rounded-lg shadow-sm border border-gold/30">
-            {t(`cat_${type.toLowerCase()}`) || type}
+          <span className="inline-block px-3 py-1 bg-gold/10 backdrop-blur-md text-gold text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm border border-gold/30">
+            {category ? (t(`cat_${category.toLowerCase()}`) || category) : (t(`cat_${type.toLowerCase()}`) || type)}
           </span>
         </div>
       </div>
@@ -127,8 +129,8 @@ export default function VehicleCard({
         {/* Brand & Model Header */}
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{brand}</p>
-            <h3 className={cn("font-display italic font-normal tracking-tight text-ink-1 group-hover:text-gold transition-colors duration-300", layoutView === "list" ? "text-3xl" : "text-2xl")}>
+            <p className="text-[10px] font-black uppercase tracking-widest text-gold mb-0.5">{brand}</p>
+            <h3 className={cn("font-sans font-black tracking-tight text-ink-1 group-hover:text-gold transition-colors duration-300", layoutView === "list" ? "text-2xl" : "text-xl")}>
               {model}
             </h3>
           </div>
@@ -160,16 +162,16 @@ export default function VehicleCard({
 
         {/* Price Section */}
         <div className={cn("flex", layoutView === "list" ? "flex-row items-end justify-between mt-auto" : "flex-col")}>
-          <p className="text-ink-4 text-[10px] font-semibold uppercase tracking-wider mb-1">À partir de</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-ink-1">
-              {convert(displayPrice).split(' ')[0]}
+          <p className="text-ink-4 text-[10px] font-bold uppercase tracking-wider mb-1">À partir de</p>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-2xl font-black text-ink-1">
+              {convert(displayPrice)}
             </span>
-            <span className="text-ink-3 text-sm font-medium">
-              / <span className="font-semibold text-ink-2">jour</span>
+            <span className="text-ink-3 text-xs font-semibold uppercase tracking-wider">
+              / jour
             </span>
-            {isPriceChanged && (
-              <span className="text-xs text-ink-4 line-through ml-auto">{convert(price).split(' ')[0]}</span>
+            {isPriceChanged && price > 0 && (
+              <span className="text-xs text-ink-4 line-through ml-auto">{convert(price)}</span>
             )}
           </div>
         </div>
@@ -182,14 +184,9 @@ export default function VehicleCard({
               e.stopPropagation();
               isSelected ? removeFromCompare(id) : addToCompare(id);
             }}
-            variant={isSelected ? "gold" : "outline"}
+            variant={isSelected ? "gold" : "gold-outline"}
             size="sm"
-            className={cn(
-              "h-9 px-3.5 rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all duration-300",
-              isSelected
-                ? "bg-gold text-white border-gold shadow-md shadow-gold/20 hover:shadow-lg hover:shadow-gold/30"
-                : "bg-surface-0 text-ink-3 border-border hover:border-gold/50 hover:text-gold hover:bg-gold/5 hover:shadow-md hover:shadow-gold/10"
-            )}
+            className="h-10 px-4 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 border border-gold/30"
           >
             {isSelected && <Check size={13} strokeWidth={3} />}
             {t("compare") || "Compare"}
@@ -198,8 +195,12 @@ export default function VehicleCard({
           <Button
             variant="gold"
             size="sm"
-            className="flex-1 h-9 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
-            asChild
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onReserve?.(id);
+            }}
+            className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <span className="flex items-center justify-center gap-1.5">
               Réserver

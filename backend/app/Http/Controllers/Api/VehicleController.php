@@ -102,6 +102,21 @@ class VehicleController extends Controller
         return response()->json($vehicle);
     }
 
+    public function checkAvailability(Request $request, Vehicle $vehicle)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $available = $vehicle->isAvailable($request->start_date, $request->end_date);
+
+        return response()->json([
+            'available' => $available,
+            'vehicle_id' => $vehicle->id,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

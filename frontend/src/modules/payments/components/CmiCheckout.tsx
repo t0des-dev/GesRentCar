@@ -4,13 +4,30 @@ import { useState } from "react";
 import { Loader2, ExternalLink, ShieldCheck } from "lucide-react";
 import axios from "axios";
 import { fmt } from "@/shared/utils/format";
+import { reservationService } from "@/lib/api/reservations";
 
 interface CmiCheckoutProps {
-  reservationId: number;
+  bookingPayload: {
+    vehicle_id: number;
+    start_date: string;
+    end_date: string;
+    client: {
+      name: string;
+      email: string;
+      phone: string;
+      cin: string;
+      license_number?: string;
+      cin_image_url?: string;
+      license_image_url?: string;
+    };
+    signature?: string;
+    options?: any;
+  };
   deposit: number;
+  onSuccess?: (reservationId?: number) => void;
 }
 
-export function CmiCheckout({ reservationId, deposit }: CmiCheckoutProps) {
+export function CmiCheckout({ bookingPayload, deposit, onSuccess }: CmiCheckoutProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,10 +36,18 @@ export function CmiCheckout({ reservationId, deposit }: CmiCheckoutProps) {
     setError("");
 
     try {
+      const reservation = await reservationService.create({
+        ...bookingPayload,
+        payment_method: "cmi",
+      });
+
+      const reservationId = reservation.id;
+
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/cmi/init/${reservationId}`);
       const { action_url, params } = response.data;
 
-      // Create a hidden form and submit it
+      if (onSuccess) onSuccess(reservationId);
+
       const form = document.createElement("form");
       form.method = "POST";
       form.action = action_url;
