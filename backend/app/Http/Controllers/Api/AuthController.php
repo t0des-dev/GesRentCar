@@ -8,10 +8,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        Log::info('Login attempt', [
+            'email' => $request->input('email'),
+            'has_password' => filled($request->input('password')),
+            'content_type' => $request->header('Content-Type'),
+            'content_length' => $request->header('Content-Length'),
+            'method' => $request->method(),
+            'all_input' => array_keys($request->all()),
+        ]);
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
