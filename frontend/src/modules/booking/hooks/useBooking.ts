@@ -28,36 +28,33 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
   const [isScanning, setIsScanning] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
 
-  const [booking, setBooking] = useState<BookingState>(() => {
-    if (typeof window === "undefined") {
-      return {
-        vehicleId: null, startDate: "", endDate: "", location: "", 
-        flexibility: "best_price", mileage: "limited",
-        client: { 
-          name: "", email: "", phone: "", cin: "", licenseNumber: "",
-          cinImageUrl: "", licenseImageUrl: "", verified: false 
-        },
-        paymentMethod: "deposit_card",
-      };
-    }
-    const params = new URLSearchParams(window.location.search);
-    return {
-      vehicleId: params.get("vehicle") ? Number(params.get("vehicle")) : null,
-      startDate: params.get("start_date") || localStorage.getItem('vrc_search_start') || "",
-      endDate: params.get("end_date") || localStorage.getItem('vrc_search_end') || "",
-      location: params.get("location") || localStorage.getItem('vrc_search_location') || "",
-      flexibility: "best_price", mileage: "limited",
-      client: { 
-        name: "", email: "", phone: "", cin: "", licenseNumber: "",
-        cinImageUrl: "", licenseImageUrl: "", verified: false 
-      },
-      paymentMethod: "deposit_card",
-    };
-  });
+  const [booking, setBooking] = useState<BookingState>(() => ({
+    vehicleId: null, startDate: "", endDate: "", location: "",
+    flexibility: "best_price", mileage: "limited",
+    client: {
+      name: "", email: "", phone: "", cin: "", licenseNumber: "",
+      cinImageUrl: "", licenseImageUrl: "", verified: false
+    },
+    paymentMethod: "deposit_card",
+  }));
 
+  // Sync from URL params + localStorage AFTER hydration to avoid mismatch
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("vehicle")) {
+    const vehicleId = params.get("vehicle") ? Number(params.get("vehicle")) : null;
+    const startDate = params.get("start_date") || localStorage.getItem('vrc_search_start') || "";
+    const endDate = params.get("end_date") || localStorage.getItem('vrc_search_end') || "";
+    const location = params.get("location") || localStorage.getItem('vrc_search_location') || "";
+
+    setBooking(prev => ({
+      ...prev,
+      vehicleId: vehicleId ?? prev.vehicleId,
+      startDate: startDate || prev.startDate,
+      endDate: endDate || prev.endDate,
+      location: location || prev.location,
+    }));
+
+    if (vehicleId) {
       setStep(1);
     }
   }, []);

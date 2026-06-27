@@ -1,11 +1,21 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { cn } from "@/shared/utils";
 import { ScanLine, Loader2, ShieldCheck, QrCode, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookingStepProps } from "@/types/booking";
-import ScanSessionQR from "./ScanSessionQR";
+
+const ScanSessionQR = dynamic(() => import("./ScanSessionQR"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex flex-col items-center gap-4 py-12">
+      <Loader2 className="animate-spin text-primary" size={32} />
+      <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Chargement...</p>
+    </div>
+  ),
+});
 
 interface IdentityStepProps extends BookingStepProps {
   isScanning: boolean;
