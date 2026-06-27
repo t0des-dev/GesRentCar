@@ -97,7 +97,7 @@ class ScanSessionController extends Controller
 
         try {
             $ocr = new TesseractOCR($fullPath);
-            $ocr->lang('fra', 'eng');
+            $ocr->lang('fra', 'eng', 'ara');
             $text = $ocr->run();
 
             if ($validated['type'] === 'cin') {
@@ -137,13 +137,19 @@ class ScanSessionController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data,
+            'raw_text' => $text ?? null,
             'status' => $session->status,
         ]);
     }
 
     private function extractCin(string $text): ?string
     {
-        if (preg_match('/\b([A-Z]{1,2}[0-9]{4,6})\b/', strtoupper($text), $matches)) {
+        // Moroccan CIN: 2 letters + 5-6 digits (e.g., AB123456, BE123456)
+        if (preg_match('/\b([A-Z]{1,2}\s*[0-9]{5,6})\b/i', $text, $matches)) {
+            return preg_replace('/\s+/', '', strtoupper($matches[1]));
+        }
+        // Fallback: 6-8 digits only
+        if (preg_match('/\b([0-9]{6,8})\b/', $text, $matches)) {
             return $matches[1];
         }
         return null;
@@ -151,16 +157,38 @@ class ScanSessionController extends Controller
 
     private function extractName(string $text): ?string
     {
-        if (preg_match('/(?:Nom|Name)\s*[:\-]?\s*([A-Za-z\s]+)/i', $text, $matches)) {
+        // Try labeled fields first: NOM, PRÉNOM, Nom, Prénom, Name
+        if (preg_match('/(?:PR[ÉE]NOM|PRENOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $matches)) {
+            $prenom = trim($matches[1]);
+            if (preg_match('/(?:NOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $nomMatches)) {
+                return trim($nomMatches[1]) . ' ' . $prenom;
+            }
+            return $prenom;
+        }
+        if (preg_match('/(?:NOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $matches)) {
             return trim($matches[1]);
+        }
+        // Fallback: look for two consecutive capitalized words (First Last)
+        if (preg_match('/\b([A-Z][a-z]{2,})\s+([A-Z][a-z]{2,})\b/', $text, $matches)) {
+            return $matches[1] . ' ' . $matches[2];
         }
         return null;
     }
 
     private function extractLicense(string $text): ?string
     {
-        if (preg_match('/\b([0-9]{2}\/[0-9]{4,6}|[0-9]{8})\b/', $text, $matches)) {
+        // Moroccan license: various formats
+        // Format 1: XX/XXXXX (e.g., 12/12345)
+        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{4,6})\b/', $text, $matches)) {
+            return preg_replace('/\s+/', '', $matches[1]);
+        }
+        // Format 2: 8 digits
+        if (preg_match('/\b([0-9]{8})\b/', $text, $matches)) {
             return $matches[1];
+        }
+        // Format 3: alphanumeric (e.g., 12AB3456)
+        if (preg_match('/\b([0-9]{2}[A-Z]{1,2}[0-9]{4,6})\b/i', $text, $matches)) {
+            return strtoupper($matches[1]);
         }
         return null;
     }

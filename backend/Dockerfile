@@ -1,6 +1,6 @@
 FROM php:8.4-fpm
 
-# Install system dependencies + pg_dump for backups
+# Install system dependencies + pg_dump for backups + Tesseract OCR
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -16,7 +16,11 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libfreetype6-dev \
     postgresql-client \
-    procps
+    procps \
+    tesseract-ocr \
+    tesseract-ocr-fra \
+    tesseract-ocr-eng \
+    tesseract-ocr-ara
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
