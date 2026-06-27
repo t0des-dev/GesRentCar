@@ -14,7 +14,7 @@ class OcrController extends Controller
         $type = $request->type ?? 'cin';
 
         $request->validate([
-            'image' => 'required|image|max:5120',
+            'image' => 'required|image|max:8192',
         ]);
 
         try {
