@@ -25,7 +25,8 @@ return [
         'http://127.0.0.1:3000',
         // Vercel preview deployments
         'https://vectoria-rent-car.vercel.app',
-        // Production custom domain (update after DNS)
+        // Production custom domain
+        'https://vectoria.carbonick.com',
         env('VERCEL_URL', 'https://vectoria-rent-car.vercel.app'),
     ],
 

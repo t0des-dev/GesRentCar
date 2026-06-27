@@ -57,6 +57,10 @@ services:
       - DB_PASSWORD=secret
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
+      - FRONTEND_URL=https://vectoria.carbonick.com
+      - SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1,vectoria.carbonick.com
+      - SESSION_DRIVER=redis
+      - CACHE_STORE=redis
     depends_on:
       db:
         condition: service_healthy
@@ -95,7 +99,7 @@ services:
     container_name: gesrentcar-scheduler
     restart: always
     command: >
-      sh -c "echo '0 * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1' | crontab - && crond -f -L /dev/stdout"
+      sh -c "echo '0 * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1' | crontab - && cron -f -L /dev/stdout"
     volumes:
       - ./backend/storage:/var/www/storage
     environment:

@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 async function safeCsrf() {
   try {
-    await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+    await fetch("/api/sanctum/csrf-cookie", { credentials: "include" });
   } catch {
     // CSRF cookie not critical for token-based auth
   }
