@@ -3,7 +3,6 @@ import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
 import Link from "next/link";
 import { Fuel, Users, Gauge, Star, ArrowRight, Eye, Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useCompare } from "@/hooks/useCompare";
 import { useCurrency } from "@/shared/hooks/useCurrency";
@@ -38,7 +37,6 @@ export default function VehicleCard({
   year, rating = 4.8, imageUrl, className, dynamicPrice,
   dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
 }: VehicleCardProps) {
-  const router = useRouter();
   const { t } = useTranslation();
   const { selectedIds, addToCompare, removeFromCompare } = useCompare();
   const { convert } = useCurrency();
@@ -201,7 +199,7 @@ export default function VehicleCard({
               e.preventDefault();
               e.stopPropagation();
               if (onReserve) { onReserve(id); return; }
-              router.push(`/booking?vehicle=${id}`);
+              window.location.href = `/booking?vehicle=${id}`;
             }}
             className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
