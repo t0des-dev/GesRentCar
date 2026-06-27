@@ -41,8 +41,14 @@ WORKDIR /var/www
 # Copy existing application directory contents
 COPY --chown=www-data:www-data . /var/www
 
-# Install dependencies
-RUN composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs
+# Clear cached service providers (e.g. PailServiceProvider from dev deps)
+RUN rm -f bootstrap/cache/*.php
+
+# Install dependencies (no scripts to avoid dev-provider crashes during removal)
+RUN composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts
+
+# Run post-install scripts manually
+RUN php artisan vendor:publish --tag=laravel-assets --ansi --force 2>/dev/null || true
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
