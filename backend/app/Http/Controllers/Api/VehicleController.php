@@ -17,7 +17,8 @@ class VehicleController extends Controller
         $cacheKey = 'vehicles_index_v2_'.$version.'_'.md5(json_encode($request->all()).app()->getLocale());
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $pricing) {
-            $query = Vehicle::query();
+            try {
+                $query = Vehicle::query();
 
             if ($request->has(['start_date', 'end_date'])) {
                 $query->available($request->start_date, $request->end_date);
@@ -79,7 +80,10 @@ class VehicleController extends Controller
                 return $vehicle;
             });
 
-            return response()->json($vehicles);
+                return response()->json($vehicles);
+            } catch (\Exception $e) {
+                return response()->json(['data' => [], 'message' => 'Erreur chargement flotte: '.$e->getMessage()], 500);
+            }
         });
     }
 

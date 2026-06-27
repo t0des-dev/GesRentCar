@@ -1,7 +1,6 @@
 #!/bin/sh
-set -e
 
-# Wait for database to be ready (using pg_isready if pgsql is used)
+# Wait for database to be ready
 if [ "$DB_CONNECTION" = "pgsql" ]; then
     echo "Waiting for PostgreSQL database at $DB_HOST:$DB_PORT..."
     until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME"; do
@@ -16,21 +15,23 @@ if [ ! -f .env ]; then
     php artisan key:generate --force
 fi
 
-# Run migrations
-php artisan migrate --force
+# Run migrations (never abort on failure)
+php artisan migrate --force || echo "WARNING: Migration failed, continuing anyway..."
 
-# Fix permissions for the mounted volume (only if running as root)
+# Fix permissions for the mounted volume
 if [ "$(id -u)" = "0" ]; then
     chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache || true
     chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
-else
-    echo "Running as non-root user, skipping ownership/permission changes."
 fi
 
 # Optimize Laravel for production
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache 2>/dev/null || true
+php artisan route:cache 2>/dev/null || true
+php artisan view:cache 2>/dev/null || true
 
-# Start PHP-FPM
-exec php-fpm
+# Pass CMD arguments if provided (docker-compose command:), otherwise start PHP-FPM
+if [ $# -gt 0 ]; then
+    exec "$@"
+else
+    exec php-fpm
+fi

@@ -23,6 +23,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+async function safeCsrf() {
+  try {
+    await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+  } catch {
+    // CSRF cookie not critical for token-based auth
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
       const res = await api.get("/user");
       setUser(res.data);
     } catch {
@@ -53,7 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       try {
-        await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
         const res = await api.get("/user");
         if (!cancelled) setUser(res.data);
       } catch {
@@ -66,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+    await safeCsrf();
     const res = await api.post("/auth/login", { email, password });
     const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
     setUser(u);
@@ -79,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string, password_confirmation: string) => {
-    await fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: "include" });
+    await safeCsrf();
     const res = await api.post("/auth/register", { name, email, password, password_confirmation });
     const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
     setUser(u);
