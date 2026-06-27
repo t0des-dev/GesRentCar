@@ -1,4 +1,7 @@
 import api from "@/shared/services/client";
+import axios from "axios";
+
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface ScanSession {
   session_id: number;
@@ -32,17 +35,15 @@ export const scanSessionService = {
   },
 
   async phoneStatus(token: string): Promise<{ status: string; cin_number: string | null; license_number: string | null }> {
-    const res = await api.get(`/scan-sessions/${token}/status`);
-    return res.data.data;
+    const { data } = await axios.get(`${baseURL}/scan-sessions/${token}/status`);
+    return data.data;
   },
 
   async upload(token: string, type: "cin" | "license", file: File): Promise<{ success: boolean; data: Record<string, string>; status: string }> {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("type", type);
-    const { data } = await api.post(`/scan-sessions/${token}/upload`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const { data } = await axios.post(`${baseURL}/scan-sessions/${token}/upload`, formData);
     return data;
   },
 };

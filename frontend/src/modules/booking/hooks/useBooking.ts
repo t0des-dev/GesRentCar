@@ -100,7 +100,7 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
     previewVehicle, setPreviewVehicle,
     isScanning, setIsScanning,
     signature, setSignature,
-    booking, update,
+    booking, setBooking, update,
     vehicle, days, total, deposit
   };
 }

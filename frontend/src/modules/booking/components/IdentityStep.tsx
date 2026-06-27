@@ -20,9 +20,10 @@ const ScanSessionQR = dynamic(() => import("./ScanSessionQR"), {
 interface IdentityStepProps extends BookingStepProps {
   isScanning: boolean;
   setIsScanning: (val: boolean) => void;
+  setBooking: React.Dispatch<React.SetStateAction<import("@/types/booking").BookingState>>;
 }
 
-export default function IdentityStep({ booking, update, isScanning, setIsScanning }: IdentityStepProps) {
+export default function IdentityStep({ booking, update, isScanning, setIsScanning, setBooking }: IdentityStepProps) {
   const [scanSuccess, setScanSuccess] = useState(false);
   const [showQR, setShowQR] = useState(false);
 
@@ -33,17 +34,23 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
     cinImageUrl?: string;
     licenseImageUrl?: string;
   }) => {
-    update("client", {
-      ...booking.client,
-      name: data.name || booking.client.name,
-      cin: data.cin || booking.client.cin,
-      licenseNumber: data.licenseNumber || booking.client.licenseNumber,
-      cinImageUrl: data.cinImageUrl || booking.client.cinImageUrl,
-      licenseImageUrl: data.licenseImageUrl || booking.client.licenseImageUrl,
-    });
+    setBooking((prev) => ({
+      ...prev,
+      client: {
+        ...prev.client,
+        name: data.name || prev.client.name,
+        cin: data.cin || prev.client.cin,
+        licenseNumber: data.licenseNumber || prev.client.licenseNumber,
+        cinImageUrl: data.cinImageUrl || prev.client.cinImageUrl,
+        licenseImageUrl: data.licenseImageUrl || prev.client.licenseImageUrl,
+      },
+    }));
 
     setTimeout(() => {
-      update("client", { ...booking.client, verified: true });
+      setBooking((prev) => ({
+        ...prev,
+        client: { ...prev.client, verified: true },
+      }));
     }, 1500);
 
     setScanSuccess(true);
@@ -51,7 +58,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
       setScanSuccess(false);
       setShowQR(false);
     }, 3000);
-  }, [booking.client, update]);
+  }, [setBooking]);
 
   return (
     <div className="space-y-8">

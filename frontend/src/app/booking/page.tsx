@@ -47,7 +47,7 @@ export default function BookingPage() {
     previewVehicle, setPreviewVehicle,
     isScanning, setIsScanning,
     signature, setSignature,
-    booking, update,
+    booking, setBooking, update,
     vehicle, days, total, deposit
   } = useBooking(displayVehicles);
 
@@ -95,7 +95,7 @@ export default function BookingPage() {
                   {step === 2 && <OptionsStep booking={booking} update={update} />}
                   {step === 3 && (
                     <IdentityStep 
-                      booking={booking} update={update} 
+                      booking={booking} update={update} setBooking={setBooking}
                       isScanning={isScanning} setIsScanning={setIsScanning} 
                     />
                   )}
