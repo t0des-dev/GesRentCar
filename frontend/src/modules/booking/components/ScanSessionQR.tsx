@@ -16,6 +16,9 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
   const [status, setStatus] = useState<ScanSessionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const createSession = useCallback(async () => {
     try {
@@ -88,7 +91,7 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
     );
   }
 
-  if (!session) return null;
+  if (!mounted || !session) return null;
 
   const isCompleted = status?.status === "completed";
   const isExpired = status?.status === "expired" || expiresIn <= 0;
