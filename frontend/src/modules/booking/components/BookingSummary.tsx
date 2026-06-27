@@ -109,6 +109,8 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle,
               <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider">Total Net à payer</span>
               {vehicleLoading ? (
                 <div className="h-8 w-28 bg-slate-100 rounded-lg animate-pulse" />
+              ) : !days ? (
+                <span className="text-sm text-slate-300 font-medium italic">Sélectionnez vos dates</span>
               ) : (
                 <span className="text-2xl font-bold text-slate-900 tracking-tight">{fmt(total)} DH</span>
               )}
@@ -124,6 +126,8 @@ export default function BookingSummary({ booking, days, total, deposit, vehicle,
                 </div>
                 {vehicleLoading ? (
                   <div className="h-7 w-24 bg-emerald-100 rounded-lg animate-pulse" />
+                ) : !days ? (
+                  <span className="text-sm text-emerald-300 font-medium italic">--</span>
                 ) : (
                   <span className="text-xl font-bold text-emerald-700 tracking-tight">{fmt(deposit)} DH</span>
                 )}

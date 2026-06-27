@@ -66,15 +66,15 @@ export function useBooking(initialVehicles: BookingVehicle[] = []) {
   }, [booking.startDate, booking.endDate]);
 
   const pricing = useMemo(() => {
-    if (!vehicle || !days) return { total: 0, basePrice: 0, dailyRate: 0, optionsPrice: 0, deposit: 0, dynamicReason: null, breakdown: [] };
+    const pricePerDay = vehicle?.price ?? 0;
     return calculatePrice({
-      pricePerDay: vehicle.price,
-      days,
+      pricePerDay,
+      days: days || 1,
       startDate: booking.startDate,
       flexibility: booking.flexibility,
       mileage: booking.mileage,
     });
-  }, [vehicle, days, booking.startDate, booking.flexibility, booking.mileage]);
+  }, [vehicle?.price, days, booking.startDate, booking.flexibility, booking.mileage]);
 
   const { total, deposit } = pricing;
 
