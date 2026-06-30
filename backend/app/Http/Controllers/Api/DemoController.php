@@ -86,7 +86,7 @@ class DemoController extends Controller
                     [
                         'brand'                => 'Mercedes-Benz',
                         'model'                => 'Classe G 63 AMG',
-                        'plate'                => '12345-A-1',
+                        'plate'                => '10001-X-1',
                         'price_per_day'        => 2500.00,
                         'mileage'              => 12000,
                         'status'               => 'available',
@@ -105,7 +105,7 @@ class DemoController extends Controller
                     [
                         'brand'                => 'Land Rover',
                         'model'                => 'Range Rover Sport',
-                        'plate'                => '67890-B-26',
+                        'plate'                => '20002-X-26',
                         'price_per_day'        => 1800.00,
                         'mileage'              => 24000,
                         'status'               => 'rented',
@@ -202,7 +202,7 @@ class DemoController extends Controller
 
                 $createdVehicles = [];
                 foreach ($vehicles as $vehicleData) {
-                    $createdVehicles[] = Vehicle::firstOrCreate(
+                    $createdVehicles[] = Vehicle::updateOrCreate(
                         ['plate' => $vehicleData['plate']],
                         $vehicleData
                     );
