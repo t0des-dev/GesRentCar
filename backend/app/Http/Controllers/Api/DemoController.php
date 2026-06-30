@@ -202,10 +202,14 @@ class DemoController extends Controller
 
                 $createdVehicles = [];
                 foreach ($vehicles as $vehicleData) {
-                    $createdVehicles[] = Vehicle::updateOrCreate(
+                    $vehicle = Vehicle::withTrashed()->updateOrCreate(
                         ['plate' => $vehicleData['plate']],
                         $vehicleData
                     );
+                    if ($vehicle->trashed()) {
+                        $vehicle->restore();
+                    }
+                    $createdVehicles[] = $vehicle;
                 }
 
                 // 3. Demo reservations + payments + contracts
