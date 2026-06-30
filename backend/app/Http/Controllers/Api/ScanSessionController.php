@@ -11,9 +11,6 @@ use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class ScanSessionController extends Controller
 {
-    /**
-     * Create a new scan session (authenticated — desktop user).
-     */
     public function store(Request $request): JsonResponse
     {
         $session = ScanSession::create([
@@ -32,9 +29,6 @@ class ScanSessionController extends Controller
         ], 201);
     }
 
-    /**
-     * Poll session status (authenticated — desktop user).
-     */
     public function show(ScanSession $session): JsonResponse
     {
         if ($session->isExpired() && $session->status !== 'completed') {
@@ -46,9 +40,6 @@ class ScanSessionController extends Controller
         ]);
     }
 
-    /**
-     * Phone page loads this to verify token is valid (no auth).
-     */
     public function phoneShow(string $token): JsonResponse
     {
         $session = ScanSession::where('token', $token)->firstOrFail();
@@ -66,9 +57,6 @@ class ScanSessionController extends Controller
         ]);
     }
 
-    /**
-     * Phone uploads scan data (no auth, uses token).
-     */
     public function upload(Request $request, string $token): JsonResponse
     {
         $session = ScanSession::where('token', $token)->firstOrFail();
@@ -86,7 +74,6 @@ class ScanSessionController extends Controller
             'image' => 'required|image|max:8192',
         ]);
 
-        // Store and OCR the image
         $file = $request->file('image');
         $filename = 'scan_' . $session->token . '_' . $validated['type'] . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('private/documents/clients', $filename);
@@ -95,28 +82,48 @@ class ScanSessionController extends Controller
 
         $data = ['image_url' => $imageUrl];
 
+        // Preprocess image for better OCR accuracy
+        $preprocessedPath = $this->preprocessImage($fullPath);
+
         try {
-            $ocr = new TesseractOCR($fullPath);
+            $ocr = new TesseractOCR($preprocessedPath);
             $ocr->lang('fra', 'eng', 'ara');
             $text = $ocr->run();
 
             if ($validated['type'] === 'cin') {
                 $data['name'] = $this->extractName($text);
                 $data['id_number'] = $this->extractCin($text);
+
+                if (empty($data['name']) && empty($data['id_number'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Impossible de lire le texte sur l\'image. Veuillez réessayer avec un meilleur éclairage.',
+                        'data' => $data,
+                    ], 422);
+                }
             } else {
                 $data['license_number'] = $this->extractLicense($text);
+
+                if (empty($data['license_number'])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Impossible de lire le numéro de permis. Veuillez réessayer.',
+                        'data' => $data,
+                    ], 422);
+                }
             }
         } catch (\Exception $e) {
-            // Fallback demo data
-            if ($validated['type'] === 'cin') {
-                $data['name'] = 'Demo User';
-                $data['id_number'] = 'AB123456';
-            } else {
-                $data['license_number'] = 'LC-998877';
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de traitement de l\'image. Veuillez réessayer.',
+            ], 500);
+        } finally {
+            // Clean up preprocessed temp file
+            if (isset($preprocessedPath) && $preprocessedPath !== $fullPath && file_exists($preprocessedPath)) {
+                @unlink($preprocessedPath);
             }
         }
 
-        // Update session
         $update = ['status' => 'scanning'];
         if ($validated['type'] === 'cin') {
             $update['cin_name'] = $data['name'] ?? null;
@@ -127,7 +134,6 @@ class ScanSessionController extends Controller
             $update['license_image_url'] = $data['image_url'] ?? null;
         }
 
-        // Mark completed if both documents uploaded
         $session->fill($update);
         if ($session->cin_number && $session->license_number) {
             $session->status = 'completed';
@@ -142,34 +148,91 @@ class ScanSessionController extends Controller
         ]);
     }
 
+    private function preprocessImage(string $path): string
+    {
+        $info = @getimagesize($path);
+        if (!$info) {
+            return $path;
+        }
+
+        $preprocessedPath = dirname($path) . '/pre_' . basename($path);
+
+        switch ($info[2]) {
+            case IMAGETYPE_JPEG:
+                $img = @imagecreatefromjpeg($path);
+                break;
+            case IMAGETYPE_PNG:
+                $img = @imagecreatefrompng($path);
+                break;
+            case IMAGETYPE_GIF:
+                $img = @imagecreatefromgif($path);
+                break;
+            default:
+                return $path;
+        }
+
+        if (!$img) {
+            return $path;
+        }
+
+        $width = imagesx($img);
+        $height = imagesy($img);
+
+        // Resize if too large (Tesseract works best at ~300 DPI)
+        $maxDim = 2000;
+        if ($width > $maxDim || $height > $maxDim) {
+            $ratio = min($maxDim / $width, $maxDim / $height);
+            $resized = imagecreatetruecolor((int)($width * $ratio), (int)($height * $ratio));
+            imagecopyresampled($resized, $img, 0, 0, 0, 0, (int)($width * $ratio), (int)($height * $ratio), $width, $height);
+            imagedestroy($img);
+            $img = $resized;
+        }
+
+        imagefilter($img, IMG_FILTER_GRAYSCALE);
+        imagefilter($img, IMG_FILTER_CONTRAST, -30);
+
+        imagejpeg($img, $preprocessedPath, 90);
+        imagedestroy($img);
+
+        return $preprocessedPath;
+    }
+
     private function extractCin(string $text): ?string
     {
-        // Moroccan CIN: 2 letters + 5-6 digits (e.g., AB123456, BE123456)
-        if (preg_match('/\b([A-Z]{1,2}\s*[0-9]{5,6})\b/i', $text, $matches)) {
+        // Format 1: 1-3 letters + 4-7 digits (Moroccan CIN, passport, etc.)
+        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,7})\b/i', $text, $matches)) {
             return preg_replace('/\s+/', '', strtoupper($matches[1]));
         }
-        // Fallback: 6-8 digits only
-        if (preg_match('/\b([0-9]{6,8})\b/', $text, $matches)) {
+        // Format 2: 9-12 consecutive digits (French/European ID)
+        if (preg_match('/\b([0-9]{9,12})\b/', $text, $matches)) {
             return $matches[1];
+        }
+        // Format 3: Single letter + 5-8 digits (passport)
+        if (preg_match('/\b([A-Z][0-9]{5,8})\b/i', $text, $matches)) {
+            return strtoupper($matches[1]);
         }
         return null;
     }
 
     private function extractName(string $text): ?string
     {
-        // Try labeled fields first: NOM, PRÉNOM, Nom, Prénom, Name
-        if (preg_match('/(?:PR[ÉE]NOM|PRENOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $matches)) {
+        // Try labeled French fields first: PRÉNOM + NOM
+        if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             $prenom = trim($matches[1]);
-            if (preg_match('/(?:NOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $nomMatches)) {
-                return trim($nomMatches[1]) . ' ' . $prenom;
+            if (preg_match('/(?:NOM|Name|Surname|Nom|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $nomMatches)) {
+                $nom = trim($nomMatches[1]);
+                // Avoid matching the same word as both NOM and PRENOM
+                if (strtolower($nom) !== strtolower($prenom)) {
+                    return $nom . ' ' . $prenom;
+                }
             }
             return $prenom;
         }
-        if (preg_match('/(?:NOM)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/iu', $text, $matches)) {
+        if (preg_match('/(?:NOM|Name|Surname|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             return trim($matches[1]);
         }
-        // Fallback: look for two consecutive capitalized words (First Last)
-        if (preg_match('/\b([A-Z][a-z]{2,})\s+([A-Z][a-z]{2,})\b/', $text, $matches)) {
+        // Fallback: two consecutive capitalized words
+        if (preg_match('/\b([A-Z][a-zÀ-ÿ]{2,})\s+([A-Z][a-zÀ-ÿ]{2,})\b/u', $text, $matches)) {
             return $matches[1] . ' ' . $matches[2];
         }
         return null;
@@ -177,18 +240,21 @@ class ScanSessionController extends Controller
 
     private function extractLicense(string $text): ?string
     {
-        // Moroccan license: various formats
-        // Format 1: XX/XXXXX (e.g., 12/12345)
+        // Format 1: XX/XXXXX (Moroccan license format)
         if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{4,6})\b/', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
-        // Format 2: 8 digits
+        // Format 2: 8 consecutive digits
         if (preg_match('/\b([0-9]{8})\b/', $text, $matches)) {
             return $matches[1];
         }
-        // Format 3: alphanumeric (e.g., 12AB3456)
-        if (preg_match('/\b([0-9]{2}[A-Z]{1,2}[0-9]{4,6})\b/i', $text, $matches)) {
-            return strtoupper($matches[1]);
+        // Format 3: Alphanumeric (e.g., 12AB3456, 12-AB-3456)
+        if (preg_match('/\b([0-9]{1,3}\s*[A-Z]{1,3}\s*[0-9]{3,6})\b/i', $text, $matches)) {
+            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
+        }
+        // Format 4: European format (1-3 letters + digits)
+        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,8})\b/i', $text, $matches)) {
+            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
         }
         return null;
     }

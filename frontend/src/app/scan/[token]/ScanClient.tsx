@@ -89,6 +89,12 @@ export default function ScanClient() {
       try {
         const result = await scanSessionService.upload(token, scanType, compressed);
 
+        if (!result.success) {
+          setErrorMsg(result.message || "Impossible de lire le document. Réessayez avec un meilleur éclairage.");
+          setStep("error");
+          return;
+        }
+
         if (scanType === "cin") {
           setCinDone(true);
           if (result.status !== "completed") {
@@ -121,6 +127,12 @@ export default function ScanClient() {
 
     try {
       const result = await scanSessionService.upload(token, scanType, compressed);
+
+      if (!result.success) {
+        setErrorMsg(result.message || "Impossible de lire le document. Réessayez avec un meilleur éclairage.");
+        setStep("error");
+        return;
+      }
 
       if (scanType === "cin") {
         setCinDone(true);

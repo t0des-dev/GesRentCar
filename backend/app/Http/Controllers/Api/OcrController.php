@@ -18,23 +18,19 @@ class OcrController extends Controller
         ]);
 
         try {
-            // Store image permanently in PRIVATE storage
             $file = $request->file('image');
             $filename = time().'_'.$type.'.'.$file->getClientOriginalExtension();
             $path = $file->storeAs('private/documents/clients', $filename);
-
-            // Get the full path for Tesseract
             $fullPath = storage_path('app/'.$path);
+            $imageUrl = '/api/documents/preview/'.$filename;
 
-            // Run Tesseract
-            $ocr = new TesseractOCR($fullPath);
+            // Preprocess image for better OCR
+            $preprocessedPath = $this->preprocessImage($fullPath);
+
+            $ocr = new TesseractOCR($preprocessedPath);
             $ocr->lang('fra', 'eng');
             $text = $ocr->run();
 
-            // Prepare SECURE URL for frontend
-            $imageUrl = '/api/documents/preview/'.$filename;
-
-            // Extract data using Regex
             $data = [];
             $warnings = [];
 
@@ -55,12 +51,32 @@ class OcrController extends Controller
                     'expiry_date' => $expiry,
                     'image_url' => $imageUrl,
                 ];
+
+                if (empty($data['name']) && empty($data['id_number'])) {
+                    return response()->json([
+                        'success' => false,
+                        'raw_text' => $text,
+                        'data' => $data,
+                        'warnings' => $warnings,
+                        'message' => 'Impossible de lire la Carte Nationale. Veuillez réessayer avec un meilleur éclairage.',
+                    ], 422);
+                }
             } else {
                 $data = [
                     'license_number' => $this->extractLicense($text),
                     'expiry_date' => $expiry,
                     'image_url' => $imageUrl,
                 ];
+
+                if (empty($data['license_number'])) {
+                    return response()->json([
+                        'success' => false,
+                        'raw_text' => $text,
+                        'data' => $data,
+                        'warnings' => $warnings,
+                        'message' => 'Impossible de lire le Permis de Conduire. Veuillez réessayer.',
+                    ], 422);
+                }
             }
 
             return response()->json([
@@ -71,79 +87,140 @@ class OcrController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Fallback for demo mode
-            $demoUrl = '/api/documents/preview/demo_'.$type.'.jpg';
-
             return response()->json([
-                'success' => true,
-                'raw_text' => 'MODE DÉMO (Erreur OCR) : '.$e->getMessage(),
+                'success' => false,
+                'raw_text' => null,
                 'data' => [
-                    'name' => 'Demo User (Extraction IA)',
-                    'id_number' => 'AB123456',
-                    'license_number' => 'LC-998877',
-                    'expiry_date' => '2026-12-31',
-                    'image_url' => $demoUrl,
+                    'image_url' => $imageUrl ?? null,
                 ],
                 'warnings' => [],
-            ]);
+                'message' => 'Erreur de traitement de l\'image. Veuillez réessayer.',
+            ], 500);
+        } finally {
+            if (isset($preprocessedPath) && $preprocessedPath !== $fullPath && file_exists($preprocessedPath)) {
+                @unlink($preprocessedPath);
+            }
         }
+    }
+
+    private function preprocessImage(string $path): string
+    {
+        $info = @getimagesize($path);
+        if (!$info) {
+            return $path;
+        }
+
+        $preprocessedPath = dirname($path) . '/pre_' . basename($path);
+
+        switch ($info[2]) {
+            case IMAGETYPE_JPEG:
+                $img = @imagecreatefromjpeg($path);
+                break;
+            case IMAGETYPE_PNG:
+                $img = @imagecreatefrompng($path);
+                break;
+            case IMAGETYPE_GIF:
+                $img = @imagecreatefromgif($path);
+                break;
+            default:
+                return $path;
+        }
+
+        if (!$img) {
+            return $path;
+        }
+
+        $width = imagesx($img);
+        $height = imagesy($img);
+
+        $maxDim = 2000;
+        if ($width > $maxDim || $height > $maxDim) {
+            $ratio = min($maxDim / $width, $maxDim / $height);
+            $resized = imagecreatetruecolor((int)($width * $ratio), (int)($height * $ratio));
+            imagecopyresampled($resized, $img, 0, 0, 0, 0, (int)($width * $ratio), (int)($height * $ratio), $width, $height);
+            imagedestroy($img);
+            $img = $resized;
+        }
+
+        imagefilter($img, IMG_FILTER_GRAYSCALE);
+        imagefilter($img, IMG_FILTER_CONTRAST, -30);
+
+        imagejpeg($img, $preprocessedPath, 90);
+        imagedestroy($img);
+
+        return $preprocessedPath;
     }
 
     private function extractExpiryDate(string $text): ?string
     {
-        // Matches typical date formats DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
-        // Often labels as 'Expire', 'Valable', 'Date de validité'
-        if (preg_match('/(?:Expire|Valable|Validité).*?([0-9]{2}[\/\.\-][0-9]{2}[\/\.\-][0-9]{4})/i', $text, $matches)) {
+        if (preg_match('/(?:Expire|Valable|Validité|Exp|Date).*?([0-9]{2}[\/\.\-][0-9]{2}[\/\.\-][0-9]{4})/i', $text, $matches)) {
             try {
                 return Carbon::createFromFormat('d/m/Y', str_replace(['.', '-'], '/', $matches[1]))->format('Y-m-d');
             } catch (\Exception $e) {
                 return null;
             }
         }
-
         return null;
     }
 
     private function extractCin(string $text): ?string
     {
-        // Look for Moroccan CIN format (1-2 Letters followed by 4-6 digits) e.g., AB123456
-        if (preg_match('/\b([A-Z]{1,2}[0-9]{4,6})\b/', strtoupper($text), $matches)) {
+        // Format 1: 1-3 letters + 4-7 digits
+        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,7})\b/i', $text, $matches)) {
+            return preg_replace('/\s+/', '', strtoupper($matches[1]));
+        }
+        // Format 2: 9-12 digit French/European ID
+        if (preg_match('/\b([0-9]{9,12})\b/', $text, $matches)) {
             return $matches[1];
         }
-
+        // Format 3: Letter + 5-8 digits (passport)
+        if (preg_match('/\b([A-Z][0-9]{5,8})\b/i', $text, $matches)) {
+            return strtoupper($matches[1]);
+        }
         return null;
     }
 
     private function extractName(string $text): ?string
     {
-        // Simple heuristic: Look for 'Nom' or 'Name' followed by text
-        if (preg_match('/(?:Nom|Name)\s*[:\-]?\s*([A-Za-z\s]+)/i', $text, $matches)) {
+        // Try labeled fields: PRÉNOM + NOM, or Given Name + Surname
+        if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
+            $prenom = trim($matches[1]);
+            if (preg_match('/(?:NOM|Name|Surname|Nom|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $nomMatches)) {
+                $nom = trim($nomMatches[1]);
+                if (strtolower($nom) !== strtolower($prenom)) {
+                    return $nom . ' ' . $prenom;
+                }
+            }
+            return $prenom;
+        }
+        if (preg_match('/(?:NOM|Name|Surname|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             return trim($matches[1]);
         }
-
+        // Fallback: two consecutive capitalized words
+        if (preg_match('/\b([A-Z][a-zÀ-ÿ]{2,})\s+([A-Z][a-zÀ-ÿ]{2,})\b/u', $text, $matches)) {
+            return $matches[1] . ' ' . $matches[2];
+        }
         return null;
     }
 
     private function extractLicense(string $text): ?string
     {
-        // Look for typical License numbers (e.g., 12/12345 or 12345678)
-        if (preg_match('/\b([0-9]{2}\/[0-9]{4,6}|[0-9]{8})\b/', $text, $matches)) {
+        // Format 1: XX/XXXXX
+        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{4,6})\b/', $text, $matches)) {
+            return preg_replace('/\s+/', '', $matches[1]);
+        }
+        // Format 2: 8 digits
+        if (preg_match('/\b([0-9]{8})\b/', $text, $matches)) {
             return $matches[1];
         }
-
+        // Format 3: Alphanumeric (12AB3456)
+        if (preg_match('/\b([0-9]{1,3}\s*[A-Z]{1,3}\s*[0-9]{3,6})\b/i', $text, $matches)) {
+            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
+        }
+        // Format 4: European (ABC12345)
+        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,8})\b/i', $text, $matches)) {
+            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
+        }
         return null;
-    }
-
-    public function analyzeDamage(Request $request)
-    {
-        // Simulated AI analysis of vehicle photo
-        return response()->json([
-            'integrity_score' => 92,
-            'detections' => [
-                ['part' => 'Front Bumper', 'issue' => 'Minor Scratch', 'severity' => 'Low'],
-                ['part' => 'Left Door', 'issue' => 'None', 'severity' => 'None'],
-            ],
-            'estimated_repair_cost' => 150.00,
-        ]);
     }
 }
