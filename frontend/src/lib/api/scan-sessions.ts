@@ -39,11 +39,18 @@ export const scanSessionService = {
     return data.data;
   },
 
-  async upload(token: string, type: "cin" | "license", file: File): Promise<{ success: boolean; data: Record<string, string>; status: string; message?: string }> {
+  async upload(token: string, type: "cin" | "license", file: File): Promise<{ success: boolean; data?: Record<string, string>; status?: string; message?: string }> {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("type", type);
-    const { data } = await axios.post(`${baseURL}/scan-sessions/${token}/upload`, formData);
-    return data;
+    try {
+      const { data } = await axios.post(`${baseURL}/scan-sessions/${token}/upload`, formData);
+      return data;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        return error.response.data as { success: boolean; message?: string };
+      }
+      return { success: false, message: "Erreur réseau. Vérifiez votre connexion." };
+    }
   },
 };
