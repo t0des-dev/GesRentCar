@@ -18,6 +18,9 @@ fi
 # Run migrations (never abort on failure)
 php artisan migrate --force || echo "WARNING: Migration failed, continuing anyway..."
 
+# Seed initial database records (never abort on failure)
+php artisan db:seed --force || echo "WARNING: Seeding failed, continuing anyway..."
+
 # Fix permissions for the mounted volume
 if [ "$(id -u)" = "0" ]; then
     chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache || true

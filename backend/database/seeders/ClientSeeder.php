@@ -13,11 +13,13 @@ class ClientSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Client Vectoria',
-            'email' => 'client@vectoria.com',
-            'password' => Hash::make('Client2026!'),
-            'role' => 'client',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'client@vectoria.com'],
+            [
+                'name' => 'Client Vectoria',
+                'password' => Hash::make('Client2026!'),
+                'role' => 'client',
+            ]
+        );
     }
 }
