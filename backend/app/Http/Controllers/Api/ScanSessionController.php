@@ -76,6 +76,10 @@ class ScanSessionController extends Controller
 
         $file = $request->file('image');
         $filename = 'scan_' . $session->token . '_' . $validated['type'] . '.' . $file->getClientOriginalExtension();
+        $dir = storage_path('app/private/documents/clients');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
         $path = $file->storeAs('private/documents/clients', $filename);
         $fullPath = storage_path('app/' . $path);
         $imageUrl = '/api/documents/preview/' . $filename;
