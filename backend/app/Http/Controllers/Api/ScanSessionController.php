@@ -114,14 +114,9 @@ class ScanSessionController extends Controller
             }
         } catch (\Exception $e) {
             $msg = $e->getMessage();
-            if (str_contains($msg, 'not installed') || str_contains($msg, 'not found') || str_contains($msg, 'No such file') || str_contains($msg, 'Cannot find')) {
-                $message = 'Le service OCR (Tesseract) n\'est pas installé sur le serveur. Contactez l\'administrateur.';
-            } else {
-                $message = 'Erreur de traitement de l\'image. Veuillez réessayer.';
-            }
             return response()->json([
                 'success' => false,
-                'message' => $message,
+                'message' => 'Erreur OCR : ' . $msg,
             ], 500);
         } finally {
             // Clean up preprocessed temp file
