@@ -271,21 +271,17 @@ class ScanSessionController extends Controller
 
     private function extractLicense(string $text): ?string
     {
-        // Format 1: XX/XXXXX or XX/XXXXXX (Moroccan license)
+        // Priority 1: context-aware — look for "Permis N°" label followed by the number
+        if (preg_match('/(?:Permis|PERMIS|License|LICENCE)\s*N[°oº.]?\s*[:\-=\.]?\s*([0-9]{2}\s*\/\s*[0-9]{4,6})/iu', $text, $matches)) {
+            return preg_replace('/\s+/', '', $matches[1]);
+        }
+        // Priority 2: XX/XXXXX or XX/XXXXXX (Moroccan license, standalone)
         if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5,6})\b/', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
-        // Format 2: 8 consecutive digits
+        // Priority 3: 8 consecutive digits
         if (preg_match('/\b([0-9]{8})\b/', $text, $matches)) {
             return $matches[1];
-        }
-        // Format 3: Alphanumeric (e.g., 12AB3456, 12-AB-3456)
-        if (preg_match('/\b([0-9]{1,3}\s*[A-Z]{1,3}\s*[0-9]{3,6})\b/i', $text, $matches)) {
-            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
-        }
-        // Format 4: European format (1-3 letters + digits)
-        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,8})\b/i', $text, $matches)) {
-            return strtoupper(preg_replace('/\s+/', '', $matches[1]));
         }
         return null;
     }
