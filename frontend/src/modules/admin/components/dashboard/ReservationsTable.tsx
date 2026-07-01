@@ -14,6 +14,8 @@ interface ReservationsTableProps {
   onPreviewDocs: (docs: { cin?: string; license?: string; name?: string }) => void;
   actionLoading: number | null;
   onRowClick: (reservation: Reservation) => void;
+  onConfirm?: (reservation: Reservation) => void;
+  onCancel?: (reservation: Reservation) => void;
   // Pagination
   currentPage?: number;
   lastPage?: number;
@@ -79,6 +81,8 @@ export default function ReservationsTable({
   onPreviewDocs, 
   actionLoading,
   onRowClick,
+  onConfirm,
+  onCancel,
   currentPage = 1,
   lastPage = 1,
   total,
@@ -248,13 +252,13 @@ export default function ReservationsTable({
                     )}
                   </td>
                   <td className="py-4 text-right">
-                    {r.status === "pending" ? (
+                    {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
                       <div className="flex gap-2 justify-end">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
-                          onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }}
+                          onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
                           disabled={actionLoading === r.id}
                         >
                           Accepter
@@ -263,7 +267,7 @@ export default function ReservationsTable({
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
-                          onClick={(e) => { e.stopPropagation(); onAction(r.id, "reject"); }}
+                          onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
                           disabled={actionLoading === r.id}
                         >
                           Rejeter
@@ -348,13 +352,13 @@ export default function ReservationsTable({
                   )}
                 </div>
 
-                {r.status === "pending" && (
+                {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
                   <div className="flex gap-2 justify-end">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
-                      onClick={(e) => { e.stopPropagation(); onAction(r.id, "accept"); }}
+                      onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
                       disabled={actionLoading === r.id}
                     >
                       Accepter
@@ -363,13 +367,13 @@ export default function ReservationsTable({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
-                      onClick={(e) => { e.stopPropagation(); onAction(r.id, "reject"); }}
+                      onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
                       disabled={actionLoading === r.id}
                     >
                       Rejeter
                     </motion.button>
                   </div>
-                )}
+                ) : null}
               </div>
             </motion.div>
           ))
