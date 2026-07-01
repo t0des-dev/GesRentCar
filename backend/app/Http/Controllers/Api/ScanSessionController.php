@@ -246,17 +246,41 @@ class ScanSessionController extends Controller
         if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             return trim($matches[1]);
         }
-        // Fallback: two consecutive capitalized words (at least 2 chars each)
+        // Fallback 1: two consecutive ALL-CAPS words on same line
         if (preg_match('/\b([A-ZÀ-Ý]{2,})\s+([A-ZÀ-Ý]{2,})\b/u', $text, $matches)) {
             return $matches[1] . ' ' . $matches[2];
+        }
+        // Fallback 2: name on separate lines after header (Moroccan CIN layout)
+        $lines = preg_split('/\r?\n/', $text);
+        $skipHeader = true;
+        $candidates = [];
+        foreach ($lines as $line) {
+            $trim = trim($line);
+            if ($trim === '') continue;
+            if ($skipHeader) {
+                if (preg_match('/ROYAUME|MAROC|CARTE|IDENTIT|PASSPORT/i', $trim)) {
+                    continue;
+                }
+                $skipHeader = false;
+            }
+            if (preg_match('/^[A-ZÀ-Ý\s\-]{2,}$/', $trim) && !preg_match('/ROYAUME|MAROC|CARTE|IDENTIT|NATIONAL|NUM[ÉE]RO|DATE|LIEU|TAILLE/i', $trim)) {
+                $candidates[] = $trim;
+            }
+            if (count($candidates) >= 2) break;
+        }
+        if (count($candidates) >= 2) {
+            return $candidates[0] . ' ' . $candidates[1];
+        }
+        if (count($candidates) === 1) {
+            return $candidates[0];
         }
         return null;
     }
 
     private function extractLicense(string $text): ?string
     {
-        // Format 1: XX/XXXXX (Moroccan license - exactly 5 digits after slash, not 4 which is a year)
-        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5})\b/', $text, $matches)) {
+        // Format 1: XX/XXXXX or XX/XXXXXX (Moroccan license)
+        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5,6})\b/', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
         // Format 2: 8 consecutive digits
