@@ -82,8 +82,19 @@ class ScanSessionController extends Controller
 
         $data = ['image_url' => $imageUrl];
 
+        if (!file_exists($fullPath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Image non sauvegardée. storage_path=' . storage_path('app') . ' | path=' . $path,
+            ], 500);
+        }
+
         // Preprocess image for better OCR accuracy
         $preprocessedPath = $this->preprocessImage($fullPath);
+
+        if (!file_exists($preprocessedPath)) {
+            $preprocessedPath = $fullPath;
+        }
 
         try {
             $ocr = new TesseractOCR($preprocessedPath);
