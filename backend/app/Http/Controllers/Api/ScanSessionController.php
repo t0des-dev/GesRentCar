@@ -232,23 +232,22 @@ class ScanSessionController extends Controller
 
     private function extractName(string $text): ?string
     {
-        // Try labeled French fields first: PRÉNOM + NOM
-        if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
-            $prenom = trim($matches[1]);
-            if (preg_match('/(?:NOM|Name|Surname|Nom|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $nomMatches)) {
-                $nom = trim($nomMatches[1]);
-                // Avoid matching the same word as both NOM and PRENOM
+        // Try labeled French fields: NOM + PRÉNOM (order: NOM first is more common on CIN)
+        if (preg_match('/(?:NOM|Name|Surname|Nom|Family)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $nomMatches)) {
+            $nom = trim($nomMatches[1]);
+            if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
+                $prenom = trim($matches[1]);
                 if (strtolower($nom) !== strtolower($prenom)) {
                     return $nom . ' ' . $prenom;
                 }
             }
-            return $prenom;
+            return $nom;
         }
-        if (preg_match('/(?:NOM|Name|Surname|Family)\s*[:\-]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
+        if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             return trim($matches[1]);
         }
-        // Fallback: two consecutive capitalized words
-        if (preg_match('/\b([A-Z][a-zÀ-ÿ]{2,})\s+([A-Z][a-zÀ-ÿ]{2,})\b/u', $text, $matches)) {
+        // Fallback: two consecutive capitalized words (at least 2 chars each)
+        if (preg_match('/\b([A-ZÀ-Ý]{2,})\s+([A-ZÀ-Ý]{2,})\b/u', $text, $matches)) {
             return $matches[1] . ' ' . $matches[2];
         }
         return null;
@@ -256,8 +255,8 @@ class ScanSessionController extends Controller
 
     private function extractLicense(string $text): ?string
     {
-        // Format 1: XX/XXXXX (Moroccan license format)
-        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{4,6})\b/', $text, $matches)) {
+        // Format 1: XX/XXXXX (Moroccan license - exactly 5 digits after slash, not 4 which is a year)
+        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5})\b/', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
         // Format 2: 8 consecutive digits
