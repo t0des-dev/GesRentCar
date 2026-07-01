@@ -42,6 +42,7 @@ RUN rm -f bootstrap/cache/*.php \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # ─── Backend stage: API + OCR (with Tesseract) ────────────────────────────
 FROM base AS backend
