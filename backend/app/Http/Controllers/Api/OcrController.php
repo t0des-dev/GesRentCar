@@ -24,8 +24,8 @@ class OcrController extends Controller
             if (!is_dir($dir)) {
                 mkdir($dir, 0775, true);
             }
-            $path = $file->storeAs('private/documents/clients', $filename);
-            $fullPath = storage_path('app/'.$path);
+            $file->storeAs('documents/clients', $filename);
+            $fullPath = $dir . '/' . $filename;
             $imageUrl = '/api/documents/preview/'.$filename;
 
             // Preprocess image for better OCR

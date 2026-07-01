@@ -80,8 +80,8 @@ class ScanSessionController extends Controller
         if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
-        $path = $file->storeAs('private/documents/clients', $filename);
-        $fullPath = storage_path('app/' . $path);
+        $file->storeAs('documents/clients', $filename);
+        $fullPath = $dir . '/' . $filename;
         $imageUrl = '/api/documents/preview/' . $filename;
 
         $data = ['image_url' => $imageUrl];
@@ -89,7 +89,7 @@ class ScanSessionController extends Controller
         if (!file_exists($fullPath)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Image non sauvegardée. storage_path=' . storage_path('app') . ' | path=' . $path,
+                'message' => 'Image non sauvegardée. fullPath=' . $fullPath,
             ], 500);
         }
 
