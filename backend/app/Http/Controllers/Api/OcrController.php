@@ -232,11 +232,11 @@ class OcrController extends Controller
     private function extractLicense(string $text): ?string
     {
         // Priority 1: context-aware — look for "Permis N°" label
-        if (preg_match('/(?:Permis|PERMIS|License|LICENCE)\s*N[°oº.]?\s*[:\-=\.]?\s*([0-9]{2}\s*\/\s*[0-9]{4,6})/iu', $text, $matches)) {
+        if (preg_match('/(?:Permis|PERMIS|License|LICENCE)\s*N[°oº.]?\s*[:\-=\.]?\s*([0-9]{2}\s*\/\s*[0-9]{4,10})/iu', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
-        // Priority 2: XX/XXXXX or XX/XXXXXX (Moroccan license, standalone)
-        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5,6})\b/', $text, $matches)) {
+        // Priority 2: XX/XXXXXXXXXX (Moroccan license, standalone)
+        if (preg_match('/\b([0-9]{2}\s*\/\s*[0-9]{5,10})\b/', $text, $matches)) {
             return preg_replace('/\s+/', '', $matches[1]);
         }
         // Priority 3: 8 consecutive digits
