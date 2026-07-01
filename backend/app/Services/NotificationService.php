@@ -359,7 +359,10 @@ MSG;
      */
     private function normalizePhone(string $phone): string
     {
-        $phone = preg_replace('/\s+/', '', $phone);
+        $phone = preg_replace('/\s+/', '', trim($phone));
+        if ($phone === '' || $phone === null) {
+            return '';
+        }
         // Moroccan local format
         if (str_starts_with($phone, '0') && ! str_starts_with($phone, '00')) {
             $phone = '+212'.substr($phone, 1);

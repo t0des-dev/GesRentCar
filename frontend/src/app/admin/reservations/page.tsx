@@ -75,7 +75,7 @@ export default function ReservationsPage() {
       } else {
         await api.put(`/reservations/${modalReservation.id}`, {
           status: "cancelled",
-          documents: { cancel_reason: cancelReason },
+          cancel_reason: cancelReason,
         });
       }
       setModalOpen(false);

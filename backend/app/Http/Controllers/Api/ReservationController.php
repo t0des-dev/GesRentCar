@@ -212,7 +212,15 @@ class ReservationController extends Controller
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after:start_date',
             'vehicle_id' => 'sometimes|exists:vehicles,id',
+            'cancel_reason' => 'sometimes|nullable|string',
         ]);
+
+        if (isset($validated['cancel_reason'])) {
+            $docs = $reservation->documents ?? [];
+            $docs['cancel_reason'] = $validated['cancel_reason'];
+            $reservation->update(['documents' => $docs]);
+            unset($validated['cancel_reason']);
+        }
 
         if (isset($validated['start_date']) || isset($validated['end_date']) || isset($validated['vehicle_id'])) {
             $vehicleId = $validated['vehicle_id'] ?? $reservation->vehicle_id;
@@ -271,15 +279,26 @@ class ReservationController extends Controller
             return response()->json(['message' => 'Statut de réservation invalide.'], 422);
         }
 
+        $reservation->load(['client', 'vehicle']);
         $reservation->update(['status' => 'pending_payment']);
 
-        $contractCtrl = new ContractController($this->notificationService);
-        $contractCtrl->generate($reservation);
+        try {
+            $contractCtrl = new ContractController($this->notificationService);
+            $contractCtrl->generate($reservation);
+        } catch (\Throwable $e) {
+            Log::warning('Contract generation failed after accept', ['reservation_id' => $reservation->id, 'error' => $e->getMessage()]);
+        }
 
-        $this->notificationService->sendSms(
-            $reservation->client->phone,
-            "VectoriaRentCar: Votre demande #{$reservation->id} a ete ACCEPTEE. Merci de proceder au paiement pour confirmer."
-        );
+        try {
+            if ($reservation->client && $reservation->client->phone) {
+                $this->notificationService->sendSms(
+                    $reservation->client->phone,
+                    "VectoriaRentCar: Votre demande #{$reservation->id} a ete ACCEPTEE. Merci de proceder au paiement pour confirmer."
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::warning('SMS notification failed after accept', ['reservation_id' => $reservation->id, 'error' => $e->getMessage()]);
+        }
 
         return response()->json([
             'message' => 'Réservation acceptée par le partenaire.',
@@ -298,7 +317,7 @@ class ReservationController extends Controller
 
         return response()->json([
             'message' => 'Réservation rejetée par le partenaire.',
-            'reservation' => $reservation->fresh(),
+            'reservation' => $reservation->fresh(['client', 'vehicle']),
         ]);
     }
 

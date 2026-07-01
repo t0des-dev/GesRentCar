@@ -39,13 +39,27 @@ class ConfigController extends Controller
 
     public function index(): JsonResponse
     {
-        $setting = Setting::where('key', 'agency_config')->first();
+        try {
+            $setting = Setting::where('key', 'agency_config')->first();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'agency_name' => env('AGENCY_NAME', 'Vectoria Rent Car'),
+                'agency_slogan' => env('AGENCY_SLOGAN', 'Premium Car Rental'),
+                'primary_color' => env('AGENCY_PRIMARY_COLOR', '#6366f1'),
+            ]);
+        }
 
         // If agency_config record doesn't exist, try to migrate from legacy records
         if (! $setting) {
-            $name = Setting::where('key', 'agency_name')->value('value') ?? env('AGENCY_NAME', 'Vectoria Rent Car');
-            $slogan = Setting::where('key', 'agency_slogan')->value('value') ?? env('AGENCY_SLOGAN', 'Premium Car Rental');
-            $color = Setting::where('key', 'agency_primary_color')->value('value') ?? env('AGENCY_PRIMARY_COLOR', '#6366f1');
+            try {
+                $name = Setting::where('key', 'agency_name')->value('value') ?? env('AGENCY_NAME', 'Vectoria Rent Car');
+                $slogan = Setting::where('key', 'agency_slogan')->value('value') ?? env('AGENCY_SLOGAN', 'Premium Car Rental');
+                $color = Setting::where('key', 'agency_primary_color')->value('value') ?? env('AGENCY_PRIMARY_COLOR', '#6366f1');
+            } catch (\Throwable $e) {
+                $name = env('AGENCY_NAME', 'Vectoria Rent Car');
+                $slogan = env('AGENCY_SLOGAN', 'Premium Car Rental');
+                $color = env('AGENCY_PRIMARY_COLOR', '#6366f1');
+            }
 
             return response()->json([
                 'agency_name' => $name,
@@ -60,27 +74,27 @@ class ConfigController extends Controller
             'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
             'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
             'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
-            'logo_url' => $setting->logo_url,
-            'hero_image_url' => $setting->hero_image_url,
-            'hero_video_url' => $setting->hero_video_url,
-            'about_text_fr' => $setting->about_text_fr,
-            'about_text_en' => $setting->about_text_en,
-            'about_text_ar' => $setting->about_text_ar,
-            'sections_config' => $setting->sections_config,
-            'category_prices' => $setting->category_prices,
-            'special_offers' => $setting->special_offers,
-            'header_config' => $setting->header_config,
-            'footer_config' => $setting->footer_config,
-            'theme_config' => $setting->theme_config,
-            'stats_config' => $setting->stats_config,
-            'sections_order' => $setting->sections_order,
-            'testimonials' => $setting->testimonials,
-            'seo_config' => $setting->seo_config,
-            'social_hub' => $setting->social_hub,
-            'faq_config' => $setting->faq_config,
-            'features_config' => $setting->features_config,
-            'concierge_config' => $setting->concierge_config,
-            'sections_content' => $setting->sections_content,
+            'logo_url' => $setting->logo_url ?? null,
+            'hero_image_url' => $setting->hero_image_url ?? null,
+            'hero_video_url' => $setting->hero_video_url ?? null,
+            'about_text_fr' => $setting->about_text_fr ?? null,
+            'about_text_en' => $setting->about_text_en ?? null,
+            'about_text_ar' => $setting->about_text_ar ?? null,
+            'sections_config' => $setting->sections_config ?? null,
+            'category_prices' => $setting->category_prices ?? null,
+            'special_offers' => $setting->special_offers ?? null,
+            'header_config' => $setting->header_config ?? null,
+            'footer_config' => $setting->footer_config ?? null,
+            'theme_config' => $setting->theme_config ?? null,
+            'stats_config' => $setting->stats_config ?? null,
+            'sections_order' => $setting->sections_order ?? null,
+            'testimonials' => $setting->testimonials ?? null,
+            'seo_config' => $setting->seo_config ?? null,
+            'social_hub' => $setting->social_hub ?? null,
+            'faq_config' => $setting->faq_config ?? null,
+            'features_config' => $setting->features_config ?? null,
+            'concierge_config' => $setting->concierge_config ?? null,
+            'sections_content' => $setting->sections_content ?? null,
         ]);
     }
 
