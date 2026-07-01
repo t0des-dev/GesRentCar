@@ -175,17 +175,17 @@ class OcrController extends Controller
 
     private function extractCin(string $text): ?string
     {
-        // Format 1: 1-3 letters + 4-7 digits
-        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,7})\b/i', $text, $matches)) {
+        // Format 1: 1-3 letters + 4-8 digits (Moroccan CIN like K01234567)
+        if (preg_match('/\b([A-Z]{1,3}\s*[0-9]{4,8})\b/i', $text, $matches)) {
             return preg_replace('/\s+/', '', strtoupper($matches[1]));
         }
-        // Format 2: 9-12 digit French/European ID
-        if (preg_match('/\b([0-9]{9,12})\b/', $text, $matches)) {
-            return $matches[1];
-        }
-        // Format 3: Letter + 5-8 digits (passport)
+        // Format 2: Single letter + 5-8 digits (passport)
         if (preg_match('/\b([A-Z][0-9]{5,8})\b/i', $text, $matches)) {
             return strtoupper($matches[1]);
+        }
+        // Format 3: 9-12 digit French/European ID
+        if (preg_match('/\b([0-9]{9,12})\b/', $text, $matches)) {
+            return $matches[1];
         }
         return null;
     }
@@ -206,24 +206,16 @@ class OcrController extends Controller
         if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
             return trim($matches[1]);
         }
-        // Fallback 1: two consecutive ALL-CAPS words on same line
-        if (preg_match('/\b([A-ZÀ-Ý]{2,})\s+([A-ZÀ-Ý]{2,})\b/u', $text, $matches)) {
-            return $matches[1] . ' ' . $matches[2];
-        }
-        // Fallback 2: name on separate lines after header (Moroccan CIN layout)
+        // Fallback: scan all lines for ALL-CAPS Latin words, skip known CIN headers/fields
         $lines = preg_split('/\r?\n/', $text);
-        $skipHeader = true;
+        $skipWords = '/ROYAUME|MAROC|CARTE|IDENTIT|NATIONAL|PASSPORT|NUM[ÉE]RO|DATE|LIEU|TAILLE|N[ÉE]|VALABLE|SIGNALEMENT|PROFIL|FILS|PERMISSION|ADRESSE|CIN|DROIT|AL|ASSILAH|TANGER|CASABLANCA|RABAT|FES|MARRAKECH/i';
         $candidates = [];
         foreach ($lines as $line) {
             $trim = trim($line);
             if ($trim === '') continue;
-            if ($skipHeader) {
-                if (preg_match('/ROYAUME|MAROC|CARTE|IDENTIT|PASSPORT/i', $trim)) {
-                    continue;
-                }
-                $skipHeader = false;
-            }
-            if (preg_match('/^[A-ZÀ-Ý\s\-]{2,}$/', $trim) && !preg_match('/ROYAUME|MAROC|CARTE|IDENTIT|NATIONAL|NUM[ÉE]RO|DATE|LIEU|TAILLE/i', $trim)) {
+            if (preg_match($skipWords, $trim)) continue;
+            // Must be ALL-CAPS Latin text (typical for names on CIN)
+            if (preg_match('/^[A-ZÀ-Ý][A-ZÀ-Ý\s\-]+[A-ZÀ-Ý]$/', $trim)) {
                 $candidates[] = $trim;
             }
             if (count($candidates) >= 2) break;
