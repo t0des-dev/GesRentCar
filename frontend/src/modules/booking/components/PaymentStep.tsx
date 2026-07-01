@@ -27,13 +27,13 @@ const GATEWAY_STYLES: Record<string, { selected: string; icon: string }> = {
 };
 
 const GATEWAYS = [
-  { id: "stripe", label: "Stripe", sub: "International", icon: CreditCard },
-  { id: "cmi", label: "CMI", sub: "Maroc Local", icon: Globe },
+  // { id: "stripe", label: "Stripe", sub: "International", icon: CreditCard },
+  // { id: "cmi", label: "CMI", sub: "Maroc Local", icon: Globe },
   { id: "on_site", label: "Sur Place", sub: "Agence", icon: Banknote },
 ];
 
 export default function PaymentStep({ booking, deposit, reservationId, signature, onSuccess, onPrev }: PaymentStepProps) {
-  const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("stripe");
+  const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("on_site");
   const [loading, setLoading] = useState(false);
 
   const checkAvailability = async () => {
@@ -97,7 +97,7 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
         </div>
 
         {/* Gateway Selector */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-10">
           {GATEWAYS.map((gateway) => {
             const isSelected = selectedGateway === gateway.id;
             const gwStyle = GATEWAY_STYLES[gateway.id];
