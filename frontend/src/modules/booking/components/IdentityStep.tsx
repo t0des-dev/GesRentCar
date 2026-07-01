@@ -3,9 +3,11 @@
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { cn } from "@/shared/utils";
-import { ScanLine, Loader2, ShieldCheck, QrCode, Smartphone } from "lucide-react";
+import { ScanLine, Loader2, ShieldCheck, QrCode, Smartphone, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookingStepProps } from "@/types/booking";
+import DocumentScanOverlay from "./DocumentScanOverlay";
+import { scanSessionService, type ScanSession } from "@/lib/api/scan-sessions";
 
 const ScanSessionQR = dynamic(() => import("./ScanSessionQR"), {
   ssr: false,
@@ -26,6 +28,14 @@ interface IdentityStepProps extends BookingStepProps {
 export default function IdentityStep({ booking, update, isScanning, setIsScanning, setBooking }: IdentityStepProps) {
   const [scanSuccess, setScanSuccess] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayScanType, setOverlayScanType] = useState<"cin" | "license">("cin");
+  const [overlayScanning, setOverlayScanning] = useState(false);
+  const [scanSession, setScanSession] = useState<ScanSession | null>(null);
+  const [scanData, setScanData] = useState<{
+    name?: string; cin?: string; licenseNumber?: string;
+    cinImageUrl?: string; licenseImageUrl?: string;
+  }>({});
 
   const handleScanComplete = useCallback((data: {
     name?: string;
@@ -43,15 +53,9 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
         licenseNumber: data.licenseNumber || prev.client.licenseNumber,
         cinImageUrl: data.cinImageUrl || prev.client.cinImageUrl,
         licenseImageUrl: data.licenseImageUrl || prev.client.licenseImageUrl,
+        verified: true,
       },
     }));
-
-    setTimeout(() => {
-      setBooking((prev) => ({
-        ...prev,
-        client: { ...prev.client, verified: true },
-      }));
-    }, 1500);
 
     setScanSuccess(true);
     setTimeout(() => {
@@ -59,6 +63,62 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
       setShowQR(false);
     }, 3000);
   }, [setBooking]);
+
+  const handleOpenCamera = useCallback(async () => {
+    try {
+      const session = await scanSessionService.create();
+      setScanSession(session);
+      setScanData({});
+      setOverlayScanType("cin");
+      setOverlayScanning(false);
+      setShowOverlay(true);
+      setIsScanning(true);
+    } catch {
+      setIsScanning(false);
+    }
+  }, [setIsScanning]);
+
+  const handleOverlayCapture = useCallback(async (file: File) => {
+    if (!scanSession) return;
+    setOverlayScanning(true);
+
+    try {
+      const result = await scanSessionService.upload(scanSession.token, overlayScanType, file);
+
+      if (!result.success) {
+        setOverlayScanning(false);
+        return;
+      }
+
+      const newData = { ...scanData };
+      if (overlayScanType === "cin") {
+        newData.name = result.data?.name || "";
+        newData.cin = result.data?.id_number || "";
+        newData.cinImageUrl = result.data?.image_url || "";
+      } else {
+        newData.licenseNumber = result.data?.license_number || "";
+        newData.licenseImageUrl = result.data?.image_url || "";
+      }
+      setScanData(newData);
+
+      if (result.status === "completed") {
+        setShowOverlay(false);
+        setIsScanning(false);
+        handleScanComplete(newData);
+      } else {
+        setOverlayScanType("license");
+        setOverlayScanning(false);
+      }
+    } catch {
+      setOverlayScanning(false);
+    }
+  }, [scanSession, overlayScanType, scanData, setIsScanning, handleScanComplete]);
+
+  const handleCloseOverlay = useCallback(() => {
+    setShowOverlay(false);
+    setIsScanning(false);
+    setScanSession(null);
+  }, [setIsScanning]);
 
   return (
     <div className="space-y-8">
@@ -129,12 +189,16 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                     </p>
                   </div>
 
-                  <ScanSessionQR onComplete={handleScanComplete} />
+                  <ScanSessionQR
+                    onComplete={handleScanComplete}
+                    onScanningChange={setIsScanning}
+                  />
 
                   <button
-                    onClick={() => setShowQR(false)}
-                    className="mt-4 text-xs text-slate-400 font-semibold underline hover:text-slate-600 transition-colors"
+                    onClick={handleOpenCamera}
+                    className="mt-4 inline-flex items-center gap-2 text-xs text-slate-400 font-semibold underline hover:text-slate-600 transition-colors"
                   >
+                    <Camera size={14} />
                     Utiliser la caméra de cet appareil
                   </button>
                 </div>
@@ -220,6 +284,14 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
           </div>
         ))}
       </div>
+
+      <DocumentScanOverlay
+        open={showOverlay}
+        onClose={handleCloseOverlay}
+        onCapture={handleOverlayCapture}
+        scanning={overlayScanning}
+        title={overlayScanType === "cin" ? "Carte Nationale d'Identité" : "Permis de Conduire"}
+      />
     </div>
   );
 }

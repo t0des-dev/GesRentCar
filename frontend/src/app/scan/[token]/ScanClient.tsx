@@ -22,6 +22,17 @@ export default function ScanClient() {
   const [licenseDone, setLicenseDone] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
 
+  const isArabic = typeof navigator !== "undefined" && navigator.language.startsWith("ar");
+  const loc = (fr: string, ar: string) => isArabic ? ar : fr;
+
+  // Set RTL for Arabic users
+  useEffect(() => {
+    if (isArabic) {
+      document.documentElement.dir = "rtl";
+      document.documentElement.lang = "ar";
+    }
+  }, []);
+
   // Verify token is valid
   useEffect(() => {
     scanSessionService.phoneStatus(token)
@@ -29,7 +40,7 @@ export default function ScanClient() {
         if (data.status === "completed") {
           setStep("done");
         } else if (data.status === "expired") {
-          setErrorMsg("Session expirée. Retournez sur votre ordinateur.");
+          setErrorMsg(loc("Session expirée. Retournez sur votre ordinateur.", "انتهت الجلسة. عد إلى جهاز الكمبيوتر الخاص بك."));
           setStep("error");
         } else {
           if (data.cin_number) setCinDone(true);
@@ -39,7 +50,7 @@ export default function ScanClient() {
         }
       })
       .catch(() => {
-        setErrorMsg("Lien invalide ou expiré.");
+        setErrorMsg(loc("Lien invalide ou expiré.", "رابط غير صالح أو منتهي الصلاحية."));
         setStep("error");
       });
 
@@ -60,7 +71,7 @@ export default function ScanClient() {
         setCameraReady(true);
       }
     } catch {
-      setErrorMsg("Caméra indisponible. Autorisez l'accès dans les paramètres.");
+      setErrorMsg(loc("Caméra indisponible. Autorisez l'accès dans les paramètres.", "الكاميرا غير متوفرة. اسمح بالوصول في الإعدادات."));
       setStep("error");
     }
   };
@@ -90,7 +101,7 @@ export default function ScanClient() {
         const result = await scanSessionService.upload(token, scanType, compressed);
 
         if (!result.success) {
-          setErrorMsg(result.message || "Impossible de lire le document. Réessayez avec un meilleur éclairage.");
+          setErrorMsg(result.message || loc("Impossible de lire le document. Réessayez avec un meilleur éclairage.", "تعذر قراءة المستند. حاول مرة أخرى مع إضاءة أفضل."));
           setStep("error");
           return;
         }
@@ -112,7 +123,7 @@ export default function ScanClient() {
           await startCamera();
         }
       } catch {
-        setErrorMsg("Erreur lors de l'envoi. Réessayez.");
+        setErrorMsg(loc("Erreur lors de l'envoi. Réessayez.", "خطأ في الإرسال. حاول مرة أخرى."));
         setStep("error");
       }
     }, "image/jpeg", 0.92);
@@ -129,7 +140,7 @@ export default function ScanClient() {
       const result = await scanSessionService.upload(token, scanType, compressed);
 
       if (!result.success) {
-        setErrorMsg(result.message || "Impossible de lire le document. Réessayez avec un meilleur éclairage.");
+        setErrorMsg(result.message || loc("Impossible de lire le document. Réessayez avec un meilleur éclairage.", "تعذر قراءة المستند. حاول مرة أخرى مع إضاءة أفضل."));
         setStep("error");
         return;
       }
@@ -151,7 +162,7 @@ export default function ScanClient() {
         await startCamera();
       }
     } catch {
-      setErrorMsg("Erreur lors de l'envoi. Réessayez.");
+      setErrorMsg(loc("Erreur lors de l'envoi. Réessayez.", "خطأ في الإرسال. حاول مرة أخرى."));
       setStep("error");
     }
   };
@@ -161,7 +172,7 @@ export default function ScanClient() {
     return (
       <div className="min-h-[100dvh] bg-black flex flex-col items-center justify-center gap-4">
         <Loader2 className="animate-spin text-white" size={36} />
-        <p className="text-white/60 text-xs font-semibold uppercase tracking-widest">Vérification du lien...</p>
+        <p className="text-white/60 text-xs font-semibold uppercase tracking-widest">{loc("Vérification du lien...", "جارٍ التحقق من الرابط...")}</p>
       </div>
     );
   }
@@ -188,8 +199,8 @@ export default function ScanClient() {
           </div>
         </motion.div>
         <div className="text-center">
-          <h2 className="text-white text-xl font-bold mb-2">Documents envoyés !</h2>
-          <p className="text-white/50 text-sm">Retournez sur votre ordinateur pour continuer.</p>
+          <h2 className="text-white text-xl font-bold mb-2">{loc("Documents envoyés !", "تم إرسال المستندات!")}</h2>
+          <p className="text-white/50 text-sm">{loc("Retournez sur votre ordinateur pour continuer.", "عد إلى جهاز الكمبيوتر الخاص بك للمتابعة.")}</p>
         </div>
       </div>
     );
@@ -201,9 +212,9 @@ export default function ScanClient() {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 bg-black/80 backdrop-blur-sm z-20 shrink-0">
         <div>
-          <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest">Scan Vectoria</p>
+          <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest">{loc("Scan Vectoria", "مسح فيكتوريا")}</p>
           <h3 className="text-white text-base font-bold">
-            {scanType === "cin" ? "Carte Nationale d'Identité" : "Permis de Conduire"}
+            {scanType === "cin" ? loc("Carte Nationale d'Identité", "البطاقة الوطنية للتعريف") : loc("Permis de Conduire", "رخصة السياقة")}
           </h3>
         </div>
         <div className="flex items-center gap-3">
@@ -214,7 +225,7 @@ export default function ScanClient() {
           )}
           {licenseDone && (
             <div className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase">
-              <CheckCircle2 size={10} /> Permis
+              <CheckCircle2 size={10} /> {loc("Permis", "رخصة")}
             </div>
           )}
         </div>
@@ -247,7 +258,7 @@ export default function ScanClient() {
         {/* Hint */}
         <div className="absolute bottom-6 inset-x-0 text-center z-10">
           <p className="text-white/80 text-xs font-semibold drop-shadow-lg">
-            {step === "uploading" ? "Analyse en cours..." : "Cadrez le document dans le cadre"}
+            {step === "uploading" ? loc("Analyse en cours...", "جارٍ التحليل...") : loc("Cadrez le document dans le cadre", "ضع المستند في الإطار")}
           </p>
         </div>
       </div>

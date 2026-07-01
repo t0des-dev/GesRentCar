@@ -9,9 +9,10 @@ import { scanSessionService, type ScanSession, type ScanSessionStatus } from "@/
 
 interface ScanSessionQRProps {
   onComplete: (data: { name?: string; cin?: string; licenseNumber?: string; cinImageUrl?: string; licenseImageUrl?: string }) => void;
+  onScanningChange?: (scanning: boolean) => void;
 }
 
-export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
+export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSessionQRProps) {
   const [session, setSession] = useState<ScanSession | null>(null);
   const [status, setStatus] = useState<ScanSessionStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,12 +27,13 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
       setError(null);
       const s = await scanSessionService.create();
       setSession(s);
+      onScanningChange?.(true);
     } catch {
       setError("Impossible de créer la session de scan.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onScanningChange]);
 
   // Poll status every 2s
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
 
         if (s.status === "completed") {
           clearInterval(interval);
+          onScanningChange?.(false);
           onComplete({
             name: s.cin_name ?? undefined,
             cin: s.cin_number ?? undefined,
@@ -53,6 +56,7 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
           });
         } else if (s.status === "expired") {
           clearInterval(interval);
+          onScanningChange?.(false);
           setError("Session expirée. Générez un nouveau QR code.");
         }
       } catch {
@@ -61,7 +65,7 @@ export default function ScanSessionQR({ onComplete }: ScanSessionQRProps) {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [session, onComplete]);
+  }, [session, onComplete, onScanningChange]);
 
   useEffect(() => {
     createSession();

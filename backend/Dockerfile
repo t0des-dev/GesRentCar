@@ -51,7 +51,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr-fra \
     tesseract-ocr-eng \
     tesseract-ocr-ara \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /tmp/* /var/tmp/*
 
 EXPOSE 9000
 ENTRYPOINT ["docker-entrypoint.sh"]
