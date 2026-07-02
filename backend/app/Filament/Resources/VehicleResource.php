@@ -10,6 +10,8 @@ use Filament\Forms;
 use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -98,7 +100,7 @@ class VehicleResource extends Resource
                                 Forms\Components\TextInput::make('commission_rate')
                                     ->numeric()
                                     ->suffix('%')
-                                    ->visible(fn (Forms\Get $get) => $get('type') === 'collaborator'),
+                                    ->visible(fn (Get $get) => $get('type') === 'collaborator'),
                             ])->columns(2),
 
                         Forms\Components\Tabs\Tab::make('Documents & Assurance')
@@ -210,7 +212,7 @@ class VehicleResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Informations Véhicule')
+                Section::make('Informations Véhicule')
                     ->schema([
                         Infolists\Components\ImageEntry::make('image_url')
                             ->hiddenLabel()
@@ -238,7 +240,7 @@ class VehicleResource extends Resource
                             ->label('Prix / Jour')
                             ->money('MAD'),
                     ])->columns(3),
-                Infolists\Components\Section::make('Dates & Conformité')
+                Section::make('Dates & Conformité')
                     ->schema([
                         Infolists\Components\TextEntry::make('insurance_date')
                             ->label('Assurance')
