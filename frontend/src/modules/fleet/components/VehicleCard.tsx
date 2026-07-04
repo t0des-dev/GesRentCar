@@ -44,6 +44,7 @@ export default function VehicleCard({
 
   const displayPrice = dynamicPrice || price;
   const isPriceChanged = dynamicPrice && dynamicPrice !== price;
+  const discountPercent = isPriceChanged && price > 0 ? Math.round((1 - displayPrice / price) * 100) : 0;
 
   return (
     <Link
@@ -85,10 +86,24 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Dynamic Reason Badge — Top Right */}
+        {/* Promotion Ribbon Flag — Top Right */}
         {dynamicReason && (
-          <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-gold to-yellow-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(212,175,55,0.3)] border border-gold/40">
-            {dynamicReason.toUpperCase()}
+          <div className="absolute top-0 right-0 z-10 flex flex-col items-end">
+            <div className="relative bg-gradient-to-b from-rose-600 via-amber-500 to-amber-400 text-white px-4 pt-3 pb-2 pr-5 shadow-lg shadow-rose-500/20">
+              <div className="absolute -bottom-[6px] right-0 w-0 h-0 border-l-[10px] border-l-rose-700 border-b-[6px] border-b-transparent" />
+              <div className="flex flex-col items-end gap-0.5">
+                <span className="flex items-center gap-1 text-[7px] font-black uppercase tracking-[0.18em] text-white/60">
+                  <span aria-hidden="true">✦</span> Offre spéciale
+                </span>
+                <span className="text-xs font-black leading-tight">{dynamicReason.toUpperCase()}</span>
+                {isPriceChanged && price > 0 && (
+                  <span className="inline-flex items-center gap-0.5 mt-0.5 text-[10px] font-black bg-white/20 px-2 py-0.5">
+                    −{discountPercent}%
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[7px] border-t-amber-400" />
           </div>
         )}
 
@@ -171,7 +186,12 @@ export default function VehicleCard({
               / jour
             </span>
             {isPriceChanged && price > 0 && (
-              <span className="text-xs text-ink-4 line-through ml-auto">{convert(price)}</span>
+              <>
+                <span className="text-xs text-ink-4 line-through ml-auto">{convert(price)}</span>
+                <span className="inline-flex items-center text-[9px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-sm ml-1">
+                  −{discountPercent}%
+                </span>
+              </>
             )}
           </div>
         </div>
@@ -204,7 +224,7 @@ export default function VehicleCard({
             className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <span className="flex items-center justify-center gap-1.5">
-              Réserver
+              {dynamicReason ? "Profiter" : "Réserver"}
               <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
             </span>
           </Button>
