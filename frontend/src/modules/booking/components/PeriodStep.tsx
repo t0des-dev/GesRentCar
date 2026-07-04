@@ -39,9 +39,10 @@ export default function PeriodStep({ booking, update, getFieldError, handleBlur 
           <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
             <Calendar size={18} />
           </div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-ink-2">Départ du séjour</label>
+          <label htmlFor="startDate" className="text-xs font-semibold uppercase tracking-wider text-ink-2">Départ du séjour</label>
         </div>
         <input 
+          id="startDate"
           type="date" 
           value={booking.startDate} 
           onChange={(e) => update("startDate", e.target.value)} 
@@ -65,9 +66,10 @@ export default function PeriodStep({ booking, update, getFieldError, handleBlur 
           <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
             <Clock size={18} />
           </div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-ink-2">Fin du séjour</label>
+          <label htmlFor="endDate" className="text-xs font-semibold uppercase tracking-wider text-ink-2">Fin du séjour</label>
         </div>
         <input 
+          id="endDate"
           type="date" 
           value={booking.endDate} 
           min={booking.startDate || undefined} 
@@ -92,9 +94,10 @@ export default function PeriodStep({ booking, update, getFieldError, handleBlur 
           <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
             <MapPin size={18} />
           </div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-ink-2">Point de rencontre / Aéroport</label>
+          <label htmlFor="location" className="text-xs font-semibold uppercase tracking-wider text-ink-2">Point de rencontre / Aéroport</label>
         </div>
         <input 
+          id="location"
           type="text" 
           placeholder="Ex: Aéroport Mohammed V (CMN)..." 
           value={booking.location} 

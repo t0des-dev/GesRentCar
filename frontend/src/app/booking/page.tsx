@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useState, useCallback, Component } from "react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useVehicles } from "@/shared/hooks/useApi";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 
 // Components
 import StepIndicator from "@/modules/booking/components/StepIndicator";
@@ -23,10 +23,43 @@ import { VehicleShowroom } from "@/modules/booking/components/VehicleShowroom";
 import { useBooking } from "@/modules/booking/hooks/useBooking";
 import { useDirection } from "@/shared/hooks/useDirection";
 
+// Error boundary
+class StepErrorBoundary extends Component<
+  { children: React.ReactNode; step: number },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; step: number }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center py-24 text-ink-4">
+          <p className="text-xs font-semibold uppercase tracking-wider">
+            Une erreur est survenue à l&apos;étape {this.props.step + 1}
+          </p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-4 text-primary underline text-sm"
+          >
+            Réessayer
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function BookingPage() {
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
   const { t } = useTranslation();
   const dir = useDirection();
+  const [showSummaryMobile, setShowSummaryMobile] = useState(false);
 
   const displayVehicles = useMemo(() => {
     if (!vehiclesData?.data) return [];
@@ -54,14 +87,19 @@ export default function BookingPage() {
     getFieldError, handleBlur, clientFieldChange,
   } = useBooking(displayVehicles);
 
+  // Auto-scroll to top on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   if (confirmed) {
     return (
-      <ConfirmationView 
-        booking={booking} 
-        reservationId={reservationId} 
-        deposit={deposit} 
-        total={total} 
-        vehicle={vehicle} 
+      <ConfirmationView
+        booking={booking}
+        reservationId={reservationId}
+        deposit={deposit}
+        total={total}
+        vehicle={vehicle}
       />
     );
   }
@@ -88,77 +126,92 @@ export default function BookingPage() {
                   exit={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {step === 0 && (
-                    <VehicleStep 
-                      booking={booking} update={update} isLoading={isLoadingVehicles} 
-                      vehicles={displayVehicles} onPreview={setPreviewVehicle} onNext={nextStep} 
-                    />
-                  )}
-                  {step === 1 && <PeriodStep booking={booking} update={update} getFieldError={getFieldError} handleBlur={handleBlur} />}
-                  {step === 2 && <OptionsStep booking={booking} update={update} />}
-                  {step === 3 && (
-                    <IdentityStep 
-                      booking={booking} update={update} setBooking={setBooking}
-                      isScanning={isScanning} setIsScanning={setIsScanning}
-                      getFieldError={getFieldError} handleBlur={handleBlur}
-                      clientFieldChange={clientFieldChange}
-                    />
-                  )}
-                  {step === 4 && (
-                    <SignatureStep 
-                      onComplete={(sig) => { setSignature(sig); nextStep(); }} 
-                      onBack={prevStep} 
-                    />
-                  )}
-                  {step === 5 && (
-                    <PaymentStep 
-                      booking={booking} deposit={deposit} reservationId={reservationId} 
-                      signature={signature} 
-                      onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
-                      onPrev={prevStep}
-                    />
-                  )}
+                  <StepErrorBoundary step={step}>
+                    {step === 0 && (
+                      <VehicleStep
+                        booking={booking} update={update} isLoading={isLoadingVehicles}
+                        vehicles={displayVehicles} onPreview={setPreviewVehicle} onNext={nextStep}
+                      />
+                    )}
+                    {step === 1 && <PeriodStep booking={booking} update={update} getFieldError={getFieldError} handleBlur={handleBlur} />}
+                    {step === 2 && <OptionsStep booking={booking} update={update} />}
+                    {step === 3 && (
+                      <IdentityStep
+                        booking={booking} update={update} setBooking={setBooking}
+                        isScanning={isScanning} setIsScanning={setIsScanning}
+                        getFieldError={getFieldError} handleBlur={handleBlur}
+                        clientFieldChange={clientFieldChange}
+                      />
+                    )}
+                    {step === 4 && (
+                      <SignatureStep
+                        onComplete={(sig) => { setSignature(sig); nextStep(); }}
+                        onBack={prevStep}
+                      />
+                    )}
+                    {step === 5 && (
+                      <PaymentStep
+                        booking={booking} deposit={deposit} total={total} days={days}
+                        reservationId={reservationId}
+                        signature={signature}
+                        onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
+                        onPrev={prevStep}
+                      />
+                    )}
+                  </StepErrorBoundary>
                 </motion.div>
               </AnimatePresence>
             </div>
 
             {step < 5 && (
               <div className="flex justify-between items-center pt-8 border-t border-border">
-                <button 
-                  onClick={prevStep} 
-                  disabled={step === 0} 
+                <button
+                  onClick={prevStep}
+                  disabled={step === 0}
                   className="btn-ghost disabled:opacity-0"
                 >
                   Précédent
                 </button>
-                {step > 0 && (
-                  <button 
-                    onClick={nextStep} 
-                    disabled={!canNext()} 
-                    className="btn-primary disabled:opacity-30"
-                  >
-                    Continuer
-                    <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                )}
+                <button
+                  onClick={nextStep}
+                  disabled={!canNext()}
+                  className="btn-primary disabled:opacity-30"
+                >
+                  Continuer
+                  <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </button>
               </div>
             )}
           </div>
 
-          <BookingSummary 
-            booking={booking} days={days} total={total} 
-            deposit={deposit} vehicle={vehicle}
-            vehicleLoading={isLoadingVehicles}
-          />
+          {/* Mobile summary toggle */}
+          <button
+            onClick={() => setShowSummaryMobile(!showSummaryMobile)}
+            className="lg:hidden flex items-center gap-2 w-full py-3 px-5 bg-surface-0 rounded-2xl border border-border text-sm font-semibold text-ink-2"
+          >
+            {showSummaryMobile ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            {showSummaryMobile ? "Masquer le récapitulatif" : "Voir le récapitulatif"}
+          </button>
+
+          <div className={`w-full lg:w-1/3 ${showSummaryMobile ? "block" : "hidden"} lg:block`}>
+            <BookingSummary
+              booking={booking} days={days} total={total}
+              deposit={deposit} vehicle={vehicle}
+              vehicleLoading={isLoadingVehicles}
+              currentStep={step}
+              onEditVehicle={() => { setStep(0); setShowSummaryMobile(false); }}
+              onEditPeriod={() => { setStep(1); setShowSummaryMobile(false); }}
+            />
+          </div>
         </div>
       </div>
 
       <AnimatePresence>
         {previewVehicle && (
-          <VehicleShowroom 
-            vehicle={previewVehicle} 
-            onClose={() => setPreviewVehicle(null)} 
-            onSelect={() => { update("vehicleId", previewVehicle.id); setStep(1); }} 
+          <VehicleShowroom
+            vehicle={previewVehicle}
+            onClose={() => setPreviewVehicle(null)}
+            onSelect={() => { update("vehicleId", previewVehicle.id); setStep(1); }}
           />
         )}
       </AnimatePresence>
