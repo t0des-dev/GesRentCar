@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libwebp-dev \
     libfreetype6-dev \
     cron \
+    procps \
+    postgresql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
     && pecl install redis \
