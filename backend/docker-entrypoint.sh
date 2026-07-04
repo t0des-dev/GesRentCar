@@ -27,6 +27,10 @@ if [ "$(id -u)" = "0" ]; then
     chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
 fi
 
+# Publish and cache Filament admin assets
+php artisan filament:assets --ansi --no-interaction 2>/dev/null || true
+php artisan storage:link 2>/dev/null || true
+
 # Optimize Laravel for production
 php artisan config:cache 2>/dev/null || true
 php artisan route:cache 2>/dev/null || true
