@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\ScanSessionController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
+use App\Http\Controllers\Api\PageController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +79,8 @@ $apiRoutes = function () {
 
     Route::middleware('throttle:public')->group(function () {
         Route::get('/config', [ConfigController::class, 'index']);
+        Route::get('/pages', [PageController::class, 'index']);
+        Route::get('/pages/{slug}', [PageController::class, 'show']);
 
         Route::get('/vehicles', [VehicleController::class, 'index']);
         Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
@@ -134,6 +137,10 @@ $apiRoutes = function () {
         Route::get('/stats', [StatsController::class, 'generalStats']);
         Route::post('/config', [ConfigController::class, 'update']);
         Route::post('/config/upload', [ConfigController::class, 'uploadAsset']);
+        Route::get('/admin/pages', [PageController::class, 'adminIndex']);
+        Route::post('/admin/pages', [PageController::class, 'store']);
+        Route::put('/admin/pages/{page}', [PageController::class, 'update']);
+        Route::delete('/admin/pages/{page}', [PageController::class, 'destroy']);
 
         Route::get('/exports/reservations', [ExportController::class, 'reservations']);
         Route::get('/exports/profit-loss', [ExportController::class, 'profitLoss']);
