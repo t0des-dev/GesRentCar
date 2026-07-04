@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
     libwebp-dev \
     libfreetype6-dev \
-    postgresql-client \
-    procps \
     cron \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
