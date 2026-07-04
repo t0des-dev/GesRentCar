@@ -98,7 +98,7 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="w-10 h-10 rounded-full bg-surface-0/10 hover:bg-surface-0/20 flex items-center justify-center text-white transition-colors"
           >
             <X size={20} />
           </button>
@@ -151,7 +151,7 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
           {/* Error fallback: file picker */}
           {error && !scanning && (
             <div className="absolute bottom-44 inset-x-0 flex justify-center z-10">
-              <label className="flex items-center gap-2 bg-white/15 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-semibold cursor-pointer hover:bg-white/25 transition-colors border border-white/20">
+              <label className="flex items-center gap-2 bg-surface-0/15 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-semibold cursor-pointer hover:bg-surface-0/25 transition-colors border border-white/20">
                 <Camera size={18} />
                 Choisir depuis la galerie
                 <input
@@ -169,7 +169,7 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
         {/* Bottom controls */}
         <div className="flex items-center justify-center gap-6 py-8 bg-black/80 backdrop-blur-sm z-20">
           {/* Gallery fallback */}
-          <label className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer transition-colors border border-white/20">
+          <label className="w-12 h-12 rounded-full bg-surface-0/10 hover:bg-surface-0/20 flex items-center justify-center text-white cursor-pointer transition-colors border border-white/20">
             <Camera size={20} />
             <input
               type="file"
@@ -185,13 +185,13 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
             disabled={scanning || !cameraReady}
             className={cn(
               "w-[72px] h-[72px] rounded-full border-4 border-white flex items-center justify-center transition-all",
-              scanning ? "bg-white/20" : "bg-white hover:scale-105 active:scale-95"
+              scanning ? "bg-surface-0/20" : "bg-surface-0 hover:scale-105 active:scale-95"
             )}
           >
             {scanning ? (
               <Loader2 size={28} className="text-white animate-spin" />
             ) : (
-              <div className="w-[58px] h-[58px] rounded-full bg-white" />
+              <div className="w-[58px] h-[58px] rounded-full bg-surface-0" />
             )}
           </button>
 

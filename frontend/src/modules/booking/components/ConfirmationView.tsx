@@ -52,16 +52,16 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
     : '';
 
   return (
-    <main className="min-h-screen py-24 flex items-center justify-center bg-slate-50">
+    <main className="min-h-screen py-24 flex items-center justify-center bg-surface-1">
       <div className="text-center flex flex-col items-center gap-8 max-w-lg mx-auto px-6">
         {/* Success icon */}
         <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-200">
           <Check size={40} className="text-emerald-600" strokeWidth={3} />
         </div>
 
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Véhicule Bloqué !</h1>
-        <p className="text-slate-500 text-base leading-relaxed">
-          Félicitations <strong className="text-slate-900">{booking.client.name}</strong> !<br/>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink-1">Véhicule Bloqué !</h1>
+        <p className="text-ink-2 text-base leading-relaxed">
+          Félicitations <strong className="text-ink-1">{booking.client.name}</strong> !<br/>
           Votre acompte de <strong>{fmt(deposit)} DH</strong> a été traité avec succès.
           {startFormatted && <> Le véhicule vous attendra le <strong>{startFormatted}</strong>.</>}
         </p>
@@ -69,21 +69,21 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
         {/* Info card */}
         <div className="w-full card-editorial p-8 text-left space-y-4">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400 font-semibold">Véhicule</span>
-            <span className="font-semibold text-slate-900">{vehicle?.brand} {vehicle?.model}</span>
+            <span className="text-ink-3 font-semibold">Véhicule</span>
+            <span className="font-semibold text-ink-1">{vehicle?.brand} {vehicle?.model}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400 font-semibold">Départ</span>
-            <span className="font-semibold text-slate-900">{booking.startDate}</span>
+            <span className="text-ink-3 font-semibold">Départ</span>
+            <span className="font-semibold text-ink-1">{booking.startDate}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400 font-semibold">Retour</span>
-            <span className="font-semibold text-slate-900">{booking.endDate}</span>
+            <span className="text-ink-3 font-semibold">Retour</span>
+            <span className="font-semibold text-ink-1">{booking.endDate}</span>
           </div>
-          <div className="h-px bg-slate-100" />
+          <div className="h-px bg-surface-2" />
           <div className="flex justify-between">
-            <span className="text-slate-400 font-semibold text-sm">Montant total</span>
-            <span className="font-semibold text-slate-900">{fmt(total)} DH</span>
+            <span className="text-ink-3 font-semibold text-sm">Montant total</span>
+            <span className="font-semibold text-ink-1">{fmt(total)} DH</span>
           </div>
           <div className="flex justify-between">
             <span className="text-emerald-600 font-semibold text-sm">Acompte payé</span>

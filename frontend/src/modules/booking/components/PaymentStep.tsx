@@ -21,8 +21,8 @@ interface PaymentStepProps {
 }
 
 const GATEWAY_STYLES: Record<string, { selected: string; icon: string }> = {
-  stripe: { selected: "border-slate-900 bg-slate-900 text-white", icon: "text-slate-900" },
-  cmi: { selected: "border-primary bg-primary text-white", icon: "text-primary" },
+  stripe: { selected: "border-primary bg-primary text-primary-foreground", icon: "text-ink-1" },
+  cmi: { selected: "border-primary bg-primary text-primary-foreground", icon: "text-primary" },
   on_site: { selected: "border-emerald-600 bg-emerald-600 text-white", icon: "text-emerald-600" },
 };
 
@@ -85,14 +85,14 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-10 rounded-3xl border border-slate-100/80 shadow-sm relative overflow-hidden">
-        <div className="flex items-center gap-4 mb-8 border-b border-slate-100 pb-6">
+      <div className="bg-surface-0 p-10 rounded-3xl border border-border/80 shadow-sm relative overflow-hidden">
+        <div className="flex items-center gap-4 mb-8 border-b border-border pb-6">
           <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
             <Lock size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900 tracking-tight">Garantie & Paiement</h3>
-            <p className="text-sm text-slate-400 italic">Sécurisez votre réservation via nos passerelles certifiées.</p>
+            <h3 className="text-xl font-bold text-ink-1 tracking-tight">Garantie & Paiement</h3>
+            <p className="text-sm text-ink-3 italic">Sécurisez votre réservation via nos passerelles certifiées.</p>
           </div>
         </div>
 
@@ -109,14 +109,14 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
                 onClick={() => setSelectedGateway(gateway.id as any)}
                 className={cn(
                   "flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all duration-300 group",
-                  isSelected ? gwStyle.selected + " scale-[1.02] shadow-sm" : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-slate-200 hover:bg-white"
+                  isSelected ? gwStyle.selected + " scale-[1.02] shadow-sm" : "border-border bg-surface-1/50 text-ink-3 hover:border-border hover:bg-surface-0"
                 )}
               >
                 <div className={cn(
                   "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                  isSelected ? "bg-white/20" : "bg-white border border-slate-100"
+                  isSelected ? "bg-surface-0/20" : "bg-surface-0 border border-border"
                 )}>
-                  <Icon size={20} className={isSelected ? "text-white" : "text-slate-500"} />
+                  <Icon size={20} className={isSelected ? "text-white" : "text-ink-2"} />
                 </div>
                 <div className="text-center">
                   <span className="block text-xs font-semibold uppercase tracking-wider">{gateway.label}</span>
@@ -205,7 +205,7 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
               )}
             </AnimatePresence>
           ) : (
-            <div className="text-slate-300 flex flex-col items-center gap-3 py-10">
+            <div className="text-ink-4 flex flex-col items-center gap-3 py-10">
               <CreditCard size={36} className="opacity-20" />
               <p className="text-xs font-semibold uppercase tracking-wider">En attente de finalisation...</p>
             </div>
@@ -216,7 +216,7 @@ export default function PaymentStep({ booking, deposit, reservationId, signature
       <div className="flex justify-start">
         <button 
           onClick={onPrev} 
-          className="px-8 py-4 rounded-xl text-slate-400 font-semibold uppercase text-xs tracking-wider hover:bg-slate-50 transition-all flex items-center gap-2"
+          className="px-8 py-4 rounded-xl text-ink-3 font-semibold uppercase text-xs tracking-wider hover:bg-surface-1 transition-all flex items-center gap-2"
         >
           ← Retour aux options
         </button>

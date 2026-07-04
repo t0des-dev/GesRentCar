@@ -79,7 +79,7 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
     return (
       <div className="flex flex-col items-center gap-4 py-12">
         <Loader2 className="animate-spin text-primary" size={32} />
-        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Génération du QR code...</p>
+        <p className="text-xs text-ink-3 uppercase tracking-wider font-semibold">Génération du QR code...</p>
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
             animate={{ scale: 1, opacity: 1 }}
             className="relative"
           >
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-lg">
+            <div className="bg-surface-0 p-6 rounded-3xl border border-border shadow-lg">
               <QRCodeSVG
                 value={session.scan_url}
                 size={180}
@@ -176,12 +176,12 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
         ) : (
           <>
             <div className="flex items-center gap-2 justify-center">
-              <Smartphone size={14} className="text-slate-400" />
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <Smartphone size={14} className="text-ink-3" />
+              <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">
                 Scannez avec votre téléphone
               </p>
             </div>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-ink-3">
               Ouvrez l&apos;appareil photo et scannez ce QR code
             </p>
           </>
@@ -190,7 +190,7 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
 
       {/* Timer */}
       {!isCompleted && !isExpired && (
-        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-semibold">
+        <div className="flex items-center gap-1.5 text-[10px] text-ink-3 font-semibold">
           <Clock size={10} />
           Expire dans {Math.floor(expiresIn / 60)}:{String(expiresIn % 60).padStart(2, "0")}
         </div>

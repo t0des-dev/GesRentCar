@@ -21,10 +21,12 @@ import { VehicleShowroom } from "@/modules/booking/components/VehicleShowroom";
 
 // Hooks
 import { useBooking } from "@/modules/booking/hooks/useBooking";
+import { useDirection } from "@/shared/hooks/useDirection";
 
 export default function BookingPage() {
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
   const { t } = useTranslation();
+  const dir = useDirection();
 
   const displayVehicles = useMemo(() => {
     if (!vehiclesData?.data) return [];
@@ -48,7 +50,8 @@ export default function BookingPage() {
     isScanning, setIsScanning,
     signature, setSignature,
     booking, setBooking, update,
-    vehicle, days, total, deposit
+    vehicle, days, total, deposit,
+    getFieldError, handleBlur, clientFieldChange,
   } = useBooking(displayVehicles);
 
   if (confirmed) {
@@ -69,7 +72,7 @@ export default function BookingPage() {
         <div className="section-header text-center">
           <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.2em] mb-4">Votre Réservation</p>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">Réservez l'Exception</h1>
-          <p className="text-slate-500 text-base max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
+          <p className="text-ink-2 text-base max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 items-start">
@@ -80,9 +83,9 @@ export default function BookingPage() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: dir === "rtl" ? -20 : 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
                   {step === 0 && (
@@ -91,12 +94,14 @@ export default function BookingPage() {
                       vehicles={displayVehicles} onPreview={setPreviewVehicle} onNext={nextStep} 
                     />
                   )}
-                  {step === 1 && <PeriodStep booking={booking} update={update} />}
+                  {step === 1 && <PeriodStep booking={booking} update={update} getFieldError={getFieldError} handleBlur={handleBlur} />}
                   {step === 2 && <OptionsStep booking={booking} update={update} />}
                   {step === 3 && (
                     <IdentityStep 
                       booking={booking} update={update} setBooking={setBooking}
-                      isScanning={isScanning} setIsScanning={setIsScanning} 
+                      isScanning={isScanning} setIsScanning={setIsScanning}
+                      getFieldError={getFieldError} handleBlur={handleBlur}
+                      clientFieldChange={clientFieldChange}
                     />
                   )}
                   {step === 4 && (
@@ -118,7 +123,7 @@ export default function BookingPage() {
             </div>
 
             {step < 5 && (
-              <div className="flex justify-between items-center pt-8 border-t border-slate-100">
+              <div className="flex justify-between items-center pt-8 border-t border-border">
                 <button 
                   onClick={prevStep} 
                   disabled={step === 0} 

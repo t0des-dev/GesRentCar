@@ -21,7 +21,7 @@ interface StepIndicatorProps {
 export default function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) {
   return (
     <div className="relative mb-12">
-      <div className="absolute top-[22px] left-0 w-full h-[2px] bg-slate-100 z-0">
+      <div className="absolute top-[22px] left-0 w-full h-[2px] bg-surface-2 z-0">
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
@@ -42,9 +42,9 @@ export default function StepIndicator({ currentStep, onStepClick }: StepIndicato
                 whileHover={i < currentStep ? { scale: 1.05 } : {}}
                 className={cn(
                   "w-11 h-11 rounded-full flex items-center justify-center border-2 transition-all duration-500 cursor-pointer relative", 
-                  isCompleted ? "bg-slate-900 border-slate-900 text-white" : 
-                  isActive ? "border-primary text-primary bg-white scale-110 shadow-sm" : 
-                  "border-slate-200 text-slate-300 bg-white"
+                  isCompleted ? "bg-primary border-primary text-primary-foreground" : 
+                  isActive ? "border-primary text-primary bg-surface-0 scale-110 shadow-sm" : 
+                  "border-border text-ink-4 bg-surface-0"
                 )}
               >
                 {isCompleted ? <Check size={16} strokeWidth={3} /> : <Icon size={16} />}
@@ -53,7 +53,7 @@ export default function StepIndicator({ currentStep, onStepClick }: StepIndicato
               <div className="mt-3 flex flex-col items-center">
                 <span className={cn(
                   "text-xs font-medium uppercase tracking-wider transition-all duration-300", 
-                  isActive ? "text-primary" : isCompleted ? "text-slate-900" : "text-slate-300"
+                  isActive ? "text-primary" : isCompleted ? "text-ink-1" : "text-ink-4"
                 )}>
                   {s.label}
                 </span>

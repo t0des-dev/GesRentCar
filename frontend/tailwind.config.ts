@@ -83,7 +83,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-instrument-serif)", "Georgia", "serif"],
-        sans: ["var(--font-inter)", "Cairo", "system-ui", "sans-serif"],
+        sans: ["var(--font-geist-sans)", "Cairo", "system-ui", "sans-serif"],
         serif: ["var(--font-instrument-serif)", "Georgia", "serif"],
       },
       borderRadius: {

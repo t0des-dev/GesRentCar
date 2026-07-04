@@ -34,25 +34,25 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
   return (
     <div className="space-y-8">
       <div className="text-center max-w-lg mx-auto">
-        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary border border-slate-100">
+        <div className="w-14 h-14 bg-surface-1 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary border border-border">
           <PenTool size={24} />
         </div>
-        <h3 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Validation <span className="text-primary">Juridique</span></h3>
-        <p className="text-sm text-slate-500 leading-relaxed italic">
+        <h3 className="text-2xl font-bold text-ink-1 mb-3 tracking-tight">Validation <span className="text-primary">Juridique</span></h3>
+        <p className="text-sm text-ink-2 leading-relaxed italic">
           Veuillez apposer votre signature ci-dessous.
         </p>
       </div>
 
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white border border-slate-100/80 rounded-3xl overflow-hidden shadow-sm">
-          <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center px-6">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+        <div className="bg-surface-0 border border-border/80 rounded-3xl overflow-hidden shadow-sm">
+          <div className="bg-surface-1 p-4 border-b border-border flex justify-between items-center px-6">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-3 flex items-center gap-2">
               <Shield size={12} className="text-primary" />
               Zone de signature sécurisée
             </span>
             <button 
               onClick={clear} 
-              className="p-1.5 text-slate-300 hover:text-red-500 transition-colors"
+              className="p-1.5 text-ink-4 hover:text-red-500 transition-colors"
               title="Effacer"
             >
               <RotateCcw size={16} />
@@ -68,8 +68,8 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
             />
           </div>
 
-          <div className="bg-slate-50 p-3 text-center border-t border-slate-100">
-            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Document Vectoria Rent Car • Certifié</p>
+          <div className="bg-surface-1 p-3 text-center border-t border-border">
+            <p className="text-xs text-ink-3 font-medium uppercase tracking-wider">Document Vectoria Rent Car • Certifié</p>
           </div>
         </div>
       </div>
@@ -78,14 +78,14 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
         <div className="flex gap-4">
           <button 
             onClick={onBack} 
-            className="flex-1 py-5 rounded-2xl border border-slate-200 font-semibold uppercase text-xs tracking-wider text-slate-400 hover:bg-slate-50 transition-all"
+            className="flex-1 py-5 rounded-2xl border border-border font-semibold uppercase text-xs tracking-wider text-ink-3 hover:bg-surface-1 transition-all"
           >
             Retour
           </button>
           <button 
             onClick={save} 
             disabled={!hasSignature}
-            className="flex-[2] bg-slate-900 text-white py-5 rounded-2xl font-semibold uppercase text-xs tracking-wider shadow-sm hover:bg-primary active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-30"
+            className="flex-[2] bg-primary text-primary-foreground py-5 rounded-2xl font-semibold uppercase text-xs tracking-wider shadow-sm hover:bg-primary active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-30"
           >
             Finaliser & Payer <CheckCircle2 size={18} />
           </button>

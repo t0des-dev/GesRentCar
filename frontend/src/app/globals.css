@@ -141,6 +141,13 @@
     @apply border-border;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none; }
   }
 
   html {
@@ -150,7 +157,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-inter), "Cairo", system-ui, sans-serif;
+    font-family: var(--font-geist-sans), "Cairo", system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
 
@@ -243,7 +250,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-dark));
   }
 
   /* ── Glass ── */
@@ -584,7 +591,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-dark));
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -668,7 +675,7 @@
     justify-content: center;
     gap: 0.5rem;
     background: transparent;
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-dark));
     padding: 0.8125rem 1.75rem;
     border-radius: var(--radius-lg);
     font-size: 0.75rem;
@@ -786,7 +793,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-dark));
     box-shadow: 0 0 0 0 hsl(var(--gold) / 0.2);
     transition: all 0.3s ease;
   }
@@ -832,7 +839,7 @@
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .nav-link-gold:hover {
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-dark));
   }
   .nav-link-gold:hover::after {
     transform: scaleX(1);
@@ -988,11 +995,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes reveal-clip {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0 0 0); }
-}
-
 @keyframes float-subtle {
   0%, 100% { transform: translateY(0px); }
   50%      { transform: translateY(-4px); }
@@ -1032,7 +1034,7 @@
 .animate-underline-expand   { animation: underline-expand 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
 .animate-glow-border        { animation: glow-border 2s ease-in-out infinite; }
 .animate-slide-in-bottom    { animation: slide-in-bottom 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-.animate-reveal-clip        { animation: reveal-clip 1.2s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-reveal-clip        { animation: reveal 1.2s cubic-bezier(0.22,1,0.36,1) both; }
 .animate-float-subtle       { animation: float-subtle 3s ease-in-out infinite; }
 
 /* ── Stagger delays ── */
