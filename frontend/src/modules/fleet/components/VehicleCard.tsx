@@ -84,23 +84,20 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Promotion Ribbon — Offre spéciale only */}
+        {/* Promotion Badge — Offre spéciale only */}
         {isPromo && (
-          <div className="absolute top-0 right-0 z-10 flex flex-col items-end">
-            <div className="relative bg-gradient-to-b from-rose-600 via-amber-500 to-amber-400 text-white px-4 pt-3 pb-2 pr-5 shadow-lg shadow-rose-500/20">
-              <div className="absolute -bottom-[6px] right-0 w-0 h-0 border-l-[10px] border-l-rose-700 border-b-[6px] border-b-transparent" />
-              <div className="flex flex-col items-end gap-0.5">
-                <span className="flex items-center gap-1 text-[7px] font-black uppercase tracking-[0.18em] text-white/60">
-                  <span aria-hidden="true">✦</span> Offre spéciale
-                </span>
-                {isPriceChanged && price > 0 && (
-                  <span className="inline-flex items-center gap-0.5 mt-0.5 text-[10px] font-black bg-white/20 px-2 py-0.5">
-                    −{discountPercent}%
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[7px] border-t-amber-400" />
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-amber-600 text-[9px] font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/>
+              <path d="M6 9.01V9"/>
+              <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/>
+            </svg>
+            <span className="uppercase tracking-wider">Offre spéciale</span>
+            {isPriceChanged && price > 0 && (
+              <span className="text-[8px] font-black text-white bg-amber-500 px-1.5 py-0.5 rounded-sm">
+                −{discountPercent}%
+              </span>
+            )}
           </div>
         )}
 
