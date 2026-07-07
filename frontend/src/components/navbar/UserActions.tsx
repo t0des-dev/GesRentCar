@@ -36,9 +36,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300",
-              isScrolled
-                ? "bg-slate-100 hover:bg-slate-200 text-slate-800"
-                : "bg-white/10 hover:bg-white/20 text-white"
+              "bg-slate-100 hover:bg-slate-200 text-slate-800"
             )}
           >
             <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center overflow-hidden">
@@ -84,9 +82,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
           size="sm"
           className={cn(
             "rounded-lg",
-            isScrolled
-              ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              : "text-white/80 hover:text-white hover:bg-white/10"
+            "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           )}
         >
           <Link href="/login">
@@ -97,7 +93,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
 
       <Button
         asChild
-        variant={isScrolled ? "default" : "secondary"}
+        variant="default"
         className="rounded-xl"
       >
         <Link href="/booking">

@@ -25,9 +25,7 @@ export default function LanguageSwitcher({
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-xs font-semibold",
-          (isScrolled || !transparentHero)
-            ? "text-slate-900 hover:text-black hover:bg-slate-100 font-semibold"
-            : "text-white/70 hover:text-white hover:bg-white/10"
+          "text-slate-700 hover:text-black hover:bg-slate-100 font-semibold"
         )}
       >
         <Globe size={14} />

@@ -12,9 +12,7 @@ export default function NavLinks({ links, className, isScrolled }: { links: any[
           href={link.url}
           className={cn(
             "relative px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300 group flex flex-col items-center",
-            isScrolled
-              ? "text-slate-900 hover:text-gold"
-              : "text-white/80 hover:text-white"
+            "text-slate-700 hover:text-gold"
           )}
         >
           {link.label}

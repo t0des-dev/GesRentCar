@@ -63,10 +63,7 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        isScrolled
-          ? "premium-glass border-b border-border/20 shadow-lg"
-          : "bg-transparent"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-xl border-b border-border/20 shadow-sm"
       )}
     >
       <div className="container mx-auto px-6 lg:px-8">
@@ -97,10 +94,7 @@ export default function Navbar() {
             />
 
             {/* Dark Mode Toggle */}
-            <div className={cn(
-              "transition-all duration-300",
-              isScrolled ? "text-ink-1" : "text-white/75 hover:text-white"
-            )}>
+            <div className="transition-all duration-300 text-ink-2">
               <ThemeToggle />
             </div>
 
@@ -113,9 +107,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(true)}
             className={cn(
               "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
-              isScrolled 
-                ? "bg-surface-2 text-ink-1 hover:bg-surface-3" 
-                : "bg-white/12 text-white hover:bg-white/20 hover:text-white"
+              "bg-surface-2 text-ink-1 hover:bg-surface-3"
             )}
             aria-label="Toggle menu"
           >
@@ -147,9 +139,7 @@ function CurrencySwitcher({
         onClick={() => setCurrencyOpen(!currencyOpen)}
         className={cn(
           "px-3 py-1.5 rounded-lg transition-all duration-300 text-xs font-semibold tracking-wide",
-          isScrolled
-            ? "text-ink-1 hover:text-ink-1 hover:bg-surface-2 font-semibold"
-            : "text-white/75 hover:text-white hover:bg-white/12"
+          "text-ink-2 hover:text-ink-1 hover:bg-surface-2 font-semibold"
         )}
       >
         {currency}
