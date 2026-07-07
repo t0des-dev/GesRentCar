@@ -49,13 +49,13 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
 
   // Calculate unique categories
   const categories = useMemo(() => {
-    const cats = new Set(vehicles.map(v => v.type || "Standard").filter(Boolean));
+    const cats = new Set(vehicles.map(v => v.category || "Standard").filter(Boolean));
     return ["Tous", ...Array.from(cats)];
   }, [vehicles]);
 
   // Filter vehicles
   const filteredVehicles = useMemo(() => {
-    let filtered = activeTab === "Tous" ? vehicles : vehicles.filter(v => (v.type || "Standard") === activeTab);
+    let filtered = activeTab === "Tous" ? vehicles : vehicles.filter(v => (v.category || "Standard") === activeTab);
     
     // Filter by specific IDs if provided in CMS
     if (content.selected_ids) {
