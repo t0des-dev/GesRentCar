@@ -24,7 +24,6 @@ const ConciergeBanner = dynamic(() => import("@/modules/ai/components/ConciergeB
 const FAQSection = dynamic(() => import("@/components/FAQSection"), { ssr: false });
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
 const CtaBanner = dynamic(() => import("@/components/home/CtaBanner"));
-const VehicleComparator = dynamic(() => import("@/modules/fleet/components/VehicleComparator"), { ssr: false });
 const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"));
 
 import JsonLd from "@/components/SEO/JsonLd";
@@ -41,7 +40,6 @@ const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
   cta_banner: "h-80",
   concierge_banner: "h-64",
   map: "h-[400px]",
-  comparator: "h-[500px]",
 };
 
 function SectionSkeleton({ id, className }: { id?: string; className?: string }) {
@@ -101,7 +99,6 @@ export default function HomeClient() {
       { id: "vibe_selector",     active: false },
       { id: "map",               active: false },
       { id: "faq",               active: !!sections.faq },
-      { id: "comparator",        active: !!sections.comparator },
       { id: "cta_banner",        active: true },
     ];
   }, [storefront.sections_order, sections]);
@@ -163,7 +160,6 @@ export default function HomeClient() {
       ),
       how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
       cta_banner: () => <CtaBanner content={storefront.sections_content.cta_banner} />,
-      comparator: () => <VehicleComparator content={storefront.sections_content.comparator} />,
     }),
     [storefront, location, startDate, endDate, handleSearch, aboutText, STATS, featuredVehicles, isLoading]
   );

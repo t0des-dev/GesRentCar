@@ -2,9 +2,8 @@ import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
 import Link from "next/link";
-import { Fuel, Users, Gauge, Star, ArrowRight, Eye, Check } from "lucide-react";
+import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
-import { useCompare } from "@/hooks/useCompare";
 import { useCurrency } from "@/shared/hooks/useCurrency";
 import { Button } from "@/shared/ui/button";
 
@@ -38,9 +37,7 @@ export default function VehicleCard({
   dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
 }: VehicleCardProps) {
   const { t } = useTranslation();
-  const { selectedIds, addToCompare, removeFromCompare } = useCompare();
   const { convert } = useCurrency();
-  const isSelected = selectedIds.includes(id);
 
   const displayPrice = dynamicPrice || price;
   const isPriceChanged = dynamicPrice && dynamicPrice !== price;
@@ -203,24 +200,10 @@ export default function VehicleCard({
           </div>
         </div>
 
-        {/* Actions — Compare & Reserve */}
+        {/* Actions — Reserve */}
         <div className="flex items-center gap-2.5 mt-auto pt-3">
           <Button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              isSelected ? removeFromCompare(id) : addToCompare(id);
-            }}
-            variant={isSelected ? "gold" : "gold-outline"}
-            size="sm"
-            className="h-10 px-4 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 border border-gold/30"
-          >
-            {isSelected && <Check size={13} strokeWidth={3} />}
-            {t("compare") || "Compare"}
-          </Button>
-
-          <Button
-            variant="gold"
+            variant="ghost"
             size="sm"
             onClick={(e) => {
               e.preventDefault();
@@ -228,7 +211,7 @@ export default function VehicleCard({
               if (onReserve) { onReserve(id); return; }
               window.location.href = `/booking?vehicle=${id}`;
             }}
-            className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-gold to-gold-dark text-white shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+            className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider border border-gold/30 text-gold hover:bg-gold/5 transition-all duration-300"
           >
             <span className="flex items-center justify-center gap-1.5">
               Réserver

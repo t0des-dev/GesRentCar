@@ -5,7 +5,6 @@ import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { LanguageProvider } from "@/shared/hooks/useTranslation";
 import ReactQueryProvider from "@/lib/QueryProvider";
-import CompareFloatingBar from "@/components/CompareFloatingBar";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "@/modules/auth/context/context";
@@ -89,7 +88,6 @@ export default function RootLayout({
                     <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
                     <ConciergeAI />
                   </LayoutWrapper>
-                  <CompareFloatingBar />
                   <WhatsAppFloat />
                   <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
                     duration: 4000,

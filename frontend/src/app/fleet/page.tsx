@@ -11,7 +11,6 @@ import { LayoutGrid, List, Car, Gauge, Users, Wallet, MapPin, Star, RotateCcw, C
 
 import FleetHeader from "@/modules/fleet/components/FleetHeader";
 import FleetGrid from "@/modules/fleet/components/FleetGrid";
-import CompareFloatingBar from "@/components/CompareFloatingBar";
 import { Filter } from "lucide-react";
 
 // Hooks
@@ -336,9 +335,6 @@ function FleetContent() {
           columns={fleetSettings.columns}
         />
       </div>
-
-      {/* Compare Floating Bar */}
-      <CompareFloatingBar />
 
       {/* Quick View Modal */}
       {quickViewVehicle && (
