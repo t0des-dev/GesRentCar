@@ -18,6 +18,10 @@ interface HeroSectionProps {
   setStartDate: (v: string) => void;
   endDate: string;
   setEndDate: (v: string) => void;
+  startTime: string;
+  setStartTime: (v: string) => void;
+  endTime: string;
+  setEndTime: (v: string) => void;
   onSearch: () => void;
   aboutText: string;
   stats: any[];
@@ -26,7 +30,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({
-  agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp
+  agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp
 }: HeroSectionProps) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -73,6 +77,8 @@ export default function HeroSection({
             location={location} setLocation={setLocation}
             startDate={startDate} setStartDate={setStartDate}
             endDate={endDate} setEndDate={setEndDate}
+            startTime={startTime} setStartTime={setStartTime}
+            endTime={endTime} setEndTime={setEndTime}
             onSearch={onSearch} y1={y1} mounted={mounted}
           />
         </div>

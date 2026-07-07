@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, MotionValue, AnimatePresence } from "framer-motion";
-import { MapPin, ArrowRight, Calendar, Building2, Plane } from "lucide-react";
+import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
 import { useState } from "react";
@@ -14,6 +14,10 @@ interface HeroSearchFormProps {
   setStartDate: (v: string) => void;
   endDate: string;
   setEndDate: (v: string) => void;
+  startTime: string;
+  setStartTime: (v: string) => void;
+  endTime: string;
+  setEndTime: (v: string) => void;
   onSearch: () => void;
   y1: MotionValue<number>;
   mounted: boolean;
@@ -33,7 +37,7 @@ const PREDEFINED_LOCATIONS = [
 ];
 
 export default function HeroSearchForm({
-  location, setLocation, startDate, setStartDate, endDate, setEndDate, onSearch, y1, mounted, content = {}
+  location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch, y1, mounted, content = {}
 }: HeroSearchFormProps) {
   const today = getTodayString();
   const sf = content?.search_form || {};
@@ -113,7 +117,7 @@ export default function HeroSearchForm({
               <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
                 {startLabel}
               </label>
-              <div className="relative flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+              <div className="flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
                 <Calendar size={18} className="text-gold shrink-0" />
                 <input
                   type="date"
@@ -123,13 +127,22 @@ export default function HeroSearchForm({
                   className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
                 />
               </div>
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+                <Clock size={18} className="text-gold shrink-0" />
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
+                />
+              </div>
             </div>
 
             <div className="space-y-2.5">
               <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
                 {endLabel}
               </label>
-              <div className="relative flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+              <div className="flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
                 <Calendar size={18} className="text-gold shrink-0" />
                 <input
                   type="date"
@@ -137,6 +150,15 @@ export default function HeroSearchForm({
                   min={startDate || today}
                   onChange={e => setEndDate(e.target.value)}
                   className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
+                />
+              </div>
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+                <Clock size={18} className="text-gold shrink-0" />
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
+                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
                 />
               </div>
             </div>

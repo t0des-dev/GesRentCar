@@ -12,6 +12,10 @@ interface StickyBookingBarProps {
   setStartDate: (v: string) => void;
   endDate: string;
   setEndDate: (v: string) => void;
+  startTime: string;
+  setStartTime: (v: string) => void;
+  endTime: string;
+  setEndTime: (v: string) => void;
   onSearch: () => void;
   content?: {
     placeholder?: string;
@@ -20,7 +24,7 @@ interface StickyBookingBarProps {
 }
 
 export default function StickyBookingBar({
-  location, setLocation, startDate, setStartDate, endDate, setEndDate, onSearch,
+  location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch,
   content = {}
 }: StickyBookingBarProps) {
   const [visible, setVisible] = useState(false);
@@ -115,6 +119,26 @@ export default function StickyBookingBar({
                           value={endDate}
                           min={startDate || today}
                           onChange={(e) => setEndDate(e.target.value)}
+                          className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-3 bg-ink-2 rounded-xl px-4 py-3">
+                        <span className="text-primary/60 shrink-0 text-sm">🕐</span>
+                        <input
+                          type="time"
+                          value={startTime}
+                          onChange={(e) => setStartTime(e.target.value)}
+                          className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3 bg-ink-2 rounded-xl px-4 py-3">
+                        <span className="text-primary/60 shrink-0 text-sm">🕐</span>
+                        <input
+                          type="time"
+                          value={endTime}
+                          onChange={(e) => setEndTime(e.target.value)}
                           className="bg-transparent text-white text-sm w-full focus:outline-none [color-scheme:dark]"
                         />
                       </div>

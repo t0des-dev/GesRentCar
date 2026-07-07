@@ -69,6 +69,14 @@ export default function HomeClient() {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("vrc_search_end") || "";
   });
+  const [startTime, setStartTime] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("vrc_search_start_time") || "09:00";
+  });
+  const [endTime, setEndTime] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("vrc_search_end_time") || "09:00";
+  });
   const [scrollPercent, setScrollPercent] = useState(0);
 
   const { scrollYProgress } = useScroll();
@@ -115,13 +123,17 @@ export default function HomeClient() {
     localStorage.setItem("vrc_search_location", location);
     localStorage.setItem("vrc_search_start", startDate);
     localStorage.setItem("vrc_search_end", endDate);
+    localStorage.setItem("vrc_search_start_time", startTime);
+    localStorage.setItem("vrc_search_end_time", endTime);
 
     const params = new URLSearchParams();
     if (location) params.set("location", location);
     if (startDate) params.set("start_date", startDate);
     if (endDate) params.set("end_date", endDate);
+    if (startTime) params.set("start_time", startTime);
+    if (endTime) params.set("end_time", endTime);
     router.push(`/fleet?${params.toString()}`);
-  }, [location, startDate, endDate, router]);
+  }, [location, startDate, endDate, startTime, endTime, router]);
 
   const sectionMap = useMemo<Record<string, () => ReactNode>>(
     () => ({
@@ -135,6 +147,10 @@ export default function HomeClient() {
           setStartDate={setStartDate}
           endDate={endDate}
           setEndDate={setEndDate}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          endTime={endTime}
+          setEndTime={setEndTime}
           onSearch={handleSearch}
           aboutText={aboutText}
           stats={STATS}
@@ -206,6 +222,10 @@ export default function HomeClient() {
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
+        startTime={startTime}
+        setStartTime={setStartTime}
+        endTime={endTime}
+        setEndTime={setEndTime}
         onSearch={handleSearch}
       />
       <PromotionBanner content={storefront.sections_content.promotion_banner} />
