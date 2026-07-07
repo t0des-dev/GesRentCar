@@ -16,6 +16,7 @@ interface SummaryVehicle {
   model?: string;
   type?: string;
   img?: string;
+  price?: number;
 }
 
 interface BookingSummaryProps {
@@ -39,7 +40,7 @@ export default function BookingSummary({
 
   const estimatedPricing = vehicle && !days
     ? calculatePrice({
-        pricePerDay: (vehicle as any).price || 0,
+        pricePerDay: vehicle.price || 0,
         days: 1,
         startDate: "",
         flexibility: "best_price",

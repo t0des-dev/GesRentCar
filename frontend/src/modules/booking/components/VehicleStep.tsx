@@ -8,16 +8,15 @@ import { calculatePrice } from "@/shared/utils/pricing";
 import { fmt } from "@/shared/utils/format";
 import { BookingStepProps } from "@/types/booking";
 import { DisplayVehicle } from "@/modules/booking/hooks/useBooking";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface VehicleStepProps extends BookingStepProps {
   isLoading: boolean;
   vehicles: DisplayVehicle[];
-  onPreview: (v: DisplayVehicle) => void;
   onNext: () => void;
 }
 
-export default function VehicleStep({ booking, update, isLoading, vehicles, onPreview: _onPreview, onNext }: VehicleStepProps) {
+export default function VehicleStep({ booking, update, isLoading, vehicles, onNext }: VehicleStepProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const handleSelect = (v: DisplayVehicle) => {

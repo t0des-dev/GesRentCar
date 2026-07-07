@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/shared/utils";
-import { Lock, CreditCard, Globe, Banknote, Loader2, CheckCircle2 } from "lucide-react";
+import { Lock, CreditCard, Globe, Banknote, Loader2, CheckCircle2, type LucideIcon } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 import { CmiCheckout } from "@/modules/payments/components/CmiCheckout";
@@ -17,7 +17,6 @@ interface PaymentStepProps {
   deposit: number;
   total: number;
   days: number;
-  reservationId: number | null;
   signature: string | null;
   onSuccess: (resId?: number) => void;
   onPrev: () => void;
@@ -29,7 +28,7 @@ const GATEWAY_STYLES: Record<string, { selected: string; icon: string }> = {
   on_site: { selected: "border-amber-600 bg-amber-600 text-white", icon: "text-amber-600" },
 };
 
-const GATEWAYS = [
+const GATEWAYS: { id: "stripe" | "cmi" | "on_site"; label: string; sub: string; icon: LucideIcon }[] = [
   { id: "stripe", label: "Stripe", sub: "International", icon: CreditCard },
   { id: "cmi", label: "CMI", sub: "Maroc Local", icon: Globe },
   { id: "on_site", label: "Sur Place", sub: "Agence", icon: Banknote },
@@ -41,7 +40,7 @@ const CARD_LOGOS = [
   { src: "https://cdn.jsdelivr.net/gh/vectoria-assets/payment/cmi.svg", label: "CMI" },
 ];
 
-export default function PaymentStep({ booking, deposit, total, days, reservationId, signature, onSuccess, onPrev }: PaymentStepProps) {
+export default function PaymentStep({ booking, deposit, total, days, signature, onSuccess, onPrev }: PaymentStepProps) {
   const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("stripe");
   const [loading, setLoading] = useState(false);
 
@@ -151,7 +150,7 @@ export default function PaymentStep({ booking, deposit, total, days, reservation
             return (
               <button
                 key={gateway.id}
-                onClick={() => setSelectedGateway(gateway.id as any)}
+                onClick={() => setSelectedGateway(gateway.id)}
                 className={cn(
                   "flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all duration-300 group",
                   isSelected ? gwStyle.selected + " scale-[1.02] shadow-sm" : "border-border bg-surface-1/50 text-ink-3 hover:border-border hover:bg-surface-0"

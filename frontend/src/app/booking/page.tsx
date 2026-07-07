@@ -130,7 +130,7 @@ export default function BookingPage() {
                     {step === 0 && (
                       <VehicleStep
                         booking={booking} update={update} isLoading={isLoadingVehicles}
-                        vehicles={displayVehicles} onPreview={setPreviewVehicle} onNext={nextStep}
+                        vehicles={displayVehicles} onNext={nextStep}
                       />
                     )}
                     {step === 1 && <PeriodStep booking={booking} update={update} getFieldError={getFieldError} handleBlur={handleBlur} />}
@@ -152,7 +152,6 @@ export default function BookingPage() {
                     {step === 5 && (
                       <PaymentStep
                         booking={booking} deposit={deposit} total={total} days={days}
-                        reservationId={reservationId}
                         signature={signature}
                         onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
                         onPrev={prevStep}
