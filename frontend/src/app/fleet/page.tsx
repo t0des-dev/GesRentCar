@@ -52,6 +52,7 @@ function FleetContent() {
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
+  const lifestyleParam = searchParams.get("lifestyle") || "all";
 
   const fleetSettings = useMemo(() => getFleetSettings(), []);
 
@@ -63,7 +64,7 @@ function FleetContent() {
     transmission: "All",
     maxPrice: 3000,
     seats: "All",
-    lifestyle: "all",
+    lifestyle: lifestyleParam,
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
