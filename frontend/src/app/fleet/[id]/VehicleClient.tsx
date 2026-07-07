@@ -104,11 +104,11 @@ export default function VehicleClient() {
         className="relative h-[85vh] min-h-[600px] w-full overflow-hidden"
       >
         {/* Background Image with Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface-0 via-surface-0/60 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
         <img 
           src={getImageUrl(vehicle.image_url) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000&auto=format&fit=crop"} 
           alt={`${vehicle.brand} ${vehicle.model}`}
-          className="w-full h-full object-cover object-center opacity-70"
+          className="w-full h-full object-cover object-center"
         />
         
         {/* Back Button */}
@@ -117,7 +117,7 @@ export default function VehicleClient() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
           onClick={() => router.back()} 
-          className="absolute top-28 left-6 md:left-12 z-20 flex items-center gap-2 bg-white/15 backdrop-blur-xl px-6 py-3 rounded-full text-ink-1 text-xs font-bold uppercase tracking-wider border border-white/30 transition-all duration-300 hover:bg-gold hover:text-white group"
+          className="absolute top-28 left-6 md:left-12 z-20 flex items-center gap-2 bg-white/15 backdrop-blur-xl px-6 py-3 rounded-full text-white text-xs font-bold uppercase tracking-wider border border-white/30 transition-all duration-300 hover:bg-gold hover:text-white group"
           whileHover={{ x: -4 }}
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
