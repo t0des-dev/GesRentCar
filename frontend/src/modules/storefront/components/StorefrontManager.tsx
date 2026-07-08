@@ -37,10 +37,11 @@ export default function StorefrontManager() {
   
   const [form, setForm] = useState<StorefrontForm>({ ...defaultStorefrontForm });
   const [previewSectionId, setPreviewSectionId] = useState<string | null>(null);
+  const justSavedRef = useRef(false);
 
-  // Sync from API once
+  // Sync from API once — skip if we just saved (avoid overwriting local state)
   useEffect(() => {
-    if (currentAgency.agency_name) {
+    if (currentAgency.agency_name && !justSavedRef.current) {
       setForm(prev => {
         const merged = {
           ...prev,
@@ -64,6 +65,7 @@ export default function StorefrontManager() {
         return merged;
       });
     }
+    justSavedRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAgency.agency_name]);
 
@@ -73,6 +75,7 @@ export default function StorefrontManager() {
     setLoading(true);
     try {
       await api.post('/config', data);
+      justSavedRef.current = true;
       queryClient.invalidateQueries({ queryKey: ['agency-config'] });
       setSaved(true);
       setHasUnsaved(false);
@@ -87,21 +90,37 @@ export default function StorefrontManager() {
 
   // Auto-save debounce
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const formRef = useRef(form);
+  formRef.current = form;
+
+  const flushPendingSave = useCallback(() => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+      saveToServer(formRef.current);
+    }
+  }, [saveToServer]);
+
+  // Flush pending save on unmount so navigation doesn't lose changes
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+        // Fire-and-forget save on unmount
+        api.post('/config', formRef.current).catch(() => {});
+      }
+    };
+  }, []);
 
   const autoSave = useCallback((data: StorefrontForm) => {
     setHasUnsaved(true);
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null;
       saveToServer(data);
     }, 1500);
   }, [saveToServer]);
-
-  // Cleanup timer
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    };
-  }, []);
 
   const setFormAndAutoSave = useCallback((data: StorefrontForm | ((prev: StorefrontForm) => StorefrontForm)) => {
     setForm(prev => {
@@ -112,7 +131,10 @@ export default function StorefrontManager() {
   }, [autoSave]);
 
   const handleSave = async () => {
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
     await saveToServer(form);
   };
 
