@@ -1,5 +1,8 @@
-# ─── Base stage: PHP + all system deps ─────────────────────────────────────
+# ─── Base stage: PHP + system deps ─────────────────────────────────────────
 FROM php:8.4-fpm AS base
+
+# Clean first to free builder disk space
+RUN rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -27,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /tmp/* /var/tmp/*
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini \
     && echo "post_max_size = 12M" >> /usr/local/etc/php/conf.d/uploads.ini \
