@@ -7,7 +7,7 @@ import { cn } from "@/shared/utils";
 import { Button } from "@/shared/ui/button";
 
 interface MobileLang {
-  code: "fr" | "en" | "ar";
+  code: "fr" | "en";
   label: string;
 }
 
@@ -26,7 +26,7 @@ interface MobileMenuProps {
   links: MobileMenuLink[];
   languages: MobileLang[];
   lang: string;
-  switchLang: (v: "fr" | "en" | "ar") => void;
+  switchLang: (v: "fr" | "en") => void;
   session: MobileMenuSession | null;
   signOut: () => void;
   t: (key: string) => string;

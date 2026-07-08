@@ -275,7 +275,7 @@ const sectionLabels: Record<string, string> = {
 };
 
 export default function SectionContentEditor({ sectionId, content, onChange, extraFields }: SectionContentEditorProps) {
-  const [lang, setLang] = useState<"fr" | "en" | "ar">("fr");
+  const [lang, setLang] = useState<"fr" | "en">("fr");
   const fields = sectionFields[sectionId];
   if (!fields) return <p className="text-sm text-slate-400 italic">Aucun champ éditable pour cette section.</p>;
 
@@ -287,7 +287,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
           {sectionLabels[sectionId] ?? sectionId}
         </h4>
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
-          {(["fr", "en", "ar"] as const).map((l) => (
+          {(["fr", "en"] as const).map((l) => (
             <button
               key={l}
               onClick={() => setLang(l)}
@@ -295,7 +295,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
                 lang === l ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"
               }`}
             >
-              {l === "fr" ? "FR" : l === "en" ? "EN" : "AR"}
+              {l === "fr" ? "FR" : "EN"}
             </button>
           ))}
         </div>

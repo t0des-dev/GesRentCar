@@ -27,7 +27,6 @@ export default function MultilingualSettings({ form, setForm }: MultilingualSett
         <div className="space-y-6">
           <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Français</label><textarea rows={3} value={form.about_text_fr ?? ""} onChange={e => setForm({...form, about_text_fr: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none" /></div>
           <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">English</label><textarea rows={3} value={form.about_text_en ?? ""} onChange={e => setForm({...form, about_text_en: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none" /></div>
-          <div className="space-y-2 text-right"><label className="text-[10px] font-black uppercase text-slate-400">العربية</label><textarea rows={3} dir="rtl" value={form.about_text_ar ?? ""} onChange={e => setForm({...form, about_text_ar: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none" /></div>
         </div>
       </div>
 

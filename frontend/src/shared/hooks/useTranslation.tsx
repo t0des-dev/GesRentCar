@@ -2,7 +2,7 @@
 
 import { useState, createContext, useContext, useEffect, useCallback } from "react";
 
-type Language = "fr" | "ar" | "en";
+type Language = "fr" | "en";
 
 const translations = {
   fr: {
@@ -318,163 +318,6 @@ const translations = {
     about_val_3_desc: "Technological tools at the service of your comfort.",
     cta_title: "Ready for the road?",
     cta_desc: "Book your dream vehicle in minutes and experience excellence.",
-  },
-  ar: {
-    nav_fleet: "أسطولنا",
-    nav_locations: "وكالاتنا",
-    nav_offers: "عروض خاصة",
-    nav_about: "معلومات عنا",
-    nav_login: "تسجيل الدخول",
-    nav_dashboard: "حسابي",
-    nav_logout: "تسجيل الخروج",
-    nav_book: "احجز الآن",
-    nav_contact: "اتصل بنا",
-    footer_cookies: "إعدادات الكوكيز",
-    footer_privacy: "سياسة الخصوصية",
-    footer_accessibility: "سهولة الوصول",
-    footer_dsa: "قانون الخدمات الرقمية",
-    footer_terms: "الشروط العامة",
-    hero_title: "تميز التأجير مع",
-    hero_subtitle: "اكتشف أسطولاً من السيارات الفاخرة، بأسعار شفافة وخدمة عملاء متاحة على مدار الساعة.",
-    btn_catalog: "عرض الكتالوج",
-    btn_agency: "وكالتنا",
-    search_placeholder: "ابحث عن سيارة...",
-    featured_vehicles: "سيارات مختارة",
-    why_us: "لماذا تختار",
-    quick_booking: "حجز سريع",
-    safety: "أمان تام",
-    assistance: "دعم 24/7",
-    rent_now: "احجز الآن",
-    price_per_day: "في اليوم",
-    start_date: "تاريخ البدء",
-    end_date: "تاريخ الانتهاء",
-    confirm_booking: "تأكيد الحجز",
-    success_booking: "تم الحجز بنجاح!",
-    available: "متوفر",
-    maintenance: "في الصيانة",
-    rented: "مؤجر",
-    features_title: "التجربة الفاخرة",
-    features_subtitle: "اكتشف لماذا يختارنا عملاؤنا لرحلاتهم المهنية والشخصية.",
-    feat_support_title: "دعم 24/7",
-    feat_support_desc: "فريق مخصص في خدمتك في أي وقت وأي مكان في المغرب.",
-    feat_chauffeur_title: "خدمة سائق VIP",
-    feat_chauffeur_desc: "استمتع برحلتك براحة البال مع سائقينا المحترفين المؤهلين.",
-    feat_fleet_title: "أسطول فاخر",
-    feat_fleet_desc: "سيارات حديثة، مصانة بشكل مثالي، لراحة وأمان مطلقين.",
-    how_it_works: "كيف يعمل؟",
-    step_1_title: "اختر",
-    step_1_desc: "تصفح مجموعتنا واختر السيارة المثالية.",
-    step_2_title: "احجز",
-    step_2_desc: "أدخل التواريخ الخاصة بك وقم بالتأكيد ببضع نقرات.",
-    step_3_title: "انطلق",
-    step_3_desc: "استلم مفاتيحك واستمتع بالطريق.",
-    stat_clients: "عملاء راضون",
-    stat_fleet: "أسطول فاخر",
-    stat_exp: "سنوات الخبرة",
-    stat_support: "دعم متاح",
-
-    // Filters & Specs
-    filter_title: "الفلاتر",
-    filter_clear: "مسح",
-    filter_category: "الفئة",
-    filter_transmission: "ناقل الحركة",
-    filter_capacity: "السعة",
-    filter_price_max: "أقصى سعر",
-    spec_seats: "السعة",
-    spec_fuel: "المحرك",
-    spec_gearbox: "الناقل",
-    spec_pers: "أشخاص",
-    currency_day: "درهم / يوم",
-    vision_360: "رؤية 360°",
-    compare: "مقارنة",
-    all: "الكل",
-
-    // Fleet Page
-    fleet_title_1: "فن",
-    fleet_title_2: "الأداء",
-    fleet_subtitle: "اكتشف مجموعة من السيارات الاستثنائية، التي تجمع بين الهندسة المتطورة والتصميم الخالد.",
-    fleet_count: "تحفة فنية متاحة",
-    fleet_empty_title: "لم يتم العثور على أي رمز",
-    fleet_empty_desc: "اضبط معاييرك لاكتشاف روائع أخرى من مجموعتنا.",
-
-    // Quick View
-    qv_rent: "احجز الآن",
-    qv_continue: "متابعة البحث",
-    qv_security: "الأمان",
-    qv_fuel: "الوقود",
-    qv_transmission: "ناقل الحركة",
-    qv_seats: "المقاعد",
-
-    // Badges & Labels
-    badge_special: "عرض خاص",
-    badge_internal: "داخلي",
-    fleet_tag: "أسطول فاخر 2026",
-
-    // Membership Banner
-    member_title: "عضو متميز؟",
-    member_desc: "استفد من خصم 15% على مجموعة السيارات الرياضية.",
-    member_btn: "انضم الآن",
-
-    // Categories
-    cat_all: "الكل",
-    cat_sedan: "سيدان",
-    cat_suv: "دفع رباعي",
-    cat_sport: "رياضية",
-    cat_compact: "مدمجة",
-    cat_luxury: "فاخرة",
-    cat_internal: "داخلي",
-    cat_collaborator: "شريك",
-    cat_economy: "اقتصادي",
-    cat_utility: "خدمة",
-    cat_standard: "قياسي",
-    trans_automatic: "أوتوماتيك",
-    trans_automatique: "أوتوماتيك",
-    trans_manual: "يدوي",
-    trans_manuelle: "يدوي",
-
-    // Contact Page
-    contact_title: "اتصل بنا",
-    contact_subtitle: "هل لديك سؤال؟ فريقنا هنا لمساعدتك.",
-    contact_name: "الاسم الكامل",
-    contact_email: "البريد الإلكتروني",
-    contact_subject: "الموضوع",
-    contact_message: "رسالتك",
-    contact_send: "إرسال الرسالة",
-    contact_success: "تم إرسال الرسالة بنجاح!",
-    contact_info_title: "معلومات الاتصال",
-    contact_info_desc: "تفضل بزيارتنا في وكالاتنا أو اتصل بنا مباشرة.",
-
-    // FAQ Section
-    faq_title: "الأسئلة الشائعة",
-    faq_subtitle: "كل ما تحتاج لمعرفته حول الإيجار الفاخر في فيكتوريا.",
-    faq_q1: "ما هي الوثائق المطلوبة لاستئجار سيارة؟",
-    faq_a1: "يجب تقديم رخصة قيادة صالحة (لأكثر من سنتين)، وبطاقة هوية (بطاقة تعريف أو جواز سفر)، وبطاقة ائتمان للضمان.",
-    faq_q2: "هل يتم حجز مبلغ الضمان على بطاقتي؟",
-    faq_a2: "نعم، يتم إجراء تفويض مسبق على بطاقتك البنكية وقت استلام السيارة. يعتمد المبلغ على فئة السيارة المختارة.",
-    faq_q3: "هل التأمين مشمول في السعر؟",
-    faq_a3: "نعم، جميع أسعارنا تشمل تأميناً شاملاً مع إعفاء. يمكنك أيضاً الاشتراك في خيارات شراء الإعفاء لمزيد من راحة البال.",
-    faq_q4: "هل من الممكن تسليم السيارة في المطار؟",
-    faq_a4: "بالتأكيد. نحن نقدم خدمة توصيل واستلام مجانية في المطارات الرئيسية في المغرب (الدار البيضاء، مراكش، أكادير، إلخ).",
-    faq_q5: "هل يمكنني إلغاء حجزي؟",
-    faq_a5: "نعم، الإلغاء مجاني حتى 48 ساعة قبل بدء الإيجار. بعد هذه الفترة، قد يتم تطبيق رسوم وفقاً للشروط المختارة.",
-
-    // About Page
-    about_hero_title: "فن التنقل الفاخر",
-    about_hero_subtitle: "فيكتوريا تعيد تعريف معايير التأجير الفاخر في المغرب منذ عام 2024.",
-    about_story_label: "قصتنا",
-    about_story_title: "رؤية للتميز",
-    about_story_p1: "ولدت فيكتوريا من شغف بالسيارات الاستثنائية والخدمة الشخصية، وأثبتت نفسها كمرجع للتأجير المتميز.",
-    about_mission_title: "مهمتنا",
-    about_mission_desc: "تقديم أكثر من مجرد إيجار بسيط: تجربة لا تُنسى حيث كل تفصيل مهم، من الحجز إلى الإرجاع.",
-    about_values_title: "قيمنا",
-    about_val_1: "التميز",
-    about_val_1_desc: "سعي دائم للكمال في خدماتنا.",
-    about_val_2: "الثقة",
-    about_val_2_desc: "شفافية تامة في أسعارنا وشروطنا.",
-    about_val_3: "الابتكار",
-    about_val_3_desc: "أدوات تكنولوجية في خدمة راحتكم.",
-    cta_title: "هل أنت جاهز للانطلاق؟",
-    cta_desc: "احجز سيارة أحلامك في دقائق واستمتع بالتميز المطلق.",
   }
 };
 
@@ -491,15 +334,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Language>(() => {
     if (typeof window === "undefined") return "fr";
     const saved = localStorage.getItem("vectoria_lang") as Language;
-    if (saved && ["fr", "en", "ar"].includes(saved)) return saved;
+    if (saved && ["fr", "en"].includes(saved)) return saved;
     const browserLang = navigator.language.split("-")[0];
-    if (["fr", "en", "ar"].includes(browserLang)) return browserLang as Language;
+    if (["fr", "en"].includes(browserLang)) return browserLang as Language;
     return "fr";
   });
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = "ltr";
     document.documentElement.lang = lang;
     setIsReady(true);
   }, []);
@@ -510,7 +353,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     // Smooth transition logic could be added here (e.g. fade out content)
     setLang(newLang);
     localStorage.setItem("vectoria_lang", newLang);
-    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = "ltr";
     document.documentElement.lang = newLang;
     
     // Optionally trigger a subtle sound or vibration

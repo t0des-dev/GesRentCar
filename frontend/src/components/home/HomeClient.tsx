@@ -87,7 +87,7 @@ export default function HomeClient() {
   });
 
   const sections = storefront.sections_config;
-  const aboutText = lang === "ar" ? storefront.about_text_ar : lang === "en" ? storefront.about_text_en : storefront.about_text_fr;
+  const aboutText = lang === "en" ? storefront.about_text_en : storefront.about_text_fr;
   const STATS = storefront.stats_config.items || [];
 
   const currentOrder = useMemo(() => {
