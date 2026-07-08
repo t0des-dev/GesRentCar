@@ -274,7 +274,6 @@ export default function HomeClient() {
         setEndTime={setEndTime}
         onSearch={handleSearch}
       />
-      <PromotionBanner content={storefront.sections_content.promotion_banner} />
     </main>
   );
 }
