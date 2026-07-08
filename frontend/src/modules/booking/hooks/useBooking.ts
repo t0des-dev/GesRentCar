@@ -69,6 +69,7 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
   const [step, setStep] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
   const [reservationId, setReservationId] = useState<number | null>(null);
+  const [reservationStatus, setReservationStatus] = useState<string>("confirmed");
   const [previewVehicle, setPreviewVehicle] = useState<DisplayVehicle | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
@@ -218,6 +219,7 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
     step, setStep, nextStep, prevStep, canNext,
     confirmed, setConfirmed,
     reservationId, setReservationId,
+    reservationStatus, setReservationStatus,
     previewVehicle, setPreviewVehicle,
     isScanning, setIsScanning,
     signature, setSignature,

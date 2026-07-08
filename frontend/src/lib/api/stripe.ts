@@ -18,6 +18,7 @@ export interface StripeIntentPayload {
 export interface StripeIntentResponse {
   client_secret: string;
   reservation_id: number;
+  status: string;
   amount: number;
   total_price: number;
 }

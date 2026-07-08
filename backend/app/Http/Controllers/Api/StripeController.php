@@ -123,6 +123,7 @@ class StripeController extends Controller
         return response()->json([
             'client_secret' => $intent->client_secret,
             'reservation_id' => $reservation->id,
+            'status' => $reservation->status,
             'amount' => $deposit,
             'total_price' => $totalPrice,
         ]);

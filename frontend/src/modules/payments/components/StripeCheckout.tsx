@@ -54,12 +54,14 @@ const appearance = {
 // ─── Inner form (must be inside <Elements>) ───────────────────────────────────
 function CheckoutForm({
   reservationId,
+  reservationStatus,
   deposit,
   onSuccess,
 }: {
   reservationId: number;
+  reservationStatus?: string;
   deposit: number;
-  onSuccess: (reservationId?: number) => void;
+  onSuccess: (reservationId?: number, status?: string) => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -89,9 +91,9 @@ function CheckoutForm({
     if (paymentIntent?.status === "succeeded") {
       try {
         await stripeService.confirm(reservationId, paymentIntent.id);
-        onSuccess(reservationId);
+        onSuccess(reservationId, reservationStatus);
       } catch {
-        onSuccess(reservationId);
+        onSuccess(reservationId, reservationStatus);
       }
     }
   };
@@ -158,12 +160,13 @@ export interface StripeCheckoutProps {
     signature?: string;
     options?: any;
   };
-  onSuccess: (reservationId?: number) => void;
+  onSuccess: (reservationId?: number, status?: string) => void;
 }
 
 export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeCheckoutProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [reservationId, setReservationId] = useState<number | null>(null);
+  const [reservationStatus, setReservationStatus] = useState<string | undefined>(undefined);
   const [initError, setInitError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -190,6 +193,7 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
         }
         setClientSecret(res.client_secret);
         setReservationId(res.reservation_id);
+        setReservationStatus(res.status);
       })
       .catch((err) => {
         console.error("Stripe Intent Error:", err);
@@ -231,6 +235,7 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
     <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret, appearance }}>
       <CheckoutForm
         reservationId={reservationId}
+        reservationStatus={reservationStatus}
         deposit={deposit}
         onSuccess={onSuccess}
       />

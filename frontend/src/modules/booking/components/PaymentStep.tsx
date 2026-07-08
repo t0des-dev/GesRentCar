@@ -18,7 +18,7 @@ interface PaymentStepProps {
   total: number;
   days: number;
   signature: string | null;
-  onSuccess: (resId?: number) => void;
+  onSuccess: (resId?: number, status?: string) => void;
   onPrev: () => void;
 }
 
@@ -82,7 +82,7 @@ export default function PaymentStep({ booking, deposit, total, days, signature, 
         },
         payment_method: "on_site",
       });
-      onSuccess(res.id);
+      onSuccess(res.id, res.status);
     } catch (err) {
       console.error("OnSite Reservation Error", err);
       notifyError("Une erreur est survenue lors de la reservation.");

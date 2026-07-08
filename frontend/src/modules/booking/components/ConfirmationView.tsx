@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { Check, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, FileText, Clock, AlertTriangle } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import confetti from "canvas-confetti";
 import { fmt } from "@/shared/utils/format";
@@ -14,33 +14,30 @@ interface ConfirmationVehicle {
 interface ConfirmationViewProps {
   booking: BookingState;
   reservationId: number | null;
+  reservationStatus?: string;
   deposit: number;
   total: number;
   vehicle?: ConfirmationVehicle | null;
 }
 
-export default function ConfirmationView({ booking, reservationId, deposit, total, vehicle }: ConfirmationViewProps) {
+export default function ConfirmationView({ booking, reservationId, reservationStatus, deposit, total, vehicle }: ConfirmationViewProps) {
+  const isPartnerPending = reservationStatus === "pending_partner";
+
   useEffect(() => {
+    if (isPartnerPending) return;
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
     const interval = setInterval(function() {
       const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
+      if (timeLeft <= 0) return clearInterval(interval);
       const particleCount = 50 * (timeLeft / duration);
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
     }, 250);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [isPartnerPending]);
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
   const contractUrl = reservationId
@@ -50,6 +47,61 @@ export default function ConfirmationView({ booking, reservationId, deposit, tota
   const startFormatted = booking.startDate
     ? new Date(booking.startDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
     : '';
+
+  if (isPartnerPending) {
+    return (
+      <main className="min-h-screen py-24 flex items-center justify-center bg-surface-1">
+        <div className="text-center flex flex-col items-center gap-8 max-w-lg mx-auto px-6">
+          <div className="w-24 h-24 rounded-full bg-amber-50 flex items-center justify-center border-2 border-amber-200">
+            <Clock size={40} className="text-amber-500" strokeWidth={2} />
+          </div>
+
+          <h1 className="text-3xl font-semibold tracking-tight text-ink-1">Réservation en attente</h1>
+          <p className="text-ink-2 text-base leading-relaxed">
+            Votre réservation pour le <strong className="text-ink-1">{vehicle?.brand} {vehicle?.model}</strong> est en cours de validation auprès du partenaire.
+            {startFormatted && <> Date souhaitée : <strong>{startFormatted}</strong>.</>}
+          </p>
+
+          <div className="w-full bg-amber-50 border border-amber-200 rounded-2xl p-6 text-left space-y-3">
+            <div className="flex items-center gap-3 text-amber-700">
+              <AlertTriangle size={18} />
+              <span className="font-bold text-sm">Délai de validation : 1 heure</span>
+            </div>
+            <p className="text-amber-600 text-sm leading-relaxed">
+              Le partenaire dispose d&apos;une heure pour confirmer la disponibilité du véhicule. Vous recevrez une notification par email dès que la décision sera prise.
+            </p>
+            <p className="text-amber-600 text-sm leading-relaxed">
+              Si le partenaire ne répond pas dans le délai imparti, la réservation sera automatiquement annulée et aucun montant ne sera débité.
+            </p>
+          </div>
+
+          <div className="w-full card-editorial p-8 text-left space-y-4">
+            <div className="flex justify-between text-sm">
+              <span className="text-ink-3 font-semibold">Véhicule</span>
+              <span className="font-semibold text-ink-1">{vehicle?.brand} {vehicle?.model}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-ink-3 font-semibold">Départ</span>
+              <span className="font-semibold text-ink-1">{booking.startDate}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-ink-3 font-semibold">Retour</span>
+              <span className="font-semibold text-ink-1">{booking.endDate}</span>
+            </div>
+            <div className="h-px bg-surface-2" />
+            <div className="flex justify-between">
+              <span className="text-ink-3 font-semibold text-sm">Montant total</span>
+              <span className="font-semibold text-ink-1">{fmt(total)} DH</span>
+            </div>
+          </div>
+
+          <a href="/" className="btn-secondary w-full">
+            Retourner à l&apos;accueil
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen py-24 flex items-center justify-center bg-surface-1">

@@ -24,7 +24,7 @@ interface CmiCheckoutProps {
     options?: any;
   };
   deposit: number;
-  onSuccess?: (reservationId?: number) => void;
+  onSuccess?: (reservationId?: number, status?: string) => void;
 }
 
 export function CmiCheckout({ bookingPayload, deposit, onSuccess }: CmiCheckoutProps) {
@@ -46,7 +46,7 @@ export function CmiCheckout({ bookingPayload, deposit, onSuccess }: CmiCheckoutP
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/cmi/init/${reservationId}`);
       const { action_url, params } = response.data;
 
-      if (onSuccess) onSuccess(reservationId);
+      if (onSuccess) onSuccess(reservationId, reservation.status);
 
       const form = document.createElement("form");
       form.method = "POST";

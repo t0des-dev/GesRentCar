@@ -79,6 +79,7 @@ export default function BookingPage() {
     step, setStep, nextStep, prevStep, canNext,
     confirmed, setConfirmed,
     reservationId, setReservationId,
+    reservationStatus, setReservationStatus,
     previewVehicle, setPreviewVehicle,
     isScanning, setIsScanning,
     signature, setSignature,
@@ -97,6 +98,7 @@ export default function BookingPage() {
       <ConfirmationView
         booking={booking}
         reservationId={reservationId}
+        reservationStatus={reservationStatus}
         deposit={deposit}
         total={total}
         vehicle={vehicle}
@@ -153,7 +155,7 @@ export default function BookingPage() {
                       <PaymentStep
                         booking={booking} deposit={deposit} total={total} days={days}
                         signature={signature}
-                        onSuccess={(resId) => { if (resId) setReservationId(resId); setConfirmed(true); }}
+                        onSuccess={(resId, status) => { if (resId) setReservationId(resId); if (status) setReservationStatus(status); setConfirmed(true); }}
                         onPrev={prevStep}
                       />
                     )}
