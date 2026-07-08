@@ -70,33 +70,41 @@ class ConfigController extends Controller
             ]);
         }
 
-        return response()->json([
-            'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
-            'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
-            'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
-            'logo_url' => $setting->logo_url ?? null,
-            'logo_config' => $setting->logo_config ?? null,
-            'hero_image_url' => $setting->hero_image_url ?? null,
-            'hero_video_url' => $setting->hero_video_url ?? null,
-            'about_text_fr' => $setting->about_text_fr ?? null,
-            'about_text_en' => $setting->about_text_en ?? null,
-            'about_text_ar' => $setting->about_text_ar ?? null,
-            'sections_config' => $setting->sections_config ?? null,
-            'category_prices' => $setting->category_prices ?? null,
-            'special_offers' => $setting->special_offers ?? null,
-            'header_config' => $setting->header_config ?? null,
-            'footer_config' => $setting->footer_config ?? null,
-            'theme_config' => $setting->theme_config ?? null,
-            'stats_config' => $setting->stats_config ?? null,
-            'sections_order' => $setting->sections_order ?? null,
-            'testimonials' => $setting->testimonials ?? null,
-            'seo_config' => $setting->seo_config ?? null,
-            'social_hub' => $setting->social_hub ?? null,
-            'faq_config' => $setting->faq_config ?? null,
-            'features_config' => $setting->features_config ?? null,
-            'concierge_config' => $setting->concierge_config ?? null,
-            'sections_content' => $setting->sections_content ?? null,
-        ]);
+        try {
+            return response()->json([
+                'agency_name' => $setting->value ?? env('AGENCY_NAME', 'Vectoria Rent Car'),
+                'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
+                'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
+                'logo_url' => $setting->logo_url ?? null,
+                'logo_config' => $setting->logo_config ?? null,
+                'hero_image_url' => $setting->hero_image_url ?? null,
+                'hero_video_url' => $setting->hero_video_url ?? null,
+                'about_text_fr' => $setting->about_text_fr ?? null,
+                'about_text_en' => $setting->about_text_en ?? null,
+                'about_text_ar' => $setting->about_text_ar ?? null,
+                'sections_config' => $setting->sections_config ?? null,
+                'category_prices' => $setting->category_prices ?? null,
+                'special_offers' => $setting->special_offers ?? null,
+                'header_config' => $setting->header_config ?? null,
+                'footer_config' => $setting->footer_config ?? null,
+                'theme_config' => $setting->theme_config ?? null,
+                'stats_config' => $setting->stats_config ?? null,
+                'sections_order' => $setting->sections_order ?? null,
+                'testimonials' => $setting->testimonials ?? null,
+                'seo_config' => $setting->seo_config ?? null,
+                'social_hub' => $setting->social_hub ?? null,
+                'faq_config' => $setting->faq_config ?? null,
+                'features_config' => $setting->features_config ?? null,
+                'concierge_config' => $setting->concierge_config ?? null,
+                'sections_content' => $setting->sections_content ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'agency_name' => env('AGENCY_NAME', 'Vectoria Rent Car'),
+                'agency_slogan' => env('AGENCY_SLOGAN', 'Premium Car Rental'),
+                'primary_color' => env('AGENCY_PRIMARY_COLOR', '#6366f1'),
+            ]);
+        }
     }
 
     public function update(Request $request): JsonResponse
