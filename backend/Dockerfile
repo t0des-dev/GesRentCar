@@ -40,10 +40,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY --chown=www-data:www-data . /var/www
 RUN rm -f bootstrap/cache/*.php \
-    && rm -rf /root/.config/composer /tmp/composer-cache \
-    && COMPOSER_CACHE_DIR=/tmp/composer-cache composer install \
-        --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts --prefer-source \
-    && find vendor -type d -name ".git" -exec rm -rf {} \; 2>/dev/null || true \
+    && rm -rf /root/.config/composer \
+    && composer install \
+        --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts \
+    && rm -rf /tmp/* /root/.composer/cache \
+    && find vendor -type d -name ".git" -exec rm -rf {} + 2>/dev/null || true \
     && php artisan vendor:publish --tag=laravel-assets --ansi --force 2>/dev/null || true \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
