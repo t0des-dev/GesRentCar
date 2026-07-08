@@ -7,7 +7,6 @@ import { BookingState } from "@/types/booking";
 import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
 import { CmiCheckout } from "@/modules/payments/components/CmiCheckout";
 import { reservationService } from "@/lib/api/reservations";
-import { vehicleService } from "@/lib/api/vehicles";
 import { motion, AnimatePresence } from "framer-motion";
 import { notifyError } from "@/components/Notifications";
 import { fmt } from "@/shared/utils/format";
@@ -44,24 +43,9 @@ export default function PaymentStep({ booking, deposit, total, days, signature, 
   const [selectedGateway, setSelectedGateway] = useState<"stripe" | "cmi" | "on_site">("stripe");
   const [loading, setLoading] = useState(false);
 
-  const checkAvailability = async () => {
-    try {
-      const result = await vehicleService.checkAvailability(booking.vehicleId!, booking.startDate, booking.endDate);
-      if (!result.available) {
-        notifyError("Ce véhicule n'est plus disponible pour les dates sélectionnées.");
-        return false;
-      }
-      return true;
-    } catch {
-      return true;
-    }
-  };
-
   const handleOnSiteReservation = async () => {
     setLoading(true);
     try {
-      const available = await checkAvailability();
-      if (!available) { setLoading(false); return; }
       const res = await reservationService.create({
         vehicle_id: booking.vehicleId!,
         start_date: booking.startDate,

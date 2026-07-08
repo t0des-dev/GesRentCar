@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { BookingState } from "@/types/booking";
 import { calculatePrice } from "@/shared/utils/pricing";
+import { useVehicleAvailability } from "./useVehicleAvailability";
 
 export interface DisplayVehicle {
   id: number;
@@ -86,6 +87,13 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  // Availability check
+  const { status: availabilityStatus, recheck: recheckAvailability } = useVehicleAvailability(
+    booking.vehicleId,
+    booking.startDate,
+    booking.endDate
+  );
 
   // Sync from URL params + localStorage AFTER hydration to avoid mismatch
   useEffect(() => {
@@ -193,10 +201,15 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
       const fields = ["startDate", "endDate", "location"];
       const values = [booking.startDate, booking.endDate, booking.location];
       if (values.some(v => !v)) return false;
-      return fields.every(f => {
+      const fieldsValid = fields.every(f => {
         const v = f === "startDate" ? booking.startDate : f === "endDate" ? booking.endDate : booking.location;
         return validateFieldValue(f, v, f === "endDate" ? { startDate: booking.startDate } : undefined) === null;
       });
+      if (!fieldsValid) return false;
+      // Block if availability check is ongoing or vehicle is unavailable
+      if (availabilityStatus === "checking") return false;
+      if (availabilityStatus === "unavailable") return false;
+      return true;
     }
     if (step === 3) {
       const fields = ["name", "email", "phone", "cin", "licenseNumber"];
@@ -206,7 +219,7 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
     }
     if (step === 4) return !!signature;
     return true;
-  }, [step, booking, signature]);
+  }, [step, booking, signature, availabilityStatus]);
 
   const nextStep = () => {
     if (validateStep()) {
@@ -226,6 +239,7 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
     booking, setBooking, update,
     vehicle, days, total, deposit,
     errors, touched,
+    availabilityStatus, recheckAvailability,
     getFieldError, setFieldTouched, validateField, handleBlur, handleFieldChange, clientFieldChange, validateStep,
   };
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useEffect, useState, useCallback, Component } from "react";
-import { useTranslation } from "@/shared/hooks/useTranslation";
+import { useMemo, useEffect, useState, Component } from "react";
 import { useVehicles } from "@/shared/hooks/useApi";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -57,7 +56,6 @@ class StepErrorBoundary extends Component<
 
 export default function BookingPage() {
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
-  const { t } = useTranslation();
   const dir = useDirection();
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
 
@@ -85,6 +83,7 @@ export default function BookingPage() {
     signature, setSignature,
     booking, setBooking, update,
     vehicle, days, total, deposit,
+    availabilityStatus,
     getFieldError, handleBlur, clientFieldChange,
   } = useBooking(displayVehicles);
 
@@ -135,7 +134,13 @@ export default function BookingPage() {
                         vehicles={displayVehicles} onNext={nextStep}
                       />
                     )}
-                    {step === 1 && <PeriodStep booking={booking} update={update} getFieldError={getFieldError} handleBlur={handleBlur} />}
+                    {step === 1 && (
+                      <PeriodStep
+                        booking={booking} update={update}
+                        getFieldError={getFieldError} handleBlur={handleBlur}
+                        availability={availabilityStatus}
+                      />
+                    )}
                     {step === 2 && <OptionsStep booking={booking} update={update} />}
                     {step === 3 && (
                       <IdentityStep
