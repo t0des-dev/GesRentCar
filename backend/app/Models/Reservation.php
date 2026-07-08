@@ -56,12 +56,20 @@ class Reservation extends Model
     }
 
     /**
-     * Check if the reservation has timed out (for collaborator vehicles).
+     * Check if the reservation has timed out.
+     * - pending_partner: cancelled after 1 hour
+     * - pending_payment: cancelled after 30 minutes (abandoned Stripe/CMI)
      */
     public function checkTimeout(): bool
     {
         if ($this->status === 'pending_partner' && $this->created_at->addHour()->isPast()) {
             $this->cancel('partner_timeout');
+
+            return true;
+        }
+
+        if ($this->status === 'pending_payment' && $this->created_at->addMinutes(30)->isPast()) {
+            $this->cancel('payment_timeout');
 
             return true;
         }

@@ -108,17 +108,30 @@ class StripeController extends Controller
         });
 
         // Créer le PaymentIntent Stripe APRÈS la transaction (évite de bloquer la connexion DB)
-        $intent = PaymentIntent::create([
-            'amount' => (int) ($deposit * 100),
-            'currency' => 'mad',
-            'metadata' => [
+        try {
+            $intent = PaymentIntent::create([
+                'amount' => (int) ($deposit * 100),
+                'currency' => 'mad',
+                'metadata' => [
+                    'reservation_id' => $reservation->id,
+                    'client_id' => $reservation->client_id,
+                    'vehicle_id' => $reservation->vehicle_id,
+                    'total_price' => $totalPrice,
+                ],
+                'automatic_payment_methods' => ['enabled' => true],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('[Stripe] PaymentIntent creation failed: '.$e->getMessage(), [
                 'reservation_id' => $reservation->id,
-                'client_id' => $reservation->client_id,
-                'vehicle_id' => $reservation->vehicle_id,
-                'total_price' => $totalPrice,
-            ],
-            'automatic_payment_methods' => ['enabled' => true],
-        ]);
+                'amount' => $deposit,
+            ]);
+            // Annuler la réservation créée si Stripe échoue
+            $reservation->update(['status' => 'cancelled']);
+
+            return response()->json([
+                'message' => 'Erreur lors de l\'initialisation du paiement Stripe. Veuillez réessayer.',
+            ], 500);
+        }
 
         return response()->json([
             'client_secret' => $intent->client_secret,

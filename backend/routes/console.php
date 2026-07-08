@@ -53,6 +53,13 @@ Schedule::command('db:backup', ['--compress', '--upload', '--retention' => 30])
     });
 
 /**
+ * Nettoyage des réservations timed-out (partner > 1h, payment > 30min).
+ */
+Schedule::command('reservations:cleanup-timeout')->everyFiveMinutes()
+    ->name('cleanup-timed-out-reservations')
+    ->withoutOverlapping();
+
+/**
  * Libération automatique des cautions pour les réservations terminées.
  */
 Schedule::command('deposits:release')->daily()

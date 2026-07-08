@@ -13,15 +13,27 @@ class CleanupTimedOutReservations extends Command
 
     public function handle()
     {
-        $timedOut = Reservation::where('status', 'pending_partner')
+        // Cancel partner reservations older than 1 hour
+        $partnerTimeout = Reservation::where('status', 'pending_partner')
             ->where('created_at', '<=', now()->subHour())
             ->get();
 
-        foreach ($timedOut as $reservation) {
+        foreach ($partnerTimeout as $reservation) {
             $reservation->update(['status' => 'cancelled']);
             $this->info("Cancelled reservation #{$reservation->id} due to partner timeout.");
         }
 
-        $this->info('Cleanup completed. '.$timedOut->count().' reservations cancelled.');
+        // Cancel abandoned Stripe/CMI reservations older than 30 minutes
+        $paymentTimeout = Reservation::where('status', 'pending_payment')
+            ->where('created_at', '<=', now()->subMinutes(30))
+            ->get();
+
+        foreach ($paymentTimeout as $reservation) {
+            $reservation->update(['status' => 'cancelled']);
+            $this->info("Cancelled reservation #{$reservation->id} due to payment timeout.");
+        }
+
+        $total = $partnerTimeout->count() + $paymentTimeout->count();
+        $this->info('Cleanup completed. '.$total.' reservations cancelled.');
     }
 }
