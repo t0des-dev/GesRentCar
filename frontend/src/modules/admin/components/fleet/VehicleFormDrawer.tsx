@@ -232,7 +232,7 @@ export default function VehicleFormDrawer({
                             Array.from(files).forEach(f => formData.append("photos[]", f));
                             try {
                               const res = await api.post(`/vehicles/${vehicle.id}/photos`, formData, {
-                                headers: { "Content-Type": "multipart/form-data" }
+                                headers: { "Content-Type": undefined }
                               });
                               setVehicle({ ...vehicle, photos: res.data.photos });
                             } catch (err) { notifyError("Erreur lors de l'upload des photos"); }

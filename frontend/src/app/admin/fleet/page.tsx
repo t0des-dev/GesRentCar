@@ -93,7 +93,7 @@ export default function FleetPage() {
 
     try {
       await api.post(`/vehicles/${vehicleId}/image`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { "Content-Type": undefined }
       });
       showSuccess("Image mise à jour avec succès !");
       fetchVehicles();
@@ -210,7 +210,7 @@ export default function FleetPage() {
         const formData = new FormData();
         formData.append("image", currentVehicle.new_image);
         await api.post(`/vehicles/${savedVehicle.id}/image`, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
+          headers: { "Content-Type": undefined }
         });
       }
 

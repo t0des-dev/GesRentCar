@@ -27,7 +27,7 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
 
     try {
       const res = await api.post("/config/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { "Content-Type": undefined }
       });
       onUploadComplete(res.data.url);
     } catch (err) {

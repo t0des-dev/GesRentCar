@@ -88,7 +88,7 @@ export default function ExpenseFormDrawer({ isOpen, onClose, expense, onSave }: 
         const form = new FormData();
         form.append("receipt", receiptFile);
         await api.post(`/expenses/${savedExpense.id}/receipt`, form, {
-          headers: { "Content-Type": "multipart/form-data" }
+          headers: { "Content-Type": undefined }
         });
         toast.success("Reçu téléversé avec succès");
       }
