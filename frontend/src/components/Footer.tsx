@@ -126,8 +126,9 @@ export default function Footer() {
             <nav className="flex flex-col gap-3">
               {[
                 { href: "/fleet", label: t("nav_fleet") || "Flotte" },
-                { href: "/locations", label: t("nav_locations") || "Localités" },
+                { href: "/locations", label: t("nav_locations") || "Agences" },
                 { href: "/about", label: t("nav_about") || "À Propos" },
+                { href: "/faq", label: t("nav_faq") || "FAQ" },
                 { href: "/contact", label: t("nav_contact") || "Contact" },
               ].map(({ href, label }) => (
                 <Link
