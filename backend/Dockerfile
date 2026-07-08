@@ -1,4 +1,4 @@
-# ─── Base stage: worker & scheduler (no Tesseract) ─────────────────────────
+# ─── Base stage: PHP + all system deps ─────────────────────────────────────
 FROM php:8.4-fpm AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,6 +18,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     procps \
     postgresql-client \
+    tesseract-ocr \
+    tesseract-ocr-fra \
+    tesseract-ocr-eng \
+    tesseract-ocr-ara \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
     && pecl install redis \
@@ -44,18 +48,15 @@ RUN rm -f bootstrap/cache/*.php \
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# ─── Backend stage: API + OCR (with Tesseract) ────────────────────────────
+# ─── Backend stage: API + OCR ──────────────────────────────────────────────
 FROM base AS backend
-
-RUN rm -rf /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        tesseract-ocr \
-        tesseract-ocr-fra \
-        tesseract-ocr-eng \
-        tesseract-ocr-ara \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /tmp/* /var/tmp/*
-
 EXPOSE 9000
 ENTRYPOINT ["docker-entrypoint.sh"]
+
+# ─── Worker stage ───────────────────────────────────────────────────────────
+FROM base AS worker
+CMD ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+
+# ─── Scheduler stage ────────────────────────────────────────────────────────
+FROM base AS scheduler
+CMD ["php", "artisan", "schedule:work"]
