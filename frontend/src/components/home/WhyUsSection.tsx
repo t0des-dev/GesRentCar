@@ -35,7 +35,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
   };
 
   return (
-    <section className="py-24 bg-surface-1">
+    <section className="pt-10 pb-24 bg-surface-1">
       <div className="container mx-auto px-6">
         <div className="max-w-2xl mb-16">
           <motion.p
