@@ -20,6 +20,17 @@ export const getImageUrl = (url?: string) => {
     return absStorageMatch[1];
   }
 
+  // Document preview paths need auth token for sanctum middleware
+  if (cleanUrl.startsWith('/api/documents/preview/')) {
+    const token = typeof window !== 'undefined'
+      ? (localStorage.getItem('vectoria_token') || localStorage.getItem('auth_token') || '')
+      : '';
+    if (token) {
+      const separator = cleanUrl.includes('?') ? '&' : '?';
+      return `${cleanUrl}${separator}token=${token}`;
+    }
+  }
+
   // Non-storage paths — return as-is (public assets, external URLs, etc.)
   return cleanUrl;
 };
