@@ -220,6 +220,7 @@ export default function HomeClient() {
       ),
       how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
       cta_banner: () => <CtaBanner content={storefront.sections_content.cta_banner} />,
+      promotion_banner: () => <PromotionBanner content={storefront.sections_content.promotion_banner} />,
     }),
     [storefront, location, startDate, endDate, handleSearch, aboutText, STATS, featuredVehicles, isLoading]
   );
