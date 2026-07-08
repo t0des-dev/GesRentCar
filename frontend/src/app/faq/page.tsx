@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { HelpCircle, ArrowLeft, MessageCircle } from "lucide-react";
 import Link from "next/link";
@@ -8,6 +9,10 @@ import { useStorefront } from "@/hooks/useStorefront";
 
 export default function FaqPage() {
   const storefront = useStorefront();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <main className="min-h-screen bg-surface-0">
