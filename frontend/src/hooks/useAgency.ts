@@ -20,6 +20,7 @@ export interface AgencyConfig {
     width?: string;
     height?: string;
     background?: string;
+    background_opacity?: number;
     radius?: string;
     show_name?: boolean;
   };

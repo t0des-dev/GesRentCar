@@ -5,6 +5,26 @@ import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import { useAgency } from "@/hooks/useAgency";
 
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const match = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+  return match ? { r: parseInt(match[1], 16), g: parseInt(match[2], 16), b: parseInt(match[3], 16) } : null;
+}
+
+function parseColor(color: string, opacity: number): string {
+  if (opacity >= 1) return color;
+  if (color.startsWith("hsl")) {
+    return color.replace(")", `, ${opacity})`).replace("hsl(", "hsla(");
+  }
+  if (color.startsWith("#")) {
+    const rgb = hexToRgb(color);
+    if (rgb) return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+  }
+  if (color.startsWith("rgb") && !color.startsWith("rgba")) {
+    return color.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
+  }
+  return color;
+}
+
 export default function Logo({ className }: { className?: string }) {
   const agency = useAgency();
   const logoUrl = getImageUrl(agency.logo_url);
@@ -13,7 +33,9 @@ export default function Logo({ className }: { className?: string }) {
 
   const w = cfg.width || "36px";
   const h = cfg.height || "36px";
-  const bg = cfg.background || "hsl(var(--primary))";
+  const bgRaw = cfg.background || "hsl(var(--primary))";
+  const bgOpacity = cfg.background_opacity ?? 1;
+  const bg = parseColor(bgRaw, bgOpacity);
   const radius = cfg.radius || "8px";
   const showName = cfg.show_name !== false;
 

@@ -194,6 +194,18 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
                     />
                   </div>
                 </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500">Opacité ({Math.round((form.logo_config?.background_opacity ?? 1) * 100)}%)</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={form.logo_config?.background_opacity ?? 1}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, background_opacity: parseFloat(e.target.value)}})}
+                    className="w-full accent-primary cursor-pointer"
+                  />
+                </div>
               </div>
               <label className="flex items-center gap-3 cursor-pointer group">
                 <input
