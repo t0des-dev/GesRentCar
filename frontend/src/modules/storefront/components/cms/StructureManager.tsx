@@ -59,6 +59,18 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
         />
       ),
     },
+    faq: {
+      label: "FAQ",
+      editor: (
+        <SectionContentEditor
+          sectionId="faq"
+          content={form.sections_content.faq ?? {}}
+          faqItems={form.faq_config ?? []}
+          onFaqItemsChange={(items) => setForm({ ...form, faq_config: items })}
+          onChange={(v) => setForm({ ...form, sections_content: { ...form.sections_content, faq: v as any } })}
+        />
+      ),
+    },
   };
 
   const renderEditor = () => {

@@ -49,7 +49,10 @@ export default function FaqPage() {
 
       {/* FAQ Content */}
       <FAQSection
-        content={storefront.sections_content.faq}
+        content={{
+          ...storefront.sections_content.faq,
+          items: storefront.faq_config,
+        }}
       />
 
       {/* Bottom CTA */}

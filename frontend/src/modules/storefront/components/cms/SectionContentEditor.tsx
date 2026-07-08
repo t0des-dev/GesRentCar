@@ -140,6 +140,8 @@ interface SectionContentEditorProps {
   content: Record<string, any>;
   onChange: (content: Record<string, any>) => void;
   extraFields?: { key: string; label: string; value: string; onChange: (v: string) => void }[];
+  faqItems?: { q: string; a: string }[];
+  onFaqItemsChange?: (items: { q: string; a: string }[]) => void;
 }
 
 function StringField({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: FieldDef }) {
@@ -274,7 +276,7 @@ const sectionLabels: Record<string, string> = {
   stats: "Statistiques Clés",
 };
 
-export default function SectionContentEditor({ sectionId, content, onChange, extraFields }: SectionContentEditorProps) {
+export default function SectionContentEditor({ sectionId, content, onChange, extraFields, faqItems, onFaqItemsChange }: SectionContentEditorProps) {
   const [lang, setLang] = useState<"fr" | "en">("fr");
   const fields = sectionFields[sectionId];
   if (!fields) return <p className="text-sm text-slate-400 italic">Aucun champ éditable pour cette section.</p>;
@@ -562,6 +564,22 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "color", label: "Couleur (ex: primary)", type: "text" },
             ]}
             defaultItem={{ id: "", label: "", value: "", icon: "Star", color: "primary" }}
+          />
+        </div>
+      )}
+
+      {/* FAQ — items array */}
+      {sectionId === "faq" && faqItems && onFaqItemsChange && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Questions Fréquentes</label>
+          <ReorderableArrayEditor
+            items={faqItems as unknown as Record<string, string>[]}
+            onChange={(items) => onFaqItemsChange(items as unknown as { q: string; a: string }[])}
+            fields={[
+              { key: "q", label: "Question", type: "text" },
+              { key: "a", label: "Réponse", type: "textarea" },
+            ]}
+            defaultItem={{ q: "", a: "" }}
           />
         </div>
       )}
