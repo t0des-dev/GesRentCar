@@ -138,6 +138,74 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
             <AssetUpload type="logo" label="Logo de l&apos;Agence" currentUrl={form.logo_url} onUploadComplete={(url) => setForm({...form, logo_url: url})} />
             <AssetUpload type="hero" label="Image de repli (Poster)" currentUrl={form.hero_image_url} onUploadComplete={(url) => setForm({...form, hero_image_url: url})} />
           </div>
+
+          {/* Logo Settings */}
+          {form.logo_url && (
+            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Paramètres du Logo</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500">Largeur</label>
+                  <input
+                    type="text"
+                    value={form.logo_config?.width ?? "36px"}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, width: e.target.value}})}
+                    placeholder="36px"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold outline-none focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500">Hauteur</label>
+                  <input
+                    type="text"
+                    value={form.logo_config?.height ?? "36px"}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, height: e.target.value}})}
+                    placeholder="36px"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold outline-none focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500">Rayon</label>
+                  <input
+                    type="text"
+                    value={form.logo_config?.radius ?? "8px"}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, radius: e.target.value}})}
+                    placeholder="8px"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold outline-none focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500">Fond</label>
+                  <div className="flex gap-2">
+                    <div className="w-9 h-9 rounded-lg border-2 border-white shadow shrink-0 overflow-hidden relative">
+                      <input
+                        type="color"
+                        value={form.logo_config?.background ?? "#6366f1"}
+                        onChange={e => setForm({...form, logo_config: {...form.logo_config, background: e.target.value}})}
+                        className="absolute inset-[-5px] w-[150%] h-[150%] cursor-pointer"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={form.logo_config?.background ?? ""}
+                      onChange={e => setForm({...form, logo_config: {...form.logo_config, background: e.target.value}})}
+                      placeholder="auto"
+                      className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-mono font-bold outline-none focus:border-primary transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={form.logo_config?.show_name !== false}
+                  onChange={e => setForm({...form, logo_config: {...form.logo_config, show_name: e.target.checked}})}
+                  className="rounded border-slate-300 text-primary focus:ring-primary/50 cursor-pointer w-4 h-4"
+                />
+                <span className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors">Afficher le nom à côté du logo</span>
+              </label>
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Vidéo Hero (MP4)</label>
             <input type="text" placeholder="Lien direct vers une vidéo .mp4" value={form.hero_video_url ?? ""} onChange={e => setForm({...form, hero_video_url: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none focus:bg-white focus:border-primary transition-all" />

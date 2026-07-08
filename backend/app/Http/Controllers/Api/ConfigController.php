@@ -75,6 +75,7 @@ class ConfigController extends Controller
             'agency_slogan' => $setting->agency_slogan ?? env('AGENCY_SLOGAN', 'Premium Car Rental'),
             'primary_color' => $setting->agency_primary_color ?? env('AGENCY_PRIMARY_COLOR', '#6366f1'),
             'logo_url' => $setting->logo_url ?? null,
+            'logo_config' => $setting->logo_config ?? null,
             'hero_image_url' => $setting->hero_image_url ?? null,
             'hero_video_url' => $setting->hero_video_url ?? null,
             'about_text_fr' => $setting->about_text_fr ?? null,
@@ -115,6 +116,9 @@ class ConfigController extends Controller
         }
         if (isset($data['logo_url'])) {
             $setting->logo_url = $data['logo_url'];
+        }
+        if (isset($data['logo_config'])) {
+            $setting->logo_config = $data['logo_config'];
         }
         if (isset($data['hero_image_url'])) {
             $setting->hero_image_url = $data['hero_image_url'];

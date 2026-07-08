@@ -16,6 +16,13 @@ export interface AgencyConfig {
   agency_slogan: string;
   primary_color: string;
   logo_url?: string;
+  logo_config?: {
+    width?: string;
+    height?: string;
+    background?: string;
+    radius?: string;
+    show_name?: boolean;
+  };
   hero_image_url?: string;
   hero_video_url?: string;
   about_text_fr?: string;
