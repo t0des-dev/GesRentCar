@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import VehicleCardSkeleton from "@/modules/fleet/components/VehicleCardSkeleton";
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
+import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
@@ -35,6 +36,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("Tous");
   const [hoveredImage, setHoveredImage] = useState<string | null>(null);
+  const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
 
   const layout = content.layout || "grid";
   const columnsStr = content.columns || "3";
@@ -201,6 +203,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       transmission={v.transmission || "Automatique"} imageUrl={v.image_url ?? undefined}
                       dynamicPrice={v.dynamic_price} dynamicReason={v.dynamic_reason}
                       isPopular={idx === 0 && activeTab === "Tous"}
+                      onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </div>
                 ))}
@@ -241,6 +244,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       transmission={v.transmission || "Automatique"} imageUrl={v.image_url ?? undefined}
                       dynamicPrice={v.dynamic_price} dynamicReason={v.dynamic_reason}
                       isPopular={idx === 0 && activeTab === "Tous"}
+                      onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </motion.div>
                 ))}
@@ -261,6 +265,14 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
         )}
 
       </div>
+
+      {/* Quick View Modal */}
+      {quickViewVehicle && (
+        <QuickViewModal
+          vehicle={quickViewVehicle}
+          onClose={() => setQuickViewVehicle(null)}
+        />
+      )}
     </section>
   );
 }
