@@ -44,6 +44,7 @@ export interface SectionsConfig {
   how_it_works: boolean;
   cta_banner: boolean;
   promotion_banner: boolean;
+  dual_cta: boolean;
   comparator: boolean;
 }
 

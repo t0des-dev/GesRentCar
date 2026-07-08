@@ -36,7 +36,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
   const selected = form.sections_order.find((s) => s.id === selectedSection);
   const key = selectedSection ? contentKey(selectedSection) : null;
 
-  const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner";
+  const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner" || id === "dual_cta";
 
   const specialEditors: Record<string, { label: string; editor: ReactNode }> = {
     stats: {
@@ -69,6 +69,30 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
           onFaqItemsChange={(items) => setForm({ ...form, faq_config: items })}
           onChange={(v) => setForm({ ...form, sections_content: { ...form.sections_content, faq: v as any } })}
         />
+      ),
+    },
+    dual_cta: {
+      label: "Double Appel à l'Action",
+      editor: (
+        <div className="space-y-8">
+          <div>
+            <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Panel Gauche — Programme Privilège</h5>
+            <SectionContentEditor
+              sectionId="promotion_banner"
+              content={form.sections_content.promotion_banner ?? {}}
+              onChange={(v) => setForm({ ...form, sections_content: { ...form.sections_content, promotion_banner: v as any } })}
+            />
+          </div>
+          <div className="h-px bg-slate-100" />
+          <div>
+            <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Panel Droit — Prêt à prendre le volant ?</h5>
+            <SectionContentEditor
+              sectionId="cta_banner"
+              content={form.sections_content.cta_banner ?? {}}
+              onChange={(v) => setForm({ ...form, sections_content: { ...form.sections_content, cta_banner: v as any } })}
+            />
+          </div>
+        </div>
       ),
     },
   };

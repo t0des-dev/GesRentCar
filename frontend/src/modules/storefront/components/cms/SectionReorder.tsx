@@ -38,6 +38,7 @@ const getSectionIcon = (id: string) => {
     case "how_it_works": return <ListOrdered size={18} />;
     case "cta_banner": return <Megaphone size={18} />;
     case "promotion_banner": return <Crown size={18} />;
+    case "dual_cta": return <Megaphone size={18} />;
     case "comparator": return <ArrowLeftRight size={18} />;
     default: return <GripVertical size={18} />;
   }

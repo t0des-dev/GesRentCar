@@ -24,6 +24,7 @@ export const defaultStorefrontForm: StorefrontForm = {
     how_it_works: true,
     cta_banner: true,
     promotion_banner: true,
+    dual_cta: true,
     comparator: true,
   },
   sections_order: [
@@ -38,8 +39,7 @@ export const defaultStorefrontForm: StorefrontForm = {
     { id: "concierge_banner", label: "Bannière Concierge IA", active: true },
     { id: "faq", label: "Foire Aux Questions (Accordéon)", active: true },
     { id: "how_it_works", label: "Comment ça marche", active: true },
-    { id: "cta_banner", label: "Bannière d'Appel à l'Action", active: true },
-    { id: "promotion_banner", label: "L'exclusivité au bout des doigts", active: true },
+    { id: "dual_cta", label: "Double Appel à l'Action", active: true },
     { id: "comparator", label: "Le Garage Comparateur", active: true },
   ],
   testimonials: [],

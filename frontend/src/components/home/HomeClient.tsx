@@ -11,8 +11,8 @@ import { useStorefront } from "@/hooks/useStorefront";
 
 import HeroSection from "@/components/home/HeroSection";
 import StickyBookingBar from "@/components/home/StickyBookingBar";
-import PromotionBanner from "@/components/PromotionBanner";
 
+const DualCtaSection = dynamic(() => import("@/components/home/DualCtaSection"), { ssr: false });
 const VibeSelector = dynamic(() => import("@/components/VibeSelector"), { ssr: false });
 const LifestyleGallery = dynamic(() => import("@/components/LifestyleGallery"), { ssr: false });
 const StatsSection = dynamic(() => import("@/components/home/StatsSection"));
@@ -23,7 +23,6 @@ const ExperienceMap = dynamic(() => import("@/components/ExperienceMap"), { ssr:
 const ConciergeBanner = dynamic(() => import("@/modules/ai/components/ConciergeBanner"), { ssr: false });
 const FAQSection = dynamic(() => import("@/components/FAQSection"), { ssr: false });
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
-const CtaBanner = dynamic(() => import("@/components/home/CtaBanner"));
 const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"));
 
 import JsonLd from "@/components/SEO/JsonLd";
@@ -38,6 +37,7 @@ const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
   testimonials: "h-[400px]",
   faq: "h-[500px]",
   cta_banner: "h-80",
+  dual_cta: "h-[500px]",
   concierge_banner: "h-64",
   map: "h-[400px]",
 };
@@ -219,8 +219,12 @@ export default function HomeClient() {
         <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />
       ),
       how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
-      cta_banner: () => <CtaBanner content={storefront.sections_content.cta_banner} />,
-      promotion_banner: () => <PromotionBanner content={storefront.sections_content.promotion_banner} />,
+      dual_cta: () => (
+        <DualCtaSection
+          promotion={storefront.sections_content.promotion_banner}
+          cta={storefront.sections_content.cta_banner}
+        />
+      ),
     }),
     [storefront, location, startDate, endDate, handleSearch, aboutText, STATS, featuredVehicles, isLoading]
   );
