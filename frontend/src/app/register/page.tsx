@@ -84,7 +84,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-surface-0">
+    <div className="min-h-screen flex bg-surface-0 pt-16">
       {/* Left Side — Hero Section */}
       <motion.div
         initial={{ opacity: 0 }}
