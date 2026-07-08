@@ -71,7 +71,11 @@ export default function ReservationsPage() {
     setActionLoading(modalReservation.id);
     try {
       if (modalType === "confirm") {
-        await api.post(`/reservations/${modalReservation.id}/accept`);
+        if (modalReservation.status === "pending_partner") {
+          await api.post(`/reservations/${modalReservation.id}/accept`);
+        } else {
+          await api.put(`/reservations/${modalReservation.id}`, { status: "confirmed" });
+        }
       } else {
         await api.put(`/reservations/${modalReservation.id}`, {
           status: "cancelled",
