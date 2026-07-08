@@ -128,7 +128,7 @@ export default function Footer() {
                 { href: "/fleet", label: t("nav_fleet") || "Flotte" },
                 { href: "/locations", label: t("nav_locations") || "Agences" },
                 { href: "/about", label: t("nav_about") || "À Propos" },
-                { href: "/faq", label: t("nav_faq") || "FAQ" },
+                { href: "/#faq", label: t("nav_faq") || "FAQ" },
                 { href: "/contact", label: t("nav_contact") || "Contact" },
               ].map(({ href, label }) => (
                 <Link

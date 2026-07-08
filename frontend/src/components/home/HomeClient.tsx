@@ -246,7 +246,8 @@ export default function HomeClient() {
               sectionMap[s.id]?.()
             ) : (
               <motion.div
-                className="relative z-10"
+                id={s.id}
+                className="relative z-10 scroll-mt-20"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}

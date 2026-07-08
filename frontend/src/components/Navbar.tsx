@@ -51,6 +51,7 @@ export default function Navbar() {
     { label: t("nav_locations"), url: "/locations" },
     { label: t("nav_offers"), url: "/offers" },
     { label: t("nav_about"), url: "/about" },
+    { label: t("nav_faq") || "FAQ", url: "/#faq" },
     { label: t("nav_contact"), url: "/contact" }
   ];
 
