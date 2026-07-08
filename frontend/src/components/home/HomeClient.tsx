@@ -63,19 +63,27 @@ export default function HomeClient() {
   });
   const [startDate, setStartDate] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("vrc_search_start") || "";
+    return localStorage.getItem("vrc_search_start") || new Date().toISOString().split("T")[0];
   });
   const [endDate, setEndDate] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("vrc_search_end") || "";
+    if (localStorage.getItem("vrc_search_end")) return localStorage.getItem("vrc_search_end")!;
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
   });
   const [startTime, setStartTime] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("vrc_search_start_time") || "09:00";
+    if (localStorage.getItem("vrc_search_start_time")) return localStorage.getItem("vrc_search_start_time")!;
+    const now = new Date(); const m = now.getMinutes(); const r = m < 30 ? 30 : 0;
+    if (r === 0) now.setHours(now.getHours() + 1); now.setMinutes(r, 0, 0);
+    return now.toTimeString().slice(0, 5);
   });
   const [endTime, setEndTime] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("vrc_search_end_time") || "09:00";
+    if (localStorage.getItem("vrc_search_end_time")) return localStorage.getItem("vrc_search_end_time")!;
+    const now = new Date(); const m = now.getMinutes(); const r = m < 30 ? 30 : 0;
+    if (r === 0) now.setHours(now.getHours() + 1); now.setMinutes(r + 60, 0, 0);
+    return now.toTimeString().slice(0, 5);
   });
   const [scrollPercent, setScrollPercent] = useState(0);
 
