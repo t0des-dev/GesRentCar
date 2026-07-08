@@ -47,11 +47,13 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # ─── Backend stage: API + OCR (with Tesseract) ────────────────────────────
 FROM base AS backend
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    tesseract-ocr-fra \
-    tesseract-ocr-eng \
-    tesseract-ocr-ara \
+RUN rm -rf /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        tesseract-ocr \
+        tesseract-ocr-fra \
+        tesseract-ocr-eng \
+        tesseract-ocr-ara \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/* /tmp/* /var/tmp/*
 
