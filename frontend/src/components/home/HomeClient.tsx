@@ -53,6 +53,50 @@ function SectionSkeleton({ id, className }: { id?: string; className?: string })
   );
 }
 
+function getTodayString(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
+function getTomorrowString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
+function getStoredDateOrToday(key: string): string {
+  const stored = localStorage.getItem(key);
+  if (stored && stored >= getTodayString()) return stored;
+  return getTodayString();
+}
+
+function getStoredDateOrTomorrow(key: string): string {
+  const stored = localStorage.getItem(key);
+  if (stored && stored >= getTodayString()) return stored;
+  return getTomorrowString();
+}
+
+function getStoredTimeOrNow(key: string): string {
+  const stored = localStorage.getItem(key);
+  if (stored) return stored;
+  const now = new Date();
+  const m = now.getMinutes();
+  const r = m < 30 ? 30 : 0;
+  if (r === 0) now.setHours(now.getHours() + 1);
+  now.setMinutes(r, 0, 0);
+  return now.toTimeString().slice(0, 5);
+}
+
+function getStoredEndTimeOrNow(key: string): string {
+  const stored = localStorage.getItem(key);
+  if (stored) return stored;
+  const now = new Date();
+  const m = now.getMinutes();
+  const r = m < 30 ? 30 : 0;
+  if (r === 0) now.setHours(now.getHours() + 1);
+  now.setMinutes(r + 60, 0, 0);
+  return now.toTimeString().slice(0, 5);
+}
+
 export default function HomeClient() {
   const router = useRouter();
   const { t, lang } = useTranslation();
@@ -63,27 +107,19 @@ export default function HomeClient() {
   });
   const [startDate, setStartDate] = useState(() => {
     if (typeof window === "undefined") return "";
-    return localStorage.getItem("vrc_search_start") || new Date().toISOString().split("T")[0];
+    return getStoredDateOrToday("vrc_search_start");
   });
   const [endDate, setEndDate] = useState(() => {
     if (typeof window === "undefined") return "";
-    if (localStorage.getItem("vrc_search_end")) return localStorage.getItem("vrc_search_end")!;
-    const d = new Date(); d.setDate(d.getDate() + 1);
-    return d.toISOString().split("T")[0];
+    return getStoredDateOrTomorrow("vrc_search_end");
   });
   const [startTime, setStartTime] = useState(() => {
     if (typeof window === "undefined") return "";
-    if (localStorage.getItem("vrc_search_start_time")) return localStorage.getItem("vrc_search_start_time")!;
-    const now = new Date(); const m = now.getMinutes(); const r = m < 30 ? 30 : 0;
-    if (r === 0) now.setHours(now.getHours() + 1); now.setMinutes(r, 0, 0);
-    return now.toTimeString().slice(0, 5);
+    return getStoredTimeOrNow("vrc_search_start_time");
   });
   const [endTime, setEndTime] = useState(() => {
     if (typeof window === "undefined") return "";
-    if (localStorage.getItem("vrc_search_end_time")) return localStorage.getItem("vrc_search_end_time")!;
-    const now = new Date(); const m = now.getMinutes(); const r = m < 30 ? 30 : 0;
-    if (r === 0) now.setHours(now.getHours() + 1); now.setMinutes(r + 60, 0, 0);
-    return now.toTimeString().slice(0, 5);
+    return getStoredEndTimeOrNow("vrc_search_end_time");
   });
   const [scrollPercent, setScrollPercent] = useState(0);
 

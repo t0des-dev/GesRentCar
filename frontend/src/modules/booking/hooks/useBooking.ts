@@ -101,8 +101,12 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
     const vehicleId = params.get("vehicle") ? Number(params.get("vehicle")) : null;
     const today = new Date().toISOString().split("T")[0];
     const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
-    const startDate = params.get("start_date") || localStorage.getItem('vrc_search_start') || today;
-    const endDate = params.get("end_date") || localStorage.getItem('vrc_search_end') || tomorrow;
+
+    const storedStart = localStorage.getItem('vrc_search_start');
+    const storedEnd = localStorage.getItem('vrc_search_end');
+
+    const startDate = params.get("start_date") || (storedStart && storedStart >= today ? storedStart : today);
+    const endDate = params.get("end_date") || (storedEnd && storedEnd >= today ? storedEnd : tomorrow);
     const location = params.get("location") || localStorage.getItem('vrc_search_location') || "";
 
     setBooking(prev => ({
