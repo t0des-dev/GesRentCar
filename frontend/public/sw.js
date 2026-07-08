@@ -51,6 +51,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Never cache API requests (they require auth tokens and return dynamic data)
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
   // NEVER cache Next.js internals:
   //  - /_next/static/* : hashed JS/CSS chunks (safe, but RSC payload references them)
   //  - /_next/data/*   : data payloads
