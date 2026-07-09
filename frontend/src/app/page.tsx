@@ -9,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apiUrl = `http://web${apiUrl}`;
     }
     const res = await fetch(`${apiUrl}/config`, {
+      headers: { Accept: "application/json" },
       next: { revalidate: 60 } // Cache for 60 seconds
     });
     if (res.ok) {

@@ -54,7 +54,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
             <Menu size={18} className={form.header_config.transparent_hero ? "text-white" : "text-slate-900"} />
           ) : (
             <div className="flex items-center gap-5">
-              {form.header_config.menu_links.slice(0, 3).map((link: any, i: number) => (
+              {(form.header_config.menu_links ?? []).slice(0, 3).map((link: any, i: number) => (
                 <span key={i} className={cn("text-xs font-semibold uppercase tracking-wider", form.header_config.transparent_hero ? "text-white" : "text-slate-500")}>
                   {link.label}
                 </span>
@@ -66,7 +66,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
 
         {/* Dynamic Sections Based on Order */}
         <div className="flex flex-col">
-          {form.sections_order.map((section: any) => {
+          {(form.sections_order ?? []).map((section: any) => {
             if (!section.active) return null;
 
             switch (section.id) {
@@ -178,7 +178,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                   <section id="preview-section-testimonials" key="testimonials" className="py-10 px-5 bg-slate-50">
                     <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-6">{form.sections_content?.testimonials?.heading || "Avis Clients"}</h3>
                     <div className="space-y-3">
-                      {form.testimonials.length > 0 ? (
+                      {(form.testimonials ?? []).length > 0 ? (
                         form.testimonials.slice(0, 2).map((t: any, i: number) => (
                           <div key={i} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
                             <div className="flex items-center gap-1 text-amber-400 mb-2">
