@@ -16,6 +16,8 @@ import SkipNav from "@/components/SkipNav";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import Analytics, { AnalyticsProvider } from "@/components/Analytics";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,35 +82,40 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}>
         <ThemeProvider>
-          <SkipNav />
-          <AuthProvider>
-            <ReactQueryProvider>
-              <LanguageProvider>
-                <CurrencyProvider>
-                  <ServiceWorkerRegister />
-                  <LayoutWrapper>
-                    <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
-                    <ConciergeAI />
-                  </LayoutWrapper>
-                  <WhatsAppFloat />
-                  <PWAInstallPrompt />
-                  <OfflineIndicator />
-                  <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
-                    duration: 4000,
-                    style: {
-                      background: '#0f172a',
-                      color: '#fff',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '16px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      padding: '12px 24px',
-                    }
-                  }} />
-                </CurrencyProvider>
-              </LanguageProvider>
-            </ReactQueryProvider>
-          </AuthProvider>
+          <AccessibilityProvider>
+            <AnalyticsProvider>
+              <SkipNav />
+              <AuthProvider>
+                <ReactQueryProvider>
+                  <LanguageProvider>
+                    <CurrencyProvider>
+                      <ServiceWorkerRegister />
+                      <Analytics />
+                      <LayoutWrapper>
+                        <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
+                        <ConciergeAI />
+                      </LayoutWrapper>
+                      <WhatsAppFloat />
+                      <PWAInstallPrompt />
+                      <OfflineIndicator />
+                      <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
+                        duration: 4000,
+                        style: {
+                          background: '#0f172a',
+                          color: '#fff',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '16px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          padding: '12px 24px',
+                        }
+                      }} />
+                    </CurrencyProvider>
+                  </LanguageProvider>
+                </ReactQueryProvider>
+              </AuthProvider>
+            </AnalyticsProvider>
+          </AccessibilityProvider>
         </ThemeProvider>
       </body>
     </html>

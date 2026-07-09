@@ -111,6 +111,10 @@ $apiRoutes = function () {
         // Public storage files (images, etc.)
         Route::get('/storage/{path...}', [DocumentController::class, 'serve']);
 
+        // Analytics (public)
+        Route::post('/analytics/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'track']);
+        Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
+
         // Cross-device scan: phone uploads (no auth, token-based)
         Route::get('/scan-sessions/{token}/status', [ScanSessionController::class, 'phoneShow']);
         Route::post('/scan-sessions/{token}/upload', [ScanSessionController::class, 'upload']);
