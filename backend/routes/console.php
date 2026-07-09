@@ -65,3 +65,17 @@ Schedule::command('reservations:cleanup-timeout')->everyFiveMinutes()
 Schedule::command('deposits:release')->daily()
     ->name('release-deposits')
     ->withoutOverlapping();
+
+/**
+ * Envoi des rappels de réservation (24h avant prise en charge).
+ */
+Schedule::command('reminders:send-booking')->dailyAt('09:00')
+    ->name('send-booking-reminders')
+    ->withoutOverlapping();
+
+/**
+ * Nettoyage des entrées waitlist expirées (> 30 jours).
+ */
+Schedule::command('waitlist:cleanup')->daily()
+    ->name('cleanup-expired-waitlists')
+    ->withoutOverlapping();

@@ -21,6 +21,15 @@ use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\WaitlistController;
+use App\Http\Controllers\Api\SavedSearchController;
+use App\Http\Controllers\Api\MaintenanceScheduleController;
+use App\Http\Controllers\Api\ClientBlacklistController;
+use App\Http\Controllers\Api\LoyaltyController;
+use App\Http\Controllers\Api\ReferralController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\Api\BookingReminderController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -183,6 +192,47 @@ $apiRoutes = function () {
         Route::put('/user/profile', [AuthController::class, 'updateProfile']);
         Route::put('/user/password', [AuthController::class, 'updatePassword']);
 
+        // Waitlist
+        Route::post('/waitlist', [WaitlistController::class, 'store']);
+        Route::get('/waitlist', [WaitlistController::class, 'index']);
+
+        // Saved Searches
+        Route::get('/saved-searches', [SavedSearchController::class, 'index']);
+        Route::post('/saved-searches', [SavedSearchController::class, 'store']);
+        Route::delete('/saved-searches/{savedSearch}', [SavedSearchController::class, 'destroy']);
+
+        // Loyalty
+        Route::get('/loyalty/profile', [LoyaltyController::class, 'profile']);
+        Route::get('/loyalty/history', [LoyaltyController::class, 'pointsHistory']);
+        Route::post('/loyalty/redeem', [LoyaltyController::class, 'redeem']);
+
+        // Referrals
+        Route::get('/referral/code', [ReferralController::class, 'generateCode']);
+        Route::get('/referral/stats', [ReferralController::class, 'stats']);
+        Route::post('/referral/apply', [ReferralController::class, 'apply']);
+
+        // Reviews
+        Route::get('/reviews/vehicle/{vehicle}', [ReviewController::class, 'index']);
+        Route::get('/reviews/vehicle/{vehicle}/stats', [ReviewController::class, 'vehicleStats']);
+        Route::post('/reviews', [ReviewController::class, 'store']);
+
+        // Comparisons
+        Route::post('/comparisons', function (Request $request) {
+            $request->validate(['vehicle_ids' => 'required|array|min:2|max:4']);
+            $comparison = \App\Models\VehicleComparison::create([
+                'user_id' => $request->user()?->id,
+                'vehicle_ids' => $request->vehicle_ids,
+                'session_id' => $request->header('X-Session-Id'),
+            ]);
+            return response()->json($comparison);
+        });
+
+        // Vehicle availability check for waitlist
+        Route::get('/vehicles/{vehicle}/availability', [WaitlistController::class, 'checkAvailability']);
+
+        // Blacklist check (during booking)
+        Route::post('/blacklist/check', [ClientBlacklistController::class, 'check']);
+
         // Admin only
         Route::middleware('role:admin')->group(function () {
             Route::get('/users', [UserController::class, 'index']);
@@ -194,6 +244,33 @@ $apiRoutes = function () {
             Route::get('/admin/demo/stats', [DemoController::class, 'stats']);
             Route::post('/admin/demo/populate', [DemoController::class, 'populate']);
             Route::post('/admin/demo/clear', [DemoController::class, 'clear']);
+
+            // Maintenance Schedules
+            Route::get('/maintenance-schedules', [MaintenanceScheduleController::class, 'index']);
+            Route::post('/maintenance-schedules', [MaintenanceScheduleController::class, 'store']);
+            Route::put('/maintenance-schedules/{maintenanceSchedule}', [MaintenanceScheduleController::class, 'update']);
+            Route::get('/maintenance-schedules/overdue', [MaintenanceScheduleController::class, 'overdue']);
+
+            // Client Blacklist
+            Route::get('/blacklist', [ClientBlacklistController::class, 'index']);
+            Route::post('/blacklist', [ClientBlacklistController::class, 'store']);
+            Route::delete('/blacklist/{clientBlacklist}', [ClientBlacklistController::class, 'destroy']);
+
+            // Webhooks
+            Route::get('/webhooks', [WebhookController::class, 'index']);
+            Route::post('/webhooks', [WebhookController::class, 'store']);
+            Route::put('/webhooks/{webhook}', [WebhookController::class, 'update']);
+            Route::delete('/webhooks/{webhook}', [WebhookController::class, 'destroy']);
+            Route::post('/webhooks/{webhook}/test', [WebhookController::class, 'test']);
+
+            // Reviews Admin
+            Route::put('/reviews/{review}/approve', [ReviewController::class, 'approve']);
+
+            // Waitlist Admin
+            Route::post('/waitlist/{waitlist}/notify', [WaitlistController::class, 'notifyAvailable']);
+
+            // Booking Reminders
+            Route::post('/admin/send-reminders', [BookingReminderController::class, 'sendReminders']);
         });
     });
 };

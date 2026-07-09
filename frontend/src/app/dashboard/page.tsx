@@ -12,6 +12,7 @@ import StatsGrid from "@/modules/dashboard/components/StatsGrid";
 import ReservationTabs from "@/modules/dashboard/components/ReservationTabs";
 import ReservationList from "@/modules/dashboard/components/ReservationList";
 import ReservationDetailModal from "@/modules/dashboard/components/ReservationDetailModal";
+import ClientDashboard from "@/modules/dashboard/components/ClientDashboard";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";
@@ -75,6 +76,10 @@ export default function DashboardPage() {
           loading={reservationsLoading} 
           onSelect={setSelectedRes} 
         />
+
+        <div className="mt-12 pt-12 border-t border-surface-2">
+          <ClientDashboard />
+        </div>
       </div>
     </main>
   );
