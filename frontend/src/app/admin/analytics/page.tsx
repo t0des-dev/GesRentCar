@@ -2,6 +2,7 @@
 
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import AnalyticsDashboard from "@/modules/admin/components/AnalyticsDashboard";
+import RevenueForecast from "@/components/RevenueForecast";
 import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -21,6 +22,9 @@ export default function AnalyticsPage() {
       <AdminPageHeader icon={BarChart3} title="Analytiques" subtitle="Surveillez la santé financière et opérationnelle de votre parc automobile." />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <AnalyticsDashboard />
+      </motion.div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8">
+        <RevenueForecast />
       </motion.div>
     </>
   );

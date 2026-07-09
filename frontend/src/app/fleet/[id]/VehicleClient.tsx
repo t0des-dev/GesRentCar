@@ -9,6 +9,9 @@ import api from "@/shared/services/client";
 import { getImageUrl } from "@/shared/utils/image";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { fmt } from "@/shared/utils/format";
+import ReviewSection from "@/components/ReviewSection";
+import Vehicle360Viewer from "@/components/Vehicle360Viewer";
+import WaitlistButton from "@/components/WaitlistButton";
 
 export default function VehicleClient() {
   const params = useParams();
@@ -289,6 +292,31 @@ export default function VehicleClient() {
                 ))}
               </div>
             </motion.section>
+
+            {/* 360° Viewer */}
+            {vehicle.photos && vehicle.photos.length > 1 && (
+              <motion.section
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.35, duration: 0.6 }}
+                className="space-y-6"
+              >
+                <p className="section-eyebrow">Vue 360°</p>
+                <Vehicle360Viewer images={vehicle.photos} alt={`${vehicle.brand} ${vehicle.model}`} />
+              </motion.section>
+            )}
+
+            {/* Reviews */}
+            <motion.section
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="space-y-6"
+            >
+              <ReviewSection vehicleId={vehicle.id!} />
+            </motion.section>
           </div>
 
           {/* Right Sidebar — Booking Widget (1/3) */}
@@ -366,13 +394,22 @@ export default function VehicleClient() {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Link 
-                  href={`/booking?vehicle=${vehicle.id}${pickupDate ? `&start_date=${pickupDate}` : ''}${returnDate ? `&end_date=${returnDate}` : ''}`}
-                  className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-gold to-gold/90 text-ink-1 py-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-gold/40"
-                >
-                  Réserver ce véhicule
-                  <ArrowRight size={18} strokeWidth={3} />
-                </Link>
+                {vehicle.status === "available" ? (
+                  <Link 
+                    href={`/booking?vehicle=${vehicle.id}${pickupDate ? `&start_date=${pickupDate}` : ''}${returnDate ? `&end_date=${returnDate}` : ''}`}
+                    className="flex items-center justify-center gap-3 w-full bg-gradient-to-r from-gold to-gold/90 text-ink-1 py-4 rounded-lg text-xs font-bold uppercase tracking-widest transition-all hover:shadow-lg hover:shadow-gold/40"
+                  >
+                    Réserver ce véhicule
+                    <ArrowRight size={18} strokeWidth={3} />
+                  </Link>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center gap-2 w-full bg-surface-2 text-ink-3 py-4 rounded-lg text-xs font-bold uppercase tracking-widest border-2 border-border">
+                      Véhicule non disponible
+                    </div>
+                    <WaitlistButton vehicleId={vehicle.id!} vehicleName={`${vehicle.brand} ${vehicle.model}`} />
+                  </div>
+                )}
               </motion.div>
 
               {/* Note */}

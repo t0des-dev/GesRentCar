@@ -2,6 +2,7 @@
 
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import AdminSettings from "@/modules/admin/components/AdminSettings";
+import WebhookManager from "@/components/WebhookManager";
 import AdminPageHeader from "@/modules/admin/components/AdminPageHeader";
 import { ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
@@ -31,6 +32,9 @@ export default function SettingsPage() {
       </AdminPageHeader>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <AdminSettings />
+      </motion.div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8">
+        <WebhookManager />
       </motion.div>
     </>
   );

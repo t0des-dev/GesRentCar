@@ -13,6 +13,7 @@ import ReservationTabs from "@/modules/dashboard/components/ReservationTabs";
 import ReservationList from "@/modules/dashboard/components/ReservationList";
 import ReservationDetailModal from "@/modules/dashboard/components/ReservationDetailModal";
 import ClientDashboard from "@/modules/dashboard/components/ClientDashboard";
+import SavedSearchPanel from "@/components/SavedSearchPanel";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";
@@ -79,6 +80,10 @@ export default function DashboardPage() {
 
         <div className="mt-12 pt-12 border-t border-surface-2">
           <ClientDashboard />
+        </div>
+
+        <div className="mt-12 pt-12 border-t border-surface-2">
+          <SavedSearchPanel />
         </div>
       </div>
     </main>

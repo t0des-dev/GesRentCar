@@ -15,6 +15,8 @@ import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationD
 import MaintenanceAlerts from "@/modules/admin/components/dashboard/MaintenanceAlerts";
 import { PerformanceCharts, PopularModels } from "@/modules/admin/components/dashboard/DashboardAnalytics";
 import { notifyError } from "@/components/Notifications";
+import MaintenanceScheduler from "@/components/MaintenanceScheduler";
+import RevenueForecast from "@/components/RevenueForecast";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
@@ -78,6 +80,11 @@ export default function AdminDashboard() {
       )}
 
       {!loading && <div className="mb-12"><ProfitabilityTable /></div>}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <RevenueForecast />
+        <MaintenanceScheduler />
+      </div>
 
       <FleetCalendar 
         reservations={reservations} 

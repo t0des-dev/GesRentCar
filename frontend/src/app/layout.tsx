@@ -14,6 +14,8 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ConciergeAI from "@/modules/ai/components/ConciergeAI";
 import SkipNav from "@/components/SkipNav";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,6 +91,8 @@ export default function RootLayout({
                     <ConciergeAI />
                   </LayoutWrapper>
                   <WhatsAppFloat />
+                  <PWAInstallPrompt />
+                  <OfflineIndicator />
                   <Toaster position="bottom-left" containerClassName="!bottom-24 md:!bottom-4" toastOptions={{
                     duration: 4000,
                     style: {
