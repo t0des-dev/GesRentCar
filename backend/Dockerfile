@@ -20,13 +20,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     cron \
     procps \
-    postgresql-client \
+    default-mysql-client \
     tesseract-ocr \
     tesseract-ocr-fra \
     tesseract-ocr-eng \
     tesseract-ocr-ara \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
+    && docker-php-ext-install -j$(nproc) pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd intl zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get clean \
