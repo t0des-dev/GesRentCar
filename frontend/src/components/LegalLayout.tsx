@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Shield, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface LegalLayoutProps {
   title: string;
@@ -10,6 +10,12 @@ interface LegalLayoutProps {
 }
 
 export default function LegalLayout({ title, children }: LegalLayoutProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-24">
@@ -21,10 +27,10 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="sticky top-32 space-y-6"
+            <div 
+              className={`sticky top-32 space-y-6 transition-all duration-500 ease-out ${
+                mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"
+              }`}
             >
               <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
                 <Shield size={28} />
@@ -36,18 +42,17 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
                 Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
               </p>
               <div className="h-0.5 w-16 bg-primary rounded-full" />
-            </motion.div>
+            </div>
           </div>
 
           <div className="lg:col-span-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white rounded-3xl border border-slate-100/80 shadow-sm p-10 md:p-16 prose prose-slate prose-lg max-w-none"
+            <div 
+              className={`bg-white rounded-3xl border border-slate-100/80 shadow-sm p-10 md:p-16 prose prose-slate prose-lg max-w-none transition-all duration-500 delay-200 ease-out ${
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+              }`}
             >
               {children}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

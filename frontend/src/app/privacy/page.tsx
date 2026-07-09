@@ -1,8 +1,4 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const LegalLayout = dynamic(() => import("@/components/LegalLayout"), { ssr: false });
+import LegalLayout from "@/components/LegalLayout";
 
 export default function PrivacyPage() {
   return (
