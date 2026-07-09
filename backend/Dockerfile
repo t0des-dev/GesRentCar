@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     procps \
     default-mysql-client \
+    postgresql-client \
     tesseract-ocr \
     tesseract-ocr-fra \
     tesseract-ocr-eng \
