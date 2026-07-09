@@ -1,3 +1,5 @@
+"use client";
+
 import LegalLayout from "@/components/LegalLayout";
 
 export default function DSAPage() {
