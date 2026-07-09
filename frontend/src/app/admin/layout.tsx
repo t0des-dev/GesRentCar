@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList, FlaskConical, Ban
+  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList, FlaskConical, Ban, FileUp, ScrollText
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
@@ -25,6 +25,7 @@ const MENU_GROUPS = [
     id: "fleet", title: "Flotte", icon: Car,
     items: [
       { icon: Car, label: "Véhicules", href: "/admin/fleet" },
+      { icon: FileUp, label: "Import CSV", href: "/admin/import" },
       { icon: BarChart3, label: "Analytiques", href: "/admin/analytics" },
     ]
   },
@@ -33,6 +34,7 @@ const MENU_GROUPS = [
     items: [
       { icon: Users, label: "Utilisateurs", href: "/admin/users" },
       { icon: Ban, label: "Liste Noire", href: "/admin/blacklist" },
+      { icon: ScrollText, label: "Journal d'Audit", href: "/admin/audit" },
       { icon: Palette, label: "Storefront", href: "/admin/storefront" },
       { icon: Settings, label: "Paramètres", href: "/admin/settings" },
       { icon: FlaskConical, label: "Données de Démo", href: "/admin/demo" },

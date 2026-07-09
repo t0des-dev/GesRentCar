@@ -15,6 +15,7 @@ import LanguageSwitcher from "./navbar/LanguageSwitcher";
 import UserActions from "./navbar/UserActions";
 import MobileMenu from "./navbar/MobileMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import GlobalSearch from "@/components/GlobalSearch";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -78,6 +79,9 @@ export default function Navbar() {
 
           {/* Right Actions — Premium Dropdowns */}
           <div className="hidden md:flex items-center gap-1">
+            {/* Global Search */}
+            <GlobalSearch />
+
             {/* Language Switcher — Glass Style */}
             <LanguageSwitcher
               lang={lang} languages={languages} isOpen={langOpen}

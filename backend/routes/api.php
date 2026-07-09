@@ -20,6 +20,9 @@ use App\Http\Controllers\Api\ScanSessionController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
+use App\Http\Controllers\Api\VehicleImportController;
+use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\WaitlistController;
 use App\Http\Controllers\Api\SavedSearchController;
@@ -88,6 +91,7 @@ $apiRoutes = function () {
 
     Route::middleware('throttle:public')->group(function () {
         Route::get('/config', [ConfigController::class, 'index']);
+        Route::get('/health', [HealthController::class, 'index']);
         Route::get('/pages', [PageController::class, 'index']);
         Route::get('/pages/{slug}', [PageController::class, 'show']);
 
@@ -271,6 +275,12 @@ $apiRoutes = function () {
 
             // Booking Reminders
             Route::post('/admin/send-reminders', [BookingReminderController::class, 'sendReminders']);
+
+            // Audit Logs
+            Route::get('/audit-logs', [AuditLogController::class, 'index']);
+
+            // Vehicle CSV Import
+            Route::post('/vehicles/import', [VehicleImportController::class, 'import']);
         });
     });
 };

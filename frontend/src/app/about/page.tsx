@@ -1,118 +1,205 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Shield, Heart, Users, Sparkles, Crown, Zap, Globe } from "lucide-react";
-import { useTranslation } from "@/shared/hooks/useTranslation";
-import { useAgency } from "@/hooks/useAgency";
+import Link from "next/link";
 import { cn } from "@/shared/utils";
+import {
+  Award,
+  Shield,
+  Lightbulb,
+  Handshake,
+  ArrowRight,
+  Car,
+  Clock,
+  Users,
+  TrendingUp,
+} from "lucide-react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] as const },
+  }),
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.8 } },
+};
+
+const values = [
+  {
+    icon: Award,
+    title: "Excellence",
+    description:
+      "Chaque véhicule de notre flotte est sélectionné avec un souci du détail absolu. Nous n'acceptons que l'excellence, de l'entretien à la présentation.",
+    color: "text-gold",
+    bg: "bg-gold-light",
+  },
+  {
+    icon: Shield,
+    title: "Confiance",
+    description:
+      "La transparence est au cœur de chaque interaction. Pas de frais cachés, pas de mauvaises surprises — juste un service fiable et honnête.",
+    color: "text-primary",
+    bg: "bg-primary/10",
+  },
+  {
+    icon: Lightbulb,
+    title: "Innovation",
+    description:
+      "De la réservation en ligne au suivi GPS en temps réel, nous intégrons la technologie pour rendre votre expérience fluide et moderne.",
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+  },
+  {
+    icon: Handshake,
+    title: "Service",
+    description:
+      "Notre équipe est disponible 24h/24, 7j/7. Conciergerie personnelle, livraison à l'aéroport, assistance sur route — nous sommes toujours là.",
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+  },
+];
+
+const team = [
+  {
+    name: "Youssef El Mansouri",
+    role: "Fondateur & CEO",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    name: "Karim Benali",
+    role: "Directeur des Opérations",
+    image:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600",
+  },
+  {
+    name: "Sara Ait Brahim",
+    role: "Responsable Clientèle",
+    image:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=600",
+  },
+];
+
+const stats = [
+  { value: "15+", label: "Ans d'Expérience", icon: TrendingUp },
+  { value: "2400+", label: "Clients Satisfaits", icon: Users },
+  { value: "80+", label: "Véhicules Premium", icon: Car },
+  { value: "24/7", label: "Support Dédié", icon: Clock },
+];
 
 export default function AboutPage() {
-  const { t } = useTranslation();
-  const agency = useAgency();
-
-  const values = [
-    { icon: Crown, title: t("about_val_1"), desc: t("about_val_1_desc"), color: "text-amber-500", bg: "bg-amber-500/10" },
-    { icon: Shield, title: t("about_val_2"), desc: t("about_val_2_desc"), color: "text-blue-500", bg: "bg-blue-500/10" },
-    { icon: Zap, title: t("about_val_3"), desc: t("about_val_3_desc"), color: "text-emerald-500", bg: "bg-emerald-500/10" },
-  ];
-
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen">
       {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
-      <section className="relative h-[70vh] flex items-center overflow-hidden bg-slate-950 text-white">
-        <div className="absolute inset-0 z-0">
-          <motion.img 
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.4 }}
-            transition={{ duration: 1.5 }}
-            src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000" 
-            className="w-full h-full object-cover"
-            alt="About Hero"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-slate-50" />
-        </div>
+      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--gold-light))] via-[hsl(var(--surface-0))] to-[hsl(var(--gold-light))]" />
+        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_30%_20%,hsl(var(--gold)),transparent_50%)]" />
 
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl"
+        <div className="page-container px-6 relative z-10 py-32">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            className="max-w-3xl"
           >
-            <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full mb-8">
-              <Sparkles size={16} className="text-primary" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-80">L'Excellence Vectoria</span>
-            </div>
-            <h1 className="text-6xl md:text-8xl font-semibold tracking-tighter mb-8 leading-[0.9]">
-              {t("about_hero_title")}
+            <span className="overline-gold mb-6 inline-block">
+              Notre Histoire
+            </span>
+            <h1 className="font-display text-ink-1 mb-8 leading-[0.95] tracking-tight text-5xl md:text-7xl lg:text-8xl">
+              Vectoria
             </h1>
-            <p className="text-xl md:text-2xl text-slate-300 font-medium max-w-2xl leading-relaxed">
-              {t("about_hero_subtitle")}
+            <p className="text-ink-2 text-xl md:text-2xl leading-relaxed max-w-2xl font-medium">
+              La reference de la location vehicule premium au Maroc, au service
+              de l&apos;excellence depuis 2010.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* ── STORY SECTION ────────────────────────────────────────────────── */}
-      <section className="py-32 relative">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-            
-            <motion.div 
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
+      <section className="section-gap-lg">
+        <div className="page-container px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true }}
+              variants={fadeUp}
               className="relative"
             >
-              <div className="relative z-10 rounded-[60px] overflow-hidden shadow-sm border-8 border-white">
-                <img 
-                  src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Prestige Fleet"
-                  className="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700"
+              <div className="relative rounded-2xl overflow-hidden border-2 border-border">
+                <img
+                  src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1200"
+                  alt="Fleet Vectoria"
+                  className="w-full aspect-[4/5] object-cover"
                 />
               </div>
-              {/* Floating Stat Card */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="absolute -bottom-10 -right-10 bg-primary text-white p-10 rounded-[40px] shadow-sm z-20 hidden md:block"
+                variants={fadeUp}
+                custom={2}
+                className="absolute -bottom-8 -right-4 md:-right-8 bg-primary text-primary-foreground p-8 rounded-2xl shadow-lg z-10 hidden md:block"
               >
-                <p className="text-5xl font-semibold mb-1">5.0</p>
-                <div className="flex gap-1 mb-4">
-                  {[1,2,3,4,5].map(i => <Sparkles key={i} size={12} className="fill-white" />)}
-                </div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-70">Note Client Moyenne</p>
+                <p className="font-display text-4xl mb-1">5.0</p>
+                <p className="text-xs font-bold uppercase tracking-wider opacity-80">
+                  Note Client
+                </p>
               </motion.div>
             </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true }}
-              className="space-y-10"
+              variants={fadeUp}
+              custom={1}
+              className="space-y-8"
             >
               <div>
-                <p className="text-primary font-semibold text-xs uppercase tracking-[0.3em] mb-4">{t("about_story_label")}</p>
-                <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tighter mb-8">
-                  {t("about_story_title")}
+                <span className="overline-gold mb-4 inline-block">
+                  Notre Parcours
+                </span>
+                <h2 className="font-display text-ink-1 mb-6 text-3xl md:text-5xl leading-tight tracking-tight">
+                  L&apos;Art du Mouvement
                 </h2>
-                <div className="space-y-6 text-lg text-slate-500 font-medium leading-relaxed">
-                  <p>{t("about_story_p1")}</p>
-                  <p>
-                    {agency.about_text_fr || "Nous croyons que chaque trajet mérite d'être extraordinaire. C'est pourquoi nous sélectionnons rigoureusement chaque véhicule de notre flotte pour garantir des performances optimales et un luxe sans compromis."}
-                  </p>
-                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8 pt-8">
-                <div className="p-8 bg-white rounded-[32px] shadow-sm border border-slate-100 group hover:border-primary/20 transition-all">
-                  <h3 className="text-3xl font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors">24/7</h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("stat_support")}</p>
+              <div className="space-y-5 text-ink-2 body-text leading-relaxed">
+                <p>
+                  Depuis 2010, Vectoria redéfinit la location de véhicules
+                  premium au Maroc. Fondée avec une vision claire — offrir une
+                  expérience de conduite qui dépasse les attentes — notre
+                  entreprise est devenue la référence pour ceux qui exigent
+                  l&apos;excellence.
+                </p>
+                <p>
+                  Nous croyons que chaque trajet mérite d&apos;être
+                  extraordinaire. C&apos;est pourquoi nous sélectionnons
+                  rigoureusement chaque véhicule de notre flotte pour garantir
+                  des performances optimales et un luxe sans compromis.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 pt-4">
+                <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
+                  <p className="font-display text-ink-1 text-3xl mb-1">24/7</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
+                    Disponible
+                  </p>
                 </div>
-                <div className="p-8 bg-white rounded-[32px] shadow-sm border border-slate-100 group hover:border-primary/20 transition-all">
-                  <h3 className="text-3xl font-semibold text-slate-900 mb-2 group-hover:text-primary transition-colors">100%</h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Satisfaction</p>
+                <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
+                  <p className="font-display text-ink-1 text-3xl mb-1">100%</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
+                    Satisfaction
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -121,61 +208,162 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES SECTION ───────────────────────────────────────────────── */}
-      <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-24">
-            <h2 className="text-4xl md:text-6xl font-semibold tracking-tighter mb-6">{t("about_values_title")}</h2>
-            <div className="w-20 h-1.5 bg-primary mx-auto rounded-full" />
-          </div>
+      <section className="section-gap surface-1">
+        <div className="page-container px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-center mb-16"
+          >
+            <span className="overline-gold mb-4 inline-block">
+              Nos Principes
+            </span>
+            <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
+              Ce Qui Nous Definit
+            </h2>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((val, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <motion.div
+                key={val.title}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white/5 backdrop-blur-xl border border-white/10 p-12 rounded-[48px] hover:bg-white/10 transition-all group"
+                variants={fadeUp}
+                custom={i}
+                className="card-premium p-8 rounded-2xl border-2 border-border text-center group"
               >
-                <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-transform group-hover:scale-110", val.bg, val.color)}>
-                  <val.icon size={32} />
+                <div
+                  className={cn(
+                    "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-transform duration-300 group-hover:scale-110",
+                    val.bg,
+                    val.color
+                  )}
+                >
+                  <val.icon size={28} />
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 tracking-tight">{val.title}</h3>
-                <p className="text-slate-400 font-medium leading-relaxed">{val.desc}</p>
+                <h3 className="text-ink-1 font-bold uppercase tracking-wider text-sm mb-3">
+                  {val.title}
+                </h3>
+                <p className="text-ink-3 text-sm leading-relaxed">
+                  {val.description}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── MISSION SECTION ──────────────────────────────────────────────── */}
-      <section className="py-32">
-        <div className="container mx-auto px-6">
-          <div className="bg-white rounded-[64px] p-12 md:p-24 shadow-sm border border-slate-100 flex flex-col lg:flex-row items-center gap-16 overflow-hidden relative">
-            <div className="flex-1">
-              <h2 className="text-4xl md:text-6xl font-semibold text-slate-900 tracking-tighter mb-8">
-                {t("about_mission_title")}
-              </h2>
-              <p className="text-xl text-slate-500 font-medium leading-relaxed mb-12">
-                {t("about_mission_desc")}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {["Luxe", "Sûreté", "Prestige", "Innovation"].map(tag => (
-                  <span key={tag} className="px-6 py-2 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-[0.2em]">
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+      {/* ── TEAM SECTION ─────────────────────────────────────────────────── */}
+      <section className="section-gap">
+        <div className="page-container px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-center mb-16"
+          >
+            <span className="overline-gold mb-4 inline-block">
+              L&apos;Equipe
+            </span>
+            <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
+              Les Visages de Vectoria
+            </h2>
+          </motion.div>
 
-            <div className="w-full lg:w-[450px] aspect-square bg-slate-50 rounded-[48px] flex items-center justify-center relative group">
-              <Crown size={120} className="text-primary/20 group-hover:text-primary/40 transition-colors duration-500" />
-              <div className="absolute bottom-10 left-10 right-10 p-6 bg-white/70 backdrop-blur-xl border border-white/20 rounded-2xl text-center">
-                 <p className="font-semibold text-slate-900 uppercase tracking-tighter italic">L'Expérience Vectoria</p>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {team.map((member, i) => (
+              <motion.div
+                key={member.name}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="card-premium rounded-2xl border-2 border-border overflow-hidden group"
+              >
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="font-bold uppercase tracking-wider text-ink-1 text-sm mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-ink-3 text-xs uppercase tracking-wider font-semibold">
+                    {member.role}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── STATS SECTION ────────────────────────────────────────────────── */}
+      <section className="section-gap surface-1">
+        <div className="page-container px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="stat-display"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-gold-light flex items-center justify-center mx-auto mb-5">
+                  <stat.icon size={24} className="text-gold-dark" />
+                </div>
+                <p className="number text-ink-1">{stat.value}</p>
+                <p className="label text-ink-3">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA SECTION ──────────────────────────────────────────────────── */}
+      <section className="section-gap-lg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--gold-light))] via-[hsl(var(--surface-0))] to-[hsl(var(--gold-light))]" />
+
+        <div className="page-container px-6 relative z-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="text-center max-w-2xl mx-auto"
+          >
+            <span className="overline-gold mb-6 inline-block">
+              Rejoignez-nous
+            </span>
+            <h2 className="font-display text-ink-1 text-3xl md:text-5xl lg:text-6xl tracking-tight mb-8">
+              Rejoignez l&apos;aventure Vectoria
+            </h2>
+            <p className="text-ink-2 body-text mb-12">
+              Decouvrez une experience de location sans equal. Reservez votre
+              vehicule premium en quelques clics et laissez-vous porter par
+              l&apos;excellence.
+            </p>
+
+            <Link
+              href="/register"
+              className="btn-gold inline-flex items-center gap-2 rounded-2xl px-10 py-4"
+            >
+              Creer Mon Compte
+              <ArrowRight size={18} />
+            </Link>
+          </motion.div>
         </div>
       </section>
     </main>

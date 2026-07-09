@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { AlertTriangle } from "lucide-react";
 
 export default function Error({
   error,
@@ -9,39 +11,38 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    const errorMsg = error?.message || "";
-    if (
-      errorMsg.includes("ChunkLoadError") ||
-      errorMsg.includes("Failed to load chunk") ||
-      errorMsg.includes("Loading chunk") ||
-      errorMsg.includes("310")
-    ) {
-      if (typeof window !== "undefined") {
-        window.location.reload();
-      }
-    }
-  }, [error]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
-      <div className="text-center max-w-md mx-auto px-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-destructive mb-4">
-          Erreur
-        </p>
-        <h1 className="text-5xl font-bold text-slate-900 tracking-tight mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface-0">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center px-6"
+      >
+        <div className="flex justify-center mb-6">
+          <AlertTriangle className="w-16 h-16 text-red-500" />
+        </div>
+        <h1 className="text-3xl font-bold text-surface-900">
           Une erreur est survenue
         </h1>
-        <p className="text-slate-500 text-sm leading-relaxed mb-10">
-          Veuillez réessayer ou contacter le support si le problème persiste.
+        <p className="mt-4 text-surface-600 max-w-md mx-auto">
+          {error.message || "Une erreur inattendue s'est produite."}
         </p>
-        <button
-          onClick={reset}
-          className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-2xl text-xs font-semibold uppercase tracking-widest hover:bg-primary/90 transition-all"
-        >
-          Réessayer
-        </button>
-      </div>
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            onClick={() => reset()}
+            className="px-6 py-3 bg-gold-500 text-white font-medium rounded-lg hover:bg-gold-600 transition-colors"
+          >
+            Réessayer
+          </button>
+          <Link
+            href="/"
+            className="px-6 py-3 border border-surface-300 text-surface-700 font-medium rounded-lg hover:bg-surface-100 transition-colors"
+          >
+            Retour à l&apos;accueil
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }

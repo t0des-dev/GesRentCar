@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /fleet
+Allow: /about
+Allow: /contact
+Allow: /faq
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /booking
+
+Sitemap: https://vectoria.carbonick.com/sitemap.xml
