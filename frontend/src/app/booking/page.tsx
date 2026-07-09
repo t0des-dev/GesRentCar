@@ -139,6 +139,7 @@ export default function BookingPage() {
                         booking={booking} update={update}
                         getFieldError={getFieldError} handleBlur={handleBlur}
                         availability={availabilityStatus}
+                        vehiclePricePerDay={vehicle?.price ?? 0}
                       />
                     )}
                     {step === 2 && <OptionsStep booking={booking} update={update} />}

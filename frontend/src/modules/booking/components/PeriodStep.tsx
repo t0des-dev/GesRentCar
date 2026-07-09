@@ -1,10 +1,13 @@
 "use client";
 
 import { cn } from "@/shared/utils";
-import { Calendar, MapPin, Clock, AlertCircle, CheckCircle2, Loader2, WifiOff } from "lucide-react";
+import { Calendar, MapPin, Clock, AlertCircle, CheckCircle2, Loader2, WifiOff, Calculator } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookingState } from "@/types/booking";
 import type { AvailabilityStatus } from "../hooks/useVehicleAvailability";
+import { useMemo } from "react";
+import { calculatePrice } from "@/shared/utils/pricing";
+import { fmt } from "@/shared/utils/format";
 
 interface PeriodStepProps {
   booking: BookingState;
@@ -12,6 +15,7 @@ interface PeriodStepProps {
   getFieldError: (field: string) => string | null;
   handleBlur: (field: string, value: string) => void;
   availability?: AvailabilityStatus;
+  vehiclePricePerDay?: number;
 }
 
 function FieldError({ error }: { error: string | null }) {
@@ -87,7 +91,24 @@ export default function PeriodStep({
   getFieldError,
   handleBlur,
   availability = "idle",
+  vehiclePricePerDay = 0,
 }: PeriodStepProps) {
+  const days = useMemo(() => {
+    if (!booking.startDate || !booking.endDate) return 0;
+    const diff = new Date(booking.endDate).getTime() - new Date(booking.startDate).getTime();
+    return Math.max(1, Math.round(diff / 86400000));
+  }, [booking.startDate, booking.endDate]);
+
+  const pricePreview = useMemo(() => {
+    if (!vehiclePricePerDay || !days) return null;
+    return calculatePrice({
+      pricePerDay: vehiclePricePerDay,
+      days,
+      startDate: booking.startDate,
+      flexibility: booking.flexibility,
+      mileage: booking.mileage,
+    });
+  }, [vehiclePricePerDay, days, booking.startDate, booking.flexibility, booking.mileage]);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <motion.div
@@ -202,6 +223,46 @@ export default function PeriodStep({
       <AnimatePresence>
         <AvailabilityBadge status={availability} />
       </AnimatePresence>
+
+      {/* Live Price Preview */}
+      {pricePreview && pricePreview.total > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="col-span-full bg-gradient-to-r from-primary/5 to-gold/5 border-2 border-primary/20 rounded-2xl p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Calculator size={18} className="text-primary" />
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-2">Aperçu du prix</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Jours</p>
+              <p className="text-xl font-black text-ink-1">{days}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Tarif/jour</p>
+              <p className="text-xl font-black text-ink-1">{fmt(pricePreview.dailyRate)} DH</p>
+            </div>
+            {pricePreview.optionsPrice > 0 && (
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Options</p>
+                <p className="text-xl font-black text-primary">+{fmt(pricePreview.optionsPrice)} DH</p>
+              </div>
+            )}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Total</p>
+              <p className="text-2xl font-black text-gold">{fmt(pricePreview.total)} DH</p>
+            </div>
+          </div>
+          {pricePreview.dynamicReason && (
+            <p className="text-xs text-primary font-semibold mt-3 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              {pricePreview.dynamicReason} appliqué(e)
+            </p>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }

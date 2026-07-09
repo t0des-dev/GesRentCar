@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import api from "@/shared/services/client";
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace(/\/api\/v1$/, "");
@@ -23,24 +23,62 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const CSRF_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
+
 async function safeCsrf() {
   try {
     await fetch("/api/sanctum/csrf-cookie", { credentials: "include" });
-  } catch {
-    // CSRF cookie not critical for token-based auth
-  }
+  } catch {}
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const logoutTimerRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const csrfTimerRef = useRef<any>(null);
+  const lastActivityRef = useRef(Date.now());
+
+  const scheduleLogout = useCallback(() => {
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+    logoutTimerRef.current = setTimeout(() => {
+      setUser(null);
+      localStorage.removeItem("vectoria_user");
+      localStorage.removeItem("vectoria_token");
+      localStorage.removeItem("auth_token");
+      window.location.href = "/login?reason=timeout";
+    }, SESSION_TIMEOUT);
+  }, []);
+
+  const refreshCsrf = useCallback(async () => {
+    const token = localStorage.getItem("vectoria_token");
+    if (token) await safeCsrf();
+  }, []);
+
+  useEffect(() => {
+    csrfTimerRef.current = setInterval(refreshCsrf, CSRF_REFRESH_INTERVAL);
+    return () => { if (csrfTimerRef.current) clearInterval(csrfTimerRef.current); };
+  }, [refreshCsrf]);
+
+  useEffect(() => {
+    const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
+    const resetTimer = () => {
+      lastActivityRef.current = Date.now();
+      scheduleLogout();
+    };
+    events.forEach(e => document.addEventListener(e, resetTimer, { passive: true }));
+    scheduleLogout();
+    return () => {
+      clearTimeout(logoutTimerRef.current);
+      events.forEach(e => document.removeEventListener(e, resetTimer));
+    };
+  }, [scheduleLogout]);
 
   const fetchUser = useCallback(async () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("vectoria_token") : null;
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    const token = localStorage.getItem("vectoria_token");
+    if (!token) { setLoading(false); return; }
     try {
       const res = await api.get("/user");
       setUser(res.data);
@@ -54,11 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const token = typeof window !== "undefined" ? localStorage.getItem("vectoria_token") : null;
-      if (!token) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
+      const token = localStorage.getItem("vectoria_token");
+      if (!token) { if (!cancelled) setLoading(false); return; }
       try {
         const res = await api.get("/user");
         if (!cancelled) setUser(res.data);
@@ -81,6 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("vectoria_token", res.data.token);
       localStorage.setItem("auth_token", res.data.token);
     }
+    scheduleLogout();
     return u;
   };
 
@@ -94,11 +130,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("vectoria_token", res.data.token);
       localStorage.setItem("auth_token", res.data.token);
     }
+    scheduleLogout();
     return u;
   };
 
   const logout = async () => {
-    try { await api.post("/auth/logout"); } catch { /* ignore */ }
+    try { await api.post("/auth/logout"); } catch {}
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
     setUser(null);
     localStorage.removeItem("vectoria_user");
     localStorage.removeItem("vectoria_token");

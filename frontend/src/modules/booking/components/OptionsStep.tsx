@@ -3,10 +3,30 @@
 import { cn } from "@/shared/utils";
 import { CreditCard, Route, Check } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
+import PromoCodeInput from "@/components/PromoCodeInput";
 
 export default function OptionsStep({ booking, update }: BookingStepProps) {
+  const handlePromoApply = async (code: string) => {
+    // TODO: integrate with backend promo validation API
+    await new Promise(r => setTimeout(r, 800));
+    const promoCodes: Record<string, number> = {
+      "WELCOME10": 100,
+      "VECTORIA20": 200,
+      "PREMIUM": 150,
+    };
+    if (promoCodes[code.toUpperCase()]) {
+      return { valid: true, discount: promoCodes[code.toUpperCase()], message: `Réduction de ${promoCodes[code.toUpperCase()]} DH appliquée !` };
+    }
+    return { valid: false, message: "Code promo invalide ou expiré" };
+  };
+
   return (
     <div className="space-y-8">
+      {/* Code Promo */}
+      <div>
+        <PromoCodeInput onApply={handlePromoApply} />
+      </div>
+
       {/* Options de paiement / Flexibilité */}
       <div>
         <div className="mb-6 flex items-center gap-3">

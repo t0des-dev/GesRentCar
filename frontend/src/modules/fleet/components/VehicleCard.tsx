@@ -6,6 +6,7 @@ import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useCurrency } from "@/shared/hooks/useCurrency";
 import { Button } from "@/shared/ui/button";
+import Tooltip from "@/components/Tooltip";
 
 interface VehicleCardProps {
   id: number;
@@ -53,15 +54,13 @@ export default function VehicleCard({
         className
       )}
     >
-
-      {/* Image Container */}
       <div className={cn("relative bg-surface-1 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
             alt={`${brand} ${model}`}
             fill
-            unoptimized
+            loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-all duration-700 group-hover:scale-110"
           />
@@ -73,10 +72,8 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Gradient Overlay on Hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* FOMO Badge - Top Left */}
         {isPopular && (
           <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-red-500/90 backdrop-blur-md rounded-full shadow-lg border border-red-400/50">
             <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -84,7 +81,6 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Promotion Badge — Offre spéciale only */}
         {isPromo && (
           <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-amber-600 text-[9px] font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 shadow-sm">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -101,14 +97,12 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Dynamic Reason Badge — pricing context only */}
         {dynamicReason && !isPromo && (
           <div className="absolute top-3 right-3 z-10 bg-primary/10 backdrop-blur-sm text-primary text-[9px] font-bold px-2.5 py-1 rounded-lg border border-primary/20">
             {dynamicReason}
           </div>
         )}
 
-        {/* Star Rating — Top Right (if no dynamic reason) */}
         {!dynamicReason && (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-white/95 backdrop-blur rounded-lg text-xs shadow-md border border-white/20">
             <Star size={12} className="fill-gold text-gold" />
@@ -116,13 +110,8 @@ export default function VehicleCard({
           </div>
         )}
 
-        {/* Quick View Overlay — Slide Up */}
         <div
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onQuickView?.();
-          }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
           className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer bg-gradient-to-t from-black/60 via-transparent to-transparent translate-y-4 group-hover:translate-y-0"
         >
           <div className="px-6 py-2.5 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-2 text-white border border-white/30 hover:bg-white/30 hover:scale-105 transition-all shadow-xl">
@@ -131,7 +120,6 @@ export default function VehicleCard({
           </div>
         </div>
 
-        {/* Category Badge — Bottom Left (Gold Glow) */}
         <div className="absolute bottom-3 left-3 z-10">
           <span className="inline-block px-3 py-1 bg-gold/10 backdrop-blur-md text-gold text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm border border-gold/30">
             {category ? (t(`cat_${category.toLowerCase()}`) || category) : (t(`cat_${type.toLowerCase()}`) || type)}
@@ -139,10 +127,7 @@ export default function VehicleCard({
         </div>
       </div>
 
-      {/* Content Section */}
       <div className={cn("flex flex-col flex-1 p-5 gap-4", layoutView === "list" ? "justify-center" : "")}>
-        
-        {/* Brand & Model Header */}
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-gold mb-0.5">{brand}</p>
@@ -157,26 +142,29 @@ export default function VehicleCard({
           )}
         </div>
 
-        {/* Specs — Icons + Text */}
         <div className="flex items-center gap-4 text-xs text-ink-3">
-          <div className="flex items-center gap-1.5">
-            <Users size={14} className="text-gold" />
-            <span className="font-medium">{seats}x</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Fuel size={14} className="text-gold" />
-            <span className="font-medium">{fuel}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Gauge size={14} className="text-gold" />
-            <span className="font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
-          </div>
+          <Tooltip content={`${seats} places`}>
+            <div className="flex items-center gap-1.5">
+              <Users size={14} className="text-gold" />
+              <span className="font-medium">{seats}x</span>
+            </div>
+          </Tooltip>
+          <Tooltip content={`Carburant: ${fuel}`}>
+            <div className="flex items-center gap-1.5">
+              <Fuel size={14} className="text-gold" />
+              <span className="font-medium">{fuel}</span>
+            </div>
+          </Tooltip>
+          <Tooltip content={`Transmission: ${t(`trans_${transmission.toLowerCase()}`) || transmission}`}>
+            <div className="flex items-center gap-1.5">
+              <Gauge size={14} className="text-gold" />
+              <span className="font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
+            </div>
+          </Tooltip>
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />
 
-        {/* Price Section */}
         <div className={cn("flex", layoutView === "list" ? "flex-row items-end justify-between mt-auto" : "flex-col")}>
           <p className="text-ink-4 text-[10px] font-bold uppercase tracking-wider mb-1">À partir de</p>
           <div className="flex items-baseline gap-2 flex-wrap">
@@ -197,7 +185,6 @@ export default function VehicleCard({
           </div>
         </div>
 
-        {/* Actions — Reserve */}
         <div className="flex items-center gap-2.5 mt-auto pt-3">
           <Button
             variant="ghost"
@@ -216,7 +203,6 @@ export default function VehicleCard({
             </span>
           </Button>
         </div>
-
       </div>
     </Link>
   );

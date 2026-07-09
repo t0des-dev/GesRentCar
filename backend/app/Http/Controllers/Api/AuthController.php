@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\RateLimiter;
 
 use Illuminate\Support\Facades\Log;
 
@@ -14,14 +15,14 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        Log::info('Login attempt', [
-            'email' => $request->input('email'),
-            'has_password' => filled($request->input('password')),
-            'content_type' => $request->header('Content-Type'),
-            'content_length' => $request->header('Content-Length'),
-            'method' => $request->method(),
-            'all_input' => array_keys($request->all()),
-        ]);
+        $throttleKey = 'login:' . ($request->input('email') ?: $request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            throw ValidationException::withMessages([
+                'email' => ['Trop de tentatives. Veuillez réessayer dans ' . $seconds . ' secondes.'],
+            ]);
+        }
 
         $request->validate([
             'email' => 'required|email',
@@ -31,10 +32,13 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($throttleKey, 60);
             throw ValidationException::withMessages([
                 'email' => ['Les identifiants sont incorrects.'],
             ]);
         }
+
+        RateLimiter::clear($throttleKey);
 
         return response()->json([
             'token' => $user->createToken('auth_token')->plainTextToken,

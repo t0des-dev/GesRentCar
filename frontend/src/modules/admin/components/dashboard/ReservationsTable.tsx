@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search, ChevronLeft, ChevronRight, XCircle, Clock } from "lucide-react";
+import { Calendar, Car, CheckCircle, Download, RefreshCw, Eye, Users, Search, ChevronLeft, ChevronRight, XCircle, Clock, Trash2, CheckSquare, Square, FileSpreadsheet } from "lucide-react";
 import { Reservation } from "@/types/admin";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { exportToCsv } from "@/shared/utils/exportCsv";
 
 interface ReservationsTableProps {
   reservations: Reservation[];
@@ -16,7 +17,7 @@ interface ReservationsTableProps {
   onRowClick: (reservation: Reservation) => void;
   onConfirm?: (reservation: Reservation) => void;
   onCancel?: (reservation: Reservation) => void;
-  // Pagination
+  onBulkAction?: (ids: number[], action: "accept" | "reject") => void;
   currentPage?: number;
   lastPage?: number;
   total?: number;
@@ -26,12 +27,8 @@ interface ReservationsTableProps {
 const formatDate = (dateStr?: string) => {
   if (!dateStr) return "—";
   try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
-      day: '2-digit', month: '2-digit', year: 'numeric'
-    });
-  } catch {
-    return dateStr;
-  }
+    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch { return dateStr; }
 };
 
 const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
@@ -48,50 +45,36 @@ const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  confirmed:        "Confirmée",
-  active:           "Active",
-  ongoing:          "En cours",
-  completed:        "Terminée",
-  pending_payment:  "Attente paiement",
-  attente_paiement: "Attente paiement",
-  pending:          "En attente",
-  pending_partner:  "Attente partenaire",
-  rejected:         "Rejetée",
-  cancelled:        "Annulée",
+  confirmed: "Confirmée", active: "Active", ongoing: "En cours", completed: "Terminée",
+  pending_payment: "Attente paiement", attente_paiement: "Attente paiement",
+  pending: "En attente", pending_partner: "Attente partenaire", rejected: "Rejetée", cancelled: "Annulée",
 };
 
 function StatusBadge({ status }: { status: string }) {
   const s = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
   return (
     <span className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-br border-2", s.bg, s.border, s.text)}>
-      {status === "confirmed"       && <CheckCircle size={12} />}
-      {status === "active"          && <Car size={12} />}
-      {status === "ongoing"         && <Car size={12} />}
-      {status === "cancelled"       && <XCircle size={12} />}
+      {status === "confirmed" && <CheckCircle size={12} />}
+      {status === "active" && <Car size={12} />}
+      {status === "ongoing" && <Car size={12} />}
+      {status === "cancelled" && <XCircle size={12} />}
       {status === "pending_partner" && <Clock size={12} />}
       {STATUS_LABELS[status] ?? status}
     </span>
   );
 }
 
-export default function ReservationsTable({ 
-  reservations, 
-  onAction, 
-  onGenerateContract, 
-  onPreviewDocs, 
-  actionLoading,
-  onRowClick,
-  onConfirm,
-  onCancel,
-  currentPage = 1,
-  lastPage = 1,
-  total,
-  onPageChange,
+export default function ReservationsTable({
+  reservations, onAction, onGenerateContract, onPreviewDocs, actionLoading,
+  onRowClick, onConfirm, onCancel, onBulkAction,
+  currentPage = 1, lastPage = 1, total, onPageChange,
 }: ReservationsTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   const filteredReservations = useMemo(() => {
-    return reservations.filter(r => 
+    return reservations.filter(r =>
       r.client?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.vehicle?.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.vehicle?.model?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -99,8 +82,53 @@ export default function ReservationsTable({
     );
   }, [reservations, searchQuery]);
 
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredReservations.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredReservations.map(r => r.id)));
+    }
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleBulkAccept = async () => {
+    if (!onBulkAction || selectedIds.size === 0) return;
+    setBulkLoading(true);
+    onBulkAction(Array.from(selectedIds), "accept");
+    setSelectedIds(new Set());
+    setBulkLoading(false);
+  };
+
+  const handleBulkReject = async () => {
+    if (!onBulkAction || selectedIds.size === 0) return;
+    setBulkLoading(true);
+    onBulkAction(Array.from(selectedIds), "reject");
+    setSelectedIds(new Set());
+    setBulkLoading(false);
+  };
+
+  const handleExportCsv = () => {
+    const data = filteredReservations.map(r => ({
+      "Référence": `VC-${r.id.toString().padStart(4, "0")}`,
+      "Véhicule": r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : "—",
+      "Client": r.client?.name ?? "—",
+      "Début": r.start_date,
+      "Fin": r.end_date,
+      "Montant": r.total_price,
+      "État": STATUS_LABELS[r.status] ?? r.status,
+    }));
+    exportToCsv(data, "reservations");
+  };
+
   return (
-    <motion.section 
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.6 }}
@@ -117,36 +145,76 @@ export default function ReservationsTable({
             {total ?? reservations.length} total
           </span>
         </div>
-        {/* Pagination compacte header */}
-        {lastPage > 1 && onPageChange && (
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage <= 1}
-              className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
-            >
-              <ChevronLeft size={16} />
-            </motion.button>
-            <span className="text-xs font-bold text-ink-2 px-2">{currentPage} / {lastPage}</span>
-            <motion.button
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage >= lastPage}
-              className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
-            >
-              <ChevronRight size={16} />
-            </motion.button>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            onClick={handleExportCsv}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-border text-xs font-bold text-ink-2 hover:border-gold hover:text-gold transition-all"
+          >
+            <FileSpreadsheet size={14} /> CSV
+          </motion.button>
+          {lastPage > 1 && onPageChange && (
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
+              >
+                <ChevronLeft size={16} />
+              </motion.button>
+              <span className="text-xs font-bold text-ink-2 px-2">{currentPage} / {lastPage}</span>
+              <motion.button
+                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage >= lastPage}
+                className="w-8 h-8 rounded-lg border-2 border-border flex items-center justify-center text-ink-2 hover:border-gold hover:text-gold transition-all disabled:opacity-30"
+              >
+                <ChevronRight size={16} />
+              </motion.button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Bulk Actions Bar */}
+      {selectedIds.size > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-4 mb-6 p-4 bg-primary/5 border-2 border-primary/20 rounded-xl"
+        >
+          <span className="text-sm font-bold text-primary">{selectedIds.size} sélectionnée(s)</span>
+          <div className="flex gap-2 ml-auto">
+            <motion.button
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              onClick={handleBulkAccept}
+              disabled={bulkLoading}
+              className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-emerald-600 transition-all flex items-center gap-1"
+            >
+              <CheckCircle size={14} /> Accepter
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              onClick={handleBulkReject}
+              disabled={bulkLoading}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-red-600 transition-all flex items-center gap-1"
+            >
+              <Trash2 size={14} /> Rejeter
+            </motion.button>
+            <button onClick={() => setSelectedIds(new Set())} className="px-3 py-2 text-xs font-bold text-ink-3 hover:text-ink-1 transition-colors">
+              Annuler
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Search Input */}
       <div className="relative mb-8 max-w-xl">
         <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" strokeWidth={2} />
-        <input 
-          type="text" 
-          placeholder="Rechercher par client, véhicule ou référence..." 
+        <input
+          type="text"
+          placeholder="Rechercher par client, véhicule ou référence..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="input-premium w-full pl-12 pr-5 py-3.5"
@@ -156,11 +224,7 @@ export default function ReservationsTable({
       {/* Desktop Table */}
       <div className="hidden lg:block overflow-x-auto">
         {filteredReservations.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border">
             <Calendar size={64} className="mx-auto mb-6 text-gold/30" strokeWidth={1} />
             <p className="text-xl font-bold text-ink-1 font-serif">Aucune réservation enregistrée.</p>
           </motion.div>
@@ -168,6 +232,13 @@ export default function ReservationsTable({
           <table className="w-full">
             <thead>
               <tr className="border-b-2 border-border">
+                <th className="pb-4 w-8">
+                  <button onClick={toggleSelectAll} className="text-ink-3 hover:text-gold transition-colors">
+                    {selectedIds.size === filteredReservations.length && filteredReservations.length > 0
+                      ? <CheckSquare size={16} className="text-gold" />
+                      : <Square size={16} />}
+                  </button>
+                </th>
                 {["Référence", "Véhicule", "Client", "Période", "Montant", "État", "Contrat", "Gestion"].map((h, i) => (
                   <th key={h} className={cn("text-xs font-bold uppercase tracking-wider text-ink-3 pb-4", i === 7 && "text-right")}>
                     {h}
@@ -177,15 +248,25 @@ export default function ReservationsTable({
             </thead>
             <tbody>
               {filteredReservations.map((r, idx) => (
-                <motion.tr 
+                <motion.tr
                   key={r.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.03 }}
                   whileHover={{ y: -2 }}
                   onClick={() => onRowClick(r)}
-                  className="cursor-pointer border-b border-border/50 hover:bg-gold/5 transition-all"
+                  className={cn(
+                    "cursor-pointer border-b border-border/50 hover:bg-gold/5 transition-all",
+                    selectedIds.has(r.id) && "bg-primary/5"
+                  )}
                 >
+                  <td className="py-4 pr-4" onClick={(e) => e.stopPropagation()}>
+                    <button onClick={() => toggleSelect(r.id)} className="text-ink-3 hover:text-gold transition-colors">
+                      {selectedIds.has(r.id)
+                        ? <CheckSquare size={16} className="text-gold" />
+                        : <Square size={16} />}
+                    </button>
+                  </td>
                   <td className="py-4 pr-4">
                     <span className="text-sm font-bold text-ink-1">VC-{r.id.toString().padStart(4, "0")}</span>
                   </td>
@@ -206,15 +287,11 @@ export default function ReservationsTable({
                     <div className="flex flex-col gap-2">
                       <StatusBadge status={r.status} />
                       {r.client?.cin_image_url && (
-                        <motion.button 
+                        <motion.button
                           whileHover={{ scale: 1.05 }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onPreviewDocs({
-                              cin: r.client?.cin_image_url,
-                              license: r.client?.license_image_url,
-                              name: r.client?.name
-                            });
+                            onPreviewDocs({ cin: r.client?.cin_image_url, license: r.client?.license_image_url, name: r.client?.name });
                           }}
                           className="text-xs font-bold uppercase text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
                         >
@@ -229,9 +306,9 @@ export default function ReservationsTable({
                         <span className="text-xs font-bold text-emerald-500 uppercase tracking-wider flex items-center gap-1">
                           <CheckCircle size={12} strokeWidth={2} /> Généré
                         </span>
-                        <a 
-                          href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`} 
-                          target="_blank" 
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`}
+                          target="_blank"
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs font-bold text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
                         >
@@ -239,9 +316,8 @@ export default function ReservationsTable({
                         </a>
                       </div>
                     ) : (
-                      <motion.button 
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                         onClick={(e) => { e.stopPropagation(); onGenerateContract(r.id); }}
                         disabled={actionLoading === r.id}
                         className="text-xs font-bold text-ink-2 hover:text-gold uppercase tracking-wider border-2 border-border hover:border-gold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 disabled:opacity-60"
@@ -255,8 +331,7 @@ export default function ReservationsTable({
                     {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
                       <div className="flex gap-2 justify-end">
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
                           onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
                           disabled={actionLoading === r.id}
@@ -264,8 +339,7 @@ export default function ReservationsTable({
                           Accepter
                         </motion.button>
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
                           onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
                           disabled={actionLoading === r.id}
@@ -287,11 +361,7 @@ export default function ReservationsTable({
       {/* Mobile Cards */}
       <div className="lg:hidden space-y-4">
         {filteredReservations.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border">
             <Calendar size={64} className="mx-auto mb-6 text-gold/30" strokeWidth={1} />
             <p className="text-xl font-bold text-ink-1 font-serif">Aucune réservation enregistrée.</p>
           </motion.div>
@@ -304,15 +374,21 @@ export default function ReservationsTable({
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -2 }}
               onClick={() => onRowClick(r)}
-              className="bg-white rounded-2xl border-2 border-border shadow-md p-6 cursor-pointer hover:shadow-lg hover:shadow-gold/20 transition-all card-premium"
+              className={cn(
+                "bg-white rounded-2xl border-2 border-border shadow-md p-6 cursor-pointer hover:shadow-lg hover:shadow-gold/20 transition-all card-premium",
+                selectedIds.has(r.id) && "border-primary/40 bg-primary/5"
+              )}
             >
-              {/* Card Header */}
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-bold text-ink-1">VC-{r.id.toString().padStart(4, "0")}</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={(e) => { e.stopPropagation(); toggleSelect(r.id); }} className="text-ink-3 hover:text-gold transition-colors">
+                    {selectedIds.has(r.id) ? <CheckSquare size={16} className="text-gold" /> : <Square size={16} />}
+                  </button>
+                  <span className="text-sm font-bold text-ink-1">VC-{r.id.toString().padStart(4, "0")}</span>
+                </div>
                 <StatusBadge status={r.status} />
               </div>
 
-              {/* Card Body */}
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3">
                   <Car size={16} className="text-gold" />
@@ -324,24 +400,21 @@ export default function ReservationsTable({
                 <p className="text-sm text-ink-2">{formatDate(r.start_date)} → {formatDate(r.end_date)}</p>
               </div>
 
-              {/* Card Footer */}
               <div className="flex flex-col gap-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-between">
                   <p className="text-xl font-bold text-gold">{fmt(r.total_price)} DH</p>
-
                   {r.contract ? (
-                    <a 
-                      href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`} 
-                      target="_blank" 
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`}
+                      target="_blank"
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs font-bold text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
                     >
                       <Download size={14} strokeWidth={2} /> Contrat
                     </a>
                   ) : (
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                       onClick={(e) => { e.stopPropagation(); onGenerateContract(r.id); }}
                       disabled={actionLoading === r.id}
                       className="text-xs font-bold text-ink-2 hover:text-gold uppercase tracking-wider border-2 border-border hover:border-gold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 disabled:opacity-60"
@@ -355,8 +428,7 @@ export default function ReservationsTable({
                 {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
                   <div className="flex gap-2 justify-end">
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
                       onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
                       disabled={actionLoading === r.id}
@@ -364,8 +436,7 @@ export default function ReservationsTable({
                       Accepter
                     </motion.button>
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                       className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
                       onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
                       disabled={actionLoading === r.id}
