@@ -3,6 +3,7 @@
 import type { ContentBlock } from "@/types/page";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import DOMPurify from "dompurify";
 
 function TextBlock({ data }: { data: Record<string, any> }) {
   return (
@@ -22,7 +23,7 @@ function TextBlock({ data }: { data: Record<string, any> }) {
           {data.body && (
             <div
               className="text-lg text-ink-2 leading-relaxed space-y-4 prose max-w-none"
-              dangerouslySetInnerHTML={{ __html: data.body }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data.body) }}
             />
           )}
         </motion.div>

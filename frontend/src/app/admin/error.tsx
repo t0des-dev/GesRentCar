@@ -1,18 +1,21 @@
-"use client";
+﻿"use client";
 
-export default function AdminError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+import { useTranslation } from "@/shared/hooks/useTranslation";
+
+export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const { t } = useTranslation();
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center max-w-md mx-auto px-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-destructive mb-4">Erreur</p>
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">Erreur d&apos;administration</h1>
-        <p className="text-slate-500 text-sm leading-relaxed mb-8">
-          Le panel admin a rencontré une erreur. Veuillez réessayer.
-        </p>
-        <button onClick={reset} className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl text-xs font-semibold uppercase tracking-widest hover:bg-primary/90 transition-all">
-          Réessayer
-        </button>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
+      <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
+        <span className="text-3xl">!</span>
       </div>
+      <div>
+        <h2 className="text-xl font-black text-slate-900 mb-2">{t("errors_title")}</h2>
+        <p className="text-sm text-slate-500 max-w-md">{t("errors_admin")}</p>
+      </div>
+      <button onClick={reset} className="px-6 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-primary/90 transition-all">
+        {t("errors_retry")}
+      </button>
     </div>
   );
 }

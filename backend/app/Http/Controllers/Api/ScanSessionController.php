@@ -89,7 +89,7 @@ class ScanSessionController extends Controller
         if (!file_exists($fullPath)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Image non sauvegardée. fullPath=' . $fullPath,
+                'message' => 'Image non sauvegardée.',
             ], 500);
         }
 

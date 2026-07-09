@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, UserCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
@@ -305,9 +306,9 @@ export default function LoginPage() {
             <div className="text-center pt-4 border-t border-border">
               <p className="text-ink-3 text-sm">
                 Pas encore de compte ?{' '}
-                <a href="/register" className="font-bold text-gold hover:text-gold-dark transition-colors">
+                <Link href="/register" className="font-bold text-gold hover:text-gold-dark transition-colors">
                   S'inscrire
-                </a>
+                </Link>
               </p>
             </div>
           </motion.div>

@@ -11,7 +11,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
       </div>
       <div>
         <h2 className="text-xl font-black text-slate-900 mb-2">{t("errors_title")}</h2>
-        <p className="text-sm text-slate-500 max-w-md">{t("errors_dashboard")}</p>
+        <p className="text-sm text-slate-500 max-w-md">{t("errors_generic")}</p>
       </div>
       <button onClick={reset} className="px-6 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-primary/90 transition-all">
         {t("errors_retry")}

@@ -202,9 +202,7 @@ class VehicleController extends Controller
             return response()->json(['message' => 'Aucun fichier'], 400);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Erreur upload: '.$e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+                'message' => 'Erreur upload.',
             ], 500);
         }
     }

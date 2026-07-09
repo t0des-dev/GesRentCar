@@ -14,7 +14,16 @@ export default function DashboardGuard({ children }: { children: React.ReactNode
     }
   }, [user, loading, router]);
 
-  if (loading || !user) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-3">Chargement...</p>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return <>{children}</>;
 }

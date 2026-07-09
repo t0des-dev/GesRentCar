@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Bell, Menu } from "lucide-react";
 
 interface AdminTopbarProps {
   pathname: string;
   activeGroupTitle: string;
-  user: any;
+  user: { name: string; email: string } | null;
   onToggleMobile: () => void;
 }
 
@@ -28,12 +29,12 @@ export default function AdminTopbar({ pathname, activeGroupTitle, user, onToggle
 
         {/* Breadcrumb */}
         <div className="hidden sm:flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-ink-3">
-        <span className="text-ink-2">Admin</span>
-        <span className="text-ink-3">/</span>
-        <span className="text-ink-1">{activeGroupTitle}</span>
-        <span className="text-ink-3">/</span>
-        <span className="text-gold">{currentPathLabel}</span>
-      </div>
+          <Link href="/admin" className="text-ink-2 hover:text-gold transition-colors">Admin</Link>
+          <span className="text-ink-3">/</span>
+          <Link href="/admin" className="text-ink-1 hover:text-gold transition-colors">{activeGroupTitle}</Link>
+          <span className="text-ink-3">/</span>
+          <span className="text-gold">{currentPathLabel}</span>
+        </div>
       </div>
 
       {/* User Area */}

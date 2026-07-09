@@ -2,10 +2,18 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/shared/utils";
-import * as Icons from "lucide-react";
+import {
+  Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
+  TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones
+} from "lucide-react";
 import type { ComponentType } from "react";
 
 import type { StatsConfig, StatItem } from "@/types/storefront";
+
+const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
+  Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
+  TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones,
+};
 
 export default function StatsSection({ content }: { content: Partial<StatsConfig> }) {
   const items = content?.items || [];
@@ -31,8 +39,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
           "grid-cols-2 md:grid-cols-4"
         )}>
           {items.map((s: StatItem, idx: number) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const IconComponent = s.icon && (Icons as any)[s.icon] ? (Icons as any)[s.icon] : null;
+            const IconComponent = s.icon ? ICON_MAP[s.icon] ?? null : null;
 
             return (
               <motion.div

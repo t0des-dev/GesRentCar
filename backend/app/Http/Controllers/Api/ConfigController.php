@@ -109,7 +109,35 @@ class ConfigController extends Controller
 
     public function update(Request $request): JsonResponse
     {
-        $data = $request->all();
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'slogan' => 'sometimes|string|max:500',
+            'primary_color' => 'sometimes|string|max:20',
+            'logo_url' => 'sometimes|string|max:1000',
+            'logo_config' => 'sometimes|array',
+            'hero_image_url' => 'sometimes|string|max:1000',
+            'hero_video_url' => 'sometimes|string|max:1000',
+            'about_text_fr' => 'sometimes|string',
+            'about_text_en' => 'sometimes|string',
+            'about_text_ar' => 'sometimes|string',
+            'sections_config' => 'sometimes|array',
+            'category_prices' => 'sometimes|array',
+            'special_offers' => 'sometimes|array',
+            'header_config' => 'sometimes|array',
+            'footer_config' => 'sometimes|array',
+            'theme_config' => 'sometimes|array',
+            'stats_config' => 'sometimes|array',
+            'sections_order' => 'sometimes|array',
+            'testimonials' => 'sometimes|array',
+            'seo_config' => 'sometimes|array',
+            'social_hub' => 'sometimes|array',
+            'faq_config' => 'sometimes|array',
+            'features_config' => 'sometimes|array',
+            'concierge_config' => 'sometimes|array',
+            'sections_content' => 'sometimes|array',
+        ]);
+
+        $data = $validated;
 
         $setting = Setting::firstOrCreate(['key' => 'agency_config']);
 

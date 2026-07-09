@@ -162,6 +162,13 @@ const translations = {
     about_val_3_desc: "Des outils technologiques au service de votre confort.",
     cta_title: "Prêt pour la route ?",
     cta_desc: "Réservez votre véhicule de rêve en quelques minutes et profitez de l'excellence.",
+
+    // Errors
+    errors_title: "Erreur",
+    errors_admin: "Une erreur est survenue dans l'administration.",
+    errors_dashboard: "Une erreur est survenue dans votre tableau de bord.",
+    errors_generic: "Une erreur est survenue.",
+    errors_retry: "Réessayer",
   },
   en: {
     nav_fleet: "Our Fleet",
@@ -320,6 +327,13 @@ const translations = {
     about_val_3_desc: "Technological tools at the service of your comfort.",
     cta_title: "Ready for the road?",
     cta_desc: "Book your dream vehicle in minutes and experience excellence.",
+
+    // Errors
+    errors_title: "Error",
+    errors_admin: "An error occurred in the administration.",
+    errors_dashboard: "An error occurred in your dashboard.",
+    errors_generic: "An error occurred.",
+    errors_retry: "Retry",
   }
 };
 
