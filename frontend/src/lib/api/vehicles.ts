@@ -14,6 +14,8 @@ export interface Vehicle {
   photos: string[] | null;
   dynamic_price?: number;
   dynamic_reason?: string | null;
+  gps?: boolean;
+  air_conditioning?: boolean;
   
   // Technical specs
   year?: number;

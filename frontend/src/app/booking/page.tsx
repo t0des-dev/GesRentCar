@@ -69,7 +69,9 @@ export default function BookingPage() {
       type: "Premium",
       img: v.image_url ? getImageUrl(v.image_url) || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600" : "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600",
       specs: { transmission: v.transmission || "Auto", fuel: v.fuel_type || "Diesel", seats: v.seats || 5, mileage: v.mileage },
-      desc: v.description_fr || "L'élégance et le confort absolu pour vos trajets."
+      desc: v.description_fr || "L'élégance et le confort absolu pour vos trajets.",
+      gps: v.gps || false,
+      airConditioning: v.air_conditioning || false,
     }));
   }, [vehiclesData]);
 

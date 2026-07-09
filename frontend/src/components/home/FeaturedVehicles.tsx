@@ -203,6 +203,8 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       transmission={v.transmission || "Automatique"} imageUrl={v.image_url ?? undefined}
                       dynamicPrice={v.dynamic_price} dynamicReason={v.dynamic_reason}
                       isPopular={idx === 0 && activeTab === "Tous"}
+                      gps={v.gps || false}
+                      airConditioning={v.air_conditioning || false}
                       onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </div>
@@ -244,6 +246,8 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       transmission={v.transmission || "Automatique"} imageUrl={v.image_url ?? undefined}
                       dynamicPrice={v.dynamic_price} dynamicReason={v.dynamic_reason}
                       isPopular={idx === 0 && activeTab === "Tous"}
+                      gps={v.gps || false}
+                      airConditioning={v.air_conditioning || false}
                       onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </motion.div>

@@ -33,6 +33,8 @@ export interface Vehicle {
   color?: string;
   image_url?: string;
   photos?: string[];
+  gps?: boolean;
+  air_conditioning?: boolean;
   total_revenue?: number;
   total_maintenance_cost?: number;
   insurance_date?: string;

@@ -28,6 +28,8 @@ class Vehicle extends Model
         'seats',
         'image_url',
         'photos',
+        'gps',
+        'air_conditioning',
         'commission_rate',
         'description_fr',
         'description_en',

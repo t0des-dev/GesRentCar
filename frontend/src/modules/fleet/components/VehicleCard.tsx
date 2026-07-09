@@ -30,12 +30,15 @@ interface VehicleCardProps {
   onReserve?: (id: number) => void;
   isPopular?: boolean;
   layoutView?: "grid" | "list";
+  gps?: boolean;
+  airConditioning?: boolean;
 }
 
 export default function VehicleCard({
   id, brand, model, type, category, price, seats, fuel, transmission,
   year, rating = 4.8, imageUrl, className, dynamicPrice,
   dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
+  gps = false, airConditioning = false,
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { convert } = useCurrency();
@@ -161,6 +164,26 @@ export default function VehicleCard({
               <span className="font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
             </div>
           </Tooltip>
+          {gps && (
+            <Tooltip content="GPS intégré">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-500">
+                  <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                </svg>
+              </div>
+            </Tooltip>
+          )}
+          {airConditioning && (
+            <Tooltip content="Climatiseur">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-sky-500">
+                  <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
+                  <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
+                  <line x1="12" x2="12" y1="18" y2="22"/>
+                </svg>
+              </div>
+            </Tooltip>
+          )}
         </div>
 
         <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />

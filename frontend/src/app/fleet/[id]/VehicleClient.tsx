@@ -210,6 +210,30 @@ export default function VehicleClient() {
                   </motion.div>
                 ))}
               </div>
+
+              {/* GPS & Climatiseur Badges */}
+              {(vehicle.gps || vehicle.air_conditioning) && (
+                <div className="flex gap-3 mt-4">
+                  {vehicle.gps && (
+                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-xl">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                      </svg>
+                      GPS
+                    </span>
+                  )}
+                  {vehicle.air_conditioning && (
+                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 border-2 border-sky-200 text-sky-700 text-xs font-bold uppercase tracking-wider rounded-xl">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
+                        <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
+                        <line x1="12" x2="12" y1="18" y2="22"/>
+                      </svg>
+                      Climatiseur
+                    </span>
+                  )}
+                </div>
+              )}
             </motion.section>
 
             {/* Experience Description */}
@@ -245,7 +269,9 @@ export default function VehicleClient() {
                   "Assistance routière 24/7",
                   "Deuxième conducteur gratuit",
                   "Nettoyage intégral avant livraison",
-                  "Conciergerie dédiée"
+                  "Conciergerie dédiée",
+                  ...(vehicle.gps ? ["GPS intégré"] : []),
+                  ...(vehicle.air_conditioning ? ["Climatisation automatique"] : []),
                 ].map((feature, i) => (
                   <motion.div 
                     key={i}

@@ -148,6 +148,51 @@ export default function VehicleFormDrawer({
                   </div>
                 </div>
 
+                {/* GPS & Climatiseur */}
+                <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-2">
+                     <Settings size={16} className="text-primary" /> Équipements
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <label className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all hover:bg-surface-0" style={{ borderColor: vehicle.gps ? "var(--color-emerald-500)" : "var(--color-surface-3)" }}>
+                      <input
+                        type="checkbox"
+                        checked={vehicle.gps || false}
+                        onChange={e => setVehicle({...vehicle, gps: e.target.checked})}
+                        className="sr-only"
+                      />
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: vehicle.gps ? "rgb(16 185 129 / 0.1)" : "rgb(226 232 240 / 0.5)" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vehicle.gps ? "#10B981" : "#94A3B8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-ink-1">GPS</p>
+                        <p className="text-[10px] text-ink-3 uppercase tracking-wider">{vehicle.gps ? "Installé" : "Non installé"}</p>
+                      </div>
+                    </label>
+                    <label className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all hover:bg-surface-0" style={{ borderColor: vehicle.air_conditioning ? "var(--color-emerald-500)" : "var(--color-surface-3)" }}>
+                      <input
+                        type="checkbox"
+                        checked={vehicle.air_conditioning || false}
+                        onChange={e => setVehicle({...vehicle, air_conditioning: e.target.checked})}
+                        className="sr-only"
+                      />
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: vehicle.air_conditioning ? "rgb(16 185 129 / 0.1)" : "rgb(226 232 240 / 0.5)" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vehicle.air_conditioning ? "#10B981" : "#94A3B8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
+                          <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
+                          <line x1="12" x2="12" y1="18" y2="22"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-ink-1">Climatiseur</p>
+                        <p className="text-[10px] text-ink-3 uppercase tracking-wider">{vehicle.air_conditioning ? "Climatisé" : "Sans clim"}</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4 mt-6">
                   <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-2">
                      <Globe size={16} className="text-primary" /> Configuration SEO & Référencement
