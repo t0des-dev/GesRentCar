@@ -54,6 +54,7 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # ─── Backend stage: API + OCR ──────────────────────────────────────────────
+FROM base AS production
 FROM base AS backend
 EXPOSE 9000
 ENTRYPOINT ["docker-entrypoint.sh"]
