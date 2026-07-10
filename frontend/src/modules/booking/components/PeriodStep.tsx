@@ -170,7 +170,7 @@ export default function PeriodStep({
           id="endDate"
           type="date"
           value={booking.endDate}
-          min={booking.startDate || undefined}
+          min={booking.startDate ? (() => { const d = new Date(booking.startDate); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; })() : undefined}
           onChange={(e) => update("endDate", e.target.value)}
           onBlur={(e) => handleBlur("endDate", e.target.value)}
           className={cn(

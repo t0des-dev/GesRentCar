@@ -36,7 +36,7 @@ function validateFieldValue(field: string, value: string, context?: { startDate?
       return null;
     }
     case "endDate": {
-      if (context?.startDate && value < context.startDate) return "La date de fin doit être après la date de départ";
+      if (context?.startDate && value <= context.startDate) return "La date de fin doit être après la date de départ";
       return null;
     }
     case "location":
@@ -215,9 +215,10 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
         return validateFieldValue(f, v, f === "endDate" ? { startDate: booking.startDate } : undefined) === null;
       });
       if (!fieldsValid) return false;
-      // Block if availability check is ongoing or vehicle is unavailable
+      // Block if availability check is ongoing, failed, or vehicle is unavailable
       if (availabilityStatus === "checking") return false;
       if (availabilityStatus === "unavailable") return false;
+      if (availabilityStatus === "error") return false;
       return true;
     }
     if (step === 3) {

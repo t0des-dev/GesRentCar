@@ -20,6 +20,7 @@ export function useVehicleAvailability(
     }
 
     if (startDate >= endDate) {
+      setStatus("unavailable");
       return;
     }
 
@@ -49,8 +50,9 @@ export function useVehicleAvailability(
   }, [vehicleId, startDate, endDate]);
 
   // Derive idle state without calling setState in effect
-  const isIdle = !vehicleId || !startDate || !endDate || startDate >= endDate;
-  const effectiveStatus = isIdle ? "idle" : status;
+  const isIdle = !vehicleId || !startDate || !endDate;
+  const hasInvalidRange = !!startDate && !!endDate && startDate >= endDate;
+  const effectiveStatus = isIdle ? "idle" : hasInvalidRange ? "unavailable" : status;
 
   // Debounce: check 600ms after dates settle
   useEffect(() => {
