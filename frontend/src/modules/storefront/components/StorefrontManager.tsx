@@ -51,6 +51,11 @@ export default function StorefrontManager() {
           logo_url: currentAgency.logo_url || prev.logo_url,
           logo_config: currentAgency.logo_config || prev.logo_config,
           hero_image_url: currentAgency.hero_image_url || prev.hero_image_url,
+          hero_video_url: currentAgency.hero_video_url || prev.hero_video_url,
+          about_text_fr: currentAgency.about_text_fr || prev.about_text_fr,
+          about_text_en: currentAgency.about_text_en || prev.about_text_en,
+          about_text_ar: currentAgency.about_text_ar || prev.about_text_ar,
+          special_offers: currentAgency.special_offers || prev.special_offers,
           sections_config: { ...prev.sections_config, ...currentAgency.sections_config },
           sections_order: currentAgency.sections_order || prev.sections_order,
           testimonials: currentAgency.testimonials || prev.testimonials,
@@ -79,7 +84,19 @@ export default function StorefrontManager() {
   const saveToServer = useCallback(async (data: StorefrontForm) => {
     setLoading(true);
     try {
-      await api.post('/config', data);
+      // Only send fields the backend expects — strip extra keys from spread
+      const allowedFields = [
+        'name', 'slogan', 'primary_color', 'logo_url', 'logo_config',
+        'hero_image_url', 'hero_video_url', 'about_text_fr', 'about_text_en',
+        'about_text_ar', 'sections_config', 'category_prices', 'special_offers',
+        'header_config', 'footer_config', 'theme_config', 'stats_config',
+        'sections_order', 'testimonials', 'seo_config', 'social_hub',
+        'faq_config', 'features_config', 'concierge_config', 'sections_content',
+      ];
+      const payload = Object.fromEntries(
+        allowedFields.map(k => [k, (data as any)[k]]).filter(([, v]) => v !== undefined)
+      );
+      await api.post('/config', payload);
       justSavedRef.current = true;
       queryClient.invalidateQueries({ queryKey: ['agency-config'] });
       setSaved(true);
