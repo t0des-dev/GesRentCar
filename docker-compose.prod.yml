@@ -24,12 +24,15 @@ services:
     image: redis:7-alpine
     container_name: vectoria-redis
     restart: unless-stopped
+    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    volumes:
+      - redis_data:/data
     networks:
       - vectoria-net
 
@@ -125,6 +128,7 @@ services:
 volumes:
   postgres_data:
   storage_data:
+  redis_data:
 
 networks:
   vectoria-net:
