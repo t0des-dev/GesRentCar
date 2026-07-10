@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vectoria-cache-v6';
-const STATIC_CACHE = 'vectoria-static-v6';
+const CACHE_NAME = 'vectoria-cache-v7';
+const STATIC_CACHE = 'vectoria-static-v7';
 
 const PRECACHE_URLS = [
   '/favicon.ico',
@@ -49,23 +49,18 @@ self.addEventListener('fetch', (event) => {
     (event.request.headers.get('accept') || '').includes('text/html');
 
   if (isHtml) {
-    const networkFetch = fetch(event.request)
-      .then((response) => {
-        if (response && response.status === 200 && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      });
-
-    const timeoutFetch = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('sw-timeout')), 3000)
-    );
-
     event.respondWith(
-      Promise.race([networkFetch, timeoutFetch]).catch(() =>
-        caches.match(event.request).then((cached) => cached || new Response('Offline', { status: 503, statusText: 'Offline' }))
-      )
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(event.request).then((cached) => cached || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/html' } }))
+        )
     );
     return;
   }
