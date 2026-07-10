@@ -749,18 +749,18 @@
   <table class="tbl-bordered">
     <tr>
       <td class="bold" style="width:33%;">TOTAL GÉNÉRAL</td>
-      <td style="width:33%; text-align:right;">{{ number_format($reservation->total_amount ?? 0, 2, ',', ' ') }} MAD</td>
-      <td class="bold ar-cell" style="width:34%; direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0639;&#x0627;&#x0645; : {{ number_format($reservation->total_amount ?? 0, 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
+      <td style="width:33%; text-align:right;">{{ number_format($reservation->total_price ?? 0, 2, ',', ' ') }} MAD</td>
+      <td class="bold ar-cell" style="width:34%; direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0639;&#x0627;&#x0645; : {{ number_format($reservation->total_price ?? 0, 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
     </tr>
     <tr>
       <td class="bold">MONTANT PAYÉ</td>
-      <td style="text-align:right;">{{ number_format($reservation->paid_amount ?? 0, 2, ',', ' ') }} MAD</td>
-      <td class="bold ar-cell" style="direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0645;&#x062F;&#x0641;&#x0648;&#x0639; : {{ number_format($reservation->paid_amount ?? 0, 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
+      <td style="text-align:right;">{{ number_format($reservation->deposit_amount ?? 0, 2, ',', ' ') }} MAD</td>
+      <td class="bold ar-cell" style="direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0645;&#x062F;&#x0641;&#x0648;&#x0639; : {{ number_format($reservation->deposit_amount ?? 0, 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
     </tr>
     <tr style="background:#e8eef5;">
       <td class="bold">LE RESTE À PAYER</td>
-      <td style="text-align:right; font-weight:bold;">{{ number_format(($reservation->total_amount ?? 0) - ($reservation->paid_amount ?? 0), 2, ',', ' ') }} MAD</td>
-      <td class="bold ar-cell" style="direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0645;&#x062A;&#x0628;&#x0642;&#x064A; : {{ number_format(($reservation->total_amount ?? 0) - ($reservation->paid_amount ?? 0), 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
+      <td style="text-align:right; font-weight:bold;">{{ number_format(($reservation->total_price ?? 0) - ($reservation->deposit_amount ?? 0), 2, ',', ' ') }} MAD</td>
+      <td class="bold ar-cell" style="direction:rtl; text-align:right;">&#x0627;&#x0644;&#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0645;&#x062A;&#x0628;&#x0642;&#x064A; : {{ number_format(($reservation->total_price ?? 0) - ($reservation->deposit_amount ?? 0), 2, ',', ' ') }} &#x062F;&#x0631;&#x0647;&#x0645;</td>
     </tr>
   </table>
 
