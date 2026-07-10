@@ -196,11 +196,11 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
         setReservationStatus(res.status);
       })
       .catch((err) => {
-        const msg = err?.response?.data?.message
-          ?? err?.response?.data?.errors
-            ? Object.values(err.response.data.errors).flat().join(", ")
-            : "Impossible d'initialiser le paiement.";
-        console.error("Stripe Intent Error:", err?.response?.data ?? err);
+        const data = err?.response?.data;
+        const msg = data?.message
+          ?? (data?.errors ? Object.values(data.errors).flat().join(", ") : null)
+          ?? "Impossible d'initialiser le paiement.";
+        console.error("Stripe Intent Error:", data ?? err);
         setInitError(msg);
       })
       .finally(() => setLoading(false));

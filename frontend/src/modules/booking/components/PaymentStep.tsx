@@ -68,11 +68,11 @@ export default function PaymentStep({ booking, deposit, total, days, signature, 
       });
       onSuccess(res.id, res.status);
     } catch (err: any) {
-      const msg = err?.response?.data?.message
-        ?? err?.response?.data?.errors
-          ? Object.values(err.response.data.errors).flat().join(", ")
-          : "Une erreur est survenue lors de la réservation.";
-      console.error("OnSite Reservation Error", err?.response?.data ?? err);
+      const data = err?.response?.data;
+      const msg = data?.message
+        ?? (data?.errors ? Object.values(data.errors).flat().join(", ") : null)
+        ?? "Une erreur est survenue lors de la réservation.";
+      console.error("OnSite Reservation Error", data ?? err);
       notifyError(msg);
     } finally {
       setLoading(false);
