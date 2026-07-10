@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vectoria-cache-v7';
-const STATIC_CACHE = 'vectoria-static-v7';
+const CACHE_NAME = 'vectoria-cache-v8';
+const STATIC_CACHE = 'vectoria-static-v8';
 
 const PRECACHE_URLS = [
   '/favicon.ico',
@@ -54,13 +54,15 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           if (response && response.status === 200 && response.type === 'basic') {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)).catch(() => {});
           }
           return response;
         })
-        .catch(() =>
-          caches.match(event.request).then((cached) => cached || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/html' } }))
-        )
+        .catch(() => {
+          return caches.match(event.request).catch(() => null).then((cached) => {
+            return cached || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/html' } });
+          });
+        })
     );
     return;
   }
@@ -71,35 +73,32 @@ self.addEventListener('fetch', (event) => {
 
   if (isStatic) {
     event.respondWith(
-      caches.open(STATIC_CACHE).then((cache) =>
-        cache.match(event.request).then((cached) => {
+      caches.open(STATIC_CACHE)
+        .then((cache) => cache.match(event.request).catch(() => null))
+        .then((cached) => {
           if (cached) return cached;
           return fetch(event.request).then((response) => {
             if (response && response.status === 200) {
-              cache.put(event.request, response.clone());
+              caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, response.clone())).catch(() => {});
             }
             return response;
-          }).catch(() => cached);
+          }).catch(() => new Response('', { status: 408 }));
         })
-      )
     );
     return;
   }
 
   event.respondWith(
-    caches.open(STATIC_CACHE).then((cache) =>
-      cache.match(event.request).then((cached) => {
-        const networkFetch = fetch(event.request)
-          .then((response) => {
-            if (response && response.status === 200 && response.type === 'basic') {
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          })
-          .catch(() => cached);
-        return cached || networkFetch;
+    caches.open(STATIC_CACHE)
+      .then((cache) => cache.match(event.request).catch(() => null))
+      .then((cached) => {
+        return cached || fetch(event.request).then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, response.clone())).catch(() => {});
+          }
+          return response;
+        }).catch(() => new Response('', { status: 408 }));
       })
-    )
   );
 });
 
