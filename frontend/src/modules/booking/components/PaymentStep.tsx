@@ -67,9 +67,13 @@ export default function PaymentStep({ booking, deposit, total, days, signature, 
         payment_method: "on_site",
       });
       onSuccess(res.id, res.status);
-    } catch (err) {
-      console.error("OnSite Reservation Error", err);
-      notifyError("Une erreur est survenue lors de la reservation.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message
+        ?? err?.response?.data?.errors
+          ? Object.values(err.response.data.errors).flat().join(", ")
+          : "Une erreur est survenue lors de la réservation.";
+      console.error("OnSite Reservation Error", err?.response?.data ?? err);
+      notifyError(msg);
     } finally {
       setLoading(false);
     }

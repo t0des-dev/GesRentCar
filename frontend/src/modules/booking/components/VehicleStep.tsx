@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import { cn } from "@/shared/utils";
 import { Car, Loader2, ChevronRight, Users, Settings2, Fuel, Star, MapPin, Snowflake, LayoutGrid, List, X } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
@@ -104,11 +103,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
           className="bg-surface-0 border border-primary/30 rounded-2xl p-4 flex items-center gap-4 shadow-sm"
         >
           <div className="relative w-20 h-14 rounded-xl overflow-hidden shrink-0">
-            <Image
+            <img
               src={selectedVehicle.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
               alt={selectedVehicle.model || ""}
-              width={80}
-              height={56}
               className="w-full h-full object-cover"
               onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"; }}
             />
@@ -245,11 +242,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
               )}
             >
               <div className={cn("relative overflow-hidden", viewMode === "list" ? "h-full w-60 shrink-0" : "h-48")}>
-                <Image
+                <img
                   src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
                   alt={v.model || ""}
-                  width={viewMode === "list" ? 300 : 400}
-                  height={viewMode === "list" ? 200 : 300}
                   className="w-full h-full object-cover"
                   onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"; }}
                 />

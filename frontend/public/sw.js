@@ -64,7 +64,7 @@ self.addEventListener('fetch', (event) => {
 
     event.respondWith(
       Promise.race([networkFetch, timeoutFetch]).catch(() =>
-        caches.match(event.request).then((cached) => cached || Response.error())
+        caches.match(event.request).then((cached) => cached || new Response('Offline', { status: 503, statusText: 'Offline' }))
       )
     );
     return;

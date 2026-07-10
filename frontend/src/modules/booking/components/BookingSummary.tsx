@@ -2,7 +2,6 @@
 
 import { BookingState } from "@/types/booking";
 import { useCurrency } from "@/shared/hooks/useCurrency";
-import Image from "next/image";
 import { ShieldCheck, Calendar, MapPin, Info, Pencil, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PRICING_OPTIONS } from "@/lib/config/pricing";
@@ -76,11 +75,9 @@ export default function BookingSummary({
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-16 h-12 bg-surface-1 rounded-xl overflow-hidden border border-border shrink-0">
-                  <Image
-                    src={vehicle.img || ""}
+                  <img
+                    src={vehicle.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
                     alt={vehicle.model || ""}
-                    width={64}
-                    height={48}
                     className="w-full h-full object-cover"
                   />
                 </div>
