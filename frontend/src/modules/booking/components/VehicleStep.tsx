@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { cn } from "@/shared/utils";
-import { Car, Loader2, ChevronRight, Users, Settings2, Fuel, Star, ArrowLeft, Info } from "lucide-react";
+import { Car, Loader2, ChevronRight, Users, Settings2, Fuel, Star, ArrowLeft, Info, MapPin, Snowflake, LayoutGrid, List } from "lucide-react";
 import { calculatePrice } from "@/shared/utils/pricing";
 import { fmt } from "@/shared/utils/format";
 import { BookingStepProps } from "@/types/booking";
@@ -17,11 +17,15 @@ interface VehicleStepProps extends BookingStepProps {
 }
 
 type SortKey = "default" | "price-asc" | "price-desc";
+type ViewMode = "grid" | "list";
 
 export default function VehicleStep({ booking, update, isLoading, vehicles, onNext }: VehicleStepProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>("default");
+  const [priceMin, setPriceMin] = useState<string>("");
+  const [priceMax, setPriceMax] = useState<string>("");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -29,16 +33,34 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
     return Array.from(cats).sort();
   }, [vehicles]);
 
+  const allPrices = useMemo(() => {
+    const prices = vehicles.map((v) => v.price);
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+  }, [vehicles]);
+
   const filtered = useMemo(() => {
-    const list = categoryFilter ? vehicles.filter((v) => v.category === categoryFilter) : [...vehicles];
+    let list = categoryFilter ? vehicles.filter((v) => v.category === categoryFilter) : [...vehicles];
+    if (priceMin) {
+      const min = parseFloat(priceMin);
+      if (!isNaN(min)) list = list.filter((v) => v.price >= min);
+    }
+    if (priceMax) {
+      const max = parseFloat(priceMax);
+      if (!isNaN(max)) list = list.filter((v) => v.price <= max);
+    }
     if (sortBy === "price-asc") list.sort((a, b) => a.price - b.price);
     else if (sortBy === "price-desc") list.sort((a, b) => b.price - a.price);
     return list;
-  }, [vehicles, categoryFilter, sortBy]);
+  }, [vehicles, categoryFilter, sortBy, priceMin, priceMax]);
 
   const handleSelect = (v: DisplayVehicle) => {
     update("vehicleId", v.id);
     setExpandedId(v.id);
+  };
+
+  const handleQuickBook = (v: DisplayVehicle) => {
+    update("vehicleId", v.id);
+    onNext();
   };
 
   const handleBack = () => {
@@ -76,11 +98,126 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
       })
     : null;
 
+  const renderEquipmentTags = (v: DisplayVehicle) => {
+    const tags: { icon: typeof MapPin; label: string }[] = [];
+    if (v.gps) tags.push({ icon: MapPin, label: "GPS" });
+    if (v.airConditioning) tags.push({ icon: Snowflake, label: "Clim" });
+    return tags;
+  };
+
+  const renderVehicleCard = (v: DisplayVehicle, idx: number) => {
+    const isSelected = booking.vehicleId === v.id;
+    const equipTags = renderEquipmentTags(v);
+
+    const cardContent = (
+      <>
+        <div className={cn("relative overflow-hidden", viewMode === "list" ? "h-full w-64 shrink-0" : "h-48")}>
+          <Image
+            src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
+            alt={v.model || ""}
+            width={viewMode === "list" ? 300 : 400}
+            height={viewMode === "list" ? 200 : 300}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+          <div className="absolute top-4 left-4">
+            <span className="bg-surface-0/90 backdrop-blur-sm text-ink-1 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider">
+              {v.type}
+            </span>
+          </div>
+          {isSelected && (
+            <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider shadow-sm">
+              ✓ Sélectionné
+            </div>
+          )}
+        </div>
+
+        <div className={cn("flex flex-col flex-1", viewMode === "list" ? "p-5" : "p-5")}>
+          <div className="flex items-center gap-1 mb-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star key={i} size={9} className="fill-primary text-primary" />
+            ))}
+          </div>
+          <h3 className={cn("font-bold text-ink-1 tracking-tight mb-1 uppercase", viewMode === "list" ? "text-xl" : "text-lg")}>
+            {v.brand} <span className="text-ink-3 font-medium">{v.model}</span>
+          </h3>
+          <p className={cn("text-xs text-ink-2 leading-relaxed mb-3 line-clamp-2", viewMode === "list" && "mb-2")}>{v.desc}</p>
+
+          {equipTags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {equipTags.map((tag, i) => (
+                <span key={i} className="inline-flex items-center gap-1 bg-surface-1 text-ink-2 px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase border border-border">
+                  <tag.icon size={10} />
+                  {tag.label}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className={cn("grid grid-cols-3 gap-2 mb-5", viewMode === "list" && "mb-3")}>
+            {[
+              { icon: Users, val: v.specs?.seats || 5, label: "PLACES" },
+              { icon: Settings2, val: v.specs?.transmission || "AUTO", label: "TRANS" },
+              { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: "CARB" },
+            ].map((spec, i) => (
+              <div key={i} className="bg-surface-1 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border border-border">
+                <spec.icon size={12} className="text-primary" />
+                <span className="text-[10px] font-semibold text-ink-1 uppercase">{spec.val}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-auto">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">Tarif privilège</span>
+              <span className="text-xl font-bold text-ink-1">
+                {v.price} <span className="text-xs text-ink-3 font-medium">DH/j</span>
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleSelect(v)}
+                className="flex-1 bg-primary text-primary-foreground py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center justify-center gap-2"
+              >
+                <Car size={16} />
+                Détails
+              </button>
+              <button
+                onClick={() => handleQuickBook(v)}
+                className="flex-1 bg-surface-1 text-ink-1 border border-border py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:bg-surface-2 transition-all flex items-center justify-center gap-1.5"
+              >
+                <ChevronRight size={14} />
+                Vite
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+
+    return (
+      <motion.div
+        key={v.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: idx * 0.05 }}
+        className={cn(
+          "bg-surface-0 rounded-3xl overflow-hidden border transition-all duration-500",
+          viewMode === "list" ? "flex flex-row" : "flex flex-col",
+          isSelected
+            ? "border-primary/30 shadow-sm ring-1 ring-primary/20"
+            : "border-border/80 hover:border-border hover:shadow-sm"
+        )}
+      >
+        {cardContent}
+      </motion.div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {expandedId === null ? (
         <>
-          {/* Filter & sort bar */}
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             <div className="flex flex-wrap gap-2">
               <button
@@ -109,10 +246,48 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
                 </button>
               ))}
             </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={cn("p-2 rounded-lg border transition-all", viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-surface-0 text-ink-2 border-border")}
+              >
+                <LayoutGrid size={14} />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={cn("p-2 rounded-lg border transition-all", viewMode === "list" ? "bg-primary text-primary-foreground border-primary" : "bg-surface-0 text-ink-2 border-border")}
+              >
+                <List size={14} />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-surface-0 rounded-2xl border border-border p-4">
+            <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-3">Budget</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder={`${allPrices.min}`}
+                  value={priceMin}
+                  onChange={(e) => setPriceMin(e.target.value)}
+                  className="w-20 bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs font-semibold text-ink-1 placeholder:text-ink-4"
+                />
+                <span className="text-ink-4 text-xs">—</span>
+                <input
+                  type="number"
+                  placeholder={`${allPrices.max}`}
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="w-20 bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs font-semibold text-ink-1 placeholder:text-ink-4"
+                />
+                <span className="text-ink-4 text-xs font-medium">DH/j</span>
+              </div>
+            </div>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortKey)}
-              className="bg-surface-0 border border-border rounded-xl px-4 py-2 text-xs font-semibold text-ink-2 appearance-none cursor-pointer"
+              className="bg-surface-1 border border-border rounded-lg px-4 py-2 text-xs font-semibold text-ink-2 appearance-none cursor-pointer w-full sm:w-auto"
             >
               <option value="default">Par défaut</option>
               <option value="price-asc">Prix ↑</option>
@@ -120,87 +295,10 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
             </select>
           </div>
 
-          {/* Vehicle grid: 2 columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {filtered.map((v, idx) => {
-              const isSelected = booking.vehicleId === v.id;
-              return (
-                <motion.div
-                  key={v.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className={cn(
-                    "group relative bg-surface-0 rounded-3xl overflow-hidden border transition-all duration-500 flex flex-col",
-                    isSelected
-                      ? "border-primary/30 shadow-sm ring-1 ring-primary/20"
-                      : "border-border/80 hover:border-border hover:shadow-sm"
-                  )}
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
-                      alt={v.model || ""}
-                      width={400}
-                      height={300}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-surface-0/90 backdrop-blur-sm text-ink-1 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider">
-                        {v.type}
-                      </span>
-                    </div>
-                    {isSelected && (
-                      <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider shadow-sm">
-                        ✓ Sélectionné
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="flex items-center gap-1 mb-2">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <Star key={i} size={9} className="fill-primary text-primary" />
-                      ))}
-                    </div>
-                    <h3 className="text-lg font-bold text-ink-1 tracking-tight mb-1 uppercase">
-                      {v.brand} <span className="text-ink-3 font-medium">{v.model}</span>
-                    </h3>
-                    <p className="text-xs text-ink-2 leading-relaxed mb-4 line-clamp-2">{v.desc}</p>
-
-                    <div className="grid grid-cols-3 gap-2 mb-5">
-                      {[
-                        { icon: Users, val: v.specs?.seats || 5, label: "PLACES" },
-                        { icon: Settings2, val: v.specs?.transmission || "AUTO", label: "TRANS" },
-                        { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: "CARB" },
-                      ].map((spec, i) => (
-                        <div key={i} className="bg-surface-1 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border border-border">
-                          <spec.icon size={12} className="text-primary" />
-                          <span className="text-[10px] font-semibold text-ink-1 uppercase">{spec.val}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-auto">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">Tarif privilège</span>
-                        <span className="text-xl font-bold text-ink-1">
-                          {v.price} <span className="text-xs text-ink-3 font-medium">DH/j</span>
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleSelect(v)}
-                        className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center justify-center gap-2"
-                      >
-                        <Car size={16} />
-                        Sélectionner
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+          <div className={cn(
+            viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-5" : "flex flex-col gap-4"
+          )}>
+            {filtered.map((v, idx) => renderVehicleCard(v, idx))}
           </div>
 
           {filtered.length === 0 && (
@@ -254,6 +352,17 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
                 </p>
               </div>
 
+              {renderEquipmentTags(selectedVehicle).length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {renderEquipmentTags(selectedVehicle).map((tag, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 bg-surface-1 text-ink-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-border">
+                      <tag.icon size={12} />
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <div className="grid grid-cols-3 gap-3 mb-8">
                 {[
                   { icon: Users, val: selectedVehicle.specs?.seats || 5, label: "PLACES" },
@@ -298,13 +407,21 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
                     </>
                   )}
                 </div>
-                <button
-                  onClick={onNext}
-                  className="w-full bg-primary text-primary-foreground py-5 rounded-xl font-semibold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm"
-                >
-                  Réserver ce véhicule
-                  <ChevronRight size={18} />
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleBack}
+                    className="flex-1 bg-surface-1 text-ink-2 border border-border py-4 rounded-xl text-xs font-semibold hover:bg-surface-2 transition-all"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    onClick={onNext}
+                    className="flex-[2] bg-primary text-primary-foreground py-4 rounded-xl font-semibold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm"
+                  >
+                    Réserver ce véhicule
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
