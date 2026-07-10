@@ -256,6 +256,11 @@ const DEFAULT_CONFIG: AgencyConfig = {
   agency_slogan: "Premium Car Rental Experience",
   primary_color: "#6366f1",
   logo_url: "",
+  hero_video_url: "",
+  about_text_fr: "",
+  about_text_en: "",
+  about_text_ar: "",
+  special_offers: [],
   sections_config: {
     featured: true,
     stats: true,
