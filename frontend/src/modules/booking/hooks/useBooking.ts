@@ -11,6 +11,7 @@ export interface DisplayVehicle {
   brand?: string;
   model?: string;
   type?: string;
+  category?: string;
   img?: string;
   desc?: string;
   specs?: {

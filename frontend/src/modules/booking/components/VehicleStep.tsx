@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { cn } from "@/shared/utils";
 import { Car, Loader2, ChevronRight, Users, Settings2, Fuel, Star, ArrowLeft, Info } from "lucide-react";
@@ -16,8 +16,25 @@ interface VehicleStepProps extends BookingStepProps {
   onNext: () => void;
 }
 
+type SortKey = "default" | "price-asc" | "price-desc";
+
 export default function VehicleStep({ booking, update, isLoading, vehicles, onNext }: VehicleStepProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortKey>("default");
+
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    vehicles.forEach((v) => { if (v.category) cats.add(v.category); });
+    return Array.from(cats).sort();
+  }, [vehicles]);
+
+  const filtered = useMemo(() => {
+    const list = categoryFilter ? vehicles.filter((v) => v.category === categoryFilter) : [...vehicles];
+    if (sortBy === "price-asc") list.sort((a, b) => a.price - b.price);
+    else if (sortBy === "price-desc") list.sort((a, b) => b.price - a.price);
+    return list;
+  }, [vehicles, categoryFilter, sortBy]);
 
   const handleSelect = (v: DisplayVehicle) => {
     update("vehicleId", v.id);
@@ -60,89 +77,139 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, onNe
     : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {expandedId === null ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {vehicles.map((v, idx) => {
-            const isSelected = booking.vehicleId === v.id;
-            return (
-              <motion.div
-                key={v.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
+        <>
+          {/* Filter & sort bar */}
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setCategoryFilter(null)}
                 className={cn(
-                  "group relative bg-surface-0 rounded-3xl overflow-hidden border transition-all duration-500 flex flex-col",
-                  isSelected
-                    ? "border-primary/30 shadow-sm ring-1 ring-primary/20"
-                    : "border-border/80 hover:border-border hover:shadow-sm"
+                  "px-4 py-2 rounded-xl text-[11px] font-semibold uppercase tracking-wider transition-all border",
+                  categoryFilter === null
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-surface-0 text-ink-2 border-border hover:border-ink-3"
                 )}
               >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
-                    alt={v.model || ""}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-surface-0/90 backdrop-blur-sm text-ink-1 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider">
-                      {v.type}
-                    </span>
-                  </div>
-                  {isSelected && (
-                    <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider shadow-sm">
-                      ✓ Sélectionné
-                    </div>
+                Tous
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategoryFilter(cat === categoryFilter ? null : cat)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-[11px] font-semibold uppercase tracking-wider transition-all border",
+                    categoryFilter === cat
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-surface-0 text-ink-2 border-border hover:border-ink-3"
                   )}
-                </div>
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortKey)}
+              className="bg-surface-0 border border-border rounded-xl px-4 py-2 text-xs font-semibold text-ink-2 appearance-none cursor-pointer"
+            >
+              <option value="default">Par défaut</option>
+              <option value="price-asc">Prix ↑</option>
+              <option value="price-desc">Prix ↓</option>
+            </select>
+          </div>
 
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-1 mb-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} size={9} className="fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <h3 className="text-lg font-bold text-ink-1 tracking-tight mb-1 uppercase">
-                    {v.brand} <span className="text-ink-3 font-medium">{v.model}</span>
-                  </h3>
-                  <p className="text-xs text-ink-2 leading-relaxed mb-4 line-clamp-2">{v.desc}</p>
-
-                  <div className="grid grid-cols-3 gap-2 mb-5">
-                    {[
-                      { icon: Users, val: v.specs?.seats || 5, label: "PLACES" },
-                      { icon: Settings2, val: v.specs?.transmission || "AUTO", label: "TRANS" },
-                      { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: "CARB" },
-                    ].map((spec, i) => (
-                      <div key={i} className="bg-surface-1 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border border-border">
-                        <spec.icon size={12} className="text-primary" />
-                        <span className="text-[10px] font-semibold text-ink-1 uppercase">{spec.val}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">Tarif privilège</span>
-                      <span className="text-xl font-bold text-ink-1">
-                        {v.price} <span className="text-xs text-ink-3 font-medium">DH/j</span>
+          {/* Vehicle grid: 2 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {filtered.map((v, idx) => {
+              const isSelected = booking.vehicleId === v.id;
+              return (
+                <motion.div
+                  key={v.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className={cn(
+                    "group relative bg-surface-0 rounded-3xl overflow-hidden border transition-all duration-500 flex flex-col",
+                    isSelected
+                      ? "border-primary/30 shadow-sm ring-1 ring-primary/20"
+                      : "border-border/80 hover:border-border hover:shadow-sm"
+                  )}
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={v.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
+                      alt={v.model || ""}
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                    <div className="absolute top-4 left-4">
+                      <span className="bg-surface-0/90 backdrop-blur-sm text-ink-1 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider">
+                        {v.type}
                       </span>
                     </div>
-                    <button
-                      onClick={() => handleSelect(v)}
-                      className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center justify-center gap-2"
-                    >
-                      <Car size={16} />
-                      Sélectionner
-                    </button>
+                    {isSelected && (
+                      <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider shadow-sm">
+                        ✓ Sélectionné
+                      </div>
+                    )}
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} size={9} className="fill-primary text-primary" />
+                      ))}
+                    </div>
+                    <h3 className="text-lg font-bold text-ink-1 tracking-tight mb-1 uppercase">
+                      {v.brand} <span className="text-ink-3 font-medium">{v.model}</span>
+                    </h3>
+                    <p className="text-xs text-ink-2 leading-relaxed mb-4 line-clamp-2">{v.desc}</p>
+
+                    <div className="grid grid-cols-3 gap-2 mb-5">
+                      {[
+                        { icon: Users, val: v.specs?.seats || 5, label: "PLACES" },
+                        { icon: Settings2, val: v.specs?.transmission || "AUTO", label: "TRANS" },
+                        { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: "CARB" },
+                      ].map((spec, i) => (
+                        <div key={i} className="bg-surface-1 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border border-border">
+                          <spec.icon size={12} className="text-primary" />
+                          <span className="text-[10px] font-semibold text-ink-1 uppercase">{spec.val}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-auto">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">Tarif privilège</span>
+                        <span className="text-xl font-bold text-ink-1">
+                          {v.price} <span className="text-xs text-ink-3 font-medium">DH/j</span>
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleSelect(v)}
+                        className="w-full bg-primary text-primary-foreground py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center justify-center gap-2"
+                      >
+                        <Car size={16} />
+                        Sélectionner
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-ink-4 bg-surface-1 rounded-3xl border-2 border-dashed border-border">
+              <Car size={48} className="mb-4 opacity-20" />
+              <p className="font-semibold uppercase tracking-wider text-sm">Aucun véhicule dans cette catégorie</p>
+            </div>
+          )}
+        </>
       ) : selectedVehicle ? (
         <motion.div
           key={selectedVehicle.id}
