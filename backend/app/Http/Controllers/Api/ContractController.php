@@ -23,14 +23,16 @@ class ContractController extends Controller
 
     protected function getAgencyData(): array
     {
-        $setting = Setting::first();
+        $nameRow = Setting::where('key', 'agency_name')->first();
+        $sloganRow = Setting::where('key', 'agency_slogan')->first();
+        $logoRow = Setting::where('key', 'agency_logo_url')->first();
 
         return [
-            'agencyName' => $setting->key ?? 'Vectoria Rent Car',
-            'agencyAddress' => $setting->value ?? 'Casablanca, Maroc',
-            'agencyPhone' => $setting->agency_slogan ?? '+212 5 22 XX XX XX',
+            'agencyName' => $nameRow?->value ?? 'Vectoria Rent Car',
+            'agencyAddress' => $sloganRow?->value ?? 'Casablanca, Maroc',
+            'agencyPhone' => '+212 5 22 XX XX XX',
             'agencyEmail' => 'contact@vectoria.ma',
-            'agencyLogo' => $setting->logo_url ?? null,
+            'agencyLogo' => $logoRow?->value ?? null,
             'agencyRC' => '160455',
         ];
     }
