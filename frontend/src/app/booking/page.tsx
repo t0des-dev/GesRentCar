@@ -113,7 +113,7 @@ export default function BookingPage() {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="section-header text-center">
           <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.2em] mb-4">Votre Réservation</p>
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">Réservez l'Exception</h1>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">Réservez l&apos;Exception</h1>
           <p className="text-ink-2 text-base max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
         </div>
 
@@ -134,7 +134,7 @@ export default function BookingPage() {
                     {step === 0 && (
                       <VehicleStep
                         booking={booking} update={update} isLoading={isLoadingVehicles}
-                        vehicles={displayVehicles} onNext={nextStep}
+                        vehicles={displayVehicles} setStep={setStep}
                       />
                     )}
                     {step === 1 && (
