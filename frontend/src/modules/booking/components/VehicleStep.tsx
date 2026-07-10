@@ -110,6 +110,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
               width={80}
               height={56}
               className="w-full h-full object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"; }}
             />
           </div>
           <div className="flex-1 min-w-0">
@@ -250,6 +251,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
                   width={viewMode === "list" ? 300 : 400}
                   height={viewMode === "list" ? 200 : 300}
                   className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                 <div className="absolute top-4 left-4">

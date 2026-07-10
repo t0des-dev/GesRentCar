@@ -173,7 +173,7 @@ export default function BookingPage() {
               </AnimatePresence>
             </div>
 
-            {step < 5 && (
+            {step > 0 && step < 5 && (
               <div className="flex justify-between items-center pt-8 border-t border-border">
                 <button
                   onClick={prevStep}

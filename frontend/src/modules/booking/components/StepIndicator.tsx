@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/shared/utils";
-import { Check, Car, Calendar, Shield, User, PenTool, CreditCard, Lock } from "lucide-react";
+import { Check, Car, Calendar, Shield, User, PenTool, CreditCard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const STEPS = [
   { label: "Véhicule", icon: Car },
@@ -19,37 +19,19 @@ interface StepIndicatorProps {
   onStepClick: (step: number) => void;
 }
 
-function CelebrationParticle({ delay }: { delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
-      animate={{
-        opacity: [1, 1, 0],
-        scale: [0, 1, 0.5],
-        x: Math.random() * 60 - 30,
-        y: Math.random() * -40 - 10,
-      }}
-      transition={{ duration: 0.8, delay, ease: "easeOut" }}
-      className="absolute w-1.5 h-1.5 rounded-full"
-      style={{
-        backgroundColor: ["#D4AF37", "#1a365d", "#10B981", "#F59E0B"][Math.floor(Math.random() * 4)],
-      }}
-    />
-  );
-}
-
 export default function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) {
   const [celebratingStep, setCelebratingStep] = useState<number | null>(null);
-  const [prevStep, setPrevStep] = useState(currentStep);
+  const prevStepRef = useRef(currentStep);
 
   useEffect(() => {
-    if (currentStep > prevStep) {
-      setCelebratingStep(currentStep - 1);
-      const timer = setTimeout(() => setCelebratingStep(null), 1000);
-      return () => clearTimeout(timer);
+    if (currentStep > prevStepRef.current) {
+      const timer = setTimeout(() => setCelebratingStep(currentStep - 1), 10);
+      const clear = setTimeout(() => setCelebratingStep(null), 1010);
+      prevStepRef.current = currentStep;
+      return () => { clearTimeout(timer); clearTimeout(clear); };
     }
-    setPrevStep(currentStep);
-  }, [currentStep, prevStep]);
+    prevStepRef.current = currentStep;
+  }, [currentStep]);
 
   return (
     <div className="relative mb-8">
@@ -99,7 +81,7 @@ export default function StepIndicator({ currentStep, onStepClick }: StepIndicato
                       ? "bg-primary border-primary text-primary-foreground cursor-pointer shadow-sm"
                       : isActive
                         ? "border-primary text-primary bg-surface-0 scale-110 shadow-sm"
-                        : "border-border text-ink-4 bg-surface-0 cursor-default"
+                        : "border-surface-2 text-ink-4 bg-surface-0 cursor-default"
                   )}
                 >
                   {isCompleted ? (
@@ -113,16 +95,29 @@ export default function StepIndicator({ currentStep, onStepClick }: StepIndicato
                   ) : isActive ? (
                     <Icon size={16} />
                   ) : (
-                    <Lock size={14} />
+                    <span className="text-[10px] font-bold">{i + 1}</span>
                   )}
                 </motion.div>
 
-                {/* Celebration particles */}
                 <AnimatePresence>
                   {isCelebrating && (
                     <div className="absolute inset-0 pointer-events-none">
-                      {Array.from({ length: 8 }).map((_, pi) => (
-                        <CelebrationParticle key={pi} delay={pi * 0.05} />
+                      {[0, 1, 2, 3, 4, 5, 6, 7].map((pi) => (
+                        <motion.div
+                          key={pi}
+                          initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+                          animate={{
+                            opacity: [1, 1, 0],
+                            scale: [0, 1, 0.5],
+                            x: (pi % 2 === 0 ? 1 : -1) * (10 + pi * 5),
+                            y: -10 - pi * 5,
+                          }}
+                          transition={{ duration: 0.8, delay: pi * 0.05, ease: "easeOut" }}
+                          className="absolute w-1.5 h-1.5 rounded-full"
+                          style={{
+                            backgroundColor: ["#D4AF37", "#1a365d", "#10B981", "#F59E0B"][pi % 4],
+                          }}
+                        />
                       ))}
                     </div>
                   )}
