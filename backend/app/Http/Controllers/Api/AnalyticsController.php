@@ -39,11 +39,6 @@ class AnalyticsController extends Controller
         $visitorKey = $path . ':' . $visitorId;
         if (!isset($visitors[$visitorKey])) {
             $visitors[$visitorKey] = $timestamp;
-            $visitors[$path] = array_filter(
-                $visitors,
-                fn($key, $val) => str_starts_with($key, $path . ':'),
-                ARRAY_FILTER_USE_BOTH
-            );
             Cache::put(self::CACHE_KEY_VISITORS, $visitors, self::CACHE_TTL);
         }
 
