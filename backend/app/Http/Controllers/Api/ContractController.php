@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\GenerateContractPdf;
 use App\Models\Contract;
 use App\Models\Reservation;
+use App\Models\Setting;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -18,6 +19,20 @@ class ContractController extends Controller
     public function __construct(NotificationService $notificationService)
     {
         $this->notificationService = $notificationService;
+    }
+
+    protected function getAgencyData(): array
+    {
+        $setting = Setting::first();
+
+        return [
+            'agencyName' => $setting->key ?? 'Vectoria Rent Car',
+            'agencyAddress' => $setting->value ?? 'Casablanca, Maroc',
+            'agencyPhone' => $setting->agency_slogan ?? '+212 5 22 XX XX XX',
+            'agencyEmail' => 'contact@vectoria.ma',
+            'agencyLogo' => $setting->logo_url ?? null,
+            'agencyRC' => '160455',
+        ];
     }
 
     // ─── Generate and store PDF ────────────────────────────────────────────────
@@ -59,13 +74,20 @@ class ContractController extends Controller
     public function download(Reservation $reservation)
     {
         $lang = request('lang', 'fr');
+        $agencyData = $this->getAgencyData();
 
-        $pdf = Pdf::loadView('pdf.contract', [
-            'reservation' => $reservation->load(['client', 'vehicle', 'contract']),
+        $reservation->load(['client', 'vehicle', 'contract']);
+        $agentName = $reservation->vehicle && $reservation->vehicle->agent
+            ? $reservation->vehicle->agent->name
+            : null;
+
+        $pdf = Pdf::loadView('pdf.contract', array_merge([
+            'reservation' => $reservation,
             'client' => $reservation->client,
             'vehicle' => $reservation->vehicle,
             'lang' => $lang,
-        ])
+            'agentName' => $agentName,
+        ], $agencyData))
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans');

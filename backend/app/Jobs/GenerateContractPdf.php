@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Contract;
 use App\Models\Reservation;
+use App\Models\Setting;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
@@ -30,18 +31,39 @@ class GenerateContractPdf implements ShouldQueue
         $this->lang = $lang;
     }
 
+    protected function getAgencyData(): array
+    {
+        $setting = Setting::first();
+
+        return [
+            'agencyName' => $setting->key ?? 'Vectoria Rent Car',
+            'agencyAddress' => $setting->value ?? 'Casablanca, Maroc',
+            'agencyPhone' => $setting->agency_slogan ?? '+212 5 22 XX XX XX',
+            'agencyEmail' => 'contact@vectoria.ma',
+            'agencyLogo' => $setting->logo_url ?? null,
+            'agencyRC' => '160455',
+        ];
+    }
+
     public function handle(NotificationService $notificationService): void
     {
-        $reservation = Reservation::with(['client', 'vehicle'])->findOrFail($this->reservationId);
+        $reservation = Reservation::with(['client', 'vehicle', 'vehicle.agent', 'contract'])->findOrFail($this->reservationId);
 
         App::setLocale($this->lang);
 
-        $pdf = Pdf::loadView('pdf.contract', [
+        $agentName = $reservation->vehicle && $reservation->vehicle->agent
+            ? $reservation->vehicle->agent->name
+            : null;
+
+        $agencyData = $this->getAgencyData();
+
+        $pdf = Pdf::loadView('pdf.contract', array_merge([
             'reservation' => $reservation,
             'client' => $reservation->client,
             'vehicle' => $reservation->vehicle,
             'lang' => $this->lang,
-        ])
+            'agentName' => $agentName,
+        ], $agencyData))
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans');
