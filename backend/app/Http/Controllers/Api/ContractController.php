@@ -72,13 +72,25 @@ class ContractController extends Controller
         ]);
     }
 
-    // ─── Public stream: download PDF directly (used by frontend after payment) ─
+    // ─── Public stream: serve cached PDF or generate on-the-fly ──────────────
     public function download(Reservation $reservation)
     {
-        $lang = request('lang', 'fr');
-        $agencyData = $this->getAgencyData();
-
         $reservation->load(['client', 'vehicle', 'contract']);
+
+        $lang = request('lang', 'fr');
+        $padded = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $filename = 'VRC-Contrat-'.$padded.'.pdf';
+
+        // 1. Serve cached PDF from storage if it exists
+        $storedPath = 'contracts/contract_'.$reservation->id.'.pdf';
+        if (Storage::disk('public')->exists($storedPath)) {
+            return Storage::disk('public')->download($storedPath, $filename, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+
+        // 2. Generate on-the-fly (first request only)
+        $agencyData = $this->getAgencyData();
         $agentName = $reservation->vehicle && $reservation->vehicle->agent
             ? $reservation->vehicle->agent->name
             : null;
@@ -94,7 +106,13 @@ class ContractController extends Controller
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans');
 
-        $filename = 'VRC-Contrat-'.str_pad($reservation->id, 5, '0', STR_PAD_LEFT).'.pdf';
+        // Cache for future requests
+        Storage::disk('public')->put($storedPath, $pdf->output());
+
+        Contract::updateOrCreate(
+            ['reservation_id' => $reservation->id],
+            ['file_path' => $storedPath]
+        );
 
         return $pdf->download($filename);
     }
