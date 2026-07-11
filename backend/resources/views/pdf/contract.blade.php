@@ -36,6 +36,29 @@
 </head>
 <body>
 
+@php
+  $client = $reservation->client ?? null;
+  $vehicle = $reservation->vehicle ?? null;
+  $aName = $agencyName ?? 'Vectoria Rent Car';
+  $aAddr = $agencyAddress ?? 'Casablanca, Maroc';
+  $aPhone = $agencyPhone ?? '+212 5 22 XX XX XX';
+  $aEmail = $agencyEmail ?? 'contact@vectoria.ma';
+  $aLogo = $agencyLogo ?? null;
+  $aRC = $agencyRC ?? '160455';
+
+  $sd = \Carbon\Carbon::parse($reservation->start_date);
+  $ed = \Carbon\Carbon::parse($reservation->end_date);
+  $days = max(1, $sd->diffInDays($ed));
+
+  $cn = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+  $cr = date('y-m') . '-' . $cn;
+
+  $fullName = $client->name ?? '';
+  $nameParts = explode(' ', trim($fullName));
+  $prenom = array_shift($nameParts);
+  $nom = implode(' ', $nameParts);
+@endphp
+
 {{-- ============================================================ --}}
 {{-- PAGE 1 — DÉCLARATION PRÉALABLE --}}
 {{-- ============================================================ --}}
@@ -88,9 +111,9 @@
       </tr>
       <tr>
         <td class="bold">N° Permis</td>
-        <td>{{ $client->driver_license ?? '' }}</td>
+        <td>{{ $client->license_number ?? '' }}</td>
         <td class="bold ar-cell">&#x0631;&#x0642;&#x0645; &#x0627;&#x0644;&#x0633;&#x064A;&#x0627;&#x0642;&#x0629;</td>
-        <td class="ar-cell">{{ $client->driver_license ?? '' }}</td>
+        <td class="ar-cell">{{ $client->license_number ?? '' }}</td>
       </tr>
       <tr>
         <td class="bold">Validité</td>
@@ -136,9 +159,9 @@
   <table class="tbl-bordered">
     <tr>
       <td class="bold" style="width:25%;">Immatriculation</td>
-      <td style="width:25%;">{{ $vehicle->registration ?? '' }}</td>
+      <td style="width:25%;">{{ $vehicle->plate ?? '' }}</td>
       <td class="bold ar-cell" style="width:25%;">&#x0631;&#x0642;&#x0645; &#x0627;&#x0644;&#x062A;&#x0633;&#x062C;&#x064A;&#x0644;</td>
-      <td class="ar-cell" style="width:25%;">{{ $vehicle->registration ?? '' }}</td>
+      <td class="ar-cell" style="width:25%;">{{ $vehicle->plate ?? '' }}</td>
     </tr>
     <tr>
       <td class="bold">Agence</td>
@@ -208,8 +231,8 @@
       </td>
       <td style="width:33%; text-align:center;">
         <div class="bold mb2">Le Client</div>
-        @if(!empty($client->signature))
-          <img src="{{ $client->signature }}" style="max-height:30px;" />
+        @if($reservation->contract && $reservation->contract->signature_data)
+          <img src="{{ $reservation->contract->signature_data }}" style="max-height:30px;" />
         @endif
         <div class="sig-box"></div>
         <div class="small center mt4">Signature précédée de la mention « Lu et approuvé »</div>
@@ -619,7 +642,7 @@
     </tr>
     <tr>
       <td><span class="bold">Marque :</span> {{ $vehicle->brand ?? '' }} {{ $vehicle->model ?? '' }}</td>
-      <td><span class="bold">Immatriculation :</span> {{ $vehicle->registration ?? '' }}</td>
+      <td><span class="bold">Immatriculation :</span> {{ $vehicle->plate ?? '' }}</td>
       <td><span class="bold">Type :</span> {{ $vehicle->category ?? '' }}</td>
     </tr>
   </table>
@@ -687,7 +710,7 @@
           </tr>
           <tr>
             <td class="bold">Permis N° :</td>
-            <td>{{ $client->driver_license ?? '' }}</td>
+            <td>{{ $client->license_number ?? '' }}</td>
           </tr>
           <tr>
             <td class="bold">CIN N° :</td>
