@@ -139,17 +139,31 @@ class ReservationController extends Controller
                 abort(422, 'Le véhicule n\'est pas disponible pour ces dates.');
             }
 
-            $client = Client::firstOrCreate(
-                ['email' => $clientData['email']],
-                [
+            // Find existing client by CIN, email, or license — avoid unique constraint violations
+            $client = Client::where('cin', $clientData['cin'])
+                ->orWhere('email', $clientData['email'])
+                ->when($clientData['license_number'] ?? null, fn ($q) => $q->orWhere('license_number', $clientData['license_number']))
+                ->first();
+
+            if ($client) {
+                $client->update([
                     'name' => $clientData['name'],
+                    'phone' => $clientData['phone'],
+                    'license_number' => $clientData['license_number'] ?? $client->license_number,
+                    'cin_image_url' => $clientData['cin_image_url'] ?? $client->cin_image_url,
+                    'license_image_url' => $clientData['license_image_url'] ?? $client->license_image_url,
+                ]);
+            } else {
+                $client = Client::create([
+                    'name' => $clientData['name'],
+                    'email' => $clientData['email'],
                     'phone' => $clientData['phone'],
                     'cin' => $clientData['cin'],
                     'license_number' => $clientData['license_number'] ?? null,
                     'cin_image_url' => $clientData['cin_image_url'] ?? null,
                     'license_image_url' => $clientData['license_image_url'] ?? null,
-                ]
-            );
+                ]);
+            }
 
             $pricing = $this->pricing->calculateTotal($vehicle, $days, $options, null, $startDate);
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'confirmed';
