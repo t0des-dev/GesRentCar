@@ -78,12 +78,14 @@ class ContractController extends Controller
         $reservation->load(['client', 'vehicle', 'contract']);
 
         $lang = request('lang', 'fr');
+        \App::setLocale($lang);
+
         $padded = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
         $filename = 'VRC-Contrat-'.$padded.'.pdf';
 
-        // 1. Serve cached PDF from storage if it exists
+        // 1. Serve cached PDF from storage (skip if ?regenerate=1)
         $storedPath = 'contracts/contract_'.$reservation->id.'.pdf';
-        if (Storage::disk('public')->exists($storedPath)) {
+        if (Storage::disk('public')->exists($storedPath) && ! request()->boolean('regenerate')) {
             return Storage::disk('public')->download($storedPath, $filename, [
                 'Content-Type' => 'application/pdf',
             ]);
@@ -104,7 +106,8 @@ class ContractController extends Controller
         ], $agencyData))
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
-            ->setOption('defaultFont', 'DejaVu Sans');
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('defaultMediaType', 'print');
 
         // Cache for future requests
         Storage::disk('public')->put($storedPath, $pdf->output());
