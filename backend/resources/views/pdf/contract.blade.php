@@ -490,11 +490,21 @@
         <tr>
             <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
                 <div class="diagram-label">Vue de face</div>
-                <div style="font-size: 36px; color: #ccc;">&#x1F697;</div>
+                <div style="display:inline-block; position:relative; width:100px; height:80px;">
+                    <div style="position:absolute; top:12px; left:10px; width:80px; height:40px; border:1.5px solid #333; background:#f5f5f5; border-radius:8px 8px 2px 2px;"></div>
+                    <div style="position:absolute; top:18px; left:18px; width:64px; height:22px; border:1px solid #999; border-radius:4px 4px 0 0; background:#d0e0f0;"></div>
+                    <div style="position:absolute; bottom:2px; left:6px; width:18px; height:18px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                    <div style="position:absolute; bottom:2px; right:6px; width:18px; height:18px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                </div>
             </td>
             <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
                 <div class="diagram-label">Vue arrière</div>
-                <div style="font-size: 36px; color: #ccc;">&#x1F697;</div>
+                <div style="display:inline-block; position:relative; width:100px; height:80px;">
+                    <div style="position:absolute; top:12px; left:10px; width:80px; height:40px; border:1.5px solid #333; background:#f5f5f5; border-radius:2px 2px 8px 8px;"></div>
+                    <div style="position:absolute; top:18px; left:18px; width:64px; height:22px; border:1px solid #999; border-radius:0 0 4px 4px; background:#d0e0f0;"></div>
+                    <div style="position:absolute; bottom:2px; left:6px; width:18px; height:18px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                    <div style="position:absolute; bottom:2px; right:6px; width:18px; height:18px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                </div>
             </td>
         </tr>
     </table>
@@ -502,11 +512,21 @@
         <tr>
             <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
                 <div class="diagram-label">Côté gauche</div>
-                <div style="font-size: 36px; color: #ccc;">&#x1F697;</div>
+                <div style="display:inline-block; position:relative; width:110px; height:70px;">
+                    <div style="position:absolute; top:22px; left:5px; width:100px; height:30px; border:1.5px solid #333; background:#f5f5f5; border-radius:4px;"></div>
+                    <div style="position:absolute; top:8px; left:40px; width:50px; height:20px; border:1px solid #999; border-radius:2px 8px 0 0; background:#d0e0f0;"></div>
+                    <div style="position:absolute; bottom:4px; left:14px; width:16px; height:16px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                    <div style="position:absolute; bottom:4px; right:14px; width:16px; height:16px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                </div>
             </td>
             <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
                 <div class="diagram-label">Côté droit</div>
-                <div style="font-size: 36px; color: #ccc;">&#x1F697;</div>
+                <div style="display:inline-block; position:relative; width:110px; height:70px;">
+                    <div style="position:absolute; top:22px; left:5px; width:100px; height:30px; border:1.5px solid #333; background:#f5f5f5; border-radius:4px;"></div>
+                    <div style="position:absolute; top:8px; left:20px; width:50px; height:20px; border:1px solid #999; border-radius:8px 2px 0 0; background:#d0e0f0;"></div>
+                    <div style="position:absolute; bottom:4px; left:14px; width:16px; height:16px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                    <div style="position:absolute; bottom:4px; right:14px; width:16px; height:16px; border:2px solid #333; border-radius:50%; background:#ccc;"></div>
+                </div>
             </td>
         </tr>
     </table>
@@ -515,12 +535,12 @@
     <table class="legend-table" style="width: 100%; margin-bottom: 10px; border: 1px solid #ddd;">
         <tr>
             <td style="background: #f5f5f5; font-weight: bold;">Légende :</td>
-            <td>&#9675; Bosse</td>
-            <td>&#10005; Rayure</td>
-            <td>&#10005; Cassé</td>
-            <td>&#9632; Peinture</td>
-            <td>&#9650; Rouille</td>
-            <td>&#9733; Autre</td>
+            <td>O Bosse</td>
+            <td>X Rayure</td>
+            <td>X Cassé</td>
+            <td>[ ] Peinture</td>
+            <td>^ Rouille</td>
+            <td>* Autre</td>
         </tr>
     </table>
 
