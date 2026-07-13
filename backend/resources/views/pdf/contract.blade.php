@@ -278,66 +278,29 @@
                 </div>
             </td>
             <td style="width:72%; text-align:center;" rowspan="2">
-                {{-- Vehicle diagrams --}}
+                {{-- Vehicle photos --}}
                 <table style="width:100%;">
+                    @php
+                        $vueLabels = ['Vue de face', 'Vue arrière', 'Côté gauche', 'Côté droit'];
+                        $vPhotos = $vehiclePhotos ?? [];
+                    @endphp
+                    @for($i = 0; $i < 4; $i += 2)
                     <tr>
-                        <td style="width:50%; text-align:center; padding:4px;">
-                            <div class="diagram-label">Vue de face</div>
-                            <div style="display:inline-block; position:relative; width:110px; height:80px;">
-                                <div style="position:absolute; top:14px; left:12px; width:86px; height:44px; border:2px solid #444; background:#e8e8e8; border-radius:10px 10px 4px 4px;"></div>
-                                <div style="position:absolute; top:4px; left:28px; width:54px; height:18px; border:2px solid #444; border-radius:7px 7px 0 0; background:#b8d0e8;"></div>
-                                <div style="position:absolute; top:8px; left:32px; width:18px; height:12px; border:1px solid #666; border-radius:3px 3px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:8px; left:58px; width:18px; height:12px; border:1px solid #666; border-radius:3px 3px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:20px; left:15px; width:12px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
-                                <div style="position:absolute; top:20px; right:15px; width:12px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
-                                <div style="position:absolute; top:28px; left:30px; width:50px; height:12px; border:1px solid #888; border-radius:2px; background:#d0d0d0;"></div>
-                                <div style="position:absolute; bottom:4px; left:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                                <div style="position:absolute; bottom:4px; right:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                            </div>
-                        </td>
-                        <td style="width:50%; text-align:center; padding:4px;">
-                            <div class="diagram-label">Vue arrière</div>
-                            <div style="display:inline-block; position:relative; width:110px; height:80px;">
-                                <div style="position:absolute; top:14px; left:12px; width:86px; height:44px; border:2px solid #444; background:#e8e8e8; border-radius:4px 4px 10px 10px;"></div>
-                                <div style="position:absolute; top:4px; left:28px; width:54px; height:18px; border:2px solid #444; border-radius:0 0 7px 7px; background:#b8d0e8;"></div>
-                                <div style="position:absolute; top:8px; left:32px; width:46px; height:12px; border:1px solid #666; border-radius:0 0 3px 3px; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:20px; left:15px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
-                                <div style="position:absolute; top:20px; right:15px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
-                                <div style="position:absolute; top:28px; left:30px; width:50px; height:14px; border:1px solid #888; border-radius:2px; background:#d0d0d0;"></div>
-                                <div style="position:absolute; top:32px; left:44px; width:22px; height:6px; border-radius:2px; background:#888;"></div>
-                                <div style="position:absolute; bottom:4px; left:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                                <div style="position:absolute; bottom:4px; right:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                            </div>
-                        </td>
+                        @for($j = 0; $j < 2; $j++)
+                            @php $idx = $i + $j; @endphp
+                            <td style="width:50%; text-align:center; padding:4px;">
+                                <div class="diagram-label">{{ $vueLabels[$idx] }}</div>
+                                <div style="display:inline-block; position:relative; width:130px; height:85px; border:1.5px dashed #aaa; background:#f8f8f8; border-radius:4px; overflow:hidden;">
+                                    @if(!empty($vPhotos[$idx]))
+                                        <img src="{{ $vPhotos[$idx] }}" style="width:130px; height:85px; object-fit:cover;" />
+                                    @else
+                                        <div style="width:130px; height:85px; display:flex; align-items:center; justify-content:center; color:#bbb; font-size:7px;">[Photo]</div>
+                                    @endif
+                                </div>
+                            </td>
+                        @endfor
                     </tr>
-                    <tr>
-                        <td style="width:50%; text-align:center; padding:4px;">
-                            <div class="diagram-label">Côté gauche</div>
-                            <div style="display:inline-block; position:relative; width:130px; height:72px;">
-                                <div style="position:absolute; top:24px; left:6px; width:118px; height:28px; border:2px solid #444; background:#e8e8e8; border-radius:5px;"></div>
-                                <div style="position:absolute; top:8px; left:46px; width:56px; height:20px; border:2px solid #444; border-radius:4px 10px 0 0; background:#b8d0e8;"></div>
-                                <div style="position:absolute; top:12px; left:50px; width:20px; height:14px; border:1px solid #666; border-radius:3px 5px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:12px; left:76px; width:22px; height:14px; border:1px solid #666; border-radius:5px 3px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:30px; left:10px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
-                                <div style="position:absolute; top:30px; right:10px; width:8px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
-                                <div style="position:absolute; bottom:4px; left:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                                <div style="position:absolute; bottom:4px; right:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                            </div>
-                        </td>
-                        <td style="width:50%; text-align:center; padding:4px;">
-                            <div class="diagram-label">Côté droit</div>
-                            <div style="display:inline-block; position:relative; width:130px; height:72px;">
-                                <div style="position:absolute; top:24px; left:6px; width:118px; height:28px; border:2px solid #444; background:#e8e8e8; border-radius:5px;"></div>
-                                <div style="position:absolute; top:8px; left:28px; width:56px; height:20px; border:2px solid #444; border-radius:10px 4px 0 0; background:#b8d0e8;"></div>
-                                <div style="position:absolute; top:12px; left:32px; width:22px; height:14px; border:1px solid #666; border-radius:5px 3px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:12px; left:60px; width:20px; height:14px; border:1px solid #666; border-radius:3px 5px 0 0; background:#c8ddf0;"></div>
-                                <div style="position:absolute; top:30px; right:10px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
-                                <div style="position:absolute; top:30px; left:10px; width:8px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
-                                <div style="position:absolute; bottom:4px; left:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                                <div style="position:absolute; bottom:4px; right:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                            </div>
-                        </td>
-                    </tr>
+                    @endfor
                 </table>
             </td>
             <td style="width:14%; vertical-align:top;">

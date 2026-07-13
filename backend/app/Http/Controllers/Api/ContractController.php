@@ -88,6 +88,18 @@ class ContractController extends Controller
             $data['agencyLogo'] = $this->resolveImage($data['agencyLogo']);
         }
 
+        // Vehicle photos (main + up to 3 from photos array)
+        $vehiclePhotos = [];
+        $mainPhoto = $data['vehicle']->image_url ?? null;
+        if ($mainPhoto) {
+            $vehiclePhotos[] = $this->resolveImage($mainPhoto);
+        }
+        $extraPhotos = $data['vehicle']->photos ?? [];
+        foreach (array_slice($extraPhotos, 0, 3) as $photo) {
+            $vehiclePhotos[] = $this->resolveImage($photo);
+        }
+        $data['vehiclePhotos'] = $vehiclePhotos;
+
         // Signature
         $sigData = $data['reservation']->contract->signature_data ?? null;
         if ($sigData && ! str_starts_with($sigData, 'data:') && ! str_starts_with($sigData, '/')) {
@@ -191,11 +203,11 @@ class ContractController extends Controller
         $viewData = $this->prepareImageData($viewData);
 
         // Track temp files for cleanup
-        $tmpFiles = array_filter([
+        $tmpFiles = array_filter(array_merge([
             $viewData['cinImageUrl'] ?? null,
             $viewData['licenseImageUrl'] ?? null,
             $viewData['agencyLogo'] ?? null,
-        ], fn ($f) => $f && str_starts_with($f, sys_get_temp_dir()));
+        ], $viewData['vehiclePhotos'] ?? []), fn ($f) => $f && str_starts_with($f, sys_get_temp_dir()));
 
         // Render the view to HTML then shape Arabic text for correct DomPDF rendering
         $html = view('pdf.contract', $viewData)->render();
