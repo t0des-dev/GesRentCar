@@ -1,200 +1,45 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Contrat de Location N°{{ $reservation->id }} — {{ $agencyName }}</title>
-    <style>
-        @page { margin: 20mm 15mm; size: A4; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'DejaVu Sans', 'Helvetica Neue', Arial, sans-serif;
-            font-size: 9px;
-            color: #1a1a1a;
-            background: #fff;
-            line-height: 1.4;
-        }
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Contrat de Location N°{{ $reservation->id }}</title>
+<style>
+    @page { margin: 15mm 12mm; size: A4; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DejaVu Sans',sans-serif; font-size:8.5px; color:#1a1a1a; background:#fff; line-height:1.35; }
+    table { border-collapse:collapse; width:100%; }
+    td, th { vertical-align:top; }
 
-        /* ── Tables ──────────────────────────────────────────────────────── */
-        table { border-collapse: collapse; width: 100%; }
-        td, th { border: 1px solid #333; padding: 4px 6px; vertical-align: top; font-size: 8.5px; }
-        th { background: #e8e8e8; font-weight: bold; font-size: 8px; }
+    .page { page-break-before:always; }
+    .page:first-child { page-break-before:auto; }
 
-        /* ── Page breaks ─────────────────────────────────────────────────── */
-        .page { page-break-before: always; }
-        .page:first-child { page-break-before: auto; }
+    .blue-bar { background:#0055B8; color:#fff; font-weight:bold; font-size:9px; padding:5px 8px; text-align:center; }
+    .blue-bar-left { background:#0055B8; color:#fff; font-weight:bold; font-size:9px; padding:5px 8px; text-align:left; }
+    .blue-bar-right { background:#0055B8; color:#fff; font-weight:bold; font-size:9px; padding:5px 8px; text-align:right; direction:rtl; }
 
-        /* ── Government Header (Page 1) ──────────────────────────────────── */
-        .gov-header {
-            text-align: center;
-            border-bottom: 2px solid #003366;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-        }
-        .gov-header .kingdom {
-            font-size: 11px;
-            font-weight: bold;
-            color: #003366;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .gov-header .ministry {
-            font-size: 8px;
-            color: #555;
-            margin-top: 2px;
-        }
-        .gov-header .ministry-ar {
-            font-size: 9px;
-            color: #003366;
-            margin-top: 4px;
-            font-weight: bold;
-        }
-        .gov-header .subtitle {
-            font-size: 8px;
-            color: #666;
-            margin-top: 6px;
-            font-style: italic;
-        }
-        .gov-header .doc-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #003366;
-            margin-top: 10px;
-            text-decoration: underline;
-        }
-        .gov-header .doc-subtitle {
-            font-size: 8px;
-            color: #555;
-            margin-top: 4px;
-            font-style: italic;
-        }
+    .info-tbl td { border:1px solid #ccc; padding:3px 6px; font-size:8px; }
+    .info-tbl .lbl { background:#e8f0fe; font-weight:bold; width:18%; color:#333; }
+    .info-tbl .val { width:32%; }
+    .info-tbl .lbl-ar { background:#e8f0fe; font-weight:bold; width:18%; text-align:right; direction:rtl; color:#333; }
+    .info-tbl .val-ar { width:32%; text-align:right; direction:rtl; }
 
-        /* ── Info Table ──────────────────────────────────────────────────── */
-        .info-table td { padding: 3px 8px; font-size: 8.5px; }
-        .info-table .label { width: 28%; font-weight: bold; background: #f5f5f5; color: #333; }
-        .info-table .value { width: 22%; color: #111; }
-        .info-table .label-ar { width: 28%; font-weight: bold; background: #f5f5f5; color: #333; text-align: right; direction: rtl; }
-        .info-table .value-ar { width: 22%; color: #111; text-align: right; direction: rtl; }
-        .info-table .section-header { background: #003366; color: #fff; font-weight: bold; font-size: 9px; text-align: center; }
-        .info-table .section-header-ar { background: #003366; color: #fff; font-weight: bold; font-size: 9px; text-align: right; direction: rtl; }
+    .chk { display:inline-block; width:11px; height:11px; border:1.5px solid #0055B8; border-radius:2px; vertical-align:middle; margin-right:2px; background:#fff; }
+    .chk.on { background:#0055B8; position:relative; }
+    .chk.on::after { content:''; position:absolute; left:2px; top:0px; width:4px; height:7px; border:solid #fff; border-width:0 1.5px 1.5px 0; transform:rotate(45deg); }
 
-        /* ── Vehicle State (Page 2) ──────────────────────────────────────── */
-        .state-header {
-            background: #003366;
-            color: #fff;
-            text-align: center;
-            padding: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .state-subtitle {
-            text-align: center;
-            font-size: 8px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .checkbox-table td { text-align: center; width: 33%; font-size: 8px; }
-        .checkbox { display: inline-block; width: 10px; height: 10px; border: 1.5px solid #333; margin-right: 3px; vertical-align: middle; }
-        .checkbox.checked { background: #003366; }
-        .legend-table td { font-size: 7.5px; padding: 2px 6px; }
-        .comments-box {
-            border: 1.5px solid #333;
-            padding: 10px;
-            min-height: 80px;
-            margin: 10px 0;
-            font-size: 8.5px;
-        }
-        .pieces-box {
-            border: 1.5px solid #333;
-            padding: 8px;
-            margin: 10px 0;
-        }
-        .pieces-box .title { font-weight: bold; font-size: 9px; margin-bottom: 6px; background: #003366; color: #fff; padding: 4px 8px; }
-        .vehicle-diagram { text-align: center; padding: 10px; }
-        .diagram-label { font-size: 7.5px; font-weight: bold; color: #555; margin-bottom: 4px; }
-        .car-silhouette { font-size: 40px; color: #ccc; }
+    .sig-box { border-bottom:1px solid #999; height:35px; width:100%; margin-top:4px; }
+    .sig-label { font-size:7px; font-weight:bold; color:#555; text-align:center; }
+    .field-line { border-bottom:1px solid #999; display:inline-block; min-width:80px; }
 
-        /* ── Conditions (Page 3) ─────────────────────────────────────────── */
-        .conditions-header {
-            background: #003366;
-            color: #fff;
-            text-align: center;
-            padding: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .article { margin-bottom: 10px; }
-        .article-title { font-weight: bold; font-size: 9px; color: #003366; margin-bottom: 3px; }
-        .article-text { font-size: 8px; color: #333; line-height: 1.5; text-align: justify; }
-        .conditions-bilingual { display: table; width: 100%; }
-        .conditions-fr { display: table-cell; width: 48%; vertical-align: top; padding-right: 10px; }
-        .conditions-ar { display: table-cell; width: 48%; vertical-align: top; padding-left: 10px; border-left: 1px solid #ddd; text-align: right; direction: rtl; }
-        .article-ar { font-size: 8px; color: #333; line-height: 1.6; margin-bottom: 10px; text-align: right; direction: rtl; }
-        .article-title-ar { font-weight: bold; font-size: 9px; color: #003366; margin-bottom: 3px; text-align: right; direction: rtl; }
+    .small { font-size:7px; color:#666; }
+    .bold { font-weight:bold; }
+    .center { text-align:center; }
+    .art { margin-bottom:5px; font-size:7.5px; text-align:justify; }
+    .art-title { font-weight:bold; color:#0055B8; margin-bottom:1px; }
 
-        /* ── Contract Page (Page 4) ──────────────────────────────────────── */
-        .contract-header {
-            border: 2px solid #003366;
-            padding: 10px 15px;
-            margin-bottom: 12px;
-        }
-        .contract-header table { border: none; }
-        .contract-header td { border: none; padding: 2px 6px; font-size: 8.5px; }
-        .contract-number { font-size: 14px; font-weight: bold; color: #003366; }
-        .agency-logo { text-align: center; }
-        .agency-logo img { max-height: 50px; }
-        .section-title {
-            background: #003366;
-            color: #fff;
-            font-weight: bold;
-            font-size: 9px;
-            padding: 4px 8px;
-            margin: 8px 0 4px 0;
-        }
-        .detail-table td { padding: 3px 6px; font-size: 8.5px; }
-        .detail-table .lbl { font-weight: bold; background: #f5f5f5; width: 25%; }
-        .detail-table .val { width: 25%; }
-        .checkbox-row td { padding: 2px 6px; font-size: 8px; }
-
-        /* ── Signatures (all pages) ───────────────────────────────────────── */
-        .sig-table td { border: none; padding: 8px 12px; text-align: center; vertical-align: top; width: 25%; }
-        .sig-label { font-size: 7.5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px; }
-        .sig-box {
-            border: 1.5px dashed #999;
-            min-height: 60px;
-            margin: 4px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .sig-box img { max-width: 120px; max-height: 45px; }
-        .sig-name { font-size: 7.5px; color: #555; margin-top: 4px; }
-        .sig-date { font-size: 7px; color: #999; }
-
-        /* ── Footer (all pages) ──────────────────────────────────────────── */
-        .page-footer {
-            margin-top: 10px;
-            padding-top: 6px;
-            border-top: 1px solid #ddd;
-            font-size: 7px;
-            color: #999;
-        }
-        .page-footer table td { border: none; padding: 1px 6px; font-size: 7px; color: #999; }
-
-        /* ── Helpers ──────────────────────────────────────────────────────── */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-bold { font-weight: bold; }
-        .text-small { font-size: 7.5px; }
-        .mt-8 { margin-top: 8px; }
-        .mb-8 { margin-bottom: 8px; }
-        .blue-text { color: #003366; }
-        .no-border td, .no-border th { border: none; }
-        .green-check { color: #006600; font-weight: bold; }
-        .red-cross { color: #cc0000; font-weight: bold; }
-    </style>
+    .diagram-label { font-size:7px; font-weight:bold; color:#333; margin-bottom:4px; }
+</style>
 </head>
 <body>
 
@@ -206,910 +51,781 @@
     $agencyPhone = $agencyPhone ?? '+212 5 22 XX XX XX';
     $agencyEmail = $agencyEmail ?? 'contact@vectoria.ma';
     $agencyLogo = $agencyLogo ?? null;
+    $agencyRC = $agencyRC ?? '160455';
     $agentName = $agentName ?? null;
 
-    $startDate = $reservation->start_date;
-    $endDate = $reservation->end_date;
+    $startDate = \Carbon\Carbon::parse($reservation->start_date);
+    $endDate = \Carbon\Carbon::parse($reservation->end_date);
     $days = max(1, $startDate->diffInDays($endDate));
 
     $contractNum = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
     $contractRef = date('y-m') . '-' . $contractNum;
 
-    // Split client name into nom/prénom
     $nameParts = explode(' ', trim($client->name ?? ''));
     $prenom = array_shift($nameParts);
     $nom = implode(' ', $nameParts);
 ?>
 
-{{-- ═══════════════════════════════════════════════════════════════════════
-     PAGE 1: DÉCLARATION PRÉALABLE DE LOCATION DE VOITURE SANS CHAUFFEUR
-     ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- ═══════════════════════════════════════════════════════════════════
+     PAGE 1 — DÉCLARATION PRÉALABLE
+     ═══════════════════════════════════════════════════════════════════ --}}
 <div class="page">
 
     {{-- Government Header --}}
-    <div class="gov-header">
-        <div class="kingdom">ROYAUME DU MAROC</div>
-        <div class="ministry">Ministère de l'Équipement, du Transport et de la Logistique</div>
-        <div class="ministry-ar"> SELF RENT A CAR</div>
-        <div class="subtitle">(à renseigner par le Locataire résidant au Maroc)</div>
-        <div class="doc-title">Déclaration Préalable de location de Voiture Sans Chauffeur</div>
-        <div class="doc-subtitle">(à renseigner par le Locataire résidant au Maroc)</div>
+    <table style="width:100%; margin-bottom:6px;">
+        <tr>
+            <td style="width:40%; font-size:10px; font-weight:bold; color:#0055B8;">
+                ROYAUME DU MAROC
+                <div style="font-size:7px; font-weight:normal; color:#555;">Ministère de l'Équipement, du Transport<br>et de la Logistique</div>
+            </td>
+            <td style="width:20%; text-align:center;">
+                @if($agencyLogo)
+                    <img src="{{ $agencyLogo }}" style="max-height:35px;" />
+                @endif
+            </td>
+            <td style="width:40%; font-size:10px; font-weight:bold; color:#0055B8; text-align:right; direction:rtl;">
+                المملكة المغربية
+                <div style="font-size:7px; font-weight:normal; color:#555;">وزارة التجهيز والنقل واللوجستيك</div>
+            </td>
+        </tr>
+    </table>
+
+    <div style="text-align:center; margin:6px 0; font-size:9px; font-weight:bold; direction:rtl; color:#0055B8;">
+        &#x0625;&#x0639;&#x0644;&#x0627;&#x0646; &#x0627;&#x0644;&#x0627;&#x0633;&#x062A;&#x062E;&#x062F;&#x0627;&#x0645; &#x0644;&#x0644;&#x0623;&#x062E;&#x0630;&#x0627;&#x0631;
+    </div>
+    <div style="text-align:center; font-size:10px; font-weight:bold; color:#0055B8; text-decoration:underline; margin-bottom:4px;">
+        Déclaration Préalable de location de Voiture Sans Chauffeur
+    </div>
+    <div style="text-align:center; font-size:7px; color:#666; margin-bottom:8px;">
+        (à renseigner Par le Locataire résidant au Maroc)
     </div>
 
-    {{-- Client & Vehicle Info --}}
-    <table class="info-table" style="margin-bottom: 12px;">
+    {{-- Main Info Table --}}
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td class="label" rowspan="2">Je Soussigné (e)</td>
-            <td class="value" rowspan="2">{{ $client->name ?? '—' }}</td>
-            <td class="label-ar" rowspan="2">المستأجر</td>
-            <td class="value-ar" rowspan="2">{{ $client->name ?? '—' }}</td>
-        </tr>
-        <tr></tr>
-        <tr>
-            <td class="label">Nom</td>
-            <td class="value">{{ strtoupper($nom) ?: '—' }}</td>
-            <td class="label-ar">اللقب</td>
-            <td class="value-ar">{{ strtoupper($nom) ?: '—' }}</td>
+            <td class="lbl">Je Soussigné (e)</td>
+            <td class="val">{{ strtoupper($prenom) }} {{ strtoupper($nom) }}</td>
+            <td class="lbl-ar">&#x0623;&#x0646;&#x0627; &#x0627;&#x0644;&#x0645;&#x0648;&#x0642;&#x0639;</td>
+            <td class="val-ar">{{ strtoupper($prenom) }} {{ strtoupper($nom) }}</td>
         </tr>
         <tr>
-            <td class="label">Prénom (s)</td>
-            <td class="value">{{ $prenom ?: '—' }}</td>
-            <td class="label-ar">الاسم الشخصي</td>
-            <td class="value-ar">{{ $prenom ?: '—' }}</td>
+            <td class="lbl">Nom</td>
+            <td class="val">{{ strtoupper($nom) }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0644;&#x0642;&#x0628;</td>
+            <td class="val-ar">{{ strtoupper($nom) }}</td>
         </tr>
         <tr>
-            <td class="label">N° CIN ou carte de séjour</td>
-            <td class="value">{{ $client->cin ?? '—' }}</td>
-            <td class="label-ar">رقم البطاقة الوطنية</td>
-            <td class="value-ar">{{ $client->cin ?? '—' }}</td>
+            <td class="lbl">Prénom (s)</td>
+            <td class="val">{{ $prenom }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0627;&#x0633;&#x0645; &#x0627;&#x0644;&#x0623;&#x0648;&#x0644;</td>
+            <td class="val-ar">{{ $prenom }}</td>
         </tr>
         <tr>
-            <td class="label">N° de Permis de conduire</td>
-            <td class="value">{{ $client->license_number ?? '—' }}</td>
-            <td class="label-ar">رقم رخصة السياقة</td>
-            <td class="value-ar">{{ $client->license_number ?? '—' }}</td>
+            <td class="lbl">N° CIN / CNE ou carte de séjour</td>
+            <td class="val">{{ $client->cin ?? '' }}</td>
+            <td class="lbl-ar">&#x0631;&#x0642;&#x0645; &#x0627;&#x0644;&#x0647;&#x0648;&#x064A;&#x0629;<br>&#x0623;&#x0648; &#x0627;&#x0644;&#x0628;&#x0637;&#x0627;&#x0642;&#x0629; &#x0627;&#x0644;&#x0648;&#x0637;&#x0646;&#x064A;&#x0629;</td>
+            <td class="val-ar">{{ $client->cin ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Permis Valable Jusqu'au</td>
-            <td class="value">16/10/2038</td>
-            <td class="label-ar">صلاحية الرخصة حتى</td>
-            <td class="value-ar">16/10/2038</td>
+            <td class="lbl">N° du Permis de conduire</td>
+            <td class="val">{{ $client->license_number ?? '' }}</td>
+            <td class="lbl-ar">&#x0631;&#x0642;&#x0645; &#x0627;&#x0644;&#x0633;&#x064A;&#x0627;&#x0642;&#x0629;</td>
+            <td class="val-ar">{{ $client->license_number ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Adresse</td>
-            <td class="value">{{ $client->address ?? '—' }}</td>
-            <td class="label-ar">العنوان</td>
-            <td class="value-ar">{{ $client->address ?? '—' }}</td>
+            <td class="lbl">Permis Valable Jusqu'au</td>
+            <td class="val">{{ $client->license_expiry ?? '' }}</td>
+            <td class="lbl-ar">&#x0645;&#x0639;&#x062F; &#x0627;&#x0644;&#x0635;&#x0644;&#x0627;&#x062D;&#x064A;&#x0629;</td>
+            <td class="val-ar">{{ $client->license_expiry ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Ville</td>
-            <td class="value">{{ $client->city ?? '—' }}</td>
-            <td class="label-ar">المدينة</td>
-            <td class="value-ar">{{ $client->city ?? '—' }}</td>
+            <td class="lbl">Adresse</td>
+            <td class="val">{{ $client->address ?? '' }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0639;&#x0646;&#x0648;&#x0627;&#x0646;</td>
+            <td class="val-ar">{{ $client->address ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Code Postal</td>
-            <td class="value">{{ $client->postal_code ?? '—' }}</td>
-            <td class="label-ar">الرمز البريدي</td>
-            <td class="value-ar">{{ $client->postal_code ?? '—' }}</td>
+            <td class="lbl">Ville</td>
+            <td class="val">{{ $client->city ?? '' }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0645;&#x062F;&#x064A;&#x0646;&#x0629;</td>
+            <td class="val-ar">{{ $client->city ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">N° de GSM</td>
-            <td class="value">{{ $client->phone ?? '—' }}</td>
-            <td class="label-ar">رقم الهاتف</td>
-            <td class="value-ar">{{ $client->phone ?? '—' }}</td>
+            <td class="lbl">Code Postal</td>
+            <td class="val">{{ $client->postal_code ?? '' }}</td>
+            <td class="lbl-ar">&#x0631;&#x0642;&#x0645; &#x0627;&#x0644;&#x0628;&#x0631;&#x064A;&#x062F;</td>
+            <td class="val-ar">{{ $client->postal_code ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Adresse E-mail</td>
-            <td class="value">{{ $client->email ?? '—' }}</td>
-            <td class="label-ar">البريد الإلكتروني</td>
-            <td class="value-ar">{{ $client->email ?? '—' }}</td>
-        </tr>
-    </table>
-
-    {{-- Vehicle Declaration --}}
-    <table class="info-table" style="margin-bottom: 12px;">
-        <tr>
-            <td class="label" style="width: 40%;">Déclaré avoir pris en location Véhicule<br>immatriculé sous numéro :</td>
-            <td class="value" style="width: 20%; font-weight: bold; font-size: 11px;">{{ $vehicle->plate ?? '—' }}</td>
-            <td class="label-ar" style="width: 40%;">يصرح بأنه أخذ استئجار سيارة<br>مسجلة بالرقم</td>
-            <td class="value-ar" style="width: 20%; font-weight: bold; font-size: 11px;">{{ $vehicle->plate ?? '—' }}</td>
+            <td class="lbl">N° de GSM</td>
+            <td class="val">{{ $client->phone ?? '' }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0647;&#x0627;&#x062A;&#x0641;</td>
+            <td class="val-ar">{{ $client->phone ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">et appartenant à l'agence de location</td>
-            <td class="value" style="font-weight: bold;">{{ $agencyName }}</td>
-            <td class="label-ar">والمملوكة لوكالة التأجير</td>
-            <td class="value-ar" style="font-weight: bold;">{{ $agencyName }}</td>
-        </tr>
-    </table>
-
-    {{-- Rental Period --}}
-    <table class="info-table" style="margin-bottom: 12px;">
-        <tr>
-            <td class="section-header" colspan="2">pour la période allant du :</td>
-            <td class="section-header-ar" colspan="2">للفترة من</td>
+            <td class="lbl">Adresse E-mail</td>
+            <td class="val">{{ $client->email ?? '' }}</td>
+            <td class="lbl-ar">&#x0627;&#x0644;&#x0628;&#x0631;&#x064A;&#x062F; &#x0627;&#x0644;&#x0625;&#x0644;&#x0643;&#x062A;&#x0631;&#x0648;&#x0646;&#x064A;</td>
+            <td class="val-ar">{{ $client->email ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label" style="width: 28%;">Jour d'emprunt (jj/mm/aaaa)</td>
-            <td class="value" style="width: 22%;">{{ $startDate->format('d/m/Y') }}</td>
-            <td class="label-ar" style="width: 28%;">تاريخ الاستلام</td>
-            <td class="value-ar" style="width: 22%;">{{ $startDate->format('d/m/Y') }}</td>
+            <td class="lbl">Déclare avoir pris en location Véhicule<br>immatriculé sous numéro :</td>
+            <td class="val bold">{{ $vehicle->plate ?? '' }}</td>
+            <td class="lbl-ar">&#x0623;&#x0639;&#x0644;&#x0646; &#x0623;&#x0646;&#x0647; &#x062A;&#x0645; &#x0627;&#x0633;&#x062A;&#x0624;&#x062C;&#x0631; &#x0633;&#x064A;&#x0627;&#x0631;&#x0629; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629;<br>&#x0628;&#x0631;&#x0642;&#x0645;</td>
+            <td class="val-ar bold">{{ $vehicle->plate ?? '' }}</td>
         </tr>
         <tr>
-            <td class="label">Heure d'emprunt (HH:MM)</td>
-            <td class="value">{{ $startDate->format('H:i') }}</td>
-            <td class="label-ar">وقت الاستلام</td>
-            <td class="value-ar">{{ $startDate->format('H:i') }}</td>
+            <td class="lbl">et appartenant à l'agence de location</td>
+            <td class="val bold">{{ $agencyName }}</td>
+            <td class="lbl-ar">&#x0648;&#x062A;&#x0627;&#x0628;&#x0639; &#x0644;&#x0645;&#x0648;&#x0636;&#x0639; &#x0627;&#x0644;&#x0625;&#x064A;&#x062C;&#x0627;&#x0631;</td>
+            <td class="val-ar bold">{{ $agencyName }}</td>
         </tr>
         <tr>
-            <td class="label">au :</td>
-            <td class="value">{{ $endDate->format('d/m/Y') }}</td>
-            <td class="label-ar">إلى:</td>
-            <td class="value-ar">{{ $endDate->format('d/m/Y') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Jour de restitution (jj/mm/aaaa)</td>
-            <td class="value">{{ $endDate->format('d/m/Y') }}</td>
-            <td class="label-ar">تاريخ الإرجاع</td>
-            <td class="value-ar">{{ $endDate->format('d/m/Y') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Heure de restitution (HH:MM)</td>
-            <td class="value">{{ $endDate->format('H:i') }}</td>
-            <td class="label-ar">وقت الإرجاع</td>
-            <td class="value-ar">{{ $endDate->format('H:i') }}</td>
+            <td class="lbl">pour la période allant du :</td>
+            <td class="val bold" colspan="2" style="text-align:center;">
+                {{ $startDate->format('d/m/Y') }} au {{ $endDate->format('d/m/Y') }}
+            </td>
+            <td class="val-ar bold">{{ $startDate->format('d/m/Y') }} &#x0625;&#x0644;&#x0649; {{ $endDate->format('d/m/Y') }}</td>
         </tr>
     </table>
 
-    {{-- Location & Date --}}
-    <table class="no-border" style="margin-bottom: 12px;">
+    {{-- Dates detail --}}
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td style="width: 30%; font-weight: bold;">Fait à :</td>
-            <td style="width: 30%;">{{ $agencyAddress }}</td>
-            <td style="width: 20%; font-weight: bold; text-align: right; direction: rtl;">وقع بـ:</td>
-            <td style="width: 20%; text-align: right; direction: rtl;">{{ $agencyAddress }}</td>
+            <td class="lbl" style="width:40%;">- Jour d'emprunt (jj/mm/aaaa)</td>
+            <td class="val" style="width:10%;">{{ $startDate->format('d/m/Y') }}</td>
+            <td class="lbl" style="width:40%;">- Jour de restitution (jj/mm/aaaa)</td>
+            <td class="val" style="width:10%;">{{ $endDate->format('d/m/Y') }}</td>
         </tr>
         <tr>
-            <td style="font-weight: bold;">Le :</td>
-            <td>{{ $startDate->format('d/m/Y') }}</td>
-            <td style="font-weight: bold; text-align: right; direction: rtl;">بتاريخ:</td>
-            <td style="text-align: right; direction: rtl;">{{ $startDate->format('d/m/Y') }}</td>
+            <td class="lbl">- Heure d'emprunt (HH : MM)</td>
+            <td class="val">{{ $startDate->format('H:i') }}</td>
+            <td class="lbl">- Heure de restitution (HH: MM)</td>
+            <td class="val">{{ $endDate->format('H:i') }}</td>
+        </tr>
+    </table>
+
+    {{-- Fait à / Le --}}
+    <table style="width:100%; margin-bottom:8px;">
+        <tr>
+            <td style="font-size:8px; width:50%; padding:4px 0;">
+                <span class="bold">Fait à :</span> {{ $agencyAddress }}
+                <br><span class="bold">Le :</span> {{ $startDate->format('d/m/Y') }}
+            </td>
+            <td style="font-size:8px; width:50%; text-align:right; direction:rtl; padding:4px 0;">
+                <span class="bold">&#x0639;&#x0646;&#x0627;&#x0642; :</span> {{ $agencyAddress }}
+                <br><span class="bold">&#x0627;&#x0644;&#x064A;&#x0648;&#x0645; :</span> {{ $startDate->format('d/m/Y') }}
+            </td>
         </tr>
     </table>
 
     {{-- Signatures --}}
-    <table class="sig-table">
+    <table style="width:100%; margin-top:12px;">
         <tr>
-            <td>
-                <div class="sig-label">Signature et Cachet de l'Agence de Location</div>
-                <div class="sig-box">
-                    @if($agencyLogo)
-                        <img src="{{ $agencyLogo }}" alt="Logo Agence">
-                    @endif
+            <td style="width:50%; text-align:center; padding:0 10px;">
+                <div style="font-size:8px; font-weight:bold; color:#0055B8;">
+                    Signature, cachet de l'Agence de Location
                 </div>
-                <div class="sig-name">{{ $agencyName }}</div>
+                <div style="font-size:7px; color:#666; direction:rtl;">
+                    &#x0627;&#x0644;&#x062A;&#x0648;&#x0642;&#x064A;&#x0639; &#x0648;&#x0627;&#x0644;&#x062E;&#x0637; &#x0644;&#x0645;&#x0648;&#x0636;&#x0639; &#x0627;&#x0644;&#x0625;&#x064A;&#x062C;&#x0627;&#x0631;
+                </div>
+                <div class="sig-box"></div>
             </td>
-            <td></td>
-            <td>
-                <div class="sig-label">Signature du Locataire</div>
-                <div class="sig-box">
-                    @if($reservation->contract && $reservation->contract->signature_data)
-                        <img src="{{ $reservation->contract->signature_data }}" alt="Signature">
-                    @endif
+            <td style="width:50%; text-align:center; padding:0 10px;">
+                <div style="font-size:8px; font-weight:bold; color:#0055B8;">
+                    Signature du Locataire
                 </div>
-                <div class="sig-name">{{ $client->name ?? '' }}</div>
+                <div style="font-size:7px; color:#666; direction:rtl;">
+                    &#x0627;&#x0644;&#x062A;&#x0648;&#x0642;&#x064A;&#x0639; &#x0644;&#x0644;&#x0645;&#x0633;&#x062A;&#x0623;&#x062C;&#x0631;
+                </div>
+                @if($reservation->contract && $reservation->contract->signature_data)
+                    <img src="{{ $reservation->contract->signature_data }}" style="max-height:30px; margin-top:4px;" />
+                @endif
+                <div class="sig-box"></div>
             </td>
         </tr>
     </table>
-
-    <div class="page-footer">
-        <table>
-            <tr>
-                <td>{{ $agencyName }} — {{ $agencyAddress }}</td>
-                <td class="text-right">Déclaration Préalable — N° {{ $contractRef }}</td>
-            </tr>
-        </table>
-    </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════════════════
-     PAGE 2: ÉTAT DU VÉHICULE
-     ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- ═══════════════════════════════════════════════════════════════════
+     PAGE 2 — ÉTAT DU VÉHICULE
+     ═══════════════════════════════════════════════════════════════════ --}}
 <div class="page">
-    <div class="state-header">État du Véhicule</div>
-    <div class="state-subtitle">Veuillez indiquer tous les dommages existants sur le véhicule en marquant les zones concernées sur le diagramme ci-dessous.</div>
 
-    {{-- Pick-up & Return Info --}}
-    <table style="width: 100%; margin-bottom: 10px;">
-        <tr>
-            <td style="width: 50%; border: 1.5px solid #333; padding: 8px; vertical-align: top;">
-                <div class="text-center text-bold" style="background: #003366; color: #fff; padding: 4px; font-size: 10px;">PRISE EN CHARGE</div>
-                <table class="no-border" style="margin-top: 6px;">
-                    <tr>
-                        <td style="font-size: 8px; width: 40%;">Heure</td>
-                        <td style="font-size: 8px; font-weight: bold;">{{ $startDate->format('H:i') }}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 8px;">Km</td>
-                        <td style="font-size: 8px;">________</td>
-                    </tr>
-                </table>
-                <div class="text-bold" style="margin-top: 8px; font-size: 8px;">PROPRETÉ INTÉRIEURE</div>
-                <table class="checkbox-table no-border" style="margin-top: 4px;">
-                    <tr>
-                        <td><span class="checkbox"></span> Propre</td>
-                        <td><span class="checkbox"></span> Usagé</td>
-                        <td><span class="checkbox"></span> Sale</td>
-                    </tr>
-                </table>
-                <div class="text-bold" style="margin-top: 6px; font-size: 8px;">PROPRETÉ EXTÉRIEURE</div>
-                <table class="checkbox-table no-border" style="margin-top: 4px;">
-                    <tr>
-                        <td><span class="checkbox"></span> Propre</td>
-                        <td><span class="checkbox"></span> Usagé</td>
-                        <td><span class="checkbox"></span> Sale</td>
-                    </tr>
-                </table>
-                <div style="margin-top: 6px; font-size: 8px;">AUTONOMIE : 100 km</div>
-            </td>
-            <td style="width: 50%; border: 1.5px solid #333; padding: 8px; vertical-align: top;">
-                <div class="text-center text-bold" style="background: #003366; color: #fff; padding: 4px; font-size: 10px;">RESTITUTION</div>
-                <table class="no-border" style="margin-top: 6px;">
-                    <tr>
-                        <td style="font-size: 8px; width: 40%;">Heure</td>
-                        <td style="font-size: 8px; font-weight: bold;">{{ $endDate->format('H:i') }}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 8px;">Km</td>
-                        <td style="font-size: 8px;">________</td>
-                    </tr>
-                </table>
-                <div class="text-bold" style="margin-top: 8px; font-size: 8px;">PROPRETÉ INTÉRIEURE</div>
-                <table class="checkbox-table no-border" style="margin-top: 4px;">
-                    <tr>
-                        <td><span class="checkbox"></span> Propre</td>
-                        <td><span class="checkbox"></span> Usagé</td>
-                        <td><span class="checkbox"></span> Sale</td>
-                    </tr>
-                </table>
-                <div class="text-bold" style="margin-top: 6px; font-size: 8px;">PROPRETÉ EXTÉRIEURE</div>
-                <table class="checkbox-table no-border" style="margin-top: 4px;">
-                    <tr>
-                        <td><span class="checkbox"></span> Propre</td>
-                        <td><span class="checkbox"></span> Usagé</td>
-                        <td><span class="checkbox"></span> Sale</td>
-                    </tr>
-                </table>
-                <div style="margin-top: 6px; font-size: 8px;">AUTONOMIE : ________ km</div>
-            </td>
-        </tr>
-    </table>
+    <div class="blue-bar">État du Véhicule</div>
+    <div style="text-align:center; font-size:7.5px; color:#555; padding:4px 0;">
+        Veuillez indiquer tous les dommages existants sur le véhicule en marquant les zones concernées sur le diagramme ci-dessous.
+    </div>
 
-    {{-- Vehicle Diagrams --}}
-    <table style="width: 100%; margin-bottom: 10px;">
+    {{-- PRISE EN CHARGE / RESTITUTION --}}
+    <table style="width:100%; margin-bottom:8px;">
         <tr>
-            {{-- Vue de face --}}
-            <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
-                <div class="diagram-label">Vue de face</div>
-                <div style="display:inline-block; position:relative; width:120px; height:90px; margin:8px auto;">
-                    <div style="position:absolute; top:15px; left:15px; width:90px; height:50px; border:2px solid #444; background:#e8e8e8; border-radius:12px 12px 4px 4px;"></div>
-                    <div style="position:absolute; top:6px; left:30px; width:60px; height:20px; border:2px solid #444; border-radius:8px 8px 0 0; background:#b8d0e8;"></div>
-                    <div style="position:absolute; top:10px; left:34px; width:22px; height:14px; border:1px solid #666; border-radius:4px 4px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:10px; left:64px; width:22px; height:14px; border:1px solid #666; border-radius:4px 4px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:22px; left:18px; width:14px; height:8px; border:1px solid #666; border-radius:3px; background:#f0e060;"></div>
-                    <div style="position:absolute; top:22px; right:18px; width:14px; height:8px; border:1px solid #666; border-radius:3px; background:#f0e060;"></div>
-                    <div style="position:absolute; top:30px; left:32px; width:56px; height:16px; border:1.5px solid #555; border-radius:2px; background:#d0d0d0;"></div>
-                    <div style="position:absolute; bottom:6px; left:10px; width:22px; height:22px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:6px; right:10px; width:22px; height:22px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:12px; left:15px; width:12px; height:10px; border-radius:50%; background:#aaa;"></div>
-                    <div style="position:absolute; bottom:12px; right:15px; width:12px; height:10px; border-radius:50%; background:#aaa;"></div>
+            <td style="width:14%; vertical-align:top;">
+                <div style="font-size:8px; font-weight:bold; color:#0055B8; margin-bottom:2px;">PRISE EN CHARGE</div>
+                <div style="font-size:7px;">Heure : {{ $startDate->format('H:i') }}</div>
+                <div style="font-size:7px;">Km : ________</div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:7px; font-weight:bold;">PROPRETÉ INTÉRIEURE</div>
+                    <div style="font-size:7px;"><span class="chk on"></span> Propre  <span class="chk"></span> Usagé  <span class="chk"></span> Sale</div>
+                </div>
+                <div style="margin-top:4px;">
+                    <div style="font-size:7px; font-weight:bold;">PROPRETÉ EXTÉRIEURE</div>
+                    <div style="font-size:7px;"><span class="chk on"></span> Propre  <span class="chk"></span> Usagé  <span class="chk"></span> Sale</div>
+                </div>
+                <div style="margin-top:4px;">
+                    <div style="font-size:7px; font-weight:bold;">AUTONOMIE</div>
+                    <div style="font-size:7px;"><span class="chk on"></span> Plein  <span class="chk"></span> 3/4  <span class="chk"></span> 1/2  <span class="chk"></span> 1/4</div>
                 </div>
             </td>
-            {{-- Vue arrière --}}
-            <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
-                <div class="diagram-label">Vue arrière</div>
-                <div style="display:inline-block; position:relative; width:120px; height:90px; margin:8px auto;">
-                    <div style="position:absolute; top:15px; left:15px; width:90px; height:50px; border:2px solid #444; background:#e8e8e8; border-radius:4px 4px 12px 12px;"></div>
-                    <div style="position:absolute; top:6px; left:30px; width:60px; height:20px; border:2px solid #444; border-radius:0 0 8px 8px; background:#b8d0e8;"></div>
-                    <div style="position:absolute; top:10px; left:34px; width:52px; height:14px; border:1px solid #666; border-radius:0 0 4px 4px; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:22px; left:18px; width:12px; height:8px; border:1px solid #666; border-radius:3px; background:#e04040;"></div>
-                    <div style="position:absolute; top:22px; right:18px; width:12px; height:8px; border:1px solid #666; border-radius:3px; background:#e04040;"></div>
-                    <div style="position:absolute; top:30px; left:32px; width:56px; height:18px; border:1.5px solid #555; border-radius:2px; background:#d0d0d0;"></div>
-                    <div style="position:absolute; top:34px; left:50px; width:20px; height:8px; border-radius:2px; background:#888;"></div>
-                    <div style="position:absolute; bottom:6px; left:10px; width:22px; height:22px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:6px; right:10px; width:22px; height:22px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:12px; left:15px; width:12px; height:10px; border-radius:50%; background:#aaa;"></div>
-                    <div style="position:absolute; bottom:12px; right:15px; width:12px; height:10px; border-radius:50%; background:#aaa;"></div>
-                </div>
+            <td style="width:72%; text-align:center;" rowspan="2">
+                {{-- Vehicle diagrams --}}
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:50%; text-align:center; padding:4px;">
+                            <div class="diagram-label">Vue de face</div>
+                            <div style="display:inline-block; position:relative; width:110px; height:80px;">
+                                <div style="position:absolute; top:14px; left:12px; width:86px; height:44px; border:2px solid #444; background:#e8e8e8; border-radius:10px 10px 4px 4px;"></div>
+                                <div style="position:absolute; top:4px; left:28px; width:54px; height:18px; border:2px solid #444; border-radius:7px 7px 0 0; background:#b8d0e8;"></div>
+                                <div style="position:absolute; top:8px; left:32px; width:18px; height:12px; border:1px solid #666; border-radius:3px 3px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:8px; left:58px; width:18px; height:12px; border:1px solid #666; border-radius:3px 3px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:20px; left:15px; width:12px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
+                                <div style="position:absolute; top:20px; right:15px; width:12px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
+                                <div style="position:absolute; top:28px; left:30px; width:50px; height:12px; border:1px solid #888; border-radius:2px; background:#d0d0d0;"></div>
+                                <div style="position:absolute; bottom:4px; left:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                                <div style="position:absolute; bottom:4px; right:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                            </div>
+                        </td>
+                        <td style="width:50%; text-align:center; padding:4px;">
+                            <div class="diagram-label">Vue arrière</div>
+                            <div style="display:inline-block; position:relative; width:110px; height:80px;">
+                                <div style="position:absolute; top:14px; left:12px; width:86px; height:44px; border:2px solid #444; background:#e8e8e8; border-radius:4px 4px 10px 10px;"></div>
+                                <div style="position:absolute; top:4px; left:28px; width:54px; height:18px; border:2px solid #444; border-radius:0 0 7px 7px; background:#b8d0e8;"></div>
+                                <div style="position:absolute; top:8px; left:32px; width:46px; height:12px; border:1px solid #666; border-radius:0 0 3px 3px; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:20px; left:15px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
+                                <div style="position:absolute; top:20px; right:15px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
+                                <div style="position:absolute; top:28px; left:30px; width:50px; height:14px; border:1px solid #888; border-radius:2px; background:#d0d0d0;"></div>
+                                <div style="position:absolute; top:32px; left:44px; width:22px; height:6px; border-radius:2px; background:#888;"></div>
+                                <div style="position:absolute; bottom:4px; left:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                                <div style="position:absolute; bottom:4px; right:8px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:50%; text-align:center; padding:4px;">
+                            <div class="diagram-label">Côté gauche</div>
+                            <div style="display:inline-block; position:relative; width:130px; height:72px;">
+                                <div style="position:absolute; top:24px; left:6px; width:118px; height:28px; border:2px solid #444; background:#e8e8e8; border-radius:5px;"></div>
+                                <div style="position:absolute; top:8px; left:46px; width:56px; height:20px; border:2px solid #444; border-radius:4px 10px 0 0; background:#b8d0e8;"></div>
+                                <div style="position:absolute; top:12px; left:50px; width:20px; height:14px; border:1px solid #666; border-radius:3px 5px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:12px; left:76px; width:22px; height:14px; border:1px solid #666; border-radius:5px 3px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:30px; left:10px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
+                                <div style="position:absolute; top:30px; right:10px; width:8px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
+                                <div style="position:absolute; bottom:4px; left:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                                <div style="position:absolute; bottom:4px; right:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                            </div>
+                        </td>
+                        <td style="width:50%; text-align:center; padding:4px;">
+                            <div class="diagram-label">Côté droit</div>
+                            <div style="display:inline-block; position:relative; width:130px; height:72px;">
+                                <div style="position:absolute; top:24px; left:6px; width:118px; height:28px; border:2px solid #444; background:#e8e8e8; border-radius:5px;"></div>
+                                <div style="position:absolute; top:8px; left:28px; width:56px; height:20px; border:2px solid #444; border-radius:10px 4px 0 0; background:#b8d0e8;"></div>
+                                <div style="position:absolute; top:12px; left:32px; width:22px; height:14px; border:1px solid #666; border-radius:5px 3px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:12px; left:60px; width:20px; height:14px; border:1px solid #666; border-radius:3px 5px 0 0; background:#c8ddf0;"></div>
+                                <div style="position:absolute; top:30px; right:10px; width:10px; height:7px; border:1px solid #888; border-radius:2px; background:#f0e060;"></div>
+                                <div style="position:absolute; top:30px; left:10px; width:8px; height:7px; border:1px solid #888; border-radius:2px; background:#e04040;"></div>
+                                <div style="position:absolute; bottom:4px; left:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                                <div style="position:absolute; bottom:4px; right:16px; width:20px; height:20px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </td>
-        </tr>
-    </table>
-    <table style="width: 100%; margin-bottom: 10px;">
-        <tr>
-            {{-- Côté gauche --}}
-            <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
-                <div class="diagram-label">Côté gauche</div>
-                <div style="display:inline-block; position:relative; width:140px; height:80px; margin:8px auto;">
-                    <div style="position:absolute; top:28px; left:8px; width:124px; height:32px; border:2px solid #444; background:#e8e8e8; border-radius:6px;"></div>
-                    <div style="position:absolute; top:10px; left:50px; width:60px; height:22px; border:2px solid #444; border-radius:4px 12px 0 0; background:#b8d0e8;"></div>
-                    <div style="position:absolute; top:14px; left:54px; width:24px; height:16px; border:1px solid #666; border-radius:3px 6px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:14px; left:84px; width:22px; height:16px; border:1px solid #666; border-radius:6px 3px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:34px; left:10px; width:16px; height:10px; border:1px solid #666; border-radius:3px; background:#f0e060;"></div>
-                    <div style="position:absolute; top:34px; right:12px; width:12px; height:10px; border:1px solid #666; border-radius:3px; background:#e04040;"></div>
-                    <div style="position:absolute; bottom:6px; left:18px; width:24px; height:24px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:6px; right:18px; width:24px; height:24px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:13px; left:23px; width:14px; height:10px; border-radius:50%; background:#aaa;"></div>
-                    <div style="position:absolute; bottom:13px; right:23px; width:14px; height:10px; border-radius:50%; background:#aaa;"></div>
+            <td style="width:14%; vertical-align:top;">
+                <div style="font-size:8px; font-weight:bold; color:#0055B8; margin-bottom:2px;">RESTITUTION</div>
+                <div style="font-size:7px;">Heure : ________</div>
+                <div style="font-size:7px;">Km : ________</div>
+                <div style="margin-top:6px;">
+                    <div style="font-size:7px; font-weight:bold;">PROPRETÉ INTÉRIEURE</div>
+                    <div style="font-size:7px;"><span class="chk"></span> Propre  <span class="chk"></span> Usagé  <span class="chk"></span> Sale</div>
                 </div>
-            </td>
-            {{-- Côté droit --}}
-            <td style="width: 50%; text-align: center; border: 1px solid #ddd; padding: 10px;">
-                <div class="diagram-label">Côté droit</div>
-                <div style="display:inline-block; position:relative; width:140px; height:80px; margin:8px auto;">
-                    <div style="position:absolute; top:28px; left:8px; width:124px; height:32px; border:2px solid #444; background:#e8e8e8; border-radius:6px;"></div>
-                    <div style="position:absolute; top:10px; left:30px; width:60px; height:22px; border:2px solid #444; border-radius:12px 4px 0 0; background:#b8d0e8;"></div>
-                    <div style="position:absolute; top:14px; left:34px; width:22px; height:16px; border:1px solid #666; border-radius:6px 3px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:14px; left:62px; width:24px; height:16px; border:1px solid #666; border-radius:3px 6px 0 0; background:#c8ddf0;"></div>
-                    <div style="position:absolute; top:34px; right:12px; width:16px; height:10px; border:1px solid #666; border-radius:3px; background:#f0e060;"></div>
-                    <div style="position:absolute; top:34px; left:10px; width:12px; height:10px; border:1px solid #666; border-radius:3px; background:#e04040;"></div>
-                    <div style="position:absolute; bottom:6px; left:18px; width:24px; height:24px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:6px; right:18px; width:24px; height:24px; border:2.5px solid #333; border-radius:50%; background:#888;"></div>
-                    <div style="position:absolute; bottom:13px; left:23px; width:14px; height:10px; border-radius:50%; background:#aaa;"></div>
-                    <div style="position:absolute; bottom:13px; right:23px; width:14px; height:10px; border-radius:50%; background:#aaa;"></div>
+                <div style="margin-top:4px;">
+                    <div style="font-size:7px; font-weight:bold;">PROPRETÉ EXTÉRIEURE</div>
+                    <div style="font-size:7px;"><span class="chk"></span> Propre  <span class="chk"></span> Usagé  <span class="chk"></span> Sale</div>
+                </div>
+                <div style="margin-top:4px;">
+                    <div style="font-size:7px; font-weight:bold;">AUTONOMIE</div>
+                    <div style="font-size:7px;"><span class="chk"></span> Plein  <span class="chk"></span> 3/4  <span class="chk"></span> 1/2  <span class="chk"></span> 1/4</div>
                 </div>
             </td>
         </tr>
     </table>
 
     {{-- Legend --}}
-    <table class="legend-table" style="width: 100%; margin-bottom: 10px; border: 1px solid #ddd;">
+    <table style="width:100%; margin-bottom:8px; border:1px solid #ddd;">
         <tr>
-            <td style="background: #f5f5f5; font-weight: bold;">Légende :</td>
-            <td>O Bosse</td>
-            <td>X Rayure</td>
-            <td>X Cassé</td>
-            <td>[ ] Peinture</td>
-            <td>^ Rouille</td>
-            <td>* Autre</td>
+            <td style="background:#e8f0fe; font-weight:bold; font-size:7px; padding:3px 6px; width:12%;">Légende :</td>
+            <td style="font-size:7px; padding:3px 4px;">O Bosse</td>
+            <td style="font-size:7px; padding:3px 4px;">X Rayure</td>
+            <td style="font-size:7px; padding:3px 4px;">X Cassé</td>
+            <td style="font-size:7px; padding:3px 4px;">■ Peinture</td>
+            <td style="font-size:7px; padding:3px 4px;">▲ Rouille</td>
+            <td style="font-size:7px; padding:3px 4px;">★ Autre</td>
         </tr>
     </table>
 
-    {{-- Comments --}}
-    <div class="text-bold" style="margin-bottom: 4px;">Commentaires :</div>
-    <div class="comments-box">
-        @if($reservation->options && isset($reservation->options['comments']))
-            {{ $reservation->options['comments'] }}
-        @else
-            Aucun commentaire
-        @endif
+    {{-- Commentaires --}}
+    <div class="blue-bar-left" style="margin-top:4px;">Commentaires :</div>
+    <div style="border:1px solid #ddd; min-height:35px; padding:4px; font-size:8px; margin-bottom:6px;">
+        Aucun commentaire
     </div>
 
     {{-- Pièces jointes --}}
-    <div class="pieces-box">
-        <div class="title">Pièces jointes</div>
-        <table style="width: 100%;">
-            <tr>
-                <td style="width: 50%; border: 1px solid #ddd; padding: 6px; text-align: center;">
-                    @if($client->cin_image_url)
-                        <img src="{{ $client->cin_image_url }}" style="max-height: 60px;" alt="CIN">
-                    @else
-                        <div style="height: 60px; background: #f5f5f5; line-height: 60px; color: #999; font-size: 8px;">CIN — Recto</div>
-                    @endif
-                </td>
-                <td style="width: 50%; border: 1px solid #ddd; padding: 6px; text-align: center;">
-                    @if($client->license_image_url)
-                        <img src="{{ $client->license_image_url }}" style="max-height: 60px;" alt="Permis">
-                    @else
-                        <div style="height: 60px; background: #f5f5f5; line-height: 60px; color: #999; font-size: 8px;">Permis de conduire</div>
-                    @endif
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    {{-- Signatures --}}
-    <table class="sig-table" style="margin-top: 10px;">
+    <div class="blue-bar" style="margin-top:4px;">Pièces jointes</div>
+    <table style="width:100%; margin-top:4px; margin-bottom:6px;">
         <tr>
-            <td>
-                <div class="sig-label">Le Locataire</div>
-                <div class="sig-box">
-                    @if($reservation->contract && $reservation->contract->signature_data)
-                        <img src="{{ $reservation->contract->signature_data }}" alt="Signature">
-                    @endif
-                </div>
+            <td style="width:50%; text-align:center; padding:6px; border:1px dashed #ccc;">
+                <div style="font-size:7px; font-weight:bold; color:#0055B8; margin-bottom:4px;">CIN (Recto)</div>
+                @if($client->cin_image_url)
+                    <img src="{{ $client->cin_image_url }}" style="max-height:60px; max-width:100%;" />
+                @else
+                    <div style="height:50px; line-height:50px; color:#999; font-size:8px;">[Photo CIN]</div>
+                @endif
             </td>
-            <td>
-                <div class="sig-label">2ème Conducteur</div>
-                <div class="sig-box"></div>
-            </td>
-            <td>
-                <div class="sig-label">Le Loueur</div>
-                <div class="sig-box">
-                    @if($agencyLogo)
-                        <img src="{{ $agencyLogo }}" alt="Cachet">
-                    @endif
-                </div>
-            </td>
-            <td>
-                <div class="sig-label">Date et lieu de retour</div>
-                <div style="font-size: 8px; margin-top: 4px;">
-                    <div>Date et Heure : {{ $endDate->format('d/m/Y H:i') }}</div>
-                    <div style="margin-top: 4px;">Lieu de retour : {{ $agencyAddress }}</div>
-                </div>
+            <td style="width:50%; text-align:center; padding:6px; border:1px dashed #ccc;">
+                <div style="font-size:7px; font-weight:bold; color:#0055B8; margin-bottom:4px;">Permis de Conduire</div>
+                @if($client->license_image_url)
+                    <img src="{{ $client->license_image_url }}" style="max-height:60px; max-width:100%;" />
+                @else
+                    <div style="height:50px; line-height:50px; color:#999; font-size:8px;">[Photo Permis]</div>
+                @endif
             </td>
         </tr>
     </table>
 
-    <div class="page-footer">
-        <table>
-            <tr>
-                <td>{{ $agencyName }} — {{ $agencyAddress }}</td>
-                <td class="text-right">État du Véhicule — N° {{ $contractRef }}</td>
-            </tr>
-        </table>
-    </div>
+    {{-- Signatures --}}
+    <table style="width:100%; margin-top:6px;">
+        <tr>
+            <td style="width:25%; text-align:center; padding:0 4px;">
+                <div class="sig-label">Le Locataire</div>
+                @if($reservation->contract && $reservation->contract->signature_data)
+                    <img src="{{ $reservation->contract->signature_data }}" style="max-height:25px;" />
+                @endif
+                <div class="sig-box"></div>
+            </td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
+                <div class="sig-label">2ème Conducteur</div>
+                <div class="sig-box"></div>
+            </td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
+                <div class="sig-label">Le Loueur</div>
+                @if($agencyLogo)
+                    <img src="{{ $agencyLogo }}" style="max-height:25px;" />
+                @endif
+                <div class="sig-box"></div>
+            </td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
+                <div class="sig-label">Date et lieu de retour</div>
+                <div style="font-size:6.5px; margin-top:2px;">
+                    <div>Date et Heure : {{ $endDate->format('d/m/Y H:i') }}</div>
+                    <div style="margin-top:2px;">Lieu de retour : {{ $agencyAddress }}</div>
+                </div>
+                <div class="sig-box"></div>
+            </td>
+        </tr>
+    </table>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════════════════
-     PAGE 3: CONDITIONS GÉNÉRALES
-     ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- ═══════════════════════════════════════════════════════════════════
+     PAGE 3 — CONDITIONS GÉNÉRALES
+     ═══════════════════════════════════════════════════════════════════ --}}
 <div class="page">
-    <div class="conditions-header">Conditions Générales</div>
 
-    <div class="conditions-bilingual">
-        {{-- French --}}
-        <div class="conditions-fr">
-            <div class="article">
-                <div class="article-title">ARTICLE 1 : But du véhicule - Usage - Interdiction</div>
-                <div class="article-text">
+    <div class="blue-bar">Conditions Générales</div>
+
+    <table style="width:100%; border:1px solid #ccc; margin-top:4px;">
+        <tr>
+            {{-- French --}}
+            <td style="width:50%; vertical-align:top; padding:6px; border-right:1px solid #ccc; font-size:7.5px;">
+                <div class="art">
+                    <div class="art-title">ARTICLE 1 : But du véhicule - Usage - Interdiction</div>
                     Le Véhicule est loué pour être utilisé exclusivement par le Locataire pour des besoins personnels ou professionnels. Le Locataire s'interdit de :
                     <br><br>
-                    <strong>a)</strong> Sous-louer le Véhicule ou le mettre à disposition d'un tiers non autorisé.<br>
-                    <strong>b)</strong> Utiliser le Véhicule pour des compétitions, des rallies ou des courses.<br>
-                    <strong>c)</strong> Transporter des marchandises ou des matières dangereuses.<br>
-                    <strong>d)</strong> Quitter le territoire marocain sans autorisation écrite préalable.<br>
-                    <strong>e)</strong> Utiliser le Véhicule sous l'influence de drogues, alcool ou tout autre substance altérant les facultés.
+                    a) Sous-louer le Véhicule ou le mettre à disposition d'un tiers non autorisé.<br>
+                    b) Utiliser le Véhicule pour des compétitions, des rallies ou des courses.<br>
+                    c) Transporter des marchandises ou des matières dangereuses.<br>
+                    d) Quitter le territoire marocain sans autorisation écrite préalable.<br>
+                    e) Utiliser le Véhicule sous l'influence de drogues, alcool ou tout autre substance altérant les facultés.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 2 : Assurance - Accidents</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 2 : Assurance - Accidents</div>
                     Le Véhicule est couvert par une assurance responsabilité civile. En cas d'accident, le Locataire doit :
                     <br><br>
-                    <strong>a)</strong> Immédiatement prévenir la police et obtenir un procès-verbal.<br>
-                    <strong>b)</strong> Avertir le Loueur dans les 24 heures.<br>
-                    <strong>c)</strong> Fournir tous les documents nécessaires au règlement du sinistre.
+                    a) Immédiatement prévenir la police et obtenir un procès-verbal.<br>
+                    b) Avertir le Loueur dans les 24 heures.<br>
+                    c) Fournir tous les documents nécessaires au règlement du sinistre.
                     <br><br>
-                    <strong> franchise est de 20% du montant total des dommages</strong> (minimum 2000 MAD).
+                    <strong>La franchise est de 20% du montant total des dommages</strong> (minimum 2000 MAD).
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 3 : Location / Paiement / Pénalités</div>
-                <div class="article-text">
-                    Le montant de la location doit être payé intégralement avant la prise en charge du Véhicule. En cas de retard de paiement :
+                <div class="art">
+                    <div class="art-title">ARTICLE 3 : Location / Paiement / Pénalités</div>
+                    Le montant de la location doit être payé intégralement avant la prise en charge du Véhicule.
                     <br><br>
-                    <strong>a)</strong> Pénalité de retard de 2% par jour de retard.<br>
-                    <strong>b)</strong> Le Loueur se réserve le droit de récupérer le Véhicule sans mise en demeure préalable.<br>
-                    <strong>c)</strong> Le dépassement du kilomètre inclus est facturé au tarif de 1,50 MAD/km.
+                    a) Pénalité de retard de 2% par jour de retard.<br>
+                    b) Le Loueur se réserve le droit de récupérer le Véhicule sans mise en demeure préalable.<br>
+                    c) Le dépassement du kilomètre inclus est facturé au tarif de 1,50 MAD/km.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 4 : Documents du Véhicule / CN</div>
-                <div class="article-text">
-                    Les documents suivants se trouvent dans le Véhicule :
-                    <br><br>
-                    <strong>a)</strong> Carte grise<br>
-                    <strong>b)</strong> Carte d'assurance<br>
-                    <strong>c)</strong> Attestation de passage au contrôle technique<br>
-                    <strong>d)</strong> Vignette de circulation
+                <div class="art">
+                    <div class="art-title">ARTICLE 4 : Documents du Véhicule</div>
+                    Les documents suivants se trouvent dans le Véhicule :<br>
+                    a) Carte grise<br>
+                    b) Carte d'assurance<br>
+                    c) Attestation de passage au contrôle technique<br>
+                    d) Vignette de circulation
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 5 : Remboursement</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 5 : Remboursement</div>
                     Le remboursement éventuel sera effectué dans un délai de 10 jours ouvrables suivant la restitution du Véhicule.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 6 : Répudiation du Véhicule par le Client</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 6 : Répudiation du Véhicule par le Client</div>
                     En cas de refus de prendre en charge le Véhicule, le client s'engage à restituer le véhicule dans l'état où il a été remis.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 7 : Autres Conditions Complémentaires</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 7 : Autres Conditions Complémentaires</div>
                     Le non-respect des conditions entraîne la facturation des dommages au tarif du garage agréé le plus proche.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 8 : Contraventions</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 8 : Contraventions</div>
                     Les contraventions routières restent à la charge exclusive du Locataire.
                 </div>
-            </div>
-
-            <div class="article">
-                <div class="article-title">ARTICLE 9 : GPS</div>
-                <div class="article-text">
+                <div class="art">
+                    <div class="art-title">ARTICLE 9 : GPS</div>
                     Pour des raisons de sécurité, un GPS peut être installé pour localiser le véhicule en cas de vol.
                 </div>
-            </div>
-        </div>
 
-        {{-- Arabic --}}
-        <div class="conditions-ar">
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 1: الغرض من المركبة - الاستخدام - الحظر</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    يؤجر المركبة لاستخدامها حصرياً من المستأجر للاحتياجات الشخصية أو المهنية. يُمنع المستأجر من:
-                    <br><br>
-                    أ) إعادة تأجير المركبة أو وضعها تحت تصرف طرف ثالث غير مصرح له.<br>
-                    ب) استخدام المركبة في المسابقات أو التجمعات أو السباقات.<br>
-                    ج) نقل البضائع أو المواد الخطرة.<br>
-                    د) مغادرة التراب المغربي دون تصريح كتابي مسبق.<br>
-                    هـ) استخدام المركبة تحت تأثير المخدرات أو الكحول أو أي مادة أخرى تُضعف القدرات.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 2: التأمين - الحوادث</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    المركبة مشمولة بتأمين المسؤولية المدنية. في حالة الحادث، يجب على المستأجر:
-                    <br><br>
-                    أ) إبلاغ الشرطة فوراً والحصول على تقرير.<br>
-                    ب) إخطار المؤجر خلال 24 ساعة.<br>
-                    ج) تقديم جميع الوثائق اللازمة لتسوية الحادث.
-                    <br><br>
-                    <strong>النسبة المخصومة هي 20% من إجمالي الأضرار</strong> (الحد الأدنى 2000 درهم).
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 3: الإيجار / الدفع / الغرامات</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    يجب دفع مبلغ الإيجار بالكامل قبل استلام المركبة. في حالة تأخر الدفع:
-                    <br><br>
-                    أ) غرامة تأخير بنسبة 2% في اليوم.<br>
-                    ب) يحتفظ المؤجر بالحق في استرداد المركبة دون إنذار مسبق.<br>
-                    ج) تجاوز الكيلومترات المدروسة يُحتسب بسعر 1.50 درهم/كم.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 4: وثائق المركبة / البطاقة الوطنية</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    الوثائق التالية موجودة داخل المركبة:
-                    <br><br>
-                    أ) البطاقة الرمادية<br>
-                    ب) بطاقة التأمين<br>
-                    ج) شهادة اجتياز الفحص الفني<br>
-                    د) ملصق السير
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 5: استرداد المبلغ</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    يتم استرداد أي مبلغ خلال 10 أيام عمل من تاريخ إعادة المركبة.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 6: رفض العميل للمركبة</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    في حالة رفض استلام المركبة، يتعهد العميل بإعادة المركبة بنفس الحالة التي تم تسليمها بها.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 7: شروط إضافية</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    عدم الالتزام بالشروط يؤدي إلى فرض أضرار وفقاً لسعر ورشة المعتمدة الأقرب.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 8: المخالفات</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    تبقى المخالفات المرورية على عاتق المستأجر حصرياً.
-                </div>
-            </div>
-
-            <div class="article-ar">
-                <div class="article-title-ar">المادة 9: نظام تحديد الموقع</div>
-                <div class="article-text" style="text-align: right; direction: rtl;">
-                    لأسباب أمنية، يمكن تثبيت جهاز تحديد الموقع لمراقبة المركبة في حالة السرقة.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Signatures --}}
-    <table class="sig-table" style="margin-top: 16px;">
-        <tr>
-            <td>
-                <div class="sig-label">Le Locataire</div>
-                <div class="sig-box">
-                    @if($reservation->contract && $reservation->contract->signature_data)
-                        <img src="{{ $reservation->contract->signature_data }}" alt="Signature">
-                    @endif
-                </div>
+                <table style="width:100%; margin-top:10px;">
+                    <tr>
+                        <td style="width:50%; text-align:center; padding:0 6px;">
+                            <div class="sig-label">Le Locataire</div>
+                            @if($reservation->contract && $reservation->contract->signature_data)
+                                <img src="{{ $reservation->contract->signature_data }}" style="max-height:25px;" />
+                            @endif
+                            <div class="sig-box"></div>
+                        </td>
+                        <td style="width:50%; text-align:center; padding:0 6px;">
+                            <div class="sig-label">Le Loueur</div>
+                            @if($agencyLogo)
+                                <img src="{{ $agencyLogo }}" style="max-height:25px;" />
+                            @endif
+                            <div class="sig-box"></div>
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td>
-                <div class="sig-label">2ème Conducteur</div>
-                <div class="sig-box"></div>
-            </td>
-            <td>
-                <div class="sig-label">Le Loueur</div>
-                <div class="sig-box">
-                    @if($agencyLogo)
-                        <img src="{{ $agencyLogo }}" alt="Cachet">
-                    @endif
+
+            {{-- Arabic --}}
+            <td style="width:50%; vertical-align:top; padding:6px; direction:rtl; text-align:right; font-size:7.5px;">
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 1 : &#x0627;&#x0644;&#x063A;&#x0631;&#x0636; &#x0645;&#x0646; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; - &#x0627;&#x0644;&#x0627;&#x0633;&#x062A;&#x062E;&#x062F;&#x0627;&#x0645; - &#x0627;&#x0644;&#x062D;&#x0638;&#x0631;</div>
+                    &#x064A;&#x0624;&#x062C;&#x0631; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0644;&#x0627;&#x0633;&#x062A;&#x062E;&#x062F;&#x0627;&#x0645;&#x0647;&#x0627; &#x062D;&#x0635;&#x0631;&#x064A;&#x0627;&#x064B; &#x0645;&#x0646; &#x0642;&#x0628;&#x0644; &#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x0623;&#x062C;&#x0631; &#x0644;&#x0644;&#x0627;&#x062D;&#x062A;&#x064A;&#x0627;&#x062C;&#x0627;&#x062A; &#x0627;&#x0644;&#x0634;&#x062E;&#x0635;&#x064A;&#x0629; &#x0623;&#x0648; &#x0627;&#x0644;&#x0645;&#x0647;&#x0646;&#x064A;&#x0629;. &#x064A;&#x062A;&#x0645;&#x0646;&#x0639; &#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x0623;&#x062C;&#x0631; &#x0645;&#x0646; :
+                    <br><br>
+                    &#x0623;) &#x0625;&#x0639;&#x0627;&#x062F;&#x0629; &#x062A;&#x0623;&#x062C;&#x064A;&#x0631; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0623;&#x0648; &#x0639;&#x0631;&#x0636; &#x062A;&#x062D;&#x062A;&#x0648;&#x0637; &#x0637;&#x0631;&#x0641; &#x063A;&#x064A;&#x0631; &#x0645;&#x0635;&#x0631;&#x062D; &#x0644;&#x0647;.<br>
+                    &#x0628;) &#x0627;&#x0633;&#x062A;&#x062E;&#x062F;&#x0627;&#x0645; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0641;&#x064A; &#x0627;&#x0644;&#x0645;&#x0633;&#x0627;&#x0628;&#x0642;&#x0627;&#x062A; &#x0623;&#x0648; &#x0627;&#x0644;&#x062A;&#x0631;&#x0627;&#x0642;&#x064A;&#x0627;&#x062A; &#x0623;&#x0648; &#x0627;&#x0644;&#x0633;&#x0628;&#x0627;&#x0642;&#x0627;&#x062A;.<br>
+                    &#x062C;) &#x0646;&#x0642;&#x0644; &#x0627;&#x0644;&#x0628;&#x0636;&#x0627;&#x0626;&#x0639; &#x0623;&#x0648; &#x0627;&#x0644;&#x0645;&#x0648;&#x0627;&#x062F; &#x0627;&#x0644;&#x062E;&#x0637;&#x0631;&#x0629;.<br>
+                    &#x062F;) &#x0645;&#x063A;&#x0627;&#x062F;&#x0631;&#x0629; &#x0627;&#x0644;&#x062A;&#x0631;&#x0627;&#x0628; &#x0627;&#x0644;&#x0645;&#x063A;&#x0631;&#x0628;&#x064A; &#x062F;&#x0648;&#x0646; &#x062A;&#x0635;&#x0631;&#x064A;&#x062D; &#x0643;&#x062A;&#x0627;&#x0628;&#x064A; &#x0645;&#x0633;&#x0628;&#x0642;.<br>
+                    &#x0647;&#x0640;) &#x0627;&#x0633;&#x062A;&#x062E;&#x062F;&#x0627;&#x0645; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x062A;&#x062D;&#x062A; &#x062A;&#x0623;&#x062B;&#x064A;&#x0631; &#x0627;&#x0644;&#x0645;&#x062E;&#x062F;&#x0631;&#x0627;&#x062A; &#x0623;&#x0648; &#x0627;&#x0644;&#x0643;&#x062D;&#x0648;&#x0644;.
                 </div>
-            </td>
-            <td>
-                <div class="sig-label">Date et lieu de retour</div>
-                <div style="font-size: 8px; margin-top: 4px;">
-                    <div>Date et Heure : {{ $endDate->format('d/m/Y H:i') }}</div>
-                    <div style="margin-top: 4px;">Lieu de retour : {{ $agencyAddress }}</div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 2 : &#x0627;&#x0644;&#x062A;&#x0623;&#x0645;&#x064A;&#x0646; - &#x0627;&#x0644;&#x062D;&#x0648;&#x0627;&#x062F;&#x062B;</div>
+                    &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0645;&#x0634;&#x0645;&#x0648;&#x0644;&#x0629; &#x0628;&#x062A;&#x0623;&#x0645;&#x064A;&#x0646; &#x0645;&#x0633;&#x0624;&#x0648;&#x0644;&#x064A;&#x0629; &#x0627;&#x0644;&#x0645;&#x0633;&#x0624;&#x0648;&#x0644;&#x064A;&#x0629; &#x0627;&#x0644;&#x0639;&#x0627;&#x0645;&#x0629;. &#x0641;&#x064A; &#x062D;&#x0627;&#x0644;&#x0629; &#x0627;&#x0644;&#x062D;&#x0627;&#x062F;&#x062B;:
+                    <br><br>
+                    &#x0623;) &#x0625;&#x0628;&#x0644;&#x0627;&#x063A; &#x0627;&#x0644;&#x0634;&#x0631;&#x0637;&#x0629; &#x0641;&#x0648;&#x0631;&#x0627;&#x064B; &#x0648;&#x0627;&#x0644;&#x062D;&#x0635;&#x0648;&#x0644; &#x0639;&#x0644;&#x0649; &#x062A;&#x0642;&#x0631;&#x064A;&#x0631;.<br>
+                    &#x0628;) &#x0625;&#x062E;&#x0637;&#x0627;&#x0631; &#x0627;&#x0644;&#x0645;&#x0648;&#x0636;&#x0639; &#x062E;&#x0644;&#x0627;&#x0644; 24 &#x0633;&#x0627;&#x0639;&#x0629;.<br>
+                    &#x062C;) &#x062A;&#x0642;&#x062F;&#x064A;&#x0645; &#x062C;&#x0645;&#x064A;&#x0639; &#x0627;&#x0644;&#x0648;&#x062B;&#x0627;&#x0626;&#x0642; &#x0627;&#x0644;&#x0636;&#x0631;&#x0648;&#x0631;&#x064A;&#x0629;.
+                    <br><br>
+                    <strong>&#x0627;&#x0644;&#x0646;&#x0633;&#x0628;&#x0629; &#x0627;&#x0644;&#x0645;&#x062E;&#x0635;&#x0648;&#x0635;&#x0629; &#x0647;&#x064A; 20% &#x0645;&#x0646; &#x0625;&#x062C;&#x0645;&#x0627;&#x0644;&#x064A; &#x0627;&#x0644;&#x0623;&#x0636;&#x0631;&#x0627;&#x0631;</strong> (&#x0627;&#x0644;&#x062D;&#x062F; &#x0627;&#x0644;&#x0623;&#x062F;&#x0646;&#x0649; 2000 &#x062F;&#x0631;&#x0647;&#x0645;).
                 </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 3 : &#x0627;&#x0644;&#x0625;&#x064A;&#x062C;&#x0627;&#x0631; / &#x0627;&#x0644;&#x062F;&#x0641;&#x0639; / &#x0627;&#x0644;&#x063A;&#x0631;&#x0627;&#x0645;&#x0627;&#x062A;</div>
+                    &#x064A;&#x062C;&#x0628; &#x062F;&#x0641;&#x0639; &#x0645;&#x0628;&#x0644;&#x063A; &#x0627;&#x0644;&#x0625;&#x064A;&#x062C;&#x0627;&#x0631; &#x0628;&#x0627;&#x0644;&#x0643;&#x0627;&#x0645;&#x0644; &#x0642;&#x0628;&#x0644; &#x0627;&#x0633;&#x062A;&#x0644;&#x0627;&#x0645; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629;.
+                    <br><br>
+                    &#x0623;) &#x063A;&#x0631;&#x0627;&#x0645;&#x0629; &#x062A;&#x0623;&#x062E;&#x064A;&#x0631; 2% &#x0641;&#x064A; &#x0627;&#x0644;&#x064A;&#x0648;&#x0645;.<br>
+                    &#x0628;) &#x064A;&#x062D;&#x062A;&#x0641;&#x0638; &#x0627;&#x0644;&#x0645;&#x0648;&#x0636;&#x0639; &#x0639;&#x0644;&#x0649; &#x0627;&#x0633;&#x062A;&#x0631;&#x062C;&#x0627;&#x0639; &#x0627;&#x0644;&#x0633;&#x064A;&#x0627;&#x0631;&#x0629; &#x0628;&#x062F;&#x0648;&#x0646; &#x0625;&#x0634;&#x0639;&#x0627;&#x0631; &#x0623;&#x0648; &#x0645;&#x0646;&#x0627;&#x0639;&#x0629;.<br>
+                    &#x062C;) &#x0627;&#x0644;&#x062A;&#x062C;&#x0627;&#x0648;&#x0632; &#x0639;&#x0646; &#x0627;&#x0644;&#x0643;&#x064A;&#x0644;&#x0648;&#x0645;&#x062A;&#x0631; &#x064A;&#x0648;&#x062C;&#x0628; &#x0628;&#x0641;&#x0636;&#x0644; &#x0628;&#x0633;&#x0639;&#x0631; 1.50 &#x062F;&#x0631;&#x0647;&#x0645;/&#x0643;&#x0645;.
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 4 : &#x0648;&#x062B;&#x0627;&#x0626;&#x0642; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629;</div>
+                    &#x0627;&#x0644;&#x0648;&#x062B;&#x0627;&#x0626;&#x0642; &#x0627;&#x0644;&#x062A;&#x0627;&#x0644;&#x064A;&#x0629; &#x0645;&#x0648;&#x062C;&#x0648;&#x062F;&#x0629; &#x062F;&#x0627;&#x062E;&#x0644; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; :<br>
+                    &#x0623;) &#x0627;&#x0644;&#x0628;&#x0637;&#x0627;&#x0642;&#x0629; &#x0627;&#x0644;&#x0631;&#x0645;&#x0627;&#x062F;&#x064A;&#x0629;<br>
+                    &#x0628;) &#x0628;&#x0637;&#x0627;&#x0642;&#x0629; &#x0627;&#x0644;&#x062A;&#x0623;&#x0645;&#x064A;&#x0646;<br>
+                    &#x062C;) &#x0634;&#x0647;&#x0627;&#x062F;&#x0629; &#x0627;&#x062C;&#x062A;&#x064A;&#x0627;&#x0632; &#x0627;&#x0644;&#x0641;&#x062D;&#x0635; &#x0627;&#x0644;&#x0641;&#x0646;&#x064A;<br>
+                    &#x062F;) &#x0645;&#x0644;&#x0635;&#x0642; &#x0627;&#x0644;&#x0633;&#x064A;&#x0631;
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 5 : &#x0627;&#x0644;&#x0627;&#x0633;&#x062A;&#x0631;&#x062C;&#x0627;&#x0639;</div>
+                    &#x064A;&#x062A;&#x0645; &#x0627;&#x0644;&#x0627;&#x0633;&#x062A;&#x0631;&#x062C;&#x0627;&#x0639; &#x0623;&#x064A; &#x0645;&#x0628;&#x0644;&#x063A; &#x062E;&#x0644;&#x0627;&#x0644; 10 &#x0623;&#x064A;&#x0627;&#x0645; &#x0639;&#x0645;&#x0644; &#x0645;&#x0646; &#x0625;&#x0639;&#x0627;&#x062F;&#x0629; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629;.
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 6 : &#x0631;&#x0641;&#x0636; &#x0627;&#x0644;&#x0639;&#x0645;&#x064A;&#x0644; &#x0644;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629;</div>
+                    &#x0641;&#x064A; &#x062D;&#x0627;&#x0644;&#x0629; &#x0631;&#x0641;&#x0636; &#x0627;&#x0633;&#x062A;&#x0644;&#x0627;&#x0645; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x062A;&#x0628;&#x0639;&#x0647;&#x062F; &#x0627;&#x0644;&#x0639;&#x0645;&#x064A;&#x0644; &#x0625;&#x0639;&#x0627;&#x062F;&#x0629; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0641;&#x064A; &#x0627;&#x0644;&#x062D;&#x0627;&#x0644;&#x0629; &#x0627;&#x0644;&#x062A;&#x064A; &#x062A;&#x0645; &#x062A;&#x0633;&#x0644;&#x064A;&#x0645;&#x0647;&#x0627;.
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 7 : &#x0634;&#x0631;&#x0648;&#x0637; &#x0625;&#x0636;&#x0627;&#x0641;&#x064A;&#x0629;</div>
+                    &#x0639;&#x062F;&#x0645; &#x0627;&#x0644;&#x0627;&#x0644;&#x062A;&#x0632;&#x0627;&#x0645; &#x0628;&#x0627;&#x0644;&#x0634;&#x0631;&#x0648;&#x0637; &#x064A;&#x0624;&#x062F;&#x064A; &#x0625;&#x0644;&#x0649; &#x0641;&#x0636;&#x0644; &#x0627;&#x0644;&#x0623;&#x0636;&#x0631;&#x0627;&#x0631; &#x0628;&#x0633;&#x0639;&#x0631; &#x0648;&#x0631;&#x0634;&#x0629; &#x0627;&#x0644;&#x0635;&#x064A;&#x0627;&#x0646;&#x0629; &#x0627;&#x0644;&#x0645;&#x0648;&#x0627;&#x0641;&#x0642;.
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 8 : &#x0627;&#x0644;&#x0645;&#x062E;&#x0627;&#x0644;&#x0641;&#x0627;&#x062A;</div>
+                    &#x062A;&#x0628;&#x0642;&#x0649; &#x0627;&#x0644;&#x0645;&#x062E;&#x0627;&#x0644;&#x0641;&#x0627;&#x062A; &#x0627;&#x0644;&#x0645;&#x0631;&#x0648;&#x0631;&#x064A;&#x0629; &#x0639;&#x0644;&#x0649; &#x0639;&#x0627;&#x062A;&#x0642; &#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x0623;&#x062C;&#x0631;.
+                </div>
+                <div class="art">
+                    <div class="art-title" style="color:#0055B8;">&#x0645;&#x0627;&#x062F;&#x0629; 9 : &#x0627;&#x0644;&#x0645;&#x0639;&#x0631;&#x0636;</div>
+                    &#x0644;&#x0623;&#x0633;&#x0628;&#x0627;&#x0628; &#x0623;&#x0645;&#x0646;&#x064A;&#x0629; &#x064A;&#x0645;&#x0643;&#x0646; &#x062A;&#x062B;&#x0628;&#x064A;&#x062A; &#x062C;&#x0647;&#x0627;&#x0632; GPS &#x0644;&#x0645;&#x0631;&#x0627;&#x0642;&#x0628;&#x0629; &#x0627;&#x0644;&#x0645;&#x0631;&#x0643;&#x0628;&#x0629; &#x0641;&#x064A; &#x062D;&#x0627;&#x0644;&#x0629; &#x0627;&#x0644;&#x0633;&#x0631;&#x0642;&#x0629;.
+                </div>
+
+                <table style="width:100%; margin-top:10px;">
+                    <tr>
+                        <td style="width:50%; text-align:center; padding:0 6px;">
+                            <div class="sig-label">&#x0627;&#x0644;&#x0645;&#x0648;&#x0636;&#x0639;</div>
+                            @if($agencyLogo)
+                                <img src="{{ $agencyLogo }}" style="max-height:25px;" />
+                            @endif
+                            <div class="sig-box"></div>
+                        </td>
+                        <td style="width:50%; text-align:center; padding:0 6px;">
+                            <div class="sig-label">&#x0627;&#x0644;&#x0639;&#x0645;&#x064A;&#x0644;</div>
+                            @if($reservation->contract && $reservation->contract->signature_data)
+                                <img src="{{ $reservation->contract->signature_data }}" style="max-height:25px;" />
+                            @endif
+                            <div class="sig-box"></div>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
 
-    <div class="page-footer">
-        <table>
-            <tr>
-                <td>{{ $agencyName }} — {{ $agencyAddress }}</td>
-                <td class="text-right">Conditions Générales — N° {{ $contractRef }}</td>
-            </tr>
-        </table>
+    <div style="text-align:center; font-size:6.5px; color:#888; margin-top:8px;">
+        {{ $agencyName }} — {{ $agencyAddress }} — {{ $agencyPhone }}<br>
+        Conditions Générales — N° {{ $contractRef }}
     </div>
 </div>
 
-{{-- ═══════════════════════════════════════════════════════════════════════
-     PAGE 4: CONTRAT DE LOCATION
-     ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- ═══════════════════════════════════════════════════════════════════
+     PAGE 4 — CONTRAT DE LOCATION
+     ═══════════════════════════════════════════════════════════════════ --}}
 <div class="page">
-    {{-- Contract Header --}}
-    <div class="contract-header">
-        <table>
-            <tr>
-                <td style="width: 30%;" class="agency-logo">
-                    @if($agencyLogo)
-                        <img src="{{ $agencyLogo }}" style="max-height: 45px;" alt="Logo">
-                    @endif
-                </td>
-                <td style="width: 40%; text-align: center;">
-                    <div class="text-bold" style="font-size: 10px;">Contrat N°</div>
-                    <div class="contract-number">{{ $contractRef }}</div>
-                </td>
-                <td style="width: 30%; text-align: right;">
-                    <div class="text-bold" style="font-size: 10px;">{{ $agencyName }}</div>
-                    <div style="font-size: 8px;">Tél : {{ $agencyPhone }}</div>
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    {{-- Basic Info --}}
-    <table class="no-border" style="margin-bottom: 8px;">
+    {{-- Contract Header --}}
+    <table style="width:100%; margin-bottom:8px;">
         <tr>
-            <td style="width: 30%; font-weight: bold;">Fait le :</td>
-            <td style="width: 30%;">{{ $startDate->format('d/m/Y à H:i') }}</td>
-            <td style="width: 20%; font-weight: bold;">Marque :</td>
-            <td style="width: 20%;">{{ $vehicle->brand ?? '—' }} {{ $vehicle->model ?? '' }}</td>
-        </tr>
-        <tr>
-            <td style="font-weight: bold;">Lieu de livraison :</td>
-            <td>{{ $agencyAddress }}@if(isset($vehicle->latitude)) ({{ $vehicle->latitude }}, {{ $vehicle->longitude }})@endif</td>
-            <td style="font-weight: bold;">Immatriculation :</td>
-            <td>{{ $vehicle->plate ?? '—' }}</td>
-        </tr>
-        <tr>
-            <td style="font-weight: bold;">Lieu de reprise :</td>
-            <td>{{ $agencyAddress }}</td>
-            <td style="font-weight: bold;">Agent Commercial :</td>
-            <td>{{ $agentName ?? '—' }}</td>
+            <td style="width:25%; text-align:center;">
+                @if($agencyLogo)
+                    <img src="{{ $agencyLogo }}" style="max-height:40px;" />
+                @endif
+            </td>
+            <td style="width:50%; text-align:center;">
+                <div style="font-size:11px; font-weight:bold; color:#0055B8;">Contrat N° {{ $contractRef }}</div>
+                <div style="font-size:8px; color:#555;">{{ $agencyName }}</div>
+            </td>
+            <td style="width:25%; text-align:right; font-size:8px;">
+                <div class="bold">{{ $agencyName }}</div>
+                <div>Tél : {{ $agencyPhone }}</div>
+            </td>
         </tr>
     </table>
 
-    {{-- Duration --}}
-    <div class="section-title">DURÉE DE LOCATION</div>
-    <table class="detail-table" style="margin-bottom: 8px;">
+    {{-- Info Rows --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Informations</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td class="lbl">Date et Heure Départ</td>
-            <td class="val">{{ $startDate->format('d/m/Y à H:i') }}</td>
-            <td class="lbl">PROLONGATION DE LOCATION</td>
-            <td class="val">Du : ________</td>
+            <td class="lbl" style="width:20%;">Fait le :</td>
+            <td class="val" style="width:30%;">{{ $startDate->format('d/m/Y à H:i') }}</td>
+            <td class="lbl" style="width:20%;">Marque :</td>
+            <td class="val" style="width:30%;">{{ $vehicle->brand ?? '' }} {{ $vehicle->model ?? '' }}</td>
         </tr>
         <tr>
-            <td class="lbl">Date et Heure Retour</td>
-            <td class="val">{{ $endDate->format('d/m/Y à H:i') }}</td>
-            <td class="lbl"></td>
-            <td class="val">Au : ________</td>
+            <td class="lbl">Lieu de livraison :</td>
+            <td class="val">{{ $agencyAddress }}</td>
+            <td class="lbl">Immatriculation :</td>
+            <td class="val">{{ $vehicle->plate ?? '' }}</td>
+        </tr>
+        <tr>
+            <td class="lbl">Lieu de reprise :</td>
+            <td class="val">{{ $agencyAddress }}</td>
+            <td class="lbl">Agent Commercial :</td>
+            <td class="val">{{ $agentName ?? '' }}</td>
+        </tr>
+    </table>
+
+    {{-- DURÉE DE LOCATION --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Durée de Location</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
+        <tr>
+            <td class="lbl" style="width:25%;">Date et Heure Départ</td>
+            <td class="val" style="width:25%;">{{ $startDate->format('d/m/Y à H:i') }}</td>
+            <td class="lbl" style="width:25%;">Date et Heure Retour</td>
+            <td class="val" style="width:25%;">{{ $endDate->format('d/m/Y à H:i') }}</td>
         </tr>
         <tr>
             <td class="lbl">Durée de location</td>
-            <td class="val text-bold">{{ $days }} jour(s)</td>
-            <td class="lbl"></td>
-            <td class="val">Durée : ________</td>
+            <td class="val bold">{{ $days }} jour(s)</td>
+            <td class="lbl">Prolongation</td>
+            <td class="val"><span class="field-line"></span> jours</td>
         </tr>
     </table>
 
-    {{-- Client Info --}}
-    <div class="section-title">LE LOCATAIRE</div>
-    <table class="detail-table" style="margin-bottom: 8px;">
+    {{-- LE LOCATAIRE --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Le Locataire</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td class="lbl">Nom</td>
-            <td class="val">{{ strtoupper($nom) ?: '—' }}</td>
-            <td class="lbl">Prénom</td>
-            <td class="val">{{ $prenom ?: '—' }}</td>
+            <td class="lbl" style="width:25%;">Nom</td>
+            <td class="val" style="width:25%;">{{ strtoupper($nom) }}</td>
+            <td class="lbl" style="width:25%;">Prénom</td>
+            <td class="val" style="width:25%;">{{ $prenom }}</td>
         </tr>
         <tr>
             <td class="lbl">Date de naissance</td>
             <td class="val">{{ $client->birth_date ?? '__/__/____' }}</td>
             <td class="lbl">Adresse</td>
-            <td class="val">{{ $client->address ?? '—' }}</td>
+            <td class="val">{{ $client->address ?? '' }}</td>
         </tr>
         <tr>
             <td class="lbl">Tél</td>
-            <td class="val">{{ $client->phone ?? '—' }}</td>
+            <td class="val">{{ $client->phone ?? '' }}</td>
             <td class="lbl">Nationalité</td>
-            <td class="val">{{ $client->nationality ?? 'MAR' }}</td>
+            <td class="val">{{ $client->nationality ?? '' }}</td>
         </tr>
         <tr>
             <td class="lbl">Permis N°</td>
-            <td class="val">{{ $client->license_number ?? '—' }}</td>
+            <td class="val">{{ $client->license_number ?? '' }}</td>
             <td class="lbl">Permis Valable Jusqu'au</td>
-            <td class="val">{{ $client->license_expiry ?? '16/10/2038' }}</td>
+            <td class="val">{{ $client->license_expiry ?? '' }}</td>
         </tr>
         <tr>
             <td class="lbl">CIN N°</td>
-            <td class="val">{{ $client->cin ?? '—' }}</td>
+            <td class="val">{{ $client->cin ?? '' }}</td>
             <td class="lbl">Valable Jusqu'au</td>
-            <td class="val">{{ $client->cin_expiry ?? '22/07/2025' }}</td>
+            <td class="val">{{ $client->cin_expiry ?? '' }}</td>
         </tr>
     </table>
 
-    {{-- 2nd Driver --}}
-    <div class="section-title">2ème CONDUCTEUR</div>
-    <table class="detail-table" style="margin-bottom: 8px;">
+    {{-- 2ème CONDUCTEUR --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">2ème Conducteur (Facultatif)</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td class="lbl">Nom</td>
-            <td class="val">________</td>
-            <td class="lbl">Prénom</td>
-            <td class="val">________</td>
+            <td class="lbl" style="width:25%;">Nom</td>
+            <td class="val" style="width:25%;"><span class="field-line"></span></td>
+            <td class="lbl" style="width:25%;">Prénom</td>
+            <td class="val" style="width:25%;"><span class="field-line"></span></td>
         </tr>
         <tr>
             <td class="lbl">Date de naissance</td>
             <td class="val">__/__/____</td>
             <td class="lbl">Permis N°</td>
-            <td class="val">________</td>
+            <td class="val"><span class="field-line"></span></td>
         </tr>
         <tr>
             <td class="lbl">Permis Valable Jusqu'au</td>
             <td class="val">__/__/____</td>
             <td class="lbl">CIN N°</td>
-            <td class="val">________</td>
+            <td class="val"><span class="field-line"></span></td>
         </tr>
     </table>
 
-    {{-- Vehicle Papers --}}
-    <div class="section-title">PAPIERS DE VÉHICULE</div>
-    <table class="checkbox-row" style="margin-bottom: 8px;">
+    {{-- PAPIERS DE VÉHICULE --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Papiers de Véhicule</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td style="width: 50%;"><span class="checkbox checked"></span> Carte grise</td>
-            <td style="width: 50%;"><span class="checkbox"></span> Visite Technique</td>
+            <td style="padding:4px; width:50%;"><span class="chk on"></span> Carte grise</td>
+            <td style="padding:4px; width:50%;"><span class="chk on"></span> Visite Technique</td>
         </tr>
         <tr>
-            <td><span class="checkbox checked"></span> Assurance</td>
-            <td><span class="checkbox checked"></span> Attestation de paiement de vignette</td>
+            <td style="padding:4px;"><span class="chk on"></span> Assurance</td>
+            <td style="padding:4px;"><span class="chk on"></span> Attestation de paiement de vignette</td>
         </tr>
         <tr>
-            <td><span class="checkbox checked"></span> Autorisation de circulation</td>
-            <td></td>
-        </tr>
-    </table>
-
-    {{-- Franchise & Payment --}}
-    <table class="detail-table" style="margin-bottom: 8px;">
-        <tr>
-            <td style="width: 50%; vertical-align: top;">
-                <div class="section-title" style="margin-bottom: 4px;">FRANCHISE</div>
-                <table class="no-border">
-                    <tr>
-                        <td style="border: none; font-size: 8px;">Assurance "Tous risques"</td>
-                        <td style="border: none; font-size: 8px;"><span class="checkbox"></span></td>
-                    </tr>
-                    <tr>
-                        <td style="border: none; font-size: 8px; font-weight: bold;">Franchise</td>
-                        <td style="border: none; font-size: 8px; font-weight: bold;">{{ number_format($reservation->deposit_amount ?? 0, 2) }} DH</td>
-                    </tr>
-                </table>
-            </td>
-            <td style="width: 50%; vertical-align: top;">
-                <table class="detail-table" style="width: 100%;">
-                    <tr>
-                        <td class="lbl" style="font-weight: bold;">TOTAL GENERAL:</td>
-                        <td class="val text-bold">{{ number_format($reservation->total_price, 2) }} DH</td>
-                    </tr>
-                    <tr>
-                        <td class="lbl">MONTANT PAYÉ:</td>
-                        <td class="val text-bold">{{ number_format($reservation->deposit_amount ?? ($reservation->total_price * 0.1), 2) }} DH</td>
-                    </tr>
-                    <tr>
-                        <td class="lbl" style="font-weight: bold;">LE RESTE À PAYER:</td>
-                        <td class="val text-bold">{{ number_format($reservation->total_price - ($reservation->deposit_amount ?? ($reservation->total_price * 0.1)), 2) }} DH</td>
-                    </tr>
-                </table>
-            </td>
+            <td style="padding:4px;"><span class="chk on"></span> Autorisation de circulation</td>
+            <td style="padding:4px;"></td>
         </tr>
     </table>
 
-    {{-- Payment Method --}}
-    <div class="section-title">Mode de Règlement</div>
-    <table class="checkbox-row" style="margin-bottom: 10px;">
+    {{-- FRANCHISE --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Franchise</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
         <tr>
-            <td style="width: 25%;"><span class="checkbox {{ ($reservation->payment_method === 'cash' || $reservation->payment_method === 'on_site') ? 'checked' : '' }}"></span> Espèce</td>
-            <td style="width: 25%;"><span class="checkbox {{ $reservation->payment_method === 'cheque' ? 'checked' : '' }}"></span> Chèque</td>
-            <td style="width: 25%;"><span class="checkbox {{ ($reservation->payment_method === 'stripe' || $reservation->payment_method === 'cmi') ? 'checked' : '' }}"></span> Carte bancaire</td>
-            <td style="width: 25%;"><span class="checkbox {{ $reservation->payment_method === 'transfer' ? 'checked' : '' }}"></span> Virement</td>
+            <td class="lbl" style="width:50%;">Assurance "Tous risques"</td>
+            <td class="val" style="width:50%;"><span class="chk"></span> <span class="field-line" style="min-width:60px;"></span></td>
+        </tr>
+        <tr>
+            <td class="lbl">Franchise</td>
+            <td class="val bold">{{ number_format($reservation->deposit_amount ?? 0, 2) }} DH</td>
+        </tr>
+    </table>
+
+    {{-- MONTANT --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Montant</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:6px;">
+        <tr>
+            <td class="lbl" style="width:50%; font-weight:bold;">TOTAL GENERAL</td>
+            <td class="val" style="width:50%; font-weight:bold;">{{ number_format($reservation->total_price, 2) }} DH</td>
+        </tr>
+        <tr>
+            <td class="lbl">MONTANT PAYÉ</td>
+            <td class="val">{{ number_format($reservation->deposit_amount ?? 0, 2) }} DH</td>
+        </tr>
+        <tr>
+            <td class="lbl" style="font-weight:bold;">LE RESTE À PAYER</td>
+            <td class="val bold">{{ number_format(($reservation->total_price ?? 0) - ($reservation->deposit_amount ?? 0), 2) }} DH</td>
+        </tr>
+    </table>
+
+    {{-- MODE DE RÈGLEMENT --}}
+    <div class="blue-bar" style="text-align:left; font-size:8px;">Mode de Règlement</div>
+    <table class="info-tbl" style="width:100%; margin-bottom:8px;">
+        <tr>
+            <td style="padding:4px; width:25%;"><span class="chk {{ ($reservation->payment_method === 'cash' || $reservation->payment_method === 'on_site') ? 'on' : '' }}"></span> Espèce</td>
+            <td style="padding:4px; width:25%;"><span class="chk {{ $reservation->payment_method === 'cheque' ? 'on' : '' }}"></span> Chèque</td>
+            <td style="padding:4px; width:25%;"><span class="chk {{ ($reservation->payment_method === 'stripe' || $reservation->payment_method === 'cmi') ? 'on' : '' }}"></span> Carte bancaire</td>
+            <td style="padding:4px; width:25%;"><span class="chk {{ $reservation->payment_method === 'transfer' ? 'on' : '' }}"></span> Virement</td>
         </tr>
     </table>
 
     {{-- Signatures --}}
-    <table class="sig-table">
+    <table style="width:100%; margin-top:8px;">
         <tr>
-            <td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
                 <div class="sig-label">Le Locataire</div>
-                <div class="sig-box">
-                    @if($reservation->contract && $reservation->contract->signature_data)
-                        <img src="{{ $reservation->contract->signature_data }}" alt="Signature">
-                    @endif
-                </div>
+                @if($reservation->contract && $reservation->contract->signature_data)
+                    <img src="{{ $reservation->contract->signature_data }}" style="max-height:25px;" />
+                @endif
+                <div class="sig-box"></div>
             </td>
-            <td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
                 <div class="sig-label">2ème Conducteur</div>
                 <div class="sig-box"></div>
             </td>
-            <td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
                 <div class="sig-label">Le Loueur</div>
-                <div class="sig-box">
-                    @if($agencyLogo)
-                        <img src="{{ $agencyLogo }}" alt="Cachet">
-                    @endif
-                </div>
+                @if($agencyLogo)
+                    <img src="{{ $agencyLogo }}" style="max-height:25px;" />
+                @endif
+                <div class="sig-box"></div>
             </td>
-            <td>
+            <td style="width:25%; text-align:center; padding:0 4px;">
                 <div class="sig-label">Date et lieu de retour</div>
-                <div style="font-size: 8px; margin-top: 4px;">
+                <div style="font-size:6.5px; margin-top:2px;">
                     <div>Date et Heure : {{ $endDate->format('d/m/Y H:i') }}</div>
-                    <div style="margin-top: 4px;">Lieu de retour : {{ $agencyAddress }}</div>
+                    <div style="margin-top:2px;">Lieu de retour : {{ $agencyAddress }}</div>
                 </div>
+                <div class="sig-box"></div>
             </td>
         </tr>
     </table>
 
-    <div class="page-footer">
-        <table>
-            <tr>
-                <td>{{ $agencyName }}<br>{{ $agencyAddress }}</td>
-                <td class="text-right">
-                    {{ $agencyPhone }}<br>
-                    Tél : {{ $agencyPhone }} | {{ $agencyEmail }}<br>
-                    RC : {{ $agencyRC ?? '160455' }}
-                </td>
-            </tr>
-        </table>
+    {{-- Footer --}}
+    <div style="text-align:center; font-size:7px; color:#888; margin-top:10px; padding-top:4px; border-top:1px solid #ccc;">
+        {{ $agencyName }} — {{ $agencyAddress }}<br>
+        Tél : {{ $agencyPhone }} — {{ $agencyEmail }} — RC : {{ $agencyRC }}
     </div>
 </div>
 
