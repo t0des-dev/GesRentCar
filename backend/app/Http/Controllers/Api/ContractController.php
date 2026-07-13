@@ -16,63 +16,82 @@ use Illuminate\Support\Facades\Storage;
 
 class ContractController extends Controller
 {
-    protected function urlToDataUri(?string $url): ?string
+    /**
+     * Resolve any image URL/path to a local temp file path suitable for DomPDF.
+     * DomPDF cannot fetch external URLs or use data URIs reliably.
+     */
+    protected function resolveImage(?string $url): ?string
     {
         if (! $url) {
             return null;
         }
 
-        // Already a data URI
+        // Already a data URI — decode to temp file
         if (str_starts_with($url, 'data:')) {
-            return $url;
+            if (preg_match('#^data:[^;]+;base64,(.+)$#', $url, $m)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, base64_decode($m[1]));
+
+                return $tmp;
+            }
+
+            return null;
         }
 
-        // Absolute URL (http/https)
+        // Resolve /api/documents/preview/{filename} → private/documents/clients/{filename}
+        if (preg_match('#/api/documents/preview/(.+)$#', $url, $m)) {
+            $path = 'private/documents/clients/'.$m[1];
+            if (Storage::exists($path)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, Storage::get($path));
+
+                return $tmp;
+            }
+
+            return null;
+        }
+
+        // Absolute URL — download to temp file
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
             try {
                 $response = Http::timeout(10)->get($url);
                 if ($response->successful()) {
-                    $mime = $response->header('Content-Type', 'image/jpeg');
-                    $base64 = base64_encode($response->body());
-                    return 'data:'.$mime.';base64,'.$base64;
+                    $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                    file_put_contents($tmp, $response->body());
+
+                    return $tmp;
                 }
             } catch (\Exception $e) {
                 return null;
             }
         }
 
-        // Storage path — read from disk
+        // Storage path on public disk
         $disk = Storage::disk('public');
         if ($disk->exists($url)) {
-            $mime = 'image/jpeg';
-            if (str_ends_with(strtolower($url), '.png')) {
-                $mime = 'image/png';
-            } elseif (str_ends_with(strtolower($url), '.webp')) {
-                $mime = 'image/webp';
-            }
-            $base64 = base64_encode($disk->get($url));
-            return 'data:'.$mime.';base64,'.$base64;
+            $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+            file_put_contents($tmp, $disk->get($url));
+
+            return $tmp;
         }
 
-        // Fallback: return as-is
-        return $url;
+        return null;
     }
 
     protected function prepareImageData(array $data): array
     {
-        $data['cinImageUrl'] = $this->urlToDataUri($data['client']->cin_image_url ?? null);
-        $data['licenseImageUrl'] = $this->urlToDataUri($data['client']->license_image_url ?? null);
+        $data['cinImageUrl'] = $this->resolveImage($data['client']->cin_image_url ?? null);
+        $data['licenseImageUrl'] = $this->resolveImage($data['client']->license_image_url ?? null);
 
         // Agency logo
         if (! empty($data['agencyLogo'])) {
-            $data['agencyLogo'] = $this->urlToDataUri($data['agencyLogo']);
+            $data['agencyLogo'] = $this->resolveImage($data['agencyLogo']);
         }
 
         // Signature
         $sigData = $data['reservation']->contract->signature_data ?? null;
-        if ($sigData && ! str_starts_with($sigData, 'data:')) {
-            // Convert storage path or URL to data URI
-            $data['reservation']->contract->signature_data = $this->urlToDataUri($sigData);
+        if ($sigData && ! str_starts_with($sigData, 'data:') && ! str_starts_with($sigData, '/')) {
+            $data['reservation']->contract->signature_data = $this->resolveImage($sigData);
         }
 
         return $data;
@@ -171,6 +190,13 @@ class ContractController extends Controller
         ], $agencyData);
         $viewData = $this->prepareImageData($viewData);
 
+        // Track temp files for cleanup
+        $tmpFiles = array_filter([
+            $viewData['cinImageUrl'] ?? null,
+            $viewData['licenseImageUrl'] ?? null,
+            $viewData['agencyLogo'] ?? null,
+        ], fn ($f) => $f && str_starts_with($f, sys_get_temp_dir()));
+
         // Render the view to HTML then shape Arabic text for correct DomPDF rendering
         $html = view('pdf.contract', $viewData)->render();
         $html = $this->arPdf->shapeHtml($html);
@@ -188,6 +214,11 @@ class ContractController extends Controller
             ['reservation_id' => $reservation->id],
             ['file_path' => $storedPath]
         );
+
+        // Cleanup temp image files
+        foreach ($tmpFiles as $tmp) {
+            @unlink($tmp);
+        }
 
         return $pdf->download($filename);
     }
