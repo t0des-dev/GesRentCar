@@ -51,6 +51,34 @@ class ContractController extends Controller
             return null;
         }
 
+        // Resolve /api/storage/{path} → strip prefix, read from public disk
+        if (preg_match('#^/api/storage/(.+)$#', $url, $m)) {
+            $diskPath = $m[1];
+            $disk = Storage::disk('public');
+            if ($disk->exists($diskPath)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, $disk->get($diskPath));
+
+                return $tmp;
+            }
+
+            return null;
+        }
+
+        // Resolve /storage/{path} → strip prefix, read from public disk
+        if (preg_match('#^/storage/(.+)$#', $url, $m)) {
+            $diskPath = $m[1];
+            $disk = Storage::disk('public');
+            if ($disk->exists($diskPath)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, $disk->get($diskPath));
+
+                return $tmp;
+            }
+
+            return null;
+        }
+
         // Absolute URL — download to temp file
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
             try {
@@ -66,7 +94,7 @@ class ContractController extends Controller
             }
         }
 
-        // Storage path on public disk
+        // Storage path on public disk (no prefix)
         $disk = Storage::disk('public');
         if ($disk->exists($url)) {
             $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
@@ -120,14 +148,16 @@ class ContractController extends Controller
     protected function getAgencyData(): array
     {
         $nameRow = Setting::where('key', 'agency_name')->first();
-        $sloganRow = Setting::where('key', 'agency_slogan')->first();
+        $addressRow = Setting::where('key', 'agency_address')->first();
+        $phoneRow = Setting::where('key', 'agency_phone')->first();
+        $emailRow = Setting::where('key', 'agency_email')->first();
         $logoRow = Setting::where('key', 'agency_logo_url')->first();
 
         return [
             'agencyName' => $nameRow?->value ?? 'Vectoria Rent Car',
-            'agencyAddress' => $sloganRow?->value ?? 'Casablanca, Maroc',
-            'agencyPhone' => '+212 5 22 XX XX XX',
-            'agencyEmail' => 'contact@vectoria.ma',
+            'agencyAddress' => $addressRow?->value ?? 'Casablanca, Maroc',
+            'agencyPhone' => $phoneRow?->value ?? '+212 5 22 XX XX XX',
+            'agencyEmail' => $emailRow?->value ?? 'contact@vectoria.ma',
             'agencyLogo' => $logoRow?->value ?? null,
             'agencyRC' => '160455',
         ];

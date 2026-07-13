@@ -36,14 +36,16 @@ class GenerateContractPdf implements ShouldQueue
     protected function getAgencyData(): array
     {
         $nameRow = Setting::where('key', 'agency_name')->first();
-        $sloganRow = Setting::where('key', 'agency_slogan')->first();
+        $addressRow = Setting::where('key', 'agency_address')->first();
+        $phoneRow = Setting::where('key', 'agency_phone')->first();
+        $emailRow = Setting::where('key', 'agency_email')->first();
         $logoRow = Setting::where('key', 'agency_logo_url')->first();
 
         return [
             'agencyName' => $nameRow?->value ?? 'Vectoria Rent Car',
-            'agencyAddress' => $sloganRow?->value ?? 'Casablanca, Maroc',
-            'agencyPhone' => '+212 5 22 XX XX XX',
-            'agencyEmail' => 'contact@vectoria.ma',
+            'agencyAddress' => $addressRow?->value ?? 'Casablanca, Maroc',
+            'agencyPhone' => $phoneRow?->value ?? '+212 5 22 XX XX XX',
+            'agencyEmail' => $emailRow?->value ?? 'contact@vectoria.ma',
             'agencyLogo' => $logoRow?->value ?? null,
             'agencyRC' => '160455',
         ];
@@ -71,6 +73,34 @@ class GenerateContractPdf implements ShouldQueue
             if (Storage::exists($path)) {
                 $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
                 file_put_contents($tmp, Storage::get($path));
+
+                return $tmp;
+            }
+
+            return null;
+        }
+
+        // /api/storage/{path} → public disk
+        if (preg_match('#^/api/storage/(.+)$#', $url, $m)) {
+            $diskPath = $m[1];
+            $disk = Storage::disk('public');
+            if ($disk->exists($diskPath)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, $disk->get($diskPath));
+
+                return $tmp;
+            }
+
+            return null;
+        }
+
+        // /storage/{path} → public disk
+        if (preg_match('#^/storage/(.+)$#', $url, $m)) {
+            $diskPath = $m[1];
+            $disk = Storage::disk('public');
+            if ($disk->exists($diskPath)) {
+                $tmp = tempnam(sys_get_temp_dir(), 'contract_img_');
+                file_put_contents($tmp, $disk->get($diskPath));
 
                 return $tmp;
             }
