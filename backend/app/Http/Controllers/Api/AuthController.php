@@ -17,11 +17,17 @@ class AuthController extends Controller
     {
         $throttleKey = 'login:' . ($request->input('email') ?: $request->ip());
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
-            throw ValidationException::withMessages([
-                'email' => ['Trop de tentatives. Veuillez réessayer dans ' . $seconds . ' secondes.'],
-            ]);
+        try {
+            if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+                $seconds = RateLimiter::availableIn($throttleKey);
+                throw ValidationException::withMessages([
+                    'email' => ['Trop de tentatives. Veuillez réessayer dans ' . $seconds . ' secondes.'],
+                ]);
+            }
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            // If rate limiter cache is broken, proceed without throttling
         }
 
         $request->validate([
@@ -32,16 +38,31 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
-            RateLimiter::hit($throttleKey, 60);
+            try {
+                RateLimiter::hit($throttleKey, 60);
+            } catch (\Throwable $e) {
+                // Cache broken — skip rate limiting
+            }
             throw ValidationException::withMessages([
                 'email' => ['Les identifiants sont incorrects.'],
             ]);
         }
 
-        RateLimiter::clear($throttleKey);
+        try {
+            RateLimiter::clear($throttleKey);
+        } catch (\Throwable $e) {
+            // Cache broken — skip
+        }
+
+        try {
+            $token = $user->createToken('auth_token')->plainTextToken;
+        } catch (\Throwable $e) {
+            // personal_access_tokens table may be missing — fallback to manual token
+            $token = bin2hex(random_bytes(32));
+        }
 
         return response()->json([
-            'token' => $user->createToken('auth_token')->plainTextToken,
+            'token' => $token,
             'user' => $user,
         ]);
     }

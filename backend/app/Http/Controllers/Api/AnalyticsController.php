@@ -15,31 +15,33 @@ class AnalyticsController extends Controller
 
     public function track(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'event' => 'required|string|max:100',
-            'path' => 'required|string|max:255',
-            'data' => 'nullable|array',
-            'timestamp' => 'required|integer',
-        ]);
+        try {
+            $validated = $request->validate([
+                'event' => 'required|string|max:100',
+                'path' => 'required|string|max:255',
+                'data' => 'nullable|array',
+                'timestamp' => 'required|integer',
+            ]);
 
-        $event = $validated['event'];
-        $path = $validated['path'];
-        $data = $validated['data'] ?? [];
-        $timestamp = $validated['timestamp'];
+            $path = $validated['path'];
+            $timestamp = $validated['timestamp'];
 
-        $visitorId = $this->getVisitorId($request);
+            $visitorId = $this->getVisitorId($request);
 
-        // Increment page view count
-        $views = Cache::get(self::CACHE_KEY_VIEWS, []);
-        $views[$path] = ($views[$path] ?? 0) + 1;
-        Cache::put(self::CACHE_KEY_VIEWS, $views, self::CACHE_TTL);
+            // Increment page view count
+            $views = Cache::get(self::CACHE_KEY_VIEWS, []);
+            $views[$path] = ($views[$path] ?? 0) + 1;
+            Cache::put(self::CACHE_KEY_VIEWS, $views, self::CACHE_TTL);
 
-        // Track unique visitors per path
-        $visitors = Cache::get(self::CACHE_KEY_VISITORS, []);
-        $visitorKey = $path . ':' . $visitorId;
-        if (!isset($visitors[$visitorKey])) {
-            $visitors[$visitorKey] = $timestamp;
-            Cache::put(self::CACHE_KEY_VISITORS, $visitors, self::CACHE_TTL);
+            // Track unique visitors per path
+            $visitors = Cache::get(self::CACHE_KEY_VISITORS, []);
+            $visitorKey = $path . ':' . $visitorId;
+            if (!isset($visitors[$visitorKey])) {
+                $visitors[$visitorKey] = $timestamp;
+                Cache::put(self::CACHE_KEY_VISITORS, $visitors, self::CACHE_TTL);
+            }
+        } catch (\Throwable $e) {
+            // Analytics are non-critical — never block the client
         }
 
         return response()->json([

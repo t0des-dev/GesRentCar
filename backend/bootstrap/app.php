@@ -27,4 +27,41 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return $request->expectsJson();
         });
+
+        // Catch infrastructure failures (cache down, DB missing tables, etc.)
+        // and return clean JSON instead of 500 with stack trace.
+        $exceptions->renderable(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if (! $request->is('api/*')) {
+                return null;
+            }
+
+            $message = class_basename(get_class($e)).': '.$e->getMessage();
+
+            // Cache/store failures (Redis down, missing table)
+            if ($e instanceof \Predis\PredisConnectionException
+                || $e instanceof \Illuminate\Redis\Connections\ConnectionException
+                || str_contains($message, 'Connection')
+                || str_contains($message, 'cache')
+                || str_contains($message, 'Redis')
+            ) {
+                return response()->json([
+                    'message' => 'Service temporairement indisponible.',
+                    'error' => 'cache_unavailable',
+                ], 503);
+            }
+
+            // Database table missing
+            if (str_contains($message, 'relation')
+                || str_contains($message, 'does not exist')
+                || str_contains($message, 'column')
+                || $e instanceof \PDOException
+            ) {
+                return response()->json([
+                    'message' => 'Erreur de base de données. Veuillez réessayer.',
+                    'error' => 'database_error',
+                ], 503);
+            }
+
+            return null;
+        });
     })->create();
