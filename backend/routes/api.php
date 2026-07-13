@@ -111,6 +111,9 @@ $apiRoutes = function () {
         // Public storage files (images, etc.)
         Route::get('/storage/{path...}', [DocumentController::class, 'serve']);
 
+        // Document preview (manual auth via ?token= for img tags)
+        Route::get('/documents/preview/{filename}', [DocumentController::class, 'preview']);
+
         // Analytics (public)
         Route::post('/analytics/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'track']);
         Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
@@ -179,8 +182,6 @@ $apiRoutes = function () {
         Route::post('/vehicles/{vehicle}/image', [VehicleController::class, 'uploadImage']);
         Route::post('/vehicles/{vehicle}/photos', [VehicleController::class, 'uploadPhotos']);
         Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
-
-        Route::get('/documents/preview/{filename}', [DocumentController::class, 'preview']);
 
         Route::apiResource('maintenances', MaintenanceController::class);
 
