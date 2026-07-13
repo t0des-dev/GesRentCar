@@ -3,16 +3,35 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class DocumentController extends Controller
 {
     /**
      * Serves a private document if the user is authenticated.
-     * Accessible via /api/documents/preview/{filename}
+     * Accepts auth via:
+     *   - Authorization: Bearer {token} header (Sanctum default)
+     *   - ?token={token} query parameter (for <img> tags that can't set headers)
      */
-    public function preview(string $filename)
+    public function preview(Request $request, string $filename)
     {
+        // If no authenticated user yet, try to authenticate via ?token= query param
+        if (! $request->user()) {
+            $token = $request->query('token');
+            if ($token) {
+                $accessToken = PersonalAccessToken::findToken($token);
+                if ($accessToken) {
+                    $request->setUser($accessToken->tokenable);
+                }
+            }
+        }
+
+        if (! $request->user()) {
+            abort(401, 'Authentication required.');
+        }
+
         $path = 'private/documents/clients/'.$filename;
 
         if (! Storage::exists($path)) {
