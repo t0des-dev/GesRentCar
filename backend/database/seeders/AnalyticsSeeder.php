@@ -19,7 +19,7 @@ class AnalyticsSeeder extends Seeder
             'name' => 'John Doe',
             'phone' => '0600000000',
             'cin' => 'AB123456',
-            'driver_license' => 'LC-998877',
+            'license_number' => 'LC-998877',
         ]);
 
         $vehicles = Vehicle::all();
