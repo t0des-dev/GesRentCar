@@ -437,9 +437,12 @@ class VehicleSeeder extends Seeder
         ];
 
         foreach ($vehicles as $vehicle) {
-            Vehicle::updateOrCreate(
+            \DB::table('vehicles')->updateOrInsert(
                 ['plate' => $vehicle['plate']],
-                $vehicle
+                array_merge($vehicle, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
             );
         }
     }
