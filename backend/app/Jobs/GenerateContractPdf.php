@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Contract;
 use App\Models\Reservation;
 use App\Models\Setting;
+use App\Services\ArPdfService;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
@@ -124,7 +125,12 @@ class GenerateContractPdf implements ShouldQueue
         ], $agencyData);
         $viewData = $this->prepareImageData($viewData);
 
-        $pdf = Pdf::loadView('pdf.contract', $viewData)
+        // Render the view to HTML then shape Arabic text for correct DomPDF rendering
+        $arPdf = new ArPdfService();
+        $html = view('pdf.contract', $viewData)->render();
+        $html = $arPdf->shapeHtml($html);
+
+        $pdf = Pdf::loadHtml($html)
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans');

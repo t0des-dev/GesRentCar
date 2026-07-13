@@ -7,6 +7,7 @@ use App\Jobs\GenerateContractPdf;
 use App\Models\Contract;
 use App\Models\Reservation;
 use App\Models\Setting;
+use App\Services\ArPdfService;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -77,10 +78,12 @@ class ContractController extends Controller
         return $data;
     }
     protected $notificationService;
+    protected ArPdfService $arPdf;
 
     public function __construct(NotificationService $notificationService)
     {
         $this->notificationService = $notificationService;
+        $this->arPdf = new ArPdfService();
     }
 
     protected function getAgencyData(): array
@@ -168,7 +171,11 @@ class ContractController extends Controller
         ], $agencyData);
         $viewData = $this->prepareImageData($viewData);
 
-        $pdf = Pdf::loadView('pdf.contract', $viewData)
+        // Render the view to HTML then shape Arabic text for correct DomPDF rendering
+        $html = view('pdf.contract', $viewData)->render();
+        $html = $this->arPdf->shapeHtml($html);
+
+        $pdf = Pdf::loadHtml($html)
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans')
