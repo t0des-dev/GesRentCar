@@ -385,16 +385,16 @@
         <tr>
             <td style="width:50%; text-align:center; padding:6px; border:1px dashed #ccc;">
                 <div style="font-size:7px; font-weight:bold; color:#0055B8; margin-bottom:4px;">CIN (Recto)</div>
-                @if($client->cin_image_url)
-                    <img src="{{ $client->cin_image_url }}" style="max-height:60px; max-width:100%;" />
+                @if(!empty($cinImageUrl))
+                    <img src="{{ $cinImageUrl }}" style="max-height:60px; max-width:100%;" />
                 @else
                     <div style="height:50px; line-height:50px; color:#999; font-size:8px;">[Photo CIN]</div>
                 @endif
             </td>
             <td style="width:50%; text-align:center; padding:6px; border:1px dashed #ccc;">
                 <div style="font-size:7px; font-weight:bold; color:#0055B8; margin-bottom:4px;">Permis de Conduire</div>
-                @if($client->license_image_url)
-                    <img src="{{ $client->license_image_url }}" style="max-height:60px; max-width:100%;" />
+                @if(!empty($licenseImageUrl))
+                    <img src="{{ $licenseImageUrl }}" style="max-height:60px; max-width:100%;" />
                 @else
                     <div style="height:50px; line-height:50px; color:#999; font-size:8px;">[Photo Permis]</div>
                 @endif

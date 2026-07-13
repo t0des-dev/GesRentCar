@@ -10,10 +10,72 @@ use App\Models\Setting;
 use App\Services\NotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class ContractController extends Controller
 {
+    protected function urlToDataUri(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        // Already a data URI
+        if (str_starts_with($url, 'data:')) {
+            return $url;
+        }
+
+        // Absolute URL (http/https)
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            try {
+                $response = Http::timeout(10)->get($url);
+                if ($response->successful()) {
+                    $mime = $response->header('Content-Type', 'image/jpeg');
+                    $base64 = base64_encode($response->body());
+                    return 'data:'.$mime.';base64,'.$base64;
+                }
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        // Storage path — read from disk
+        $disk = Storage::disk('public');
+        if ($disk->exists($url)) {
+            $mime = 'image/jpeg';
+            if (str_ends_with(strtolower($url), '.png')) {
+                $mime = 'image/png';
+            } elseif (str_ends_with(strtolower($url), '.webp')) {
+                $mime = 'image/webp';
+            }
+            $base64 = base64_encode($disk->get($url));
+            return 'data:'.$mime.';base64,'.$base64;
+        }
+
+        // Fallback: return as-is
+        return $url;
+    }
+
+    protected function prepareImageData(array $data): array
+    {
+        $data['cinImageUrl'] = $this->urlToDataUri($data['client']->cin_image_url ?? null);
+        $data['licenseImageUrl'] = $this->urlToDataUri($data['client']->license_image_url ?? null);
+
+        // Agency logo
+        if (! empty($data['agencyLogo'])) {
+            $data['agencyLogo'] = $this->urlToDataUri($data['agencyLogo']);
+        }
+
+        // Signature
+        $sigData = $data['reservation']->contract->signature_data ?? null;
+        if ($sigData && ! str_starts_with($sigData, 'data:')) {
+            // Convert storage path or URL to data URI
+            $data['reservation']->contract->signature_data = $this->urlToDataUri($sigData);
+        }
+
+        return $data;
+    }
     protected $notificationService;
 
     public function __construct(NotificationService $notificationService)
@@ -97,13 +159,16 @@ class ContractController extends Controller
             ? $reservation->vehicle->agent->name
             : null;
 
-        $pdf = Pdf::loadView('pdf.contract', array_merge([
+        $viewData = array_merge([
             'reservation' => $reservation,
             'client' => $reservation->client,
             'vehicle' => $reservation->vehicle,
             'lang' => $lang,
             'agentName' => $agentName,
-        ], $agencyData))
+        ], $agencyData);
+        $viewData = $this->prepareImageData($viewData);
+
+        $pdf = Pdf::loadView('pdf.contract', $viewData)
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans')

@@ -13,6 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class GenerateContractPdf implements ShouldQueue
@@ -47,6 +48,61 @@ class GenerateContractPdf implements ShouldQueue
         ];
     }
 
+    protected function urlToDataUri(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        if (str_starts_with($url, 'data:')) {
+            return $url;
+        }
+
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            try {
+                $response = Http::timeout(10)->get($url);
+                if ($response->successful()) {
+                    $mime = $response->header('Content-Type', 'image/jpeg');
+                    $base64 = base64_encode($response->body());
+                    return 'data:'.$mime.';base64,'.$base64;
+                }
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        $disk = Storage::disk('public');
+        if ($disk->exists($url)) {
+            $mime = 'image/jpeg';
+            if (str_ends_with(strtolower($url), '.png')) {
+                $mime = 'image/png';
+            } elseif (str_ends_with(strtolower($url), '.webp')) {
+                $mime = 'image/webp';
+            }
+            $base64 = base64_encode($disk->get($url));
+            return 'data:'.$mime.';base64,'.$base64;
+        }
+
+        return $url;
+    }
+
+    protected function prepareImageData(array $data): array
+    {
+        $data['cinImageUrl'] = $this->urlToDataUri($data['client']->cin_image_url ?? null);
+        $data['licenseImageUrl'] = $this->urlToDataUri($data['client']->license_image_url ?? null);
+
+        if (! empty($data['agencyLogo'])) {
+            $data['agencyLogo'] = $this->urlToDataUri($data['agencyLogo']);
+        }
+
+        $sigData = $data['reservation']->contract->signature_data ?? null;
+        if ($sigData && ! str_starts_with($sigData, 'data:')) {
+            $data['reservation']->contract->signature_data = $this->urlToDataUri($sigData);
+        }
+
+        return $data;
+    }
+
     public function handle(NotificationService $notificationService): void
     {
         $reservation = Reservation::with(['client', 'vehicle', 'vehicle.agent', 'contract'])->findOrFail($this->reservationId);
@@ -59,13 +115,16 @@ class GenerateContractPdf implements ShouldQueue
 
         $agencyData = $this->getAgencyData();
 
-        $pdf = Pdf::loadView('pdf.contract', array_merge([
+        $viewData = array_merge([
             'reservation' => $reservation,
             'client' => $reservation->client,
             'vehicle' => $reservation->vehicle,
             'lang' => $this->lang,
             'agentName' => $agentName,
-        ], $agencyData))
+        ], $agencyData);
+        $viewData = $this->prepareImageData($viewData);
+
+        $pdf = Pdf::loadView('pdf.contract', $viewData)
             ->setPaper('a4', 'portrait')
             ->setOption('dpi', 150)
             ->setOption('defaultFont', 'DejaVu Sans');
