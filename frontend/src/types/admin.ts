@@ -98,6 +98,10 @@ export interface DashboardStats {
   reservations_count: number;
   active_bookings: number;
   occupancy_rate: number;
+  clients_count?: number;
+  revenue_today?: number;
+  pending_contracts?: number;
+  pending_partner?: number;
   maintenance_alerts?: { vehicle: string; plate: string; days: number }[];
   partner_due?: number;
   revenue_history?: { month: string; revenue: number }[];

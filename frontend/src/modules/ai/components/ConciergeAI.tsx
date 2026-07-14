@@ -125,7 +125,7 @@ export default function ConciergeAI() {
                   className="flex-1 bg-transparent border-none outline-none py-3 text-sm font-medium text-slate-900 placeholder:text-slate-400"
                 />
                 <button 
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={!input.trim()}
                   className="w-10 h-10 bg-primary text-white rounded-2xl flex items-center justify-center hover:bg-blue-600 disabled:opacity-30 transition-all shadow-lg shadow-primary/20"
                 >

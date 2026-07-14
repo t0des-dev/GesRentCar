@@ -86,17 +86,6 @@ function getStoredTimeOrNow(key: string): string {
   return now.toTimeString().slice(0, 5);
 }
 
-function getStoredEndTimeOrNow(key: string): string {
-  const stored = localStorage.getItem(key);
-  if (stored) return stored;
-  const now = new Date();
-  const m = now.getMinutes();
-  const r = m < 30 ? 30 : 0;
-  if (r === 0) now.setHours(now.getHours() + 1);
-  now.setMinutes(r + 60, 0, 0);
-  return now.toTimeString().slice(0, 5);
-}
-
 export default function HomeClient() {
   const router = useRouter();
   const { t, lang } = useTranslation();
@@ -117,11 +106,8 @@ export default function HomeClient() {
     if (typeof window === "undefined") return "";
     return getStoredTimeOrNow("vrc_search_start_time");
   });
-  const [endTime, setEndTime] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return getStoredEndTimeOrNow("vrc_search_end_time");
-  });
   const [scrollPercent, setScrollPercent] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
@@ -168,16 +154,15 @@ export default function HomeClient() {
     localStorage.setItem("vrc_search_start", startDate);
     localStorage.setItem("vrc_search_end", endDate);
     localStorage.setItem("vrc_search_start_time", startTime);
-    localStorage.setItem("vrc_search_end_time", endTime);
 
     const params = new URLSearchParams();
     if (location) params.set("location", location);
     if (startDate) params.set("start_date", startDate);
     if (endDate) params.set("end_date", endDate);
     if (startTime) params.set("start_time", startTime);
-    if (endTime) params.set("end_time", endTime);
+    if (selectedCategory) params.set("category", selectedCategory);
     router.push(`/fleet?${params.toString()}`);
-  }, [location, startDate, endDate, startTime, endTime, router]);
+  }, [location, startDate, endDate, startTime, selectedCategory, router]);
 
   const sectionMap = useMemo<Record<string, () => ReactNode>>(
     () => ({
@@ -193,11 +178,11 @@ export default function HomeClient() {
           setEndDate={setEndDate}
           startTime={startTime}
           setStartTime={setStartTime}
-          endTime={endTime}
-          setEndTime={setEndTime}
           onSearch={handleSearch}
           aboutText={aboutText}
           stats={STATS}
+          selectedCategory={selectedCategory ?? undefined}
+          onCategorySelect={setSelectedCategory}
         />
       ),
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
@@ -274,8 +259,6 @@ export default function HomeClient() {
         setEndDate={setEndDate}
         startTime={startTime}
         setStartTime={setStartTime}
-        endTime={endTime}
-        setEndTime={setEndTime}
         onSearch={handleSearch}
       />
     </main>

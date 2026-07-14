@@ -14,7 +14,7 @@ import NavLinks from "./navbar/NavLinks";
 import LanguageSwitcher from "./navbar/LanguageSwitcher";
 import UserActions from "./navbar/UserActions";
 import MobileMenu from "./navbar/MobileMenu";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/ThemeToggle";
 import GlobalSearch from "@/components/GlobalSearch";
 
 export default function Navbar() {

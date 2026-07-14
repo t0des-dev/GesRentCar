@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  // Legacy /search/[id] flow deprecated — redirect to /booking wizard
-  redirect(`/booking?vehicle=${params.id}`);
+export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  redirect(`/booking?vehicle=${id}`);
 }

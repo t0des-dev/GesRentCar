@@ -20,17 +20,19 @@ interface HeroSectionProps {
   setEndDate: (v: string) => void;
   startTime: string;
   setStartTime: (v: string) => void;
-  endTime: string;
-  setEndTime: (v: string) => void;
   onSearch: () => void;
   aboutText: string;
   stats: any[];
   heroImage?: string;
   heroVideo?: string | null;
+  selectedCategory?: string;
+  onCategorySelect?: (cat: string | null) => void;
 }
 
 export default function HeroSection({
-  agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp
+  agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate,
+  startTime, setStartTime, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp,
+  selectedCategory, onCategorySelect,
 }: HeroSectionProps) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -44,7 +46,7 @@ export default function HeroSection({
   const y1 = useTransform(scrollY, [0, 500], [0, reduceMotion ? 0 : 150]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
-  const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || "https://images.unsplash.com/photo-1503377215949-b98377627166?q=80&w=2400&auto=format&fit=crop";
+  const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || "/images/hero-fallback.jpg";
   const heroVideo = heroVideoProp || agency.hero_video_url || "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4";
 
   const scrollText = content?.experience?.cta_text || "Découvrir";
@@ -55,8 +57,7 @@ export default function HeroSection({
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-ink-1 will-change-transform"
       style={{ minHeight: "100dvh" }}
     >
-      <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03] bg-[url('https://res.cloudinary.com/dcbp6v7p3/image/upload/v1714859000/grain_texture_w4f4q4.png')] mix-blend-overlay" />
-
+      {/* Ambient glow */}
       <div className="absolute w-[600px] h-[600px] bg-primary/8 blur-[150px] rounded-full pointer-events-none z-[1] -top-48 -left-48" />
 
       <HeroBackground
@@ -78,8 +79,9 @@ export default function HeroSection({
             startDate={startDate} setStartDate={setStartDate}
             endDate={endDate} setEndDate={setEndDate}
             startTime={startTime} setStartTime={setStartTime}
-            endTime={endTime} setEndTime={setEndTime}
             onSearch={onSearch} y1={y1} mounted={mounted}
+            selectedCategory={selectedCategory}
+            onCategorySelect={onCategorySelect}
           />
         </div>
       </div>

@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, MotionValue, AnimatePresence } from "framer-motion";
-import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock } from "lucide-react";
+import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock, ChevronDown, Car, Fuel, Zap, Truck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import MagneticWrapper from "@/shared/ui/MagneticWrapper";
 
 interface HeroSearchFormProps {
@@ -16,12 +16,12 @@ interface HeroSearchFormProps {
   setEndDate: (v: string) => void;
   startTime: string;
   setStartTime: (v: string) => void;
-  endTime: string;
-  setEndTime: (v: string) => void;
   onSearch: () => void;
   y1: MotionValue<number>;
   mounted: boolean;
   content?: any;
+  selectedCategory?: string;
+  onCategorySelect?: (cat: string | null) => void;
 }
 
 function getTodayString(): string {
@@ -36,8 +36,18 @@ const PREDEFINED_LOCATIONS = [
   { id: "rabat", name: "Centre Ville", city: "Rabat", icon: Building2 },
 ];
 
+const CATEGORY_CHIPS = [
+  { id: "suv", label: "SUV", icon: Car },
+  { id: "berline", label: "Berline", icon: Sparkles },
+  { id: "electrique", label: "Électrique", icon: Zap },
+  { id: "utilitaire", label: "Utilitaire", icon: Truck },
+  { id: "citadine", label: "Citadine", icon: Fuel },
+];
+
 export default function HeroSearchForm({
-  location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch, y1, mounted, content = {}
+  location, setLocation, startDate, setStartDate, endDate, setEndDate,
+  startTime, setStartTime, onSearch, y1, mounted, content = {},
+  selectedCategory, onCategorySelect,
 }: HeroSearchFormProps) {
   const today = getTodayString();
   const sf = content?.search_form || {};
@@ -50,6 +60,15 @@ export default function HeroSearchForm({
   const fleetLinkHref = sf?.fleet_link_href || "/fleet";
 
   const [showLocations, setShowLocations] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleQuickDate = useCallback((days: number) => {
+    const start = new Date();
+    const end = new Date();
+    end.setDate(start.getDate() + days);
+    setStartDate(start.toISOString().split("T")[0]);
+    setEndDate(end.toISOString().split("T")[0]);
+  }, [setStartDate, setEndDate]);
 
   return (
     <motion.div
@@ -61,6 +80,26 @@ export default function HeroSearchForm({
     >
       <div className="glass-dark rounded-[24px] p-8 shadow-2xl border border-white/10 backdrop-blur-2xl">
         <div className="space-y-6">
+
+          {/* Category Quick-Pick Chips */}
+          {onCategorySelect && (
+            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+              {CATEGORY_CHIPS.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => onCategorySelect(selectedCategory === cat.id ? null : cat.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                    selectedCategory === cat.id
+                      ? "bg-gold text-ink-1 shadow-[0_0_16px_rgba(212,175,55,0.4)]"
+                      : "bg-white/8 text-white/70 border border-white/10 hover:bg-white/15 hover:text-white hover:border-white/25"
+                  }`}
+                >
+                  <cat.icon size={12} />
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Location Field with Custom Dropdown */}
           <div className="space-y-2.5 relative">
@@ -79,7 +118,7 @@ export default function HeroSearchForm({
                 className="w-full bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none font-medium"
               />
             </div>
-            
+
             {/* Custom Autocomplete Dropdown */}
             <AnimatePresence>
               {showLocations && (
@@ -112,6 +151,7 @@ export default function HeroSearchForm({
             </AnimatePresence>
           </div>
 
+          {/* Date Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2.5">
               <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
@@ -125,15 +165,6 @@ export default function HeroSearchForm({
                   min={today}
                   onChange={e => setStartDate(e.target.value)}
                   className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
-                />
-              </div>
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                <Clock size={18} className="text-gold shrink-0" />
-                <input
-                  type="time"
-                  value={startTime}
-                  onChange={e => setStartTime(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
                 />
               </div>
             </div>
@@ -152,17 +183,70 @@ export default function HeroSearchForm({
                   className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
                 />
               </div>
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                <Clock size={18} className="text-gold shrink-0" />
-                <input
-                  type="time"
-                  value={endTime}
-                  onChange={e => setEndTime(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
-                />
+            </div>
+          </div>
+
+          {/* Quick Date Presets */}
+          <div className="flex gap-2 justify-center lg:justify-start">
+            {[
+              { label: "1j", days: 1 },
+              { label: "3j", days: 3 },
+              { label: "1sem", days: 7 },
+              { label: "2sem", days: 14 },
+            ].map((preset) => (
+              <button
+                key={preset.days}
+                onClick={() => handleQuickDate(preset.days)}
+                className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-white/5 text-white/50 border border-white/10 hover:bg-gold/20 hover:text-gold hover:border-gold/30 transition-all duration-300"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Collapsible Time Pickers (mobile: hidden by default) */}
+          <div className={`${expanded ? "block" : "hidden"} lg:block space-y-4`}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
+                  Heure de départ
+                </label>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+                  <Clock size={18} className="text-gold shrink-0" />
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={e => setStartTime(e.target.value)}
+                    className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
+                  Heure de retour
+                </label>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
+                  <Clock size={18} className="text-gold shrink-0" />
+                  <input
+                    type="time"
+                    value={startTime}
+                    readOnly
+                    className="w-full bg-transparent text-white/40 text-sm font-medium [color-scheme:dark] relative z-10 cursor-default"
+                  />
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Expand/Collapse times toggle (mobile only) */}
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="lg:hidden flex items-center gap-2 mx-auto text-[11px] font-bold uppercase tracking-widest text-white/40 hover:text-gold transition-colors"
+          >
+            <Clock size={12} />
+            {expanded ? "Masquer les horaires" : "Choisir les horaires"}
+            <ChevronDown size={12} className={`transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
+          </button>
 
           <MagneticWrapper className="w-full pt-2">
             <Button

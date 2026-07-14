@@ -67,7 +67,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function ReservationsTable({
   reservations, onAction, onGenerateContract, onPreviewDocs, actionLoading,
-  onRowClick, onConfirm, onCancel, onBulkAction,
+  onRowClick, onStatusChange, onConfirm, onCancel, onBulkAction,
   currentPage = 1, lastPage = 1, total, onPageChange,
 }: ReservationsTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
