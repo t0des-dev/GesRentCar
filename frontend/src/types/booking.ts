@@ -9,6 +9,14 @@ export interface BookingClient {
   verified?: boolean;
 }
 
+export interface PromoResult {
+  valid: boolean;
+  discount: number;
+  type: "fixed" | "percent";
+  value: number;
+  message: string;
+}
+
 export interface BookingState {
   vehicleId: number | null;
   startDate: string;
@@ -17,7 +25,8 @@ export interface BookingState {
   flexibility: "best_price" | "flexible";
   mileage: "limited" | "unlimited";
   client: BookingClient;
-  paymentMethod: "deposit_card" | "full_card";
+  paymentMethod: "on_site" | "stripe" | "cmi";
+  promo?: PromoResult;
 }
 
 export interface BookingStepProps {

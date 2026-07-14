@@ -203,20 +203,29 @@ export default function PeriodStep({
             Point de rencontre / Aéroport
           </label>
         </div>
-        <input
+        <select
           id="location"
-          type="text"
-          placeholder="Ex: Aéroport Mohammed V (CMN)..."
           value={booking.location}
           onChange={(e) => update("location", e.target.value)}
           onBlur={(e) => handleBlur("location", e.target.value)}
           className={cn(
-            "w-full bg-surface-1 border rounded-xl px-6 py-4 font-medium text-ink-1 focus:bg-surface-0 focus:border-primary/20 transition-all outline-none placeholder:text-ink-4",
+            "w-full bg-surface-1 border rounded-xl px-6 py-4 font-medium text-ink-1 focus:bg-surface-0 focus:border-primary/20 transition-all outline-none",
             getFieldError("location")
               ? "border-red-200 bg-red-50"
-              : "border-border"
+              : "border-border",
+            !booking.location && "text-ink-4"
           )}
-        />
+        >
+          <option value="">Sélectionnez un point de rencontre</option>
+          <option value="Aéroport Mohammed V (CMN)">Aéroport Mohammed V (CMN)</option>
+          <option value="Aéroport Marrakech Menara (RAK)">Aéroport Marrakech Menara (RAK)</option>
+          <option value="Aéroport Casablanca Anfa (CAS)">Aéroport Casablanca Anfa (CAS)</option>
+          <option value="Gare Casa Voyageurs">Gare Casa Voyageurs</option>
+          <option value="Agence Vectoria - Casablanca">Agence Vectoria - Casablanca</option>
+          <option value="Agence Vectoria - Marrakech">Agence Vectoria - Marrakech</option>
+          <option value="Agence Vectoria - Rabat">Agence Vectoria - Rabat</option>
+          <option value="Livraison à l'adresse">Livraison à l'adresse</option>
+        </select>
         <FieldError error={getFieldError("location")} />
       </motion.div>
 

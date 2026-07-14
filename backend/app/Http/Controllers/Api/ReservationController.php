@@ -92,6 +92,7 @@ class ReservationController extends Controller
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
                 'total_price' => $pricing['total_price'],
+                'deposit_amount' => round($pricing['total_price'] * 0.10, 2),
                 'status' => $status,
                 'options' => empty($options) ? null : $options,
             ]);
@@ -174,6 +175,7 @@ class ReservationController extends Controller
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
                 'total_price' => $pricing['total_price'],
+                'deposit_amount' => round($pricing['total_price'] * 0.10, 2),
                 'status' => $status,
                 'payment_method' => $validated['payment_method'],
                 'options' => empty($options) ? null : $options,
@@ -222,12 +224,29 @@ class ReservationController extends Controller
     public function update(Request $request, Reservation $reservation)
     {
         $validated = $request->validate([
-            'status' => 'sometimes|string|in:pending,pending_payment,confirmed,ongoing,completed,cancelled,attente_paiement,pending_partner',
+            'status' => 'sometimes|string|in:pending,pending_payment,confirmed,ongoing,completed,cancelled,pending_partner',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after:start_date',
             'vehicle_id' => 'sometimes|exists:vehicles,id',
             'cancel_reason' => 'sometimes|nullable|string',
         ]);
+
+        // Validate status transitions
+        if (isset($validated['status'])) {
+            $allowedTransitions = [
+                'pending' => ['confirmed', 'cancelled'],
+                'pending_payment' => ['confirmed', 'cancelled'],
+                'pending_partner' => ['pending_payment', 'cancelled'],
+                'attente_paiement' => ['confirmed', 'cancelled'],
+                'confirmed' => ['ongoing', 'cancelled'],
+                'ongoing' => ['completed'],
+            ];
+            $currentStatus = $reservation->status;
+            $newStatus = $validated['status'];
+            if (isset($allowedTransitions[$currentStatus]) && ! in_array($newStatus, $allowedTransitions[$currentStatus])) {
+                return response()->json(['message' => "Transition de {$currentStatus} vers {$newStatus} non autorisée."], 422);
+            }
+        }
 
         if (isset($validated['cancel_reason'])) {
             $docs = $reservation->documents ?? [];
@@ -344,7 +363,7 @@ class ReservationController extends Controller
      */
     public function cancel(Reservation $reservation)
     {
-        $cancellableStatuses = ['pending', 'pending_payment', 'confirmed', 'attente_paiement', 'pending_partner'];
+        $cancellableStatuses = ['pending', 'pending_payment', 'confirmed', 'pending_partner'];
 
         if (! in_array($reservation->status, $cancellableStatuses)) {
             return response()->json([
@@ -407,11 +426,6 @@ class ReservationController extends Controller
     {
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
-
-            // Trouver le PaymentIntent via les metadata Stripe
-            $intents = PaymentIntent::all([
-                'limit' => 10,
-            ]);
 
             // Remboursement via Charge (plus fiable)
             $refundAmount = (int) ($reservation->payment->paid_amount * 100);

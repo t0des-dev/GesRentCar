@@ -1,9 +1,6 @@
-import SearchClient from "./SearchClient";
+import { redirect } from "next/navigation";
 
-export async function generateStaticParams() {
-  return [{ id: "placeholder" }];
-}
-
-export default function VehicleDetailPage() {
-  return <SearchClient />;
+export default function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // Legacy /search/[id] flow deprecated — redirect to /booking wizard
+  redirect(`/booking?vehicle=${params.id}`);
 }

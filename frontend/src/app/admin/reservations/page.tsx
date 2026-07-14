@@ -104,6 +104,19 @@ export default function ReservationsPage() {
     }
   };
 
+  const handleStatusChange = async (id: number, status: string) => {
+    setActionLoading(id);
+    try {
+      await api.put(`/reservations/${id}`, { status });
+      await fetchData();
+    } catch (err) {
+      console.error(`Error updating status to ${status}`, err);
+      notifyError("Erreur lors de la mise à jour du statut.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleGenerateContract = async (id: number) => {
     setActionLoading(id);
     try {
@@ -117,9 +130,22 @@ export default function ReservationsPage() {
     }
   };
 
-  const handleExport = () => {
-    const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
-    window.open(`${API}/exports/reservations?token=${token}`, "_blank");
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
+      const res = await fetch(`${API}/exports/reservations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "reservations.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      notifyError("Erreur lors de l'export.");
+    }
   };
 
   const filteredReservations = activeTab === "all"
@@ -234,6 +260,7 @@ export default function ReservationsPage() {
           onRowClick={setDrawerReservation}
           onConfirm={(r) => openModal(r, "confirm")}
           onCancel={(r) => openModal(r, "cancel")}
+          onStatusChange={handleStatusChange}
         />
       )}
 

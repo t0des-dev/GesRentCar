@@ -82,7 +82,7 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
                   </a>
                 </div>
                 <div className="aspect-video rounded-xl overflow-hidden border-2 border-border group relative">
-                  <img src={getImageUrl(docs.cin) || ""} alt="CIN" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={getImageUrl(docs.cin) || ""} alt="CIN" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onError={(e) => { (e.target as HTMLImageElement).src = "/images/document-placeholder.png"; }} />
                 </div>
               </motion.div>
             )}
@@ -102,7 +102,7 @@ export default function DocumentPreviewModal({ docs, onClose }: DocumentPreviewM
                   </a>
                 </div>
                 <div className="aspect-video rounded-xl overflow-hidden border-2 border-border group relative">
-                  <img src={getImageUrl(docs.license) || ""} alt="Permis" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={getImageUrl(docs.license) || ""} alt="Permis" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onError={(e) => { (e.target as HTMLImageElement).src = "/images/document-placeholder.png"; }} />
                 </div>
               </motion.div>
             )}

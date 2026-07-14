@@ -1,3 +1,5 @@
+import type { PromoResult } from "@/types/booking";
+
 const HIGH_SEASON_MONTHS = [7, 8, 12];
 const LONG_STAY_TIERS = [
   { days: 14, multiplier: 0.85, label: "Tarif 2 semaines" },
@@ -12,6 +14,7 @@ export interface PricingInput {
   startDate: string;
   flexibility?: "best_price" | "flexible";
   mileage?: "limited" | "unlimited";
+  promo?: PromoResult;
 }
 
 export interface PricingResult {
@@ -47,14 +50,18 @@ export function calculatePrice(input: PricingInput): PricingResult {
     reason = "Tarif weekend";
   }
 
-  if ((!reason || reason === "Tarif weekend") && days >= 1) {
-    for (const tier of LONG_STAY_TIERS) {
-      if (days >= tier.days) {
-        multiplier = tier.multiplier;
-        reason = tier.label;
-        break;
-      }
+  let longStayDiscount = 1.0;
+  let longStayReason: string | null = null;
+  for (const tier of LONG_STAY_TIERS) {
+    if (days >= tier.days) {
+      longStayDiscount = tier.multiplier;
+      longStayReason = tier.label;
+      break;
     }
+  }
+  multiplier *= longStayDiscount;
+  if (longStayReason) {
+    reason = reason ? `${reason} + ${longStayReason}` : longStayReason;
   }
 
   const dailyRate = Math.round(pricePerDay * multiplier * 100) / 100;
@@ -88,7 +95,19 @@ export function calculatePrice(input: PricingInput): PricingResult {
     breakdown.push({ label: "Kilométrage illimité", amount: amt });
   }
 
-  const total = Math.round((basePrice + optionsPrice) * 100) / 100;
+  let promoDiscount = 0;
+  if (input.promo?.valid) {
+    if (input.promo.type === "fixed") {
+      promoDiscount = input.promo.value;
+    } else {
+      promoDiscount = Math.round((basePrice + optionsPrice) * input.promo.value / 100 * 100) / 100;
+    }
+    if (promoDiscount > 0) {
+      breakdown.push({ label: "Code promo", amount: -promoDiscount });
+    }
+  }
+
+  const total = Math.max(0, Math.round((basePrice + optionsPrice - promoDiscount) * 100) / 100);
   const deposit = Math.round(total * 0.1 * 100) / 100;
 
   return { total, basePrice, dailyRate, optionsPrice, deposit, dynamicReason: reason, breakdown };

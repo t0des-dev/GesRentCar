@@ -35,13 +35,8 @@ export default function AdminDashboard() {
       setStats(statsRes.data);
       setReservations(Array.isArray(resRes.data) ? resRes.data : resRes.data.data ?? []);
     } catch {
-      setStats({
-        revenue: 6000, reservations_count: 1, active_bookings: 1, occupancy_rate: 25,
-        revenue_history: [{ month: "Jan", revenue: 2000 }, { month: "Feb", revenue: 4000 }, { month: "Mar", revenue: 6000 }],
-        fleet_distribution: [{ name: "Interne", value: 4 }, { name: "Partenaires", value: 2 }],
-        top_vehicles: [{ brand: "Mercedes", model: "Class C", count: 12, revenue: 10200 }],
-        payment_status: [{ name: "Payé", value: 45 }, { name: "En attente", value: 12 }]
-      });
+      notifyError("Erreur lors du chargement des statistiques.");
+      setStats(null);
     } finally { setLoading(false); }
   }, []);
 
@@ -61,9 +56,22 @@ export default function AdminDashboard() {
     catch { notifyError("Erreur lors de la generation du contrat."); } finally { setActionLoading(null); }
   };
 
-  const handleExport = () => {
-    const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
-    window.open(`${API}/exports/reservations?token=${token}`, "_blank");
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
+      const res = await fetch(`${API}/exports/reservations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "reservations.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      notifyError("Erreur lors de l'export.");
+    }
   };
 
   return (

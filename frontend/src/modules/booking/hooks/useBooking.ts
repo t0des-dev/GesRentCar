@@ -78,18 +78,46 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
   const [isScanning, setIsScanning] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
 
-  const [booking, setBooking] = useState<BookingState>(() => ({
-    vehicleId: null, startDate: "", endDate: "", location: "",
-    flexibility: "best_price", mileage: "limited",
-    client: {
-      name: "", email: "", phone: "", cin: "", licenseNumber: "",
-      cinImageUrl: "", licenseImageUrl: "", verified: false
-    },
-    paymentMethod: "deposit_card",
-  }));
+  const [booking, setBooking] = useState<BookingState>(() => {
+    if (typeof window === 'undefined') return {
+      vehicleId: null, startDate: "", endDate: "", location: "",
+      flexibility: "best_price", mileage: "limited",
+      client: { name: "", email: "", phone: "", cin: "", licenseNumber: "", cinImageUrl: "", licenseImageUrl: "", verified: false },
+      paymentMethod: "on_site",
+    };
+    try {
+      const saved = localStorage.getItem('vrc_booking_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.client) {
+          return { ...parsed, paymentMethod: parsed.paymentMethod || "on_site" };
+        }
+      }
+    } catch {}
+    return {
+      vehicleId: null, startDate: "", endDate: "", location: "",
+      flexibility: "best_price", mileage: "limited",
+      client: { name: "", email: "", phone: "", cin: "", licenseNumber: "", cinImageUrl: "", licenseImageUrl: "", verified: false },
+      paymentMethod: "on_site",
+    };
+  });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  // Persist booking state to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && booking.vehicleId) {
+      try { localStorage.setItem('vrc_booking_state', JSON.stringify(booking)); } catch {}
+    }
+  }, [booking]);
+
+  // Clear persistence on confirmation
+  useEffect(() => {
+    if (confirmed && typeof window !== 'undefined') {
+      try { localStorage.removeItem('vrc_booking_state'); } catch {}
+    }
+  }, [confirmed]);
 
   // Availability check
   const { status: availabilityStatus, recheck: recheckAvailability } = useVehicleAvailability(
@@ -143,8 +171,9 @@ export function useBooking(initialVehicles: DisplayVehicle[] = []) {
       startDate: booking.startDate,
       flexibility: booking.flexibility,
       mileage: booking.mileage,
+      promo: booking.promo,
     });
-  }, [vehicle?.price, days, booking.startDate, booking.flexibility, booking.mileage]);
+  }, [vehicle?.price, days, booking.startDate, booking.flexibility, booking.mileage, booking.promo]);
 
   const { total, deposit } = pricing;
 

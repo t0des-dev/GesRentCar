@@ -114,6 +114,9 @@ $apiRoutes = function () {
         // Document preview (manual auth via ?token= for img tags)
         Route::get('/documents/preview/{filename}', [DocumentController::class, 'preview']);
 
+        // Promo validation
+        Route::post('/promos/validate', [\App\Http\Controllers\Api\PromoController::class, 'validateCode']);
+
         // Analytics (public)
         Route::post('/analytics/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'track']);
         Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
@@ -141,10 +144,10 @@ $apiRoutes = function () {
         Route::get('/reservations', [ReservationController::class, 'index']);
         Route::get('/reservations/my', [ReservationController::class, 'my']);
         Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
-        Route::put('/reservations/{reservation}', [ReservationController::class, 'update']);
-        Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
-        Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
-        Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
+        Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->middleware('role:admin');
+        Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept'])->middleware('role:admin');
+        Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->middleware('role:admin');
+        Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->middleware('role:admin');
 
         // Stats
         Route::get('stats/revenue', [StatsController::class, 'revenueByCategory']);

@@ -39,7 +39,7 @@ class StatsController extends Controller
                 'vehicles.model',
                 'vehicles.plate'
             )
-            ->whereIn('reservations.status', ['confirmed', 'active', 'pending'])
+            ->whereNotIn('reservations.status', ['cancelled'])
             ->get();
 
         return response()->json($reservations);

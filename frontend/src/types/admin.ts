@@ -3,17 +3,34 @@ export interface Reservation {
   start_date: string;
   end_date: string;
   total_price: number;
+  deposit_amount?: number;
   status: string;
+  payment_method?: string;
+  options?: Record<string, unknown>;
+  documents?: Record<string, unknown>;
+  signature?: string;
+  created_at?: string;
+  updated_at?: string;
   client?: { 
+    id?: number;
     name: string; 
     email?: string;
     phone?: string;
+    cin?: string;
+    license_number?: string;
     cin_image_url?: string; 
     license_image_url?: string; 
   };
-  vehicle?: { brand: string; model: string; plate: string };
+  vehicle?: { id?: number; brand: string; model: string; plate: string; image_url?: string };
   contract?: {
+    id?: number;
     file_path: string;
+    signed_at?: string;
+  };
+  payment?: {
+    id?: number;
+    paid_amount?: number;
+    status?: string;
   };
 }
 

@@ -26,23 +26,24 @@ const formatDate = (dateStr?: string) => {
 
 export default function ReservationDrawer({ reservation, onClose, onGenerateContract, actionLoading }: ReservationDrawerProps) {
   const steps = [
-    { id: "pending_payment", label: "Réservé", icon: Calendar },
-    { id: "pending", label: "Payé", icon: CreditCard },
+    { id: "pending", label: "Réservé", icon: Calendar },
+    { id: "pending_payment", label: "Payé", icon: CreditCard },
     { id: "confirmed", label: "Contrat", icon: FileText },
-    { id: "active", label: "En cours", icon: CheckCircle },
+    { id: "ongoing", label: "En cours", icon: CheckCircle },
     { id: "completed", label: "Terminé", icon: ShieldCheck },
   ];
 
   const getCurrentStepIndex = () => {
     switch (reservation.status) {
-      case "pending_payment":
-      case "attente_paiement":
-        return 0;
       case "pending":
       case "pending_partner":
+        return 0;
+      case "pending_payment":
+      case "attente_paiement":
         return 1;
       case "confirmed":
         return 2;
+      case "ongoing":
       case "active":
         return 3;
       case "completed":

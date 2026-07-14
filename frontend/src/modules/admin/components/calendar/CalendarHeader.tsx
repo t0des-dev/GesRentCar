@@ -7,9 +7,10 @@ interface CalendarHeaderProps {
   currentMonth: Date;
   onPrev: () => void;
   onNext: () => void;
+  onToday?: () => void;
 }
 
-export default function CalendarHeader({ currentMonth, onPrev, onNext }: CalendarHeaderProps) {
+export default function CalendarHeader({ currentMonth, onPrev, onNext, onToday }: CalendarHeaderProps) {
   return (
     <motion.header
       initial={{ opacity: 0, y: 20 }}
@@ -24,6 +25,14 @@ export default function CalendarHeader({ currentMonth, onPrev, onNext }: Calenda
         </div>
       </div>
       <div className="flex items-center gap-3 bg-surface-2 p-1.5 rounded-2xl border-2 border-border">
+        {onToday && (
+          <button
+            onClick={onToday}
+            className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-ink-2 hover:border-gold hover:text-gold transition-all"
+          >
+            Aujourd'hui
+          </button>
+        )}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}

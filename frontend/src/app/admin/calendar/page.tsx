@@ -18,17 +18,25 @@ export default function CalendarPage() {
   const [data, setData] = useState<any[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedRes, setSelectedRes] = useState<any>(null);
 
+  const handleToday = () => {
+    const today = new Date();
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
+  };
+
+  const currentMonthDate = useMemo(() => new Date(currentYear, currentMonth, 1), [currentMonth, currentYear]);
+
   const daysInMonth = useMemo(() => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const date = new Date(year, month, 1);
+    const date = new Date(currentYear, currentMonth, 1);
     const days = [];
-    while (date.getMonth() === month) { days.push(new Date(date)); date.setDate(date.getDate() + 1); }
+    while (date.getMonth() === currentMonth) { days.push(new Date(date)); date.setDate(date.getDate() + 1); }
     return days;
-  }, [currentMonth]);
+  }, [currentMonth, currentYear]);
 
   const fetchData = async () => {
     try {
@@ -63,6 +71,9 @@ export default function CalendarPage() {
     const newStart = new Date(targetDay); newStart.setHours(12, 0, 0, 0);
     const newEnd = new Date(targetDay); newEnd.setDate(newEnd.getDate() + diffDays); newEnd.setHours(12, 0, 0, 0);
     
+    const confirmed = window.confirm(`Déplacer la réservation VC-${String(res.id).padStart(4, "0")} ?`);
+    if (!confirmed) return;
+
     try {
       await api.put(`/reservations/${res.id}`, { vehicle_id: targetVehicleId, start_date: newStart.toISOString().split('T')[0], end_date: newEnd.toISOString().split('T')[0] });
       fetchData();
@@ -79,9 +90,10 @@ export default function CalendarPage() {
   return (
     <>
       <CalendarHeader 
-        currentMonth={currentMonth} 
-        onPrev={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))} 
-        onNext={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))} 
+        currentMonth={currentMonthDate} 
+        onPrev={() => setCurrentMonth(prev => prev === 0 ? 11 : prev - 1)} 
+        onNext={() => setCurrentMonth(prev => prev === 11 ? 0 : prev + 1)} 
+        onToday={handleToday}
       />
 
       <CalendarGrid 

@@ -80,4 +80,29 @@ export const reservationService = {
     const { data } = await api.post(`/reservations/${reservationId}/sign`, { signature });
     return data;
   },
+
+  async getAll(params?: { status?: string; page?: number; per_page?: number }) {
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.set('status', params.status);
+    if (params?.page) queryParams.set('page', params.page.toString());
+    if (params?.per_page) queryParams.set('per_page', params.per_page.toString());
+    const qs = queryParams.toString();
+    const res = await api.get(`/reservations${qs ? `?${qs}` : ''}`);
+    return res.data;
+  },
+
+  async update(id: number, data: Record<string, unknown>) {
+    const res = await api.put(`/reservations/${id}`, data);
+    return res.data;
+  },
+
+  async accept(id: number) {
+    const res = await api.post(`/reservations/${id}/accept`);
+    return res.data;
+  },
+
+  async reject(id: number) {
+    const res = await api.post(`/reservations/${id}/reject`);
+    return res.data;
+  },
 };

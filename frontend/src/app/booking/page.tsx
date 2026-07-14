@@ -119,7 +119,7 @@ export default function BookingPage() {
 
         <div className="flex flex-col lg:flex-row gap-10 items-start">
           <div className="w-full lg:w-2/3">
-            <StepIndicator currentStep={step} onStepClick={setStep} />
+            <StepIndicator currentStep={step} onStepClick={(s) => { if (s <= step) setStep(s); }} />
 
             <div className="mb-8 min-h-[500px] relative">
               <AnimatePresence mode="wait">

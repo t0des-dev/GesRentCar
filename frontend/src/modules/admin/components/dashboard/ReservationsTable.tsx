@@ -15,6 +15,7 @@ interface ReservationsTableProps {
   onPreviewDocs: (docs: { cin?: string; license?: string; name?: string }) => void;
   actionLoading: number | null;
   onRowClick: (reservation: Reservation) => void;
+  onStatusChange?: (id: number, status: string) => void;
   onConfirm?: (reservation: Reservation) => void;
   onCancel?: (reservation: Reservation) => void;
   onBulkAction?: (ids: number[], action: "accept" | "reject") => void;
@@ -347,6 +348,28 @@ export default function ReservationsTable({
                           Rejeter
                         </motion.button>
                       </div>
+                    ) : r.status === "confirmed" ? (
+                      <div className="flex gap-2 justify-end">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-sky-500 to-sky-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-sky-500/40 transition-all"
+                          onClick={(e) => { e.stopPropagation(); onStatusChange?.(r.id, "ongoing"); }}
+                          disabled={actionLoading === r.id}
+                        >
+                          En cours
+                        </motion.button>
+                      </div>
+                    ) : r.status === "ongoing" || r.status === "active" ? (
+                      <div className="flex gap-2 justify-end">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-blue-500/40 transition-all"
+                          onClick={(e) => { e.stopPropagation(); onStatusChange?.(r.id, "completed"); }}
+                          disabled={actionLoading === r.id}
+                        >
+                          Terminé
+                        </motion.button>
+                      </div>
                     ) : (
                       <span className="text-sm font-bold text-ink-3 uppercase tracking-wider">Traitée</span>
                     )}
@@ -442,6 +465,28 @@ export default function ReservationsTable({
                       disabled={actionLoading === r.id}
                     >
                       Rejeter
+                    </motion.button>
+                  </div>
+                ) : r.status === "confirmed" ? (
+                  <div className="flex gap-2 justify-end">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-sky-500 to-sky-500/90 text-white text-xs font-bold uppercase tracking-wider"
+                      onClick={(e) => { e.stopPropagation(); onStatusChange?.(r.id, "ongoing"); }}
+                      disabled={actionLoading === r.id}
+                    >
+                      En cours
+                    </motion.button>
+                  </div>
+                ) : r.status === "ongoing" || r.status === "active" ? (
+                  <div className="flex gap-2 justify-end">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-500/90 text-white text-xs font-bold uppercase tracking-wider"
+                      onClick={(e) => { e.stopPropagation(); onStatusChange?.(r.id, "completed"); }}
+                      disabled={actionLoading === r.id}
+                    >
+                      Terminé
                     </motion.button>
                   </div>
                 ) : null}

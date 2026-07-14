@@ -71,9 +71,17 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
     createSession();
   }, [createSession]);
 
-  const expiresIn = session
-    ? Math.max(0, Math.floor((new Date(session.expires_at).getTime() - Date.now()) / 1000))
-    : 0;
+  const [expiresIn, setExpiresIn] = useState(0);
+
+  useEffect(() => {
+    if (!session) return;
+    const tick = () => setExpiresIn(
+      Math.max(0, Math.floor((new Date(session.expires_at).getTime() - Date.now()) / 1000))
+    );
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [session]);
 
   if (loading && !session) {
     return (
