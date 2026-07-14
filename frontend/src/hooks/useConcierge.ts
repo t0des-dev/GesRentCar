@@ -53,10 +53,10 @@ export function useConcierge() {
     return () => window.removeEventListener("open-concierge", handleOpen);
   }, []);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleSend = async (message?: string) => {
+    const userMsg = message || input;
+    if (!userMsg.trim()) return;
 
-    const userMsg = input;
     setMessages(prev => [...prev, { role: "user", content: userMsg }]);
     setInput("");
     setIsTyping(true);
@@ -123,6 +123,18 @@ export function useConcierge() {
       } else if (lowerMsg.includes("affaires") || lowerMsg.includes("business") || lowerMsg.includes("réunion")) {
         recommendation = { id: "4", brand: "Mercedes-Benz", model: "Classe S", price: 3800, reason: "Le bureau mobile le plus luxueux au monde." };
         response = "Pour vos rendez-vous d'affaires, la Classe S assure une présence discrète et imposante.";
+      } else if (lowerMsg.includes("prix") || lowerMsg.includes("tarif") || lowerMsg.includes("coût") || lowerMsg.includes("combien")) {
+        response = "Nos tarifs commencent à 1200 DH/jour. Consultez notre catalogue pour voir les prix de chaque véhicule.";
+      } else if (lowerMsg.includes("annuler") || lowerMsg.includes("annulation")) {
+        response = "Pour annuler, connectez-vous à votre espace client ou contactez-nous directement.";
+      } else if (lowerMsg.includes("contact") || lowerMsg.includes("téléphone") || lowerMsg.includes("email") || lowerMsg.includes("appeler")) {
+        response = "Contactez-nous au +212 600 00 00 00 ou par email à contact@vectoria.com";
+      } else if (lowerMsg.includes("merci") || lowerMsg.includes("au revoir") || lowerMsg.includes("bye")) {
+        response = "Merci ! N'hésitez pas à revenir si vous avez d'autres questions. À bientôt !";
+      } else if (lowerMsg.includes("assurance") || lowerMsg.includes("assuré")) {
+        response = "Tous nos véhicules sont couverts par une assurance complète. Des options supplémentaires sont disponibles lors de la réservation.";
+      } else if (lowerMsg.includes("caution") || lowerMsg.includes("dépôt")) {
+        response = "Un acompte de 10% est requis lors de la réservation. Le solde est payé à la prise en charge du véhicule.";
       }
 
       setMessages(prev => [...prev, { role: "bot", content: response, recommendation }]);

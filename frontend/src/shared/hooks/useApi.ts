@@ -81,3 +81,101 @@ export function useSignContract() {
     },
   });
 }
+
+// ─── Loyalty ─────────────────────────────────────────────────────────────────
+export function useLoyaltyProfile() {
+  return useQuery({
+    queryKey: ["loyalty", "profile"],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get("/loyalty/profile"));
+      return res.data;
+    },
+  });
+}
+
+export function useLoyaltyHistory() {
+  return useQuery({
+    queryKey: ["loyalty", "history"],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get("/loyalty/history"));
+      return res.data;
+    },
+  });
+}
+
+export function useRedeemLoyalty() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (points: number) => import("@/shared/services/client").then(m => m.default.post("/loyalty/redeem", { points })),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["loyalty"] });
+    },
+  });
+}
+
+// ─── Reviews ─────────────────────────────────────────────────────────────────
+export function useVehicleReviews(vehicleId: number) {
+  return useQuery({
+    queryKey: ["reviews", vehicleId],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get(`/reviews/vehicle/${vehicleId}`));
+      return res.data;
+    },
+    enabled: !!vehicleId,
+  });
+}
+
+export function useVehicleReviewStats(vehicleId: number) {
+  return useQuery({
+    queryKey: ["reviews", "stats", vehicleId],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get(`/reviews/vehicle/${vehicleId}/stats`));
+      return res.data;
+    },
+    enabled: !!vehicleId,
+  });
+}
+
+export function useSubmitReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { vehicle_id: number; reservation_id: number; rating: number; title?: string; comment?: string; cleanliness?: number; performance?: number; value_for_money?: number }) =>
+      import("@/shared/services/client").then(m => m.default.post("/reviews", data)),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", variables.vehicle_id] });
+    },
+  });
+}
+
+// ─── Referrals ───────────────────────────────────────────────────────────────
+export function useReferralCode() {
+  return useQuery({
+    queryKey: ["referral", "code"],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get("/referral/code"));
+      return res.data;
+    },
+  });
+}
+
+export function useReferralStats() {
+  return useQuery({
+    queryKey: ["referral", "stats"],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get("/referral/stats"));
+      return res.data;
+    },
+  });
+}
+
+// ─── Notifications ───────────────────────────────────────────────────────────
+export function useNotifications() {
+  return useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await import("@/shared/services/client").then(m => m.default.get("/notifications"));
+      return res.data;
+    },
+    refetchInterval: 30000,
+  });
+}

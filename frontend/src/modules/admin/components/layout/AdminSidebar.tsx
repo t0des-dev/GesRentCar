@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { useState, useMemo } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -198,21 +199,29 @@ export default function AdminSidebar({
       {/* Footer Profile */}
       <div className="p-4 border-t border-border bg-surface-0/50">
         {isCollapsed && !isMobileOpen ? (
-          <button onClick={onLogout} className="w-full flex items-center justify-center p-2 rounded-xl text-ink-3 hover:text-red-500 hover:bg-red-50 transition-colors" title="Déconnexion">
-            <LogOut size={20} />
-          </button>
+          <div className="space-y-2">
+            <ThemeToggle />
+            <button onClick={onLogout} className="w-full flex items-center justify-center p-2 rounded-xl text-ink-3 hover:text-red-500 hover:bg-red-50 transition-colors" title="Déconnexion">
+              <LogOut size={20} />
+            </button>
+          </div>
         ) : (
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gold/30 to-gold/10 border border-gold/40 flex items-center justify-center text-sm font-bold text-gold shrink-0">
-               {user?.name?.charAt(0) || "A"}
-             </div>
-             <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-ink-1 truncate">{user?.name || "Admin"}</p>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 truncate">{user?.role || "Administrateur"}</p>
-             </div>
-             <button onClick={onLogout} className="p-2 text-ink-3 hover:text-red-500 rounded-lg hover:bg-red-50 transition-all shrink-0">
-               <LogOut size={16} />
-             </button>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gold/30 to-gold/10 border border-gold/40 flex items-center justify-center text-sm font-bold text-gold shrink-0">
+                 {user?.name?.charAt(0) || "A"}
+               </div>
+               <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-ink-1 truncate">{user?.name || "Admin"}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 truncate">{user?.role || "Administrateur"}</p>
+               </div>
+               <button onClick={onLogout} className="p-2 text-ink-3 hover:text-red-500 rounded-lg hover:bg-red-50 transition-all shrink-0">
+                 <LogOut size={16} />
+               </button>
+            </div>
+            <div className="flex justify-end">
+              <ThemeToggle />
+            </div>
           </div>
         )}
       </div>

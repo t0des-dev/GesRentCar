@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, Calendar, Car, Percent } from "lucide-react";
+import { TrendingUp, Calendar, Car, Percent, Users, DollarSign, FileText, Handshake } from "lucide-react";
 import { DashboardStats } from "@/types/admin";
 import { motion } from "framer-motion";
 import { cn } from "@/shared/utils";
@@ -66,38 +66,118 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
     },
   ];
 
+  const extraCards = [
+    ...(stats.clients_count !== undefined
+      ? [{
+          label: "Clients",
+          value: stats.clients_count,
+          icon: Users,
+          gradient: "from-cyan-500/30 to-cyan-500/10",
+          border: "border-cyan-400/40",
+          icon_color: "text-cyan-400",
+        }]
+      : []),
+    ...(stats.revenue_today !== undefined
+      ? [{
+          label: "Revenus Aujourd'hui",
+          value: `${fmt(stats.revenue_today)} DH`,
+          icon: DollarSign,
+          gradient: "from-emerald-500/30 to-emerald-500/10",
+          border: "border-emerald-400/40",
+          icon_color: "text-emerald-400",
+        }]
+      : []),
+    ...(stats.pending_contracts !== undefined
+      ? [{
+          label: "Contrats en Attente",
+          value: stats.pending_contracts,
+          icon: FileText,
+          gradient: "from-amber-500/30 to-amber-500/10",
+          border: "border-amber-400/40",
+          icon_color: "text-amber-400",
+        }]
+      : []),
+    ...(stats.pending_partner !== undefined
+      ? [{
+          label: "Partenaire Dû",
+          value: stats.pending_partner,
+          icon: Handshake,
+          gradient: "from-rose-500/30 to-rose-500/10",
+          border: "border-rose-400/40",
+          icon_color: "text-rose-400",
+        }]
+      : []),
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {kpiCards.map((card, idx) => {
-        const Icon = card.icon;
-        return (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1, duration: 0.5 }}
-            whileHover={{ y: -4 }}
-            className={cn(
-              "bg-gradient-to-br rounded-2xl border-2 p-6 card-premium",
-              card.gradient,
-              card.border
-            )}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-3">{card.label}</p>
-                <p className="text-2xl md:text-3xl font-bold text-ink-1 tracking-tight">{card.value}</p>
+    <div className="mb-8 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiCards.map((card, idx) => {
+          const Icon = card.icon;
+          return (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              whileHover={{ y: -4 }}
+              className={cn(
+                "bg-gradient-to-br rounded-2xl border-2 p-6 card-premium",
+                card.gradient,
+                card.border
+              )}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-3">{card.label}</p>
+                  <p className="text-2xl md:text-3xl font-bold text-ink-1 tracking-tight">{card.value}</p>
+                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className={cn("w-12 h-12 rounded-lg flex items-center justify-center bg-white/10 backdrop-blur-sm", card.icon_color)}
+                >
+                  <Icon size={24} strokeWidth={2} />
+                </motion.div>
               </div>
-              <motion.div 
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                className={cn("w-12 h-12 rounded-lg flex items-center justify-center bg-white/10 backdrop-blur-sm", card.icon_color)}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {extraCards.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {extraCards.map((card, idx) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (kpiCards.length + idx) * 0.1, duration: 0.5 }}
+                whileHover={{ y: -4 }}
+                className={cn(
+                  "bg-gradient-to-br rounded-2xl border-2 p-6 card-premium",
+                  card.gradient,
+                  card.border
+                )}
               >
-                <Icon size={24} strokeWidth={2} />
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-3">{card.label}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-ink-1 tracking-tight">{card.value}</p>
+                  </div>
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className={cn("w-12 h-12 rounded-lg flex items-center justify-center bg-white/10 backdrop-blur-sm", card.icon_color)}
+                  >
+                    <Icon size={24} strokeWidth={2} />
+                  </motion.div>
+                </div>
               </motion.div>
-            </div>
-          </motion.div>
-        );
-      })}
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

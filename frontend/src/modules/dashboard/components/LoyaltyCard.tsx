@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Crown, Award, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Crown, Award, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { useLoyaltyProfile, useLoyaltyHistory } from "@/shared/hooks/useApi";
 
 interface LoyaltyTier {
   name: string;
@@ -30,12 +31,6 @@ interface PointsEntry {
   date: string;
 }
 
-interface LoyaltyCardProps {
-  points?: number;
-  tier?: string;
-  history?: PointsEntry[];
-}
-
 function getCurrentTier(points: number): LoyaltyTier {
   let current = TIERS[0];
   for (const tier of TIERS) {
@@ -50,11 +45,47 @@ function getNextTier(currentPoints: number): LoyaltyTier | null {
   return idx < TIERS.length - 1 ? TIERS[idx + 1] : null;
 }
 
-export default function LoyaltyCard({
-  points = 0,
-  tier = "bronze",
-  history = [],
-}: LoyaltyCardProps) {
+function LoyaltySkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl border-2 border-border bg-surface-1 p-8 animate-pulse">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-ink-1/10" />
+            <div className="space-y-2">
+              <div className="h-3 w-24 bg-ink-1/10 rounded" />
+              <div className="h-5 w-16 bg-ink-1/10 rounded" />
+            </div>
+          </div>
+          <div className="space-y-2 text-right">
+            <div className="h-3 w-16 bg-ink-1/10 rounded ml-auto" />
+            <div className="h-8 w-20 bg-ink-1/10 rounded ml-auto" />
+          </div>
+        </div>
+        <div className="h-2.5 rounded-full bg-ink-1/10" />
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[0, 1, 2, 3].map(i => (
+          <div key={i} className="rounded-xl p-4 border border-border bg-surface-1 animate-pulse">
+            <div className="w-5 h-5 bg-ink-1/10 rounded mx-auto mb-2" />
+            <div className="h-3 w-12 bg-ink-1/10 rounded mx-auto" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function LoyaltyCard() {
+  const { data: profile, isLoading: profileLoading } = useLoyaltyProfile();
+  const { data: historyData, isLoading: historyLoading } = useLoyaltyHistory();
+
+  const points = profile?.points ?? 0;
+  const tier = profile?.tier ?? "bronze";
+  const history: PointsEntry[] = historyData?.history ?? historyData ?? [];
+
+  if (profileLoading) return <LoyaltySkeleton />;
+
   const currentTier = getCurrentTier(points);
   const nextTier = getNextTier(points);
   const progress = nextTier
@@ -145,7 +176,22 @@ export default function LoyaltyCard({
         ))}
       </div>
 
-      {history.length > 0 && (
+      {historyLoading ? (
+        <div className="rounded-2xl border-2 border-border bg-surface-1 p-6">
+          <div className="space-y-4">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="flex items-center gap-4 animate-pulse">
+                <div className="w-9 h-9 rounded-lg bg-ink-1/10" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-32 bg-ink-1/10 rounded" />
+                  <div className="h-2 w-20 bg-ink-1/10 rounded" />
+                </div>
+                <div className="h-4 w-12 bg-ink-1/10 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : history.length > 0 ? (
         <div className="rounded-2xl border-2 border-border bg-surface-1 overflow-hidden">
           <div className="px-6 py-4 border-b-2 border-border">
             <h3 className="text-sm font-bold text-ink-1 uppercase tracking-wider">Historique des Points</h3>
@@ -181,7 +227,7 @@ export default function LoyaltyCard({
             ))}
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

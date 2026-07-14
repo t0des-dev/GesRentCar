@@ -204,6 +204,9 @@ $apiRoutes = function () {
         Route::put('/user/profile', [AuthController::class, 'updateProfile']);
         Route::put('/user/password', [AuthController::class, 'updatePassword']);
 
+        // Notifications polling
+        Route::get('/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'index']);
+
         // Waitlist
         Route::post('/waitlist', [WaitlistController::class, 'store']);
         Route::get('/waitlist', [WaitlistController::class, 'index']);

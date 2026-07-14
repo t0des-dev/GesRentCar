@@ -2,7 +2,7 @@
 
 import { useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2, ArrowUpDown } from "lucide-react";
+import { Loader2, ArrowUpDown, Share2, Search } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
@@ -57,6 +57,7 @@ function FleetContent() {
   const fleetSettings = useMemo(() => getFleetSettings(), []);
 
   const [search, setSearch] = useState("");
+  const [textSearch, setTextSearch] = useState("");
   const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
   const [layoutView, setLayoutView] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FleetFilterState>({
@@ -68,6 +69,13 @@ function FleetContent() {
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [shareToast, setShareToast] = useState(false);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShareToast(true);
+    setTimeout(() => setShareToast(false), 2000);
+  };
 
   const {
     sorted, isLoading, loadMore, hasMore
@@ -79,6 +87,15 @@ function FleetContent() {
     startDate: startDateParam,
     endDate: endDateParam
   });
+
+  const filteredByText = useMemo(() => {
+    if (!textSearch) return sorted;
+    const q = textSearch.toLowerCase();
+    return sorted.filter(v =>
+      v.brand?.toLowerCase().includes(q) ||
+      v.model?.toLowerCase().includes(q)
+    );
+  }, [sorted, textSearch]);
 
   const handleFilterChange = useCallback((key: keyof FleetFilterState, value: string | number) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -273,6 +290,17 @@ function FleetContent() {
           className="sticky top-24 z-30 flex items-center justify-between mb-8 pb-4 pt-4 border-b border-border flex-wrap gap-4 bg-white/70 backdrop-blur-xl rounded-t-2xl px-4 -mx-4 sm:mx-0 shadow-[0_4px_30px_rgba(0,0,0,0.02)]"
         >
           <div className="flex items-center gap-3">
+            {/* Text Search */}
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none" />
+              <input
+                type="text"
+                value={textSearch}
+                onChange={(e) => setTextSearch(e.target.value)}
+                placeholder="Rechercher marque/modèle..."
+                className="pl-9 pr-4 py-2 bg-surface-1 border border-border rounded-lg text-xs font-semibold text-ink-1 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all w-48"
+              />
+            </div>
             <p className="text-xs font-bold uppercase tracking-widest text-ink-3">
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -280,12 +308,21 @@ function FleetContent() {
                   Synchronisation...
                 </span>
               ) : (
-                `${sorted.length} ${t("fleet_count")}`
+                `${filteredByText.length} ${t("fleet_count")}`
               )}
             </p>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            {/* Share Button */}
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 hover:bg-primary/5 transition-all"
+            >
+              <Share2 size={12} />
+              Partager
+            </button>
+
             {/* View Toggle */}
             <div className="hidden md:flex items-center gap-1 bg-surface-1 p-1 rounded-lg border border-border">
               <button
@@ -327,7 +364,7 @@ function FleetContent() {
 
         {/* Fleet Grid — full width */}
         <FleetGrid
-          vehicles={sorted}
+          vehicles={filteredByText}
           loading={isLoading}
           hasMore={hasMore}
           onLoadMore={loadMore}
@@ -336,6 +373,20 @@ function FleetContent() {
           columns={fleetSettings.columns}
         />
       </div>
+
+      {/* Share Toast */}
+      <AnimatePresence>
+        {shareToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold shadow-xl"
+          >
+            Lien copié !
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Quick View Modal */}
       {quickViewVehicle && (

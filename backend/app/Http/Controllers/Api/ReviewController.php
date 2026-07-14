@@ -65,6 +65,15 @@ class ReviewController extends Controller
 
             $review = Review::create($data);
 
+            try {
+                $adminUser = \App\Models\User::where('role', 'admin')->first();
+                if ($adminUser) {
+                    $adminUser->notify(new \App\Notifications\ReviewSubmitted($review));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Review notification failed', ['error' => $e->getMessage()]);
+            }
+
             return response()->json($review, 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);

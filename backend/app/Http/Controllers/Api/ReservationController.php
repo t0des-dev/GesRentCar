@@ -294,6 +294,20 @@ class ReservationController extends Controller
                 $validated['total_price'] = $pricing['total_price'];
                 $reservation->update($validated);
 
+                if (isset($validated['status']) && $validated['status'] === 'completed') {
+                    try {
+                        $reservation->load('client', 'vehicle');
+                        if ($reservation->client && $reservation->client->email) {
+                            $user = \App\Models\User::where('email', $reservation->client->email)->first();
+                            if ($user) {
+                                $user->notify(new \App\Notifications\RentalCompleted($reservation));
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
+                    }
+                }
+
                 return $reservation;
             });
 
@@ -301,6 +315,20 @@ class ReservationController extends Controller
         }
 
         $reservation->update($validated);
+
+        if (isset($validated['status']) && $validated['status'] === 'completed') {
+            try {
+                $reservation->load('client', 'vehicle');
+                if ($reservation->client && $reservation->client->email) {
+                    $user = \App\Models\User::where('email', $reservation->client->email)->first();
+                    if ($user) {
+                        $user->notify(new \App\Notifications\RentalCompleted($reservation));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
+            }
+        }
 
         return response()->json($reservation);
     }

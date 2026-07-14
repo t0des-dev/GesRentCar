@@ -1,14 +1,10 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next";
 
-export const dynamic = 'force-static';
- 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/admin/', '/agent/', '/dashboard/'],
-    },
-    sitemap: 'https://vectoria-rent.com/sitemap.xml',
-  }
+    rules: [
+      { userAgent: "*", allow: "/", disallow: ["/admin/", "/dashboard/"] },
+    ],
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vectoriarentcar.com"}/sitemap.xml`,
+  };
 }

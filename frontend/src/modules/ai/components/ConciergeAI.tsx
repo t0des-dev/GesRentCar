@@ -55,6 +55,24 @@ export default function ConciergeAI() {
 
             {/* Messages Area */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 no-scrollbar">
+              {messages.length <= 1 && (
+                <div className="flex flex-wrap gap-2 p-4">
+                  {[
+                    "Voir les véhicules",
+                    "Connaître les tarifs",
+                    "Comment vous contacter ?",
+                    "Options de paiement",
+                  ].map((action) => (
+                    <button
+                      key={action}
+                      onClick={() => handleSend(action)}
+                      className="px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors"
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              )}
               {messages.map((m, i) => (
                 <div key={i} className={cn("flex flex-col max-w-[85%]", m.role === "user" ? "ml-auto items-end" : "items-start")}>
                   <div className={cn(

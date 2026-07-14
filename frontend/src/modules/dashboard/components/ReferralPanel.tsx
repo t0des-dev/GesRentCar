@@ -2,27 +2,58 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, Share2, Mail, MessageCircle, Gift, Users, Award, Link2 } from "lucide-react";
+import { Copy, Check, Share2, Mail, MessageCircle, Gift, Users, Award, Link2, Loader2 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { useReferralCode, useReferralStats } from "@/shared/hooks/useApi";
 
-interface ReferralStats {
-  totalReferred?: number;
-  totalBonuses?: number;
-  referralCode?: string;
+function ReferralSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl border-2 border-border bg-surface-1 p-8 animate-pulse">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-xl bg-ink-1/10" />
+          <div className="space-y-2">
+            <div className="h-5 w-32 bg-ink-1/10 rounded" />
+            <div className="h-3 w-48 bg-ink-1/10 rounded" />
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1 rounded-xl bg-surface-0 border border-border p-5 space-y-3">
+            <div className="h-3 w-24 bg-ink-1/10 rounded" />
+            <div className="h-7 w-36 bg-ink-1/10 rounded" />
+          </div>
+          <div className="flex-1 rounded-xl bg-surface-0 border border-border p-5 space-y-3">
+            <div className="h-3 w-24 bg-ink-1/10 rounded" />
+            <div className="h-4 w-full bg-ink-1/10 rounded" />
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[0, 1].map(i => (
+          <div key={i} className="rounded-xl border border-border bg-surface-1 p-6 flex items-center gap-4 animate-pulse">
+            <div className="w-12 h-12 rounded-xl bg-ink-1/10" />
+            <div className="space-y-2">
+              <div className="h-3 w-20 bg-ink-1/10 rounded" />
+              <div className="h-7 w-12 bg-ink-1/10 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-interface ReferralPanelProps {
-  stats?: ReferralStats;
-}
-
-export default function ReferralPanel({
-  stats = { totalReferred: 0, totalBonuses: 0, referralCode: "VECTORIA2026" },
-}: ReferralPanelProps) {
+export default function ReferralPanel() {
+  const { data: codeData, isLoading: codeLoading } = useReferralCode();
+  const { data: statsData, isLoading: statsLoading } = useReferralStats();
   const [copied, setCopied] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const { referralCode, totalReferred = 0, totalBonuses = 0 } = stats;
+  const referralCode = codeData?.code ?? codeData?.referralCode ?? "VECTORIA2026";
+  const totalReferred = statsData?.totalReferred ?? statsData?.total_referred ?? 0;
+  const totalBonuses = statsData?.totalBonuses ?? statsData?.total_bonuses ?? 0;
+
   const referralLink = typeof window !== "undefined"
     ? `${window.location.origin}/register?ref=${referralCode}`
     : `https://vectoria.rent/register?ref=${referralCode}`;
@@ -45,7 +76,7 @@ export default function ReferralPanel({
 
   const handleShareWhatsApp = useCallback(() => {
     const text = encodeURIComponent(
-      `Rejoins Vectoria avec mon code parrain ${referralCode} et bénéficie de réductions exclusives ! 🚗✨\n${referralLink}`
+      `Rejoins Vectoria avec mon code parrain ${referralCode} et b\u00e9n\u00e9ficie de r\u00e9ductions exclusives ! \uD83D\uDE97\u2728\n${referralLink}`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank");
   }, [referralCode, referralLink]);
@@ -53,10 +84,12 @@ export default function ReferralPanel({
   const handleShareEmail = useCallback(() => {
     const subject = encodeURIComponent("Rejoins Vectoria - Code Parrainage");
     const body = encodeURIComponent(
-      `Utilise mon code parrain ${referralCode} pour t'inscrire sur Vectoria et bénéficie d'avantages exclusives !\n\n${referralLink}`
+      `Utilise mon code parrain ${referralCode} pour t'inscrire sur Vectoria et b\u00e9n\u00e9ficie d'avantages exclusives !\n\n${referralLink}`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
   }, [referralCode, referralLink]);
+
+  if (codeLoading || statsLoading) return <ReferralSkeleton />;
 
   return (
     <div className="space-y-6">
@@ -89,7 +122,7 @@ export default function ReferralPanel({
                 )}
               >
                 {copied ? <Check size={12} /> : <Copy size={12} />}
-                {copied ? "Copié !" : "Copier"}
+                {copied ? "Copi\u00e9 !" : "Copier"}
               </button>
             </div>
             <p className="text-2xl font-bold text-gold tracking-wider font-mono">{referralCode}</p>
@@ -108,7 +141,7 @@ export default function ReferralPanel({
                 )}
               >
                 {copiedLink ? <Check size={12} /> : <Link2 size={12} />}
-                {copiedLink ? "Copié !" : "Copier"}
+                {copiedLink ? "Copi\u00e9 !" : "Copier"}
               </button>
             </div>
             <p className="text-sm text-ink-2 truncate">{referralLink}</p>
@@ -154,7 +187,7 @@ export default function ReferralPanel({
             <Users size={22} />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Parrainés</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Parrain\u00e9s</p>
             <p className="text-2xl font-bold text-ink-1">{fmt(totalReferred)}</p>
           </div>
         </motion.div>
@@ -169,7 +202,7 @@ export default function ReferralPanel({
             <Award size={22} />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Bonus Gagnés</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3">Bonus Gagn\u00e9s</p>
             <p className="text-2xl font-bold text-ink-1">{fmt(totalBonuses)} <span className="text-sm text-ink-3 ml-0.5">DH</span></p>
           </div>
         </motion.div>
