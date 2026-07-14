@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vectoria-cache-v8';
-const STATIC_CACHE = 'vectoria-static-v8';
+const CACHE_NAME = 'vectoria-cache-v9';
+const STATIC_CACHE = 'vectoria-static-v9';
 
 const PRECACHE_URLS = [
   '/favicon.ico',
@@ -82,7 +82,7 @@ self.addEventListener('fetch', (event) => {
               caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, response.clone())).catch(() => {});
             }
             return response;
-          }).catch(() => new Response('', { status: 408 }));
+          }).catch(() => new Response('', { status: 503, statusText: 'Service Unavailable' }));
         })
     );
     return;
@@ -97,7 +97,7 @@ self.addEventListener('fetch', (event) => {
             caches.open(STATIC_CACHE).then((cache) => cache.put(event.request, response.clone())).catch(() => {});
           }
           return response;
-        }).catch(() => new Response('', { status: 408 }));
+        }).catch(() => new Response('', { status: 503, statusText: 'Service Unavailable' }));
       })
   );
 });

@@ -42,9 +42,10 @@ export function useVehicleAvailability(
       if (!controller.signal.aborted) {
         setStatus(result.available ? "available" : "unavailable");
       }
-    } catch {
+    } catch (err: any) {
       if (!controller.signal.aborted) {
-        setStatus("error");
+        const is404 = err?.response?.status === 404;
+        setStatus(is404 ? "unavailable" : "error");
       }
     }
   }, [vehicleId, startDate, endDate]);
