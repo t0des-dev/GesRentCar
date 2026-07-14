@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-vectoria}
       POSTGRES_USER: ${DB_USERNAME:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -24,9 +24,9 @@ services:
     image: redis:7-alpine
     container_name: vectoria-redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no
+    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no --requirepass ${REDIS_PASSWORD:-changeme}
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "$$REDIS_PASSWORD", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -60,8 +60,9 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-vectoria}
       - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - DB_PASSWORD=${DB_PASSWORD:?Set DB_PASSWORD}
       - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
       - QUEUE_CONNECTION=redis
       - SESSION_DRIVER=redis
       - CACHE_STORE=redis
@@ -97,8 +98,9 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-vectoria}
       - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - DB_PASSWORD=${DB_PASSWORD:?Set DB_PASSWORD}
       - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
       - QUEUE_CONNECTION=redis
       - SESSION_DRIVER=redis
       - CACHE_STORE=redis

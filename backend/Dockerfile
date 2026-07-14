@@ -56,6 +56,8 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # ─── Backend stage: API + OCR ──────────────────────────────────────────────
 FROM base AS production
 FROM base AS backend
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+USER www-data
 EXPOSE 9000
 ENTRYPOINT ["docker-entrypoint.sh"]
 

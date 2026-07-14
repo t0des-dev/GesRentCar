@@ -230,10 +230,6 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
 
   if (!clientSecret || !reservationId) return null;
 
-  // Masking for security in logs
-  const maskedSecret = clientSecret.substring(0, 10) + "..." + clientSecret.substring(clientSecret.length - 10);
-  console.log("Stripe: Rendering Elements with clientSecret:", maskedSecret);
-
   return (
     <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret, appearance }}>
       <CheckoutForm

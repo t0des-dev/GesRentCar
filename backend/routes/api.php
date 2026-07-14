@@ -104,6 +104,7 @@ $apiRoutes = function () {
         Route::post('/public/reservations', [ReservationController::class, 'publicStore']);
 
         // ─── Public contract download & signature ─────────────────────────
+        // Note: Requires ?token= HMAC query parameter: hash_hmac('sha256', $reservation->id, config('app.key'))
         Route::get('/public/reservations/{reservation}/contract', [ContractController::class, 'download']);
         Route::get('/public/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
         Route::post('/public/reservations/{reservation}/sign', [ContractController::class, 'publicSign']);
@@ -117,9 +118,8 @@ $apiRoutes = function () {
         // Promo validation
         Route::post('/promos/validate', [\App\Http\Controllers\Api\PromoController::class, 'validateCode']);
 
-        // Analytics (public)
+        // Analytics (track only - stats is admin-only in authenticated group)
         Route::post('/analytics/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'track']);
-        Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
 
         // Cross-device scan: phone uploads (no auth, token-based)
         Route::get('/scan-sessions/{token}/status', [ScanSessionController::class, 'phoneShow']);
@@ -139,63 +139,12 @@ $apiRoutes = function () {
 
     // Protected routes (auth + audit + rate limit)
     Route::middleware(['auth:sanctum', 'audit', 'throttle:api'])->group(function () {
-        Route::apiResource('/clients', ClientController::class);
+
+        // ─── User-facing routes ───────────────────────────────────────────
         Route::post('/reservations', [ReservationController::class, 'store']);
         Route::get('/reservations', [ReservationController::class, 'index']);
         Route::get('/reservations/my', [ReservationController::class, 'my']);
         Route::get('/reservations/{reservation}', [ReservationController::class, 'show']);
-        Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->middleware('role:admin');
-        Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept'])->middleware('role:admin');
-        Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->middleware('role:admin');
-        Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->middleware('role:admin');
-
-        // Stats
-        Route::get('stats/revenue', [StatsController::class, 'revenueByCategory']);
-        Route::get('stats/calendar', [StatsController::class, 'calendarData']);
-        Route::get('stats/general', [StatsController::class, 'generalStats']);
-        Route::get('stats/profitability', [StatsController::class, 'vehicleProfitability']);
-
-        Route::post('/payments', [PaymentController::class, 'store']);
-        Route::post('/payments/{reservationId}/release-deposit', [PaymentController::class, 'releaseDeposit']);
-        Route::get('/stats', [StatsController::class, 'generalStats']);
-        Route::post('/config', [ConfigController::class, 'update']);
-        Route::post('/config/upload', [ConfigController::class, 'uploadAsset']);
-        Route::get('/admin/pages', [PageController::class, 'adminIndex']);
-        Route::post('/admin/pages', [PageController::class, 'store']);
-        Route::put('/admin/pages/{page}', [PageController::class, 'update']);
-        Route::delete('/admin/pages/{page}', [PageController::class, 'destroy']);
-
-        Route::get('/exports/reservations', [ExportController::class, 'reservations']);
-        Route::get('/exports/profit-loss', [ExportController::class, 'profitLoss']);
-
-        Route::post('/reservations/{reservation}/contract', [ContractController::class, 'generate']);
-        Route::get('/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
-        Route::post('/reservations/{reservation}/sign', [ContractController::class, 'sign']);
-
-        Route::post('/ocr/scan', [OcrController::class, 'scan']);
-        Route::post('/ocr/analyze-damage', [OcrController::class, 'analyzeDamage']);
-
-        // Cross-device scan sessions (desktop creates, polls)
-        Route::post('/scan-sessions', [ScanSessionController::class, 'store']);
-        Route::get('/scan-sessions/{session}', [ScanSessionController::class, 'show']);
-
-        // Fleet Management
-        Route::post('/vehicles', [VehicleController::class, 'store']);
-        Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
-        Route::post('/vehicles/{vehicle}/image', [VehicleController::class, 'uploadImage']);
-        Route::post('/vehicles/{vehicle}/photos', [VehicleController::class, 'uploadPhotos']);
-        Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
-
-        Route::apiResource('maintenances', MaintenanceController::class);
-
-        // Invoices
-        Route::apiResource('invoices', InvoiceController::class);
-        Route::get('invoices/{invoice}/download', [InvoiceController::class, 'download']);
-        Route::post('invoices/{invoice}/pay', [InvoiceController::class, 'markAsPaid']);
-
-        // Expenses
-        Route::apiResource('expenses', ExpenseController::class);
-        Route::post('expenses/{expense}/receipt', [ExpenseController::class, 'uploadReceipt']);
 
         // User Profile
         Route::get('/user/profile', function (Request $request) {
@@ -248,12 +197,82 @@ $apiRoutes = function () {
         // Blacklist check (during booking)
         Route::post('/blacklist/check', [ClientBlacklistController::class, 'check']);
 
-        // Admin only
+        // ─── Admin only ───────────────────────────────────────────────────
         Route::middleware('role:admin')->group(function () {
+            // User Management
             Route::get('/users', [UserController::class, 'index']);
             Route::post('/users', [UserController::class, 'store']);
             Route::put('/users/{user}', [UserController::class, 'update']);
             Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+            // Client Management
+            Route::apiResource('/clients', ClientController::class);
+
+            // Reservation Admin Actions
+            Route::put('/reservations/{reservation}', [ReservationController::class, 'update']);
+            Route::post('/reservations/{reservation}/accept', [ReservationController::class, 'accept']);
+            Route::post('/reservations/{reservation}/reject', [ReservationController::class, 'reject']);
+            Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel']);
+
+            // Stats
+            Route::get('stats/revenue', [StatsController::class, 'revenueByCategory']);
+            Route::get('stats/calendar', [StatsController::class, 'calendarData']);
+            Route::get('stats/general', [StatsController::class, 'generalStats']);
+            Route::get('stats/profitability', [StatsController::class, 'vehicleProfitability']);
+            Route::get('/stats', [StatsController::class, 'generalStats']);
+
+            // Analytics Stats
+            Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
+
+            // Payments
+            Route::post('/payments', [PaymentController::class, 'store']);
+            Route::post('/payments/{reservationId}/release-deposit', [PaymentController::class, 'releaseDeposit']);
+
+            // Config
+            Route::post('/config', [ConfigController::class, 'update']);
+            Route::post('/config/upload', [ConfigController::class, 'uploadAsset']);
+
+            // Admin Pages
+            Route::get('/admin/pages', [PageController::class, 'adminIndex']);
+            Route::post('/admin/pages', [PageController::class, 'store']);
+            Route::put('/admin/pages/{page}', [PageController::class, 'update']);
+            Route::delete('/admin/pages/{page}', [PageController::class, 'destroy']);
+
+            // Exports
+            Route::get('/exports/reservations', [ExportController::class, 'reservations']);
+            Route::get('/exports/profit-loss', [ExportController::class, 'profitLoss']);
+
+            // Contract Management (admin)
+            Route::post('/reservations/{reservation}/contract', [ContractController::class, 'generate']);
+            Route::get('/reservations/{reservation}/contract/file', [ContractController::class, 'file']);
+            Route::post('/reservations/{reservation}/sign', [ContractController::class, 'sign']);
+
+            // OCR
+            Route::post('/ocr/scan', [OcrController::class, 'scan']);
+            Route::post('/ocr/analyze-damage', [OcrController::class, 'analyzeDamage']);
+
+            // Cross-device scan sessions (authenticated)
+            Route::post('/scan-sessions', [ScanSessionController::class, 'store']);
+            Route::get('/scan-sessions/{session}', [ScanSessionController::class, 'show']);
+
+            // Fleet Management
+            Route::post('/vehicles', [VehicleController::class, 'store']);
+            Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update']);
+            Route::post('/vehicles/{vehicle}/image', [VehicleController::class, 'uploadImage']);
+            Route::post('/vehicles/{vehicle}/photos', [VehicleController::class, 'uploadPhotos']);
+            Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+
+            // Maintenances
+            Route::apiResource('maintenances', MaintenanceController::class);
+
+            // Invoices
+            Route::apiResource('invoices', InvoiceController::class);
+            Route::get('invoices/{invoice}/download', [InvoiceController::class, 'download']);
+            Route::post('invoices/{invoice}/pay', [InvoiceController::class, 'markAsPaid']);
+
+            // Expenses
+            Route::apiResource('expenses', ExpenseController::class);
+            Route::post('expenses/{expense}/receipt', [ExpenseController::class, 'uploadReceipt']);
 
             // Demo data management
             Route::get('/admin/demo/stats', [DemoController::class, 'stats']);

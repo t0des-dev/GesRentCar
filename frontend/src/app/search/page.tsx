@@ -8,7 +8,7 @@ import VehicleCard from "@/modules/fleet/components/VehicleCard";
 import { notifyError } from "@/components/Notifications";
 import styles from "./page.module.css";
 
-const API = "http://localhost:8000/api/v1";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 const CATEGORIES = [
   { id: 'all', label: 'All' },

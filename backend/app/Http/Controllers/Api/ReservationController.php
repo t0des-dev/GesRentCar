@@ -267,7 +267,7 @@ class ReservationController extends Controller
 
                 $isAvailable = ! $vehicle->reservations()
                     ->where('id', '!=', $reservation->id)
-                    ->whereIn('status', ['confirmed', 'ongoing'])
+                    ->whereIn('status', ['pending', 'pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
                     ->where(function ($q) use ($startDate, $endDate) {
                         $q->whereBetween('start_date', [$startDate, $endDate])
                             ->orWhereBetween('end_date', [$startDate, $endDate])

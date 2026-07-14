@@ -23,7 +23,7 @@ class BookingReminder extends Notification
         $vehicle = $this->reservation->vehicle;
         return (new MailMessage)
             ->subject('Rappel : Votre réservation Vectoria commence demain')
-            ->greeting('Bonjour ' . $this->reservation->client_name . ' !')
+            ->greeting('Bonjour ' . $this->reservation->client->name . ' !')
             ->line('Nous vous rappelons que votre réservation pour le ' . $vehicle->brand . ' ' . $vehicle->model . ' commence demain.')
             ->line('Date de retrait : ' . \Carbon\Carbon::parse($this->reservation->start_date)->format('d/m/Y'))
             ->line('Date de retour : ' . \Carbon\Carbon::parse($this->reservation->end_date)->format('d/m/Y'))

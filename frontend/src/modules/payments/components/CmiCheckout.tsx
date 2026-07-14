@@ -48,6 +48,22 @@ export function CmiCheckout({ bookingPayload, deposit, onSuccess }: CmiCheckoutP
 
       if (onSuccess) onSuccess(reservationId, reservation.status);
 
+      const allowedCmiDomains = ['cmi.co.ma', 'secure.cmi.co.ma'];
+      try {
+        const url = new URL(action_url);
+        if (!allowedCmiDomains.some(d => url.hostname.endsWith(d))) {
+          console.error('CMI: Invalid action URL domain');
+          setError("Erreur de sécurité : URL de paiement invalide.");
+          setLoading(false);
+          return;
+        }
+      } catch {
+        console.error('CMI: Invalid action URL format');
+        setError("Erreur de sécurité : URL de paiement invalide.");
+        setLoading(false);
+        return;
+      }
+
       const form = document.createElement("form");
       form.method = "POST";
       form.action = action_url;

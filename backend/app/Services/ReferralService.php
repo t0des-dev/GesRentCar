@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\LoyaltyPoint;
 use App\Models\Referral;
 use App\Models\UserLoyaltyProfile;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class ReferralService
@@ -35,6 +36,23 @@ class ReferralService
             return [
                 'success' => false,
                 'message' => 'You cannot use your own referral code.',
+            ];
+        }
+
+        $referrer = $referral->referrer;
+        if ($referrer && $referrer->ip_address && $referrer->ip_address === Request::ip()) {
+            return [
+                'success' => false,
+                'message' => 'Referral rejected: IP address matches the referrer.',
+            ];
+        }
+
+        $emailDomain = strtolower(substr(strrchr($newUser->email, '@'), 1));
+        $disposableDomains = ['tempmail.com', 'throwaway.com', 'guerrillamail.com', 'mailinator.com', 'yopmail.com', 'trashmail.com', 'fakeinbox.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la', 'dispostable.com'];
+        if (in_array($emailDomain, $disposableDomains)) {
+            return [
+                'success' => false,
+                'message' => 'Referral rejected: disposable email addresses are not allowed.',
             ];
         }
 

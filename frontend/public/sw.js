@@ -49,6 +49,14 @@ self.addEventListener('fetch', (event) => {
     (event.request.headers.get('accept') || '').includes('text/html');
 
   if (isHtml) {
+    const isPrivatePage = url.pathname.startsWith('/admin') ||
+      url.pathname.startsWith('/dashboard') ||
+      url.pathname.startsWith('/agent') ||
+      url.pathname.startsWith('/booking');
+    if (isPrivatePage) {
+      event.respondWith(fetch(event.request));
+      return;
+    }
     event.respondWith(
       fetch(event.request)
         .then((response) => {
@@ -127,6 +135,11 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   if (event.action === 'close') return;
+  const targetUrl = event.notification.data.url || '/';
+  if (!targetUrl.startsWith('/') || targetUrl.startsWith('//')) {
+    event.waitUntil(clients.openWindow('/'));
+    return;
+  }
   event.waitUntil(
     clients.matchAll({ type: 'window' }).then((clientList) => {
       for (const client of clientList) {

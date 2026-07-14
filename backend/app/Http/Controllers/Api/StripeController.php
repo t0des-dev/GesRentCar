@@ -80,7 +80,7 @@ class StripeController extends Controller
             // ✅ Calcul centralisé via PricingService
             $pricingResult = $this->pricing->calculateTotal($vehicle, $days, $options, null, $startDate);
             $totalPrice = $pricingResult['total_price'];
-            $deposit = (float) $validated['amount'];
+            $deposit = round($totalPrice * 0.10, 2);
 
             $status = $vehicle->type === 'collaborator' ? 'pending_partner' : 'pending_payment';
 
@@ -154,6 +154,11 @@ class StripeController extends Controller
 
         // Vérification auprès de Stripe
         $intent = PaymentIntent::retrieve($validated['payment_intent_id']);
+
+        // Ensure the PaymentIntent belongs to the claimed reservation
+        if (($intent->metadata->reservation_id ?? null) != $validated['reservation_id']) {
+            return response()->json(['message' => 'PaymentIntent does not belong to this reservation.'], 403);
+        }
 
         if ($intent->status !== 'succeeded') {
             return response()->json(['message' => 'Paiement non encore confirmé par Stripe.'], 422);

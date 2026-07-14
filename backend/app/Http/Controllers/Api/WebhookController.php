@@ -94,6 +94,10 @@ class WebhookController extends Controller
                 ],
             ];
 
+            if ($this->isInternalUrl($webhook->url)) {
+                abort(422, 'URL points to internal network');
+            }
+
             $response = Http::timeout(10)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-Webhook-Event' => 'webhook.test',
@@ -146,6 +150,10 @@ class WebhookController extends Controller
 
         foreach ($webhooks as $webhook) {
             try {
+                if ($this->isInternalUrl($webhook->url)) {
+                    continue;
+                }
+
                 $response = Http::timeout(10)->withHeaders([
                     'Content-Type' => 'application/json',
                     'X-Webhook-Event' => $event,
@@ -187,5 +195,18 @@ class WebhookController extends Controller
                 $webhook->increment('failure_count');
             }
         }
+    }
+
+    private function isInternalUrl(string $url): bool
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+        if (!$host) return true;
+        
+        // Resolve the hostname
+        $ip = gethostbyname($host);
+        if ($ip === $host) return false; // gethostbyname returns input on failure
+        
+        // Block private IPs
+        return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
     }
 }

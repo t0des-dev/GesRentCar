@@ -52,9 +52,13 @@ class SendNotification implements ShouldQueue
             return;
         }
 
-        Http::withToken($token)
+        $response = Http::withToken($token)
             ->timeout(20)
             ->post("https://graph.facebook.com/{$version}/{$phoneId}/messages", $this->payload);
+
+        if (!$response->successful()) {
+            throw new \Exception('Notification API error: ' . $response->status());
+        }
     }
 
     protected function sendSms()
@@ -67,12 +71,16 @@ class SendNotification implements ShouldQueue
             return;
         }
 
-        Http::withBasicAuth($sid, $token)
+        $response = Http::withBasicAuth($sid, $token)
             ->timeout(20)
             ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
                 'To' => $this->to,
                 'From' => $from,
                 'Body' => $this->message,
             ]);
+
+        if (!$response->successful()) {
+            throw new \Exception('Notification API error: ' . $response->status());
+        }
     }
 }

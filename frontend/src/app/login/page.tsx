@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, UserCheck, Sparkles } from 'lucide-react';
+import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 import { notifyInfo } from "@/components/Notifications";
@@ -21,7 +21,7 @@ export default function LoginPage() {
   // Redirection automatique des utilisateurs connectés
   useEffect(() => {
     if (!authLoading && user) {
-      const role = user.role || (typeof window !== "undefined" ? JSON.parse(localStorage.getItem("vectoria_user") || "{}").role : null);
+      const role = user.role;
       if (role === "admin") router.push("/admin");
       else if (role === "agent") router.push("/agent");
       else router.push("/dashboard");
@@ -35,7 +35,7 @@ export default function LoginPage() {
 
     try {
       const u = await login(email, password);
-      const role = u?.role || (typeof window !== "undefined" ? JSON.parse(localStorage.getItem("vectoria_user") || "{}").role : null);
+      const role = u?.role;
       if (role === "admin") router.push("/admin");
       else if (role === "agent") router.push("/agent");
       else router.push("/dashboard");
@@ -208,7 +208,7 @@ export default function LoginPage() {
                     href="#forgot" 
                     onClick={(e) => { 
                       e.preventDefault(); 
-                      notifyInfo("Fonctionnalite de recuperation en cours de developpement. Veuillez utiliser les comptes de demonstration."); 
+                      notifyInfo("Fonctionnalite de recuperation en cours de developpement."); 
                     }} 
                     className="text-xs font-semibold text-gold hover:text-gold-dark hover:underline transition-colors"
                   >
@@ -274,34 +274,6 @@ export default function LoginPage() {
               </motion.button>
             </form>
 
-            {/* Quick Demo Login */}
-            <div className="pt-5 border-t border-border space-y-4">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
-                <Sparkles size={14} className="text-gold animate-pulse" />
-                Connexion rapide (Démo)
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { role: 'Admin', email: 'admin@vectoria.com', password: 'Admin2026!', color: 'border-amber-500/30 hover:border-amber-500 text-amber-600 hover:bg-amber-50/50 focus:ring-amber-500/20' },
-                  { role: 'Agent', email: 'agent@vectoria.com', password: 'Agent2026!', color: 'border-blue-500/30 hover:border-blue-500 text-blue-600 hover:bg-blue-50/50 focus:ring-blue-500/20' },
-                  { role: 'Client', email: 'client@vectoria.com', password: 'Client2026!', color: 'border-emerald-500/30 hover:border-emerald-500 text-emerald-600 hover:bg-emerald-50/50 focus:ring-emerald-500/20' }
-                ].map((account) => (
-                  <button
-                    key={account.role}
-                    type="button"
-                    onClick={() => {
-                      setEmail(account.email);
-                      setPassword(account.password);
-                    }}
-                    className={`py-2 px-1 text-[11px] font-bold rounded-xl border transition-all text-center flex flex-col items-center justify-center gap-1 focus:ring-2 focus:outline-none cursor-pointer ${account.color}`}
-                  >
-                    <UserCheck size={14} />
-                    <span>{account.role}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Register Link */}
             <div className="text-center pt-4 border-t border-border">
               <p className="text-ink-3 text-sm">
@@ -311,18 +283,6 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
-          </motion.div>
-
-          {/* Demo Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="mt-8 text-center"
-          >
-            <p className="text-xs text-ink-4">
-              Sélectionnez un rôle ci-dessus pour pré-remplir automatiquement les identifiants de test.
-            </p>
           </motion.div>
         </div>
       </motion.div>

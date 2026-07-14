@@ -26,17 +26,23 @@ class ContractSigned extends Notification
     public function toMail($notifiable)
     {
         $contract = $this->reservation->contract;
-        $filePath = storage_path('app/public/'.$contract->file_path);
-
-        return (new MailMessage)
+        $message = (new MailMessage)
             ->subject('Votre Contrat Signé - Vectoria Rent Car')
             ->greeting('Bonjour '.$notifiable->name.',')
             ->line('Nous vous confirmons que votre contrat de location #'.$this->reservation->id.' a été signé avec succès.')
             ->line('Vous trouverez ci-joint votre copie certifiée au format PDF.')
-            ->line('Merci de votre confiance.')
-            ->attach($filePath, [
-                'as' => 'Contrat_Vectoria_'.$this->reservation->id.'.pdf',
-                'mime' => 'application/pdf',
-            ]);
+            ->line('Merci de votre confiance.');
+
+        if ($contract && !empty($contract->file_path)) {
+            $filePath = storage_path('app/public/'.$contract->file_path);
+            if (file_exists($filePath)) {
+                $message->attach($filePath, [
+                    'as' => 'Contrat_Vectoria_'.$this->reservation->id.'.pdf',
+                    'mime' => 'application/pdf',
+                ]);
+            }
+        }
+
+        return $message;
     }
 }
