@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-vectoria}
       POSTGRES_USER: ${DB_USERNAME:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -60,7 +60,7 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-vectoria}
       - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:?Set DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
       - QUEUE_CONNECTION=redis
@@ -98,7 +98,7 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-vectoria}
       - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:?Set DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
       - QUEUE_CONNECTION=redis
