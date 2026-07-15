@@ -4,9 +4,24 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Car, Users, CalendarCheck, CreditCard, Wrench, Receipt, FileText, ClipboardList,
-  Play, Trash2, AlertTriangle, CheckCircle, Loader2, RefreshCw, Database, Info
+  Play, Trash2, AlertTriangle, CheckCircle, Loader2, RefreshCw, Database, Info,
+  Star, Tag, Award, Activity
 } from "lucide-react";
 import api from "@/shared/services/client";
+
+const DEMO_TYPES = [
+  { id: "vehicles", label: "Véhicules (10)", icon: Car },
+  { id: "clients", label: "Clients (8)", icon: Users },
+  { id: "reservations", label: "Réservations (8)", icon: CalendarCheck },
+  { id: "payments", label: "Paiements", icon: CreditCard },
+  { id: "maintenances", label: "Maintenances (4)", icon: Wrench },
+  { id: "invoices", label: "Factures (3)", icon: FileText },
+  { id: "expenses", label: "Dépenses (4)", icon: Receipt },
+  { id: "reviews", label: "Reviews (5)", icon: Star },
+  { id: "promo_codes", label: "Promo Codes (2)", icon: Tag },
+  { id: "loyalty", label: "Loyalty", icon: Award },
+  { id: "activity_logs", label: "Activity Logs", icon: Activity },
+];
 
 interface DemoStats {
   vehicles: number;
@@ -17,6 +32,8 @@ interface DemoStats {
   expenses: number;
   invoices: number;
   contracts: number;
+  reviews: number;
+  promo_codes: number;
 }
 
 interface StatCardProps {
@@ -50,10 +67,17 @@ export default function DemoDataManager() {
   const [actionLoading, setActionLoading] = useState<"populate" | "clear" | null>(null);
   const [confirmAction, setConfirmAction] = useState<"populate" | "clear" | null>(null);
   const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(DEMO_TYPES.map(t => t.id));
 
   const showToast = (type: "success" | "error", message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 5000);
+  };
+
+  const toggleType = (id: string) => {
+    setSelectedTypes(prev =>
+      prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
+    );
   };
 
   const fetchStats = useCallback(async () => {
@@ -62,7 +86,7 @@ export default function DemoDataManager() {
       const res = await api.get("/admin/demo/stats");
       setStats(res.data);
     } catch {
-      setStats({ vehicles: 0, clients: 0, reservations: 0, payments: 0, maintenances: 0, expenses: 0, invoices: 0, contracts: 0 });
+      setStats({ vehicles: 0, clients: 0, reservations: 0, payments: 0, maintenances: 0, expenses: 0, invoices: 0, contracts: 0, reviews: 0, promo_codes: 0 });
     } finally {
       setLoading(false);
     }
@@ -74,7 +98,14 @@ export default function DemoDataManager() {
     setConfirmAction(null);
     setActionLoading(action);
     try {
-      const res = await api.post(`/admin/demo/${action}`);
+      let res;
+      if (action === "populate") {
+        const allSelected = selectedTypes.length === DEMO_TYPES.length;
+        const body = allSelected ? {} : { types: selectedTypes };
+        res = await api.post(`/admin/demo/${action}`, body);
+      } else {
+        res = await api.post(`/admin/demo/${action}`);
+      }
       showToast("success", res.data?.message || (action === "populate" ? "Données de démo initialisées !" : "Données de démo supprimées !"));
       await fetchStats();
     } catch (err: unknown) {
@@ -94,6 +125,8 @@ export default function DemoDataManager() {
     { icon: Receipt, label: "Dépenses", value: stats.expenses, color: "bg-red-50 text-red-600" },
     { icon: FileText, label: "Factures", value: stats.invoices, color: "bg-teal-50 text-teal-600" },
     { icon: ClipboardList, label: "Contrats", value: stats.contracts, color: "bg-indigo-50 text-indigo-600" },
+    { icon: Star, label: "Reviews", value: stats.reviews, color: "bg-yellow-50 text-yellow-600" },
+    { icon: Tag, label: "Promo Codes", value: stats.promo_codes, color: "bg-pink-50 text-pink-600" },
   ] : [];
 
   return (
@@ -124,7 +157,7 @@ export default function DemoDataManager() {
         <div>
           <p className="text-sm font-bold text-blue-800 mb-1">À propos des données de démo</p>
           <p className="text-xs text-blue-700 leading-relaxed">
-            Ce module vous permet d&apos;initialiser votre base de données avec des véhicules, clients, réservations et paiements de test réalistes — idéal pour démontrer la plateforme à des clients ou tester de nouvelles fonctionnalités. Toutes ces données peuvent être supprimées en un clic.
+            Ce module vous permet d&apos;initialiser votre base de données avec des véhicules, clients, réservations, paiements, reviews, promo codes et données de fidélité de test réalistes — idéal pour démontrer la plateforme à des clients ou tester de nouvelles fonctionnalités. Sélectionnez les types de données à créer ou supprimez tout en un clic.
           </p>
         </div>
       </div>
@@ -144,13 +177,13 @@ export default function DemoDataManager() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="h-24 bg-slate-100 rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {statCards.map((card, i) => (
               <motion.div key={card.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                 <StatCard {...card} />
@@ -178,12 +211,31 @@ export default function DemoDataManager() {
               <p className="text-xs text-slate-500 font-medium">Données de démo</p>
             </div>
           </div>
-          <p className="text-sm text-slate-600 leading-relaxed mb-6">
-            Ajoute automatiquement <strong>6 véhicules premium</strong>, <strong>3 clients</strong>, des réservations, des paiements et des contrats de test à votre base de données.
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">
+            Sélectionnez les types de données à initialiser dans votre base. Vous pouvez tout sélectionner ou choisir uniquement les catégories souhaitées.
           </p>
 
+          {/* Checkbox Group */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            {DEMO_TYPES.map(type => (
+              <label
+                key={type.id}
+                className="flex items-center gap-2 text-xs font-medium text-slate-700 cursor-pointer hover:bg-slate-50 rounded-lg p-2 transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedTypes.includes(type.id)}
+                  onChange={() => toggleType(type.id)}
+                  className="w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
+                />
+                <type.icon size={14} className="text-slate-500" />
+                <span>{type.label}</span>
+              </label>
+            ))}
+          </div>
+
           <ul className="space-y-2 mb-6">
-            {["Mercedes-Benz G63 AMG, Porsche 911, Land Rover Range Rover...", "Clients Jean Dupont, Sophie Martin, John Smith", "Réservations actives, confirmées et complétées", "Paiements et contrats associés"].map((item) => (
+            {["Mercedes-Benz G63 AMG, Porsche 911, Land Rover Range Rover...", "8 clients de test", "8 réservations actives, confirmées et complétées", "Paiements, factures et maintenances", "5 reviews clients, 2 promo codes", "Données de fidélité et logs d'activité"].map((item) => (
               <li key={item} className="flex items-start gap-2 text-xs text-slate-600">
                 <CheckCircle size={14} className="text-green-500 shrink-0 mt-0.5" />
                 {item}
@@ -212,7 +264,7 @@ export default function DemoDataManager() {
           ) : (
             <button
               onClick={() => setConfirmAction("populate")}
-              disabled={actionLoading !== null}
+              disabled={actionLoading !== null || selectedTypes.length === 0}
               className="w-full flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-2xl transition-all shadow-sm hover:shadow-md"
             >
               {actionLoading === "populate" ? (
@@ -240,7 +292,7 @@ export default function DemoDataManager() {
             </div>
           </div>
           <p className="text-sm text-slate-600 leading-relaxed mb-6">
-            Supprime <strong>toutes les réservations</strong>, paiements, contrats, maintenances, dépenses, véhicules et clients de la base de données.
+            Supprime <strong>toutes les réservations</strong>, paiements, contrats, maintenances, dépenses, véhicules, clients, reviews, promo codes et données de fidélité de la base de données.
           </p>
 
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
