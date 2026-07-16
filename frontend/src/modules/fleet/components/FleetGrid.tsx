@@ -89,6 +89,7 @@ export default function FleetGrid({
                     dynamicReason={v.dynamic_reason}
                     gps={v.gps || false}
                     airConditioning={v.air_conditioning || false}
+                    equipements={v.equipements || []}
                     layoutView={layoutView}
                     className="h-full"
                     onQuickView={() =>

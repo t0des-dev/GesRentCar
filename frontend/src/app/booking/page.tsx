@@ -72,6 +72,7 @@ export default function BookingPage() {
       desc: v.description_fr || "L'élégance et le confort absolu pour vos trajets.",
       gps: v.gps || false,
       airConditioning: v.air_conditioning || false,
+      equipements: v.equipements || [],
       category: v.category,
     }));
   }, [vehiclesData]);

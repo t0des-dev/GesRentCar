@@ -205,6 +205,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       isPopular={idx === 0 && activeTab === "Tous"}
                       gps={v.gps || false}
                       airConditioning={v.air_conditioning || false}
+                      equipements={v.equipements || []}
                       onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </div>
@@ -248,6 +249,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                       isPopular={idx === 0 && activeTab === "Tous"}
                       gps={v.gps || false}
                       airConditioning={v.air_conditioning || false}
+                      equipements={v.equipements || []}
                       onQuickView={() => setQuickViewVehicle(v)}
                     />
                   </motion.div>

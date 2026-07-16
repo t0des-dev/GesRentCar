@@ -16,6 +16,7 @@ export interface DisplayVehicle {
   desc?: string;
   gps?: boolean;
   airConditioning?: boolean;
+  equipements?: string[];
   specs?: {
     transmission?: string;
     fuel?: string;

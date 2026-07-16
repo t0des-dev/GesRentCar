@@ -32,13 +32,14 @@ interface VehicleCardProps {
   layoutView?: "grid" | "list";
   gps?: boolean;
   airConditioning?: boolean;
+  equipements?: string[];
 }
 
 export default function VehicleCard({
   id, brand, model, type, category, price, seats, fuel, transmission,
   year, rating = 4.8, imageUrl, className, dynamicPrice,
   dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
-  gps = false, airConditioning = false,
+  gps = false, airConditioning = false, equipements = [],
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { convert } = useCurrency();
@@ -184,6 +185,13 @@ export default function VehicleCard({
               </div>
             </Tooltip>
           )}
+          {equipements.filter((e: string) => e !== "GPS" && e !== "Climatiseur").slice(0, 3).map((eq: string) => (
+            <Tooltip key={eq} content={eq}>
+              <span className="inline-flex items-center px-2 py-0.5 bg-primary/5 border border-primary/15 text-primary text-[10px] font-bold rounded-md">
+                {eq}
+              </span>
+            </Tooltip>
+          ))}
         </div>
 
         <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />

@@ -72,6 +72,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
     const tags: { icon: typeof MapPin; label: string }[] = [];
     if (v.gps) tags.push({ icon: MapPin, label: "GPS" });
     if (v.airConditioning) tags.push({ icon: Snowflake, label: "Clim" });
+    (v.equipements || []).filter((e: string) => e !== "GPS" && e !== "Climatiseur").slice(0, 3).forEach((eq: string) => {
+      tags.push({ icon: MapPin, label: eq });
+    });
     return tags;
   };
 
