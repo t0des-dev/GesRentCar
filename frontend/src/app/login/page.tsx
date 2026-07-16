@@ -283,6 +283,43 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
+
+            {/* Quick Demo Login */}
+            <div className="pt-4 border-t border-border space-y-3">
+              <p className="text-center text-[10px] font-black uppercase tracking-widest text-ink-3">Connexion rapide (Démo)</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "Admin", role: "admin", icon: Shield, color: "from-violet-500 to-violet-600" },
+                  { label: "Agent", role: "agent", icon: Car, color: "from-sky-500 to-sky-600" },
+                  { label: "Client", role: "client", icon: Mail, color: "from-emerald-500 to-emerald-600" },
+                ].map((demo) => (
+                  <button
+                    key={demo.role}
+                    type="button"
+                    disabled={loading}
+                    onClick={async () => {
+                      setLoading(true);
+                      setError('');
+                      try {
+                        const u = await login(`${demo.role}@vectoria.com`, 'password123');
+                        const role = u?.role;
+                        if (role === "admin") router.push("/admin");
+                        else if (role === "agent") router.push("/agent");
+                        else router.push("/dashboard");
+                      } catch (err: any) {
+                        setError(err.response?.data?.message || `Compte démo ${demo.role} non disponible.`);
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    className={`flex flex-col items-center gap-1.5 py-2.5 rounded-xl bg-gradient-to-r ${demo.color} text-white text-[10px] font-bold uppercase tracking-wider hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50`}
+                  >
+                    <demo.icon size={16} />
+                    {demo.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
       </motion.div>
