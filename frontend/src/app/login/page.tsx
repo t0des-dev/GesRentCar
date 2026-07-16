@@ -48,8 +48,13 @@ export default function LoginPage() {
   const demoLogin = async (role: string) => {
     setLoading(true);
     setError('');
+    const passwords: Record<string, string> = {
+      admin: 'Admin2026!',
+      agent: 'Agent2026!',
+      client: 'Client2026!',
+    };
     try {
-      const u = await login(`${role}@vectoria.com`, 'password123');
+      const u = await login(`${role}@vectoria.com`, passwords[role]);
       const r = u?.role;
       if (r === "admin") router.push("/admin");
       else if (r === "agent") router.push("/agent");
