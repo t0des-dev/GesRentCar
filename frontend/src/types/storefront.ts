@@ -248,6 +248,7 @@ export interface StorefrontForm {
     background_opacity?: number;
     radius?: string;
     show_name?: boolean;
+    transparent_bg?: boolean;
   };
   hero_image_url: string;
   hero_video_url: string;

@@ -33,9 +33,9 @@ export default function Logo({ className }: { className?: string }) {
 
   const w = cfg.width || "36px";
   const h = cfg.height || "36px";
-  const bgRaw = cfg.background || "hsl(var(--primary))";
-  const bgOpacity = cfg.background_opacity ?? 1;
-  const bg = parseColor(bgRaw, bgOpacity);
+  const bgRaw = cfg.transparent_bg ? "transparent" : (cfg.background || "hsl(var(--primary))");
+  const bgOpacity = cfg.transparent_bg ? 0 : (cfg.background_opacity ?? 1);
+  const bg = cfg.transparent_bg ? "transparent" : parseColor(bgRaw, bgOpacity);
   const radius = cfg.radius || "8px";
   const showName = cfg.show_name !== false;
 

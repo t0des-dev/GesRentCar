@@ -207,15 +207,26 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
                   />
                 </div>
               </div>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={form.logo_config?.show_name !== false}
-                  onChange={e => setForm({...form, logo_config: {...form.logo_config, show_name: e.target.checked}})}
-                  className="rounded border-slate-300 text-primary focus:ring-primary/50 cursor-pointer w-4 h-4"
-                />
-                <span className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors">Afficher le nom à côté du logo</span>
-              </label>
+              <div className="flex flex-wrap gap-4">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={form.logo_config?.transparent_bg === true}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, transparent_bg: e.target.checked, background_opacity: e.target.checked ? 0 : 1}})}
+                    className="rounded border-slate-300 text-primary focus:ring-primary/50 cursor-pointer w-4 h-4"
+                  />
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors">Fond transparent</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={form.logo_config?.show_name !== false}
+                    onChange={e => setForm({...form, logo_config: {...form.logo_config, show_name: e.target.checked}})}
+                    className="rounded border-slate-300 text-primary focus:ring-primary/50 cursor-pointer w-4 h-4"
+                  />
+                  <span className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors">Afficher le nom à côté du logo</span>
+                </label>
+              </div>
             </div>
           )}
           <div className="space-y-2">
