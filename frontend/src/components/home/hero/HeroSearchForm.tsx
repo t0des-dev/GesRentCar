@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, MotionValue, AnimatePresence } from "framer-motion";
-import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock, ChevronDown, Car, Fuel, Zap, Truck, Sparkles } from "lucide-react";
+import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import MagneticWrapper from "@/shared/ui/MagneticWrapper";
 
 interface HeroSearchFormProps {
@@ -20,8 +20,6 @@ interface HeroSearchFormProps {
   y1: MotionValue<number>;
   mounted: boolean;
   content?: any;
-  selectedCategory?: string;
-  onCategorySelect?: (cat: string | null) => void;
 }
 
 function getTodayString(): string {
@@ -36,18 +34,9 @@ const PREDEFINED_LOCATIONS = [
   { id: "rabat", name: "Centre Ville", city: "Rabat", icon: Building2 },
 ];
 
-const CATEGORY_CHIPS = [
-  { id: "suv", label: "SUV", icon: Car },
-  { id: "berline", label: "Berline", icon: Sparkles },
-  { id: "electrique", label: "Électrique", icon: Zap },
-  { id: "utilitaire", label: "Utilitaire", icon: Truck },
-  { id: "citadine", label: "Citadine", icon: Fuel },
-];
-
 export default function HeroSearchForm({
   location, setLocation, startDate, setStartDate, endDate, setEndDate,
   startTime, setStartTime, onSearch, y1, mounted, content = {},
-  selectedCategory, onCategorySelect,
 }: HeroSearchFormProps) {
   const today = getTodayString();
   const sf = content?.search_form || {};
@@ -62,14 +51,6 @@ export default function HeroSearchForm({
   const [showLocations, setShowLocations] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
-  const handleQuickDate = useCallback((days: number) => {
-    const start = new Date();
-    const end = new Date();
-    end.setDate(start.getDate() + days);
-    setStartDate(start.toISOString().split("T")[0]);
-    setEndDate(end.toISOString().split("T")[0]);
-  }, [setStartDate, setEndDate]);
-
   return (
     <motion.div
       style={mounted ? { y: y1 } : {}}
@@ -80,26 +61,6 @@ export default function HeroSearchForm({
     >
       <div className="glass-dark rounded-[24px] p-8 shadow-2xl border border-white/10 backdrop-blur-2xl">
         <div className="space-y-6">
-
-          {/* Category Quick-Pick Chips */}
-          {onCategorySelect && (
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-              {CATEGORY_CHIPS.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => onCategorySelect(selectedCategory === cat.id ? null : cat.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                    selectedCategory === cat.id
-                      ? "bg-gold text-ink-1 shadow-[0_0_16px_rgba(212,175,55,0.4)]"
-                      : "bg-white/8 text-white/70 border border-white/10 hover:bg-white/15 hover:text-white hover:border-white/25"
-                  }`}
-                >
-                  <cat.icon size={12} />
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Location Field with Custom Dropdown */}
           <div className="space-y-2.5 relative">
@@ -184,24 +145,6 @@ export default function HeroSearchForm({
                 />
               </div>
             </div>
-          </div>
-
-          {/* Quick Date Presets */}
-          <div className="flex gap-2 justify-center lg:justify-start">
-            {[
-              { label: "1j", days: 1 },
-              { label: "3j", days: 3 },
-              { label: "1sem", days: 7 },
-              { label: "2sem", days: 14 },
-            ].map((preset) => (
-              <button
-                key={preset.days}
-                onClick={() => handleQuickDate(preset.days)}
-                className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-white/5 text-white/50 border border-white/10 hover:bg-gold/20 hover:text-gold hover:border-gold/30 transition-all duration-300"
-              >
-                {preset.label}
-              </button>
-            ))}
           </div>
 
           {/* Collapsible Time Pickers (mobile: hidden by default) */}

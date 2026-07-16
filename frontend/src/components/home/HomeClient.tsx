@@ -107,7 +107,6 @@ export default function HomeClient() {
     return getStoredTimeOrNow("vrc_search_start_time");
   });
   const [scrollPercent, setScrollPercent] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
@@ -160,9 +159,8 @@ export default function HomeClient() {
     if (startDate) params.set("start_date", startDate);
     if (endDate) params.set("end_date", endDate);
     if (startTime) params.set("start_time", startTime);
-    if (selectedCategory) params.set("category", selectedCategory);
     router.push(`/fleet?${params.toString()}`);
-  }, [location, startDate, endDate, startTime, selectedCategory, router]);
+  }, [location, startDate, endDate, startTime, router]);
 
   const sectionMap = useMemo<Record<string, () => ReactNode>>(
     () => ({
@@ -181,8 +179,6 @@ export default function HomeClient() {
           onSearch={handleSearch}
           aboutText={aboutText}
           stats={STATS}
-          selectedCategory={selectedCategory ?? undefined}
-          onCategorySelect={setSelectedCategory}
         />
       ),
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,

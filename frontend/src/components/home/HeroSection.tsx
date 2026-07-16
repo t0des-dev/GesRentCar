@@ -25,14 +25,11 @@ interface HeroSectionProps {
   stats: any[];
   heroImage?: string;
   heroVideo?: string | null;
-  selectedCategory?: string;
-  onCategorySelect?: (cat: string | null) => void;
 }
 
 export default function HeroSection({
   agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate,
   startTime, setStartTime, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp,
-  selectedCategory, onCategorySelect,
 }: HeroSectionProps) {
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -80,8 +77,6 @@ export default function HeroSection({
             endDate={endDate} setEndDate={setEndDate}
             startTime={startTime} setStartTime={setStartTime}
             onSearch={onSearch} y1={y1} mounted={mounted}
-            selectedCategory={selectedCategory}
-            onCategorySelect={onCategorySelect}
           />
         </div>
       </div>
