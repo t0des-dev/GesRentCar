@@ -314,8 +314,8 @@ export default function VehicleClient() {
                 ))}
               </div>
 
-              {(vehicle.gps || vehicle.air_conditioning) && (
-                <div className="flex gap-3 mt-4">
+              {(vehicle.gps || vehicle.air_conditioning || (vehicle.equipements && vehicle.equipements.length > 0)) && (
+                <div className="flex flex-wrap gap-2 mt-4">
                   {vehicle.gps && (
                     <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-xl">
                       <MapPin size={14} />
@@ -332,6 +332,11 @@ export default function VehicleClient() {
                       Climatiseur
                     </span>
                   )}
+                  {(vehicle.equipements || []).filter((e: string) => e !== "GPS" && e !== "Climatiseur").map((eq: string) => (
+                    <span key={eq} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider rounded-lg">
+                      {eq}
+                    </span>
+                  ))}
                 </div>
               )}
             </motion.section>
@@ -372,6 +377,7 @@ export default function VehicleClient() {
                   "Conciergerie dédiée",
                   ...(vehicle.gps ? ["GPS intégré"] : []),
                   ...(vehicle.air_conditioning ? ["Climatisation automatique"] : []),
+                  ...(vehicle.equipements || []).filter((e: string) => e !== "GPS" && e !== "Climatiseur"),
                 ].map((feature, i) => (
                   <motion.div
                     key={i}

@@ -30,6 +30,7 @@ class Vehicle extends Model
         'photos',
         'gps',
         'air_conditioning',
+        'equipements',
         'commission_rate',
         'description_fr',
         'description_en',
@@ -46,6 +47,7 @@ class Vehicle extends Model
     {
         return [
             'photos' => 'array',
+            'equipements' => 'array',
             'price_per_day' => 'decimal:2',
             'insurance_date' => 'date',
             'tech_inspection_date' => 'date',

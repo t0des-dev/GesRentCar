@@ -52,6 +52,7 @@ export interface Vehicle {
   photos?: string[];
   gps?: boolean;
   air_conditioning?: boolean;
+  equipements?: string[];
   total_revenue?: number;
   total_maintenance_cost?: number;
   insurance_date?: string;

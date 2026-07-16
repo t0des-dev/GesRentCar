@@ -16,6 +16,7 @@ export interface Vehicle {
   dynamic_reason?: string | null;
   gps?: boolean;
   air_conditioning?: boolean;
+  equipements?: string[];
   
   // Technical specs
   year?: number;
