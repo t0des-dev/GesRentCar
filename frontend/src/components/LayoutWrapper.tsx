@@ -11,19 +11,22 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const agency = useAgency();
   const isAdmin = pathname?.startsWith("/admin");
+  const isAgent = pathname?.startsWith("/agent");
+  const isDashboard = pathname?.startsWith("/dashboard");
+  const isInternal = isAdmin || isAgent || isDashboard;
   const isHome = pathname === "/";
 
   return (
     <>
-      {!isAdmin && <Navbar />}
+      {!isInternal && <Navbar />}
       <div className="flex flex-col" style={{ 
-        minHeight: !isAdmin ? 'calc(100vh - 70px)' : '100vh', 
+        minHeight: !isInternal ? 'calc(100vh - 70px)' : '100vh', 
       }}>
-        {!isAdmin && !isHome && <Breadcrumbs />}
+        {!isInternal && !isHome && <Breadcrumbs />}
         {children}
-        {!isAdmin && <Footer />}
+        {!isInternal && <Footer />}
       </div>
-      {!isAdmin && <ConciergeAI />}
+      {!isInternal && <ConciergeAI />}
     </>
   );
 }

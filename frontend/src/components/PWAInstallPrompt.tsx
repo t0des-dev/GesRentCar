@@ -14,9 +14,15 @@ export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installed, setInstalled] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
-  const isStandalone = typeof window !== "undefined"
-    && (window.matchMedia("(display-mode: standalone)").matches || (window.navigator as Navigator & { standalone?: boolean }).standalone === true);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsStandalone(
+      window.matchMedia("(display-mode: standalone)").matches
+      || (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+    );
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

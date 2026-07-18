@@ -19,14 +19,11 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
   };
 
   const save = () => {
-    console.log("Saving signature...", typeof onComplete);
     if (sigCanvas.current?.isEmpty()) return;
     const dataUrl = sigCanvas.current?.getTrimmedCanvas().toDataURL("image/png");
     if (dataUrl) {
         if (typeof onComplete === 'function') {
             onComplete(dataUrl);
-        } else {
-            console.error("onComplete is not a function!", onComplete);
         }
     }
   };

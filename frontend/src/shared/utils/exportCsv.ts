@@ -7,9 +7,11 @@ export function exportToCsv<T extends Record<string, unknown>>(data: T[], filena
     ...data.map(row =>
       keys.map(k => {
         const val = String(row[k] ?? "");
-        return val.includes(",") || val.includes('"') || val.includes("\n")
-          ? `"${val.replace(/"/g, '""')}"`
-          : val;
+        // Prevent CSV injection: prefix dangerous formula characters
+        const safeVal = /^[=+\-@\t]/.test(val) ? `'${val}` : val;
+        return safeVal.includes(",") || safeVal.includes('"') || safeVal.includes("\n")
+          ? `"${safeVal.replace(/"/g, '""')}"`
+          : safeVal;
       }).join(",")
     )
   ];

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class BookingReminderController extends Controller
 {
@@ -24,9 +24,8 @@ class BookingReminderController extends Controller
 
             foreach ($reservations as $reservation) {
                 if ($reservation->client && $reservation->client->email) {
-                    Mail::to($reservation->client->email)->send(
-                        new \App\Notifications\BookingReminder($reservation)
-                    );
+                    Notification::route('mail', $reservation->client->email)
+                        ->notify(new \App\Notifications\BookingReminder($reservation));
                     $sentCount++;
                 }
             }

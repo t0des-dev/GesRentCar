@@ -18,8 +18,7 @@ export function useAuthGuard(requiredRole?: "admin" | "agent") {
 
     // Vérifier le rôle si requis
     if (requiredRole && user.role !== requiredRole) {
-      // Rediriger vers la bonne page selon le rôle réel
-      router.replace(user.role === "admin" ? "/admin" : "/agent");
+      router.replace(user.role === "admin" ? "/admin" : user.role === "agent" ? "/agent" : "/dashboard");
       return;
     }
   }, [user, loading, router, requiredRole]);

@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Contract;
 use App\Models\Reservation;
 use App\Models\Vehicle;
+use App\Services\ContractService;
 use App\Services\NotificationService;
 use App\Services\PricingService;
 use Carbon\Carbon;
@@ -23,6 +24,7 @@ class ReservationController extends Controller
     public function __construct(
         protected NotificationService $notificationService,
         protected PricingService $pricing,
+        protected ContractService $contractService,
     ) {}
 
     // ─── Liste paginée (admin) ─────────────────────────────────────────────────
@@ -204,7 +206,7 @@ class ReservationController extends Controller
             }
 
             if ($reservation->contract) {
-                $contractCtrl = new ContractController($this->notificationService);
+                $contractCtrl = new ContractController($this->notificationService, $this->contractService);
                 $contractCtrl->generate($reservation);
             }
         }
@@ -237,7 +239,6 @@ class ReservationController extends Controller
                 'pending' => ['confirmed', 'cancelled'],
                 'pending_payment' => ['confirmed', 'cancelled'],
                 'pending_partner' => ['pending_payment', 'cancelled'],
-                'attente_paiement' => ['confirmed', 'cancelled'],
                 'confirmed' => ['ongoing', 'cancelled'],
                 'ongoing' => ['completed'],
             ];
@@ -344,7 +345,7 @@ class ReservationController extends Controller
         $reservation->update(['status' => 'pending_payment']);
 
         try {
-            $contractCtrl = new ContractController($this->notificationService);
+            $contractCtrl = new ContractController($this->notificationService, $this->contractService);
             $contractCtrl->generate($reservation);
         } catch (\Throwable $e) {
             Log::warning('Contract generation failed after accept', ['reservation_id' => $reservation->id, 'error' => $e->getMessage()]);
@@ -418,7 +419,7 @@ class ReservationController extends Controller
             ActivityLog::create([
                 'user_id' => auth()->id(),
                 'action' => 'reservation_cancelled',
-                'description' => "Réservation #{$reservation->id} annulée. Client: {$reservation->client->name}.",
+                'details' => "Réservation #{$reservation->id} annulée. Client: {$reservation->client->name}.",
                 'ip_address' => request()->ip(),
             ]);
         });

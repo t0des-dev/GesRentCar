@@ -137,6 +137,8 @@ class VehicleController extends Controller
             'color' => 'nullable|string',
             'commission_rate' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'transmission' => 'nullable|string|in:automatique,manuelle',
+            'seats' => 'nullable|integer|min:1|max:12',
             'photos' => 'nullable|array',
             'description_fr' => 'nullable|string',
             'description_en' => 'nullable|string',
@@ -172,6 +174,8 @@ class VehicleController extends Controller
             'color' => 'nullable|string',
             'commission_rate' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'transmission' => 'nullable|string|in:automatique,manuelle',
+            'seats' => 'nullable|integer|min:1|max:12',
             'photos' => 'nullable|array',
             'description_fr' => 'nullable|string',
             'description_en' => 'nullable|string',
@@ -242,6 +246,6 @@ class VehicleController extends Controller
         $vehicle->delete();
         $this->clearCache();
 
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

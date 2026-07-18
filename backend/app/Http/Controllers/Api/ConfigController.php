@@ -28,6 +28,18 @@ class ConfigController extends Controller
 
             $url = '/storage/branding/'.$filename;
 
+            // Persist URL to settings
+            $setting = Setting::firstOrCreate(['key' => 'agency_config']);
+            $field = match($type) {
+                'logo' => 'logo_url',
+                'hero' => 'hero_image_url',
+                'favicon' => 'favicon_url',
+                default => null,
+            };
+            if ($field) {
+                $setting->update([$field => $url]);
+            }
+
             return response()->json([
                 'url' => $url,
                 'message' => 'Fichier téléchargé avec succès',

@@ -34,7 +34,7 @@ class WaitlistController extends Controller
                 'user_id' => 'nullable|exists:users,id',
             ]);
 
-            $data['status'] = 'pending';
+            $data['status'] = 'waiting';
 
             $waitlist = Waitlist::create($data);
 
@@ -63,7 +63,7 @@ class WaitlistController extends Controller
     public function cleanupExpired()
     {
         try {
-            $expiredCount = Waitlist::where('status', 'pending')
+            $expiredCount = Waitlist::where('status', 'waiting')
                 ->where('created_at', '<', Carbon::now()->subDays(30))
                 ->update(['status' => 'expired']);
 

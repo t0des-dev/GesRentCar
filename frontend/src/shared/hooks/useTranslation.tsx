@@ -361,7 +361,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.dir = "ltr";
     document.documentElement.lang = lang;
     setIsReady(true);
-  }, []);
+  }, [lang]);
 
   const switchLang = (newLang: Language) => {
     if (newLang === lang) return;

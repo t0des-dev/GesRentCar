@@ -39,9 +39,9 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
     return () => clearInterval(interval);
   }, [isPartnerPending]);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+  const { API_URL: API } = require('@/lib/api/config');
   const contractUrl = reservationId
-    ? `${apiBase}/public/reservations/${reservationId}/contract`
+    ? `${API}/public/reservations/${reservationId}/contract`
     : null;
 
   const startFormatted = booking.startDate

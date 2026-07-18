@@ -84,7 +84,7 @@ class AvailabilityEngine
         $end = Carbon::parse($endDate);
 
         return ! Reservation::where('vehicle_id', $vehicleId)
-            ->whereIn('status', ['pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
+            ->whereIn('status', ['pending', 'pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
             ->where(function ($query) use ($start, $end) {
                 $query->whereBetween('start_date', [$start, $end])
                     ->orWhereBetween('end_date', [$start, $end])

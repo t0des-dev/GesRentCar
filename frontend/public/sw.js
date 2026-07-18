@@ -3,7 +3,6 @@ const STATIC_CACHE = 'vectoria-static-v9';
 
 const PRECACHE_URLS = [
   '/favicon.ico',
-  '/placeholder-car.jpg',
 ];
 
 self.addEventListener('install', (event) => {

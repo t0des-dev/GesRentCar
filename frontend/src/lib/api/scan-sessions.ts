@@ -1,7 +1,4 @@
 import api from "@/shared/services/client";
-import axios from "axios";
-
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface ScanSession {
   session_id: number;
@@ -35,7 +32,7 @@ export const scanSessionService = {
   },
 
   async phoneStatus(token: string): Promise<{ status: string; cin_number: string | null; license_number: string | null }> {
-    const { data } = await axios.get(`${baseURL}/scan-sessions/${token}/status`);
+    const { data } = await api.get(`/scan-sessions/${token}/status`);
     return data.data;
   },
 
@@ -44,11 +41,14 @@ export const scanSessionService = {
     formData.append("image", file);
     formData.append("type", type);
     try {
-      const { data } = await axios.post(`${baseURL}/scan-sessions/${token}/upload`, formData);
+      const { data } = await api.post(`/scan-sessions/${token}/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       return data;
     } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        return error.response.data as { success: boolean; message?: string };
+      const axiosError = error as { response?: { data?: { success: boolean; message?: string } } };
+      if (axiosError.response?.data) {
+        return axiosError.response.data;
       }
       return { success: false, message: "Erreur réseau. Vérifiez votre connexion." };
     }

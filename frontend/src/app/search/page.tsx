@@ -26,10 +26,31 @@ const IMAGE_MAPPING: Record<string, string> = {
   "range rover": "/range_rover_grey_1777383961416.png",
 };
 
+interface SearchVehicle {
+  id: number;
+  brand: string;
+  model: string;
+  price_per_day: number;
+  category: string;
+  image_url: string;
+  transmission: string;
+  fuel_type: string;
+  fuel?: string;
+  type?: string;
+  seats: number;
+  mileage: number;
+  gps: boolean;
+  air_conditioning: boolean;
+  equipements: string[];
+  description_fr: string;
+  image?: string;
+  price?: number;
+}
+
 export default function SearchPage() {
   const { t, lang } = useTranslation();
   const router = useRouter();
-  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<SearchVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -52,9 +73,11 @@ export default function SearchPage() {
       const list = Array.isArray(data) ? data : data.data ?? [];
       
       // Injecter les images pour la démo visuelle
-      const enriched = list.map((v: any) => ({
+      const enriched = list.map((v: SearchVehicle) => ({
         ...v,
-        image: IMAGE_MAPPING[v.brand.toLowerCase()] || "/car-placeholder.png"
+        type: v.category || 'Standard',
+        fuel: v.fuel_type || 'N/A',
+        image: IMAGE_MAPPING[v.brand?.toLowerCase?.()] || v.image_url || "/car-placeholder.png"
       }));
       
       setVehicles(enriched);
