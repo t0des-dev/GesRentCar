@@ -44,7 +44,12 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
           if (!cancelled) setCameraReady(true);
         }
       } catch {
-        if (!cancelled) setError("Caméra indisponible. Autorisez l'accès ou utilisez la galerie.");
+        if (!cancelled) {
+          const isSecure = window.location.protocol === "https:" || window.location.hostname === "localhost";
+          setError(isSecure
+            ? "Caméra indisponible. Vérifiez les paramètres navigateur et autorisez l'accès caméra."
+            : "La caméra nécessite HTTPS. Contactez l'administrateur pour activer le certificat SSL.");
+        }
       }
     }
 

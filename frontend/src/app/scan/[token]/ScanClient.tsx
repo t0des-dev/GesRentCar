@@ -62,7 +62,13 @@ export default function ScanClient() {
         setCameraReady(true);
       }
     } catch {
-      setErrorMsg(loc("Caméra indisponible. Autorisez l'accès dans les paramètres."));
+      const isHttps = window.location.protocol === "https:";
+      const isLocalhost = window.location.hostname === "localhost";
+      const isSecure = isHttps || isLocalhost;
+      const msg = isSecure
+        ? loc("Caméra indisponible. Vérifiez les paramètres de votre navigateur et autorisez l'accès à la caméra.")
+        : loc("La caméra nécessite une connexion HTTPS. Contactez l'administrateur pour activer le certificat SSL.");
+      setErrorMsg(msg);
       setStep("error");
     }
   };
@@ -176,6 +182,18 @@ export default function ScanClient() {
           <AlertCircle size={32} className="text-red-400" />
         </div>
         <p className="text-white text-center text-sm font-medium">{errorMsg}</p>
+        <div className="flex items-center gap-3 mt-2">
+          <button
+            onClick={() => { setErrorMsg(""); setStep("camera"); setCameraReady(false); startCamera(); }}
+            className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-colors"
+          >
+            {loc("Réessayer")}
+          </button>
+          <label className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer">
+            {loc("Choisir une photo")}
+            <input type="file" accept="image/*" onChange={handleFileInput} className="hidden" />
+          </label>
+        </div>
       </div>
     );
   }
