@@ -27,6 +27,19 @@ class ContractController extends Controller
         $this->arPdf = new ArPdfService();
     }
 
+    /**
+     * Verify HMAC token: hash_hmac('sha256', $reservation->id, config('app.key'))
+     */
+    private function verifyToken(Reservation $reservation): bool
+    {
+        $token = request()->query('token');
+        if (! $token) {
+            return false;
+        }
+        $expected = hash_hmac('sha256', (string) $reservation->id, config('app.key'));
+        return hash_equals($expected, $token);
+    }
+
     // ─── Generate and store PDF ────────────────────────────────────────────────
     public function generate(Reservation $reservation)
     {
@@ -43,6 +56,10 @@ class ContractController extends Controller
     // ─── Serve stored PDF file ────────────────────────────────────────────────
     public function file(Reservation $reservation)
     {
+        if (! $this->verifyToken($reservation)) {
+            abort(403, 'Invalid or missing token.');
+        }
+
         $contract = $reservation->contract;
 
         if (! $contract || ! $contract->file_path) {
@@ -65,6 +82,10 @@ class ContractController extends Controller
     // ─── Public stream: serve cached PDF or generate on-the-fly ──────────────
     public function download(Reservation $reservation)
     {
+        if (! $this->verifyToken($reservation)) {
+            abort(403, 'Invalid or missing token.');
+        }
+
         $reservation->load(['client', 'vehicle', 'contract']);
 
         $lang = request('lang', 'fr');
@@ -165,8 +186,10 @@ class ContractController extends Controller
     // ─── Public signing wrapper ────────────────────────────────────────────────
     public function publicSign(Request $request, Reservation $reservation)
     {
-        // In a real prod scenario, we would check a secure hash/token.
-        // For MVP, we allow signing if it hasn't been signed yet.
+        if (! $this->verifyToken($reservation)) {
+            abort(403, 'Invalid or missing token.');
+        }
+
         if ($reservation->contract && $reservation->contract->signed_at) {
             return response()->json(['message' => 'Contrat déjà signé.'], 403);
         }
