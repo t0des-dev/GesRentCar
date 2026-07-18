@@ -14,6 +14,7 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -133,9 +134,11 @@ export default function AboutPage() {
               className="relative"
             >
               <div className="relative rounded-2xl overflow-hidden border-2 border-border">
-                <img
+                <Image
                   src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1200"
                   alt="Fleet Vectoria"
+                  width={1200}
+                  height={1500}
                   className="w-full aspect-[4/5] object-cover"
                 />
               </div>
@@ -287,9 +290,11 @@ export default function AboutPage() {
                 className="card-premium rounded-2xl border-2 border-border overflow-hidden group"
               >
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img
+                  <Image
                     src={member.image}
                     alt={member.name}
+                    width={600}
+                    height={800}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>

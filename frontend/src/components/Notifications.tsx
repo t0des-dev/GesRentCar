@@ -50,7 +50,13 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Confirmer"
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-dialog-title"
+          aria-describedby="confirm-dialog-message"
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -64,7 +70,7 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Confirmer"
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10"
+            className="relative bg-white dark:bg-ink-2 rounded-2xl shadow-2xl w-full max-w-md p-6 z-10"
           >
             <button
               onClick={onCancel}
@@ -78,8 +84,8 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Confirmer"
                 <Icon size={22} className={cfg.iconColor} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-bold text-ink-1 mb-1">{title}</h3>
-                <p className="text-sm text-ink-2 leading-relaxed">{message}</p>
+                <h3 id="confirm-dialog-title" className="text-lg font-bold text-ink-1 dark:text-ink-1 mb-1">{title}</h3>
+                <p id="confirm-dialog-message" className="text-sm text-ink-2 dark:text-ink-2 leading-relaxed">{message}</p>
               </div>
             </div>
 

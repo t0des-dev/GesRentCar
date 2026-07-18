@@ -17,7 +17,7 @@ export default function ConciergeAI() {
       {/* Trigger Button — stacked above WhatsApp (bottom-24) */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-6 z-50 bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group overflow-hidden"
+        className="fixed bottom-6 right-6 lg:bottom-24 z-50 bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-primary to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
         <MessageSquare className="relative z-10 group-hover:hidden" size={24} />
@@ -32,9 +32,9 @@ export default function ConciergeAI() {
             className="fixed inset-0 z-[59] bg-black/20 backdrop-blur-sm md:hidden" 
             onClick={() => setIsOpen(false)} 
           />
-          <div className="fixed inset-0 md:inset-auto md:bottom-24 md:right-6 md:w-[420px] md:h-[600px] z-[60] bg-white md:rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-slate-100 animate-in fade-in slide-in-from-bottom-8 duration-500">
+          <div className="fixed inset-0 md:inset-auto md:bottom-24 md:right-6 md:w-[420px] md:h-[600px] z-[60] bg-white dark:bg-ink-2 md:rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-slate-100 dark:border-border animate-in fade-in slide-in-from-bottom-8 duration-500">
             {/* Header */}
-            <div className="bg-slate-900 p-6 flex justify-between items-center text-white relative overflow-hidden shrink-0">
+            <div className="bg-slate-900 dark:bg-ink-3 p-6 flex justify-between items-center text-white relative overflow-hidden shrink-0">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
               <div className="flex items-center gap-4 relative z-10">
                 <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30">
@@ -54,7 +54,7 @@ export default function ConciergeAI() {
             </div>
 
             {/* Messages Area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 no-scrollbar">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 dark:bg-ink-1 no-scrollbar">
               {messages.length <= 1 && (
                 <div className="flex flex-wrap gap-2 p-4">
                   {[
@@ -114,7 +114,7 @@ export default function ConciergeAI() {
             </div>
 
             {/* Input Area */}
-            <div className="p-6 bg-white border-t border-slate-100 shrink-0">
+            <div className="p-6 bg-white dark:bg-ink-2 border-t border-slate-100 dark:border-border shrink-0">
               <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-3xl px-5 py-2 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10">
                 <input 
                   type="text" 

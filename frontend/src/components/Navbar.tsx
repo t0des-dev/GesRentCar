@@ -64,7 +64,8 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-xl border-b border-border/20 shadow-sm"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        "bg-white/95 dark:bg-ink-2/95 backdrop-blur-xl border-b border-border/20 shadow-sm dark:border-border/10"
       )}
     >
       <div className="container mx-auto px-6 lg:px-8">
@@ -107,14 +108,14 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Toggle — Sophisticated Icon */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className={cn(
-              "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
-              "bg-surface-2 text-ink-1 hover:bg-surface-3"
-            )}
-            aria-label="Toggle menu"
-          >
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className={cn(
+                "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
+                "bg-surface-2 text-ink-1 hover:bg-surface-3 dark:bg-surface-1 dark:hover:bg-surface-2"
+              )}
+              aria-label="Toggle menu"
+            >
             <Menu size={20} strokeWidth={1.5} />
           </button>
         </div>
@@ -133,9 +134,9 @@ export default function Navbar() {
 function CurrencySwitcher({
   currency, setCurrency, currencyOpen, setCurrencyOpen, isScrolled, currencyRef
 }: {
-  currency: string; setCurrency: (c: any) => void;
+  currency: string; setCurrency: (c: "MAD" | "EUR" | "USD") => void;
   currencyOpen: boolean; setCurrencyOpen: (v: boolean) => void;
-  isScrolled: boolean; currencyRef: any;
+  isScrolled: boolean; currencyRef: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
     <div className="relative" ref={currencyRef}>
@@ -156,7 +157,7 @@ function CurrencySwitcher({
           {["MAD", "EUR", "USD"].map((c) => (
             <button
               key={c}
-              onClick={() => { setCurrency(c as any); setCurrencyOpen(false); }}
+              onClick={() => { setCurrency(c as "MAD" | "EUR" | "USD"); setCurrencyOpen(false); }}
               className={cn(
                 "flex items-center justify-between w-full px-4 py-2.5 text-sm transition-all",
                 currency === c 
