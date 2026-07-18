@@ -76,8 +76,9 @@ export default function RegisterPage() {
     try {
       await register(name, email, password, passwordConf);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur lors de l\'inscription.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || 'Erreur lors de l\'inscription.');
     } finally {
       setLoading(false);
     }

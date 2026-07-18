@@ -38,8 +38,9 @@ export default function LoginPage() {
       if (role === "admin") router.push("/admin");
       else if (role === "agent") router.push("/agent");
       else router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Identifiants incorrects ou serveur injoignable.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || 'Identifiants incorrects ou serveur injoignable.');
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,9 @@ export default function LoginPage() {
       if (r === "admin") router.push("/admin");
       else if (r === "agent") router.push("/agent");
       else router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Compte démo ${role} non disponible.`);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || `Compte démo ${role} non disponible.`);
     } finally {
       setLoading(false);
     }

@@ -40,8 +40,9 @@ export default function ProfilePage() {
       await api.put("/user/profile", profileData);
       setMsg({ type: "success", text: "Votre profil a été mis à jour avec succès." });
       await update();
-    } catch (err: any) {
-      setMsg({ type: "error", text: err.response?.data?.message || "Une erreur est survenue." });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setMsg({ type: "error", text: msg || "Une erreur est survenue." });
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,9 @@ export default function ProfilePage() {
       await api.put("/user/password", passwordData);
       setMsg({ type: "success", text: "Votre mot de passe a été modifié avec succès." });
       setPasswordData({ current_password: "", password: "", password_confirmation: "" });
-    } catch (err: any) {
-      setMsg({ type: "error", text: err.response?.data?.message || "Erreur lors du changement de mot de passe." });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setMsg({ type: "error", text: msg || "Erreur lors du changement de mot de passe." });
     } finally {
       setLoading(false);
     }

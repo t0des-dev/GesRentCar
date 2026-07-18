@@ -11,7 +11,6 @@ import { AuthProvider } from "@/modules/auth/context/context";
 import { CurrencyProvider } from "@/shared/hooks/useCurrency";
 import { Toaster } from "react-hot-toast";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
-import ConciergeAI from "@/modules/ai/components/ConciergeAI";
 import SkipNav from "@/components/SkipNav";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
@@ -81,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}>
         <ThemeProvider>
           <AccessibilityProvider>
@@ -95,7 +94,6 @@ export default function RootLayout({
                       <Analytics />
                       <LayoutWrapper>
                         <div id="main-content" tabIndex={-1} className="outline-none">{children}</div>
-                        <ConciergeAI />
                       </LayoutWrapper>
                       <WhatsAppFloat />
                       <PWAInstallPrompt />

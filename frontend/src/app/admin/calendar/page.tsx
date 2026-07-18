@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import api from "@/shared/services/client";
+import { Reservation, Vehicle } from "@/types/admin";
 
 import { notifyError } from "@/components/Notifications";
 
@@ -11,17 +12,17 @@ import CalendarHeader from "@/modules/admin/components/calendar/CalendarHeader";
 import CalendarGrid from "@/modules/admin/components/calendar/CalendarGrid";
 import CalendarReservationModal from "@/modules/admin/components/calendar/CalendarReservationModal";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+import { API_URL as API } from "@/lib/api/config";
 
 export default function CalendarPage() {
   const { user, checking } = useAuthGuard("admin");
-  const [data, setData] = useState<any[]>([]);
-  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [data, setData] = useState<Reservation[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [selectedRes, setSelectedRes] = useState<any>(null);
+  const [selectedRes, setSelectedRes] = useState<Reservation | null>(null);
 
   const handleToday = () => {
     const today = new Date();
@@ -50,14 +51,15 @@ export default function CalendarPage() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (!checking && user) fetchData(); }, [checking, user]);
 
-  const getReservationForDay = (vehicleId: number, day: Date) => {
-    return data.find(r => {
+  const getReservationForDay = (vehicleId: number, day: Date): Reservation | null => {
+    const found = data.find(r => {
       const start = new Date(r.start_date);
       const end = new Date(r.end_date);
       const current = new Date(day);
       current.setHours(0,0,0,0); start.setHours(0,0,0,0); end.setHours(0,0,0,0);
       return r.vehicle_id === vehicleId && current >= start && current <= end;
     });
+    return found ?? null;
   };
 
   const handleDrop = async (e: React.DragEvent, targetVehicleId: number, targetDay: Date) => {
@@ -77,7 +79,10 @@ export default function CalendarPage() {
     try {
       await api.put(`/reservations/${res.id}`, { vehicle_id: targetVehicleId, start_date: newStart.toISOString().split('T')[0], end_date: newEnd.toISOString().split('T')[0] });
       fetchData();
-    } catch (err: any) { notifyError(err.response?.data?.message || "Conflit de disponibilite."); }
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      notifyError(msg || "Conflit de disponibilite.");
+    }
   };
 
   if (checking || loading) return (
@@ -106,7 +111,7 @@ export default function CalendarPage() {
       />
 
       <CalendarReservationModal 
-        reservation={selectedRes} 
+        reservation={selectedRes!} 
         onClose={() => setSelectedRes(null)} 
         apiUrl={API} 
       />

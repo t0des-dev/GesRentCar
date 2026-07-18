@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils";
 
-export default function NavLinks({ links, className, isScrolled }: { links: any[]; className?: string; isScrolled?: boolean }) {
+interface NavLink {
+  label: string;
+  url: string;
+}
+
+export default function NavLinks({ links, className, isScrolled }: { links: NavLink[]; className?: string; isScrolled?: boolean }) {
   const pathname = usePathname();
 
   return (

@@ -32,7 +32,8 @@ export default function FleetPage() {
   const [loading, setLoading] = useState(true);
   const [showDrawer, setShowDrawer] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
-  const [currentVehicle, setCurrentVehicle] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [currentVehicle, setCurrentVehicle] = useState<Record<string, any> | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   
@@ -80,7 +81,7 @@ export default function FleetPage() {
   }, [fetchVehicles, checking, user]);
 
   const handleEdit = (v: Vehicle) => {
-    setCurrentVehicle({ ...v, new_image: null });
+    setCurrentVehicle({ ...v, new_image: null } as Vehicle & { new_image: null });
     setShowDrawer(true);
   };
 
@@ -106,7 +107,7 @@ export default function FleetPage() {
     try {
       const res = await api.get(`/maintenances?vehicle_id=${vehicleId}`);
       setMaintenances(res.data);
-      setCurrentVehicle(vehicles.find(v => v.id === vehicleId));
+      setCurrentVehicle(vehicles.find(v => v.id === vehicleId) ?? null);
       setShowMaintenanceModal(true);
     } catch {
       showError("Erreur lors de la récupération de la maintenance.");
@@ -184,12 +185,13 @@ export default function FleetPage() {
         'seo_title', 'seo_description', 'og_image_url'
       ];
 
-      const cleanData: any = {};
+      const cleanData: Record<string, unknown> = {};
+      const vehicleData = currentVehicle as Record<string, unknown>;
       allowedFields.forEach(field => {
-        const val = currentVehicle[field];
+        const val = vehicleData[field];
         if (val !== undefined && val !== null && val !== "") {
           if (field === 'plate') cleanData[field] = String(val).toUpperCase().trim();
-          else if (field.endsWith('_date')) cleanData[field] = new Date(val).toISOString().split('T')[0];
+          else if (field.endsWith('_date')) cleanData[field] = new Date(String(val)).toISOString().split('T')[0];
           else if (['price_per_day', 'year', 'mileage'].includes(field)) cleanData[field] = Number(val);
           else cleanData[field] = val;
         }
@@ -217,10 +219,11 @@ export default function FleetPage() {
       showSuccess("Véhicule sauvegardé !");
       setShowDrawer(false);
       fetchVehicles();
-    } catch (err: any) {
-      let errorText = err.response?.data?.message || err.message;
-      if (err.response?.data?.errors) {
-        const errors = err.response.data.errors;
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } }; message?: string };
+      let errorText = axiosErr?.response?.data?.message || axiosErr?.message || "Erreur inconnue";
+      if (axiosErr?.response?.data?.errors) {
+        const errors = axiosErr.response.data.errors;
         const firstErrorKey = Object.keys(errors)[0];
         errorText = errors[firstErrorKey][0];
       }
@@ -344,17 +347,17 @@ export default function FleetPage() {
             onClose={() => setShowDrawer(false)} 
             onSubmit={handleSubmit} 
             submitting={submitting}
-            categoryPrices={agency.category_prices || {}}
+            categoryPrices={(agency.category_prices || {}) as Record<string, number>}
           />
         )}
       </AnimatePresence>
 
-      {showMaintenanceModal && (
+      {showMaintenanceModal && currentVehicle && (
         <MaintenanceModal 
-          vehicle={currentVehicle} 
+          vehicle={'id' in currentVehicle ? currentVehicle as Vehicle : null} 
           maintenances={maintenances} 
           onClose={() => setShowMaintenanceModal(false)} 
-          onRefresh={() => { fetchMaintenances(currentVehicle.id); fetchVehicles(); }} 
+          onRefresh={() => { if ('id' in currentVehicle) fetchMaintenances(currentVehicle.id); fetchVehicles(); }} 
         />
       )}
 

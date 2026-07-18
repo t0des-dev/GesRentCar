@@ -15,7 +15,7 @@ export interface CreateReservationPayload {
   };
   payment_method: "cash" | "cmi" | "transfer" | "stripe" | "on_site";
   signature?: string;
-  options?: any;
+  options?: Record<string, unknown>;
 }
 
 export interface Reservation {
@@ -27,7 +27,7 @@ export interface Reservation {
   status: string;
   total_price: number;
   deposit_amount: number;
-  options: any | null;
+  options: Record<string, unknown> | null;
   documents: string[] | null;
   vehicle?: { brand: string; model: string; plate: string };
   client?: { name: string; email: string; phone: string };

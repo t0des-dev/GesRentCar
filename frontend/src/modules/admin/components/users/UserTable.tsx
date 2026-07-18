@@ -4,9 +4,16 @@ import { motion } from "framer-motion";
 import { Mail, Shield, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/shared/utils";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 interface UserTableProps {
-  users: any[];
-  onEdit: (u: any) => void;
+  users: User[];
+  onEdit: (u: User) => void;
   onDelete: (id: number) => void;
 }
 

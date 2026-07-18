@@ -14,7 +14,7 @@ import { PaymentSettings, NotificationSettings, AuditLogSettings } from './setti
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ name?: string; email?: string; role?: string } | null>(null);
 
   const [profileForm, setProfileForm] = useState({ name: '', email: '' });
   const [passwordForm, setPasswordForm] = useState({ current_password: '', password: '', password_confirmation: '' });
@@ -39,8 +39,9 @@ export default function AdminSettings() {
       localStorage.setItem('vectoria_user', JSON.stringify(res.data.user));
       setUser(res.data.user);
       setMessage({ type: 'success', text: 'Profil mis à jour avec succès !' });
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Erreur lors de la mise à jour.' });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setMessage({ type: 'error', text: msg || 'Erreur lors de la mise à jour.' });
     } finally {
       setLoading(false);
     }
@@ -54,8 +55,9 @@ export default function AdminSettings() {
       await api.put('/user/password', passwordForm);
       setPasswordForm({ current_password: '', password: '', password_confirmation: '' });
       setMessage({ type: 'success', text: 'Mot de passe modifié avec succès !' });
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Erreur lors de la modification.' });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setMessage({ type: 'error', text: msg || 'Erreur lors de la modification.' });
     } finally {
       setLoading(false);
     }

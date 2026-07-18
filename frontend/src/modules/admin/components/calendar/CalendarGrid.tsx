@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@/shared/utils";
+import { Vehicle, Reservation } from "@/types/admin";
 
 interface CalendarGridProps {
   days: Date[];
-  vehicles: any[];
-  getReservationForDay: (vId: number, day: Date) => any;
-  onSelectReservation: (res: any) => void;
-  onDragStart: (e: React.DragEvent, res: any) => void;
+  vehicles: Vehicle[];
+  getReservationForDay: (vId: number, day: Date) => Reservation | null;
+  onSelectReservation: (res: Reservation) => void;
+  onDragStart: (e: React.DragEvent, res: Reservation) => void;
   onDrop: (e: React.DragEvent, vId: number, day: Date) => void;
 }
 

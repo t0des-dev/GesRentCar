@@ -6,7 +6,12 @@ import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
 
 interface AnalyticsKpiGridProps {
-  stats: any;
+  stats: {
+    total_revenue?: number;
+    total_reservations?: number;
+    occupancy_rate?: number;
+    active_vehicles?: number;
+  } | null;
 }
 
 export default function AnalyticsKpiGrid({ stats }: AnalyticsKpiGridProps) {

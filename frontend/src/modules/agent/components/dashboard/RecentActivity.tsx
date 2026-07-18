@@ -3,9 +3,10 @@
 import { motion } from "framer-motion";
 import { Calendar, Search } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { Reservation } from "@/types/admin";
 
 interface RecentActivityProps {
-  reservations: any[];
+  reservations: Reservation[];
   loading: boolean;
 }
 

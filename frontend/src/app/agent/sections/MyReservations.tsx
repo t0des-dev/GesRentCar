@@ -5,8 +5,9 @@ import { Car, Calendar, Search, Filter, ChevronDown, ChevronUp, DollarSign, Load
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { Reservation } from "@/types/admin";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { API_URL as API } from "@/lib/api/config";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 const STATUS_MAP: Record<string, { label: string, style: string }> = {
@@ -17,7 +18,7 @@ const STATUS_MAP: Record<string, { label: string, style: string }> = {
 };
 
 export default function MyReservations() {
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");

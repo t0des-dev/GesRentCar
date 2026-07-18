@@ -93,8 +93,8 @@ export default function ImportPage() {
       if (res.data.skipped > 0) {
         toast(`${res.data.skipped} doublon(s) ignoré(s).`, { icon: "⚠️" });
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || err.message;
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || (err as Error)?.message;
       toast.error(`Erreur: ${msg}`);
     } finally {
       setImporting(false);

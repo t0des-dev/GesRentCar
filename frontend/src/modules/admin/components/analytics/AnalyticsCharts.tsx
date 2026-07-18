@@ -5,8 +5,8 @@ import RevenueChart from "@/components/RevenueChart";
 import FleetPieChart from "@/components/FleetPieChart";
 
 interface AnalyticsChartsProps {
-  revenueData: any[];
-  fleetData: any;
+  revenueData: { month: string; revenue: number }[];
+  fleetData: { occupied_vehicles?: number; free_vehicles?: number } | null;
 }
 
 export default function AnalyticsCharts({ revenueData, fleetData }: AnalyticsChartsProps) {

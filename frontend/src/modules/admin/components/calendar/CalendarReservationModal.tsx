@@ -3,9 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, User, Clock, FileText } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { Reservation } from "@/types/admin";
 
 interface CalendarReservationModalProps {
-  reservation: any;
+  reservation: Reservation;
   onClose: () => void;
   apiUrl: string;
 }
@@ -54,7 +55,7 @@ export default function CalendarReservationModal({ reservation, onClose, apiUrl 
                 <User size={18} className="text-primary" />
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Client</p>
-                  <strong className="font-serif text-base text-ink-1">{reservation.client_name}</strong>
+                  <strong className="font-serif text-base text-ink-1">{reservation.client?.name || 'N/A'}</strong>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 bg-surface-2 rounded-2xl">

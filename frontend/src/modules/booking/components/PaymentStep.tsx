@@ -67,8 +67,9 @@ export default function PaymentStep({ booking, deposit, total, days, signature, 
         payment_method: "on_site",
       });
       onSuccess(res.id, res.status);
-    } catch (err: any) {
-      const data = err?.response?.data;
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
+      const data = axiosErr?.response?.data;
       const msg = data?.message
         ?? (data?.errors ? Object.values(data.errors).flat().join(", ") : null)
         ?? "Une erreur est survenue lors de la réservation.";

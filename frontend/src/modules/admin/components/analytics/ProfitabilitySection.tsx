@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import ProfitabilityTable from "@/components/ProfitabilityTable";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ProfitabilitySectionProps {
   data: any[];
 }

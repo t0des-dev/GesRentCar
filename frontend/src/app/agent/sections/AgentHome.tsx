@@ -7,14 +7,15 @@ import { Car, ArrowRight } from "lucide-react";
 import KpiGrid from "@/modules/agent/components/dashboard/KpiGrid";
 import RecentActivity from "@/modules/agent/components/dashboard/RecentActivity";
 import QuickActions from "@/modules/agent/components/dashboard/QuickActions";
+import { Reservation } from "@/types/admin";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { API_URL as API } from "@/lib/api/config";
 const getToken = () => typeof window !== "undefined" ? localStorage.getItem("vectoria_token") || "" : "";
 
 export default function AgentHome({ onNewRental }: { onNewRental: () => void }) {
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ name?: string; role?: string } | null>(null);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function AgentHome({ onNewRental }: { onNewRental: () => void }) 
   const stats = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
     return {
-      totalRevenue: reservations.reduce((s, r) => s + (parseFloat(r.total_price) || 0), 0),
+      totalRevenue: reservations.reduce((s, r) => s + (Number(r.total_price) || 0), 0),
       pickups: reservations.filter((r) => r.start_date?.split('T')[0] === today).length,
       returns: reservations.filter((r) => r.end_date?.split('T')[0] === today).length,
       active: reservations.filter((r) => r.status === "confirmed").length,

@@ -42,9 +42,10 @@ export function useVehicleAvailability(
       if (!controller.signal.aborted) {
         setStatus(result.available ? "available" : "unavailable");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (!controller.signal.aborted) {
-        const is404 = err?.response?.status === 404;
+        const axiosErr = err as { response?: { status?: number } };
+        const is404 = axiosErr?.response?.status === 404;
         setStatus(is404 ? "unavailable" : "error");
       }
     }

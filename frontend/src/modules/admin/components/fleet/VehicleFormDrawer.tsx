@@ -9,13 +9,16 @@ import { getImageUrl } from "@/shared/utils/image";
 import { useState } from "react";
 import { notifyError } from "@/components/Notifications";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type VehicleFormData = any;
+
 interface VehicleFormDrawerProps {
-  vehicle: any;
-  setVehicle: (v: any) => void;
+  vehicle: VehicleFormData;
+  setVehicle: (v: VehicleFormData) => void;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
   submitting: boolean;
-  categoryPrices: Record<string, any>;
+  categoryPrices: Record<string, number>;
 }
 
 export default function VehicleFormDrawer({

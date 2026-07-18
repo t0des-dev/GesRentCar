@@ -7,7 +7,7 @@ import { cn } from "@/shared/utils";
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  editingUser: any;
+  editingUser: { id?: number; name?: string; email?: string; role?: string } | null;
   onSave: (e: React.FormEvent<HTMLFormElement>) => void;
   loading: boolean;
 }

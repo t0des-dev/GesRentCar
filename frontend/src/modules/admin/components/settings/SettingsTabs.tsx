@@ -3,8 +3,14 @@
 import { cn } from "@/shared/utils";
 import { motion } from "framer-motion";
 
+interface Tab {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+}
+
 interface SettingsTabsProps {
-  tabs: any[];
+  tabs: Tab[];
   activeTab: string;
   setActiveTab: (id: string) => void;
 }

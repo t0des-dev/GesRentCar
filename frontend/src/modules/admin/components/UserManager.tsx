@@ -9,11 +9,18 @@ import { ConfirmDialog, notifyError } from "@/components/Notifications";
 import UserTable from "./users/UserTable";
 import UserModal from "./users/UserModal";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export default function UserManager() {
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<any>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<() => void>(() => {});
 
@@ -38,14 +45,19 @@ export default function UserManager() {
       else { await api.post("/users", data); }
       setShowUserModal(false);
       fetchUsers();
-    } catch (err: any) { notifyError(err.response?.data?.message || "Erreur lors de la sauvegarde."); }
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      notifyError(msg || "Erreur lors de la sauvegarde."); }
     finally { setLoading(false); }
   };
 
   const handleDeleteUser = async (id: number) => {
     setPendingAction(() => async () => {
       try { await api.delete(`/users/${id}`); fetchUsers(); }
-      catch(err: any) { notifyError(err.response?.data?.message || "Erreur lors de la suppression."); }
+      catch(err: unknown) {
+        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+        notifyError(msg || "Erreur lors de la suppression.");
+      }
     });
     setConfirmOpen(true);
   };
@@ -67,7 +79,7 @@ export default function UserManager() {
 
       <UserTable 
         users={users} 
-        onEdit={(u: any) => { setEditingUser(u); setShowUserModal(true); }} 
+        onEdit={(u: User) => { setEditingUser(u); setShowUserModal(true); }} 
         onDelete={handleDeleteUser} 
       />
 

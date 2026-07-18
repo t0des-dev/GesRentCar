@@ -8,12 +8,14 @@ import api from '@/shared/services/client';
 import AnalyticsKpiGrid from './analytics/AnalyticsKpiGrid';
 import AnalyticsCharts from './analytics/AnalyticsCharts';
 import ProfitabilitySection from './analytics/ProfitabilitySection';
+import { DashboardStats } from '@/types/admin';
 
 export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<any>(null);
-  const [revenueData, setRevenueData] = useState([]);
-  const [profitabilityData, setProfitabilityData] = useState([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [revenueData, setRevenueData] = useState<{ month: string; revenue: number }[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [profitabilityData, setProfitabilityData] = useState<any[]>([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -25,8 +27,8 @@ export default function AnalyticsDashboard() {
       ]);
 
       setStats(generalRes.data);
-      setRevenueData(revenueRes.data.map((item: any) => ({
-        month: item.category || item.month || 'N/A',
+      setRevenueData(revenueRes.data.map((item: Record<string, unknown>) => ({
+        month: (item.category || item.month || 'N/A') as string,
         revenue: Number(item.total_revenue || 0)
       })));
       setProfitabilityData(profitabilityRes.data);
@@ -60,7 +62,7 @@ export default function AnalyticsDashboard() {
       </div>
 
       <AnalyticsKpiGrid stats={stats} />
-      <AnalyticsCharts revenueData={revenueData} fleetData={stats} />
+      <AnalyticsCharts revenueData={revenueData} fleetData={{ occupied_vehicles: stats?.active_bookings, free_vehicles: stats?.fleet_distribution?.length }} />
       <ProfitabilitySection data={profitabilityData} />
     </div>
   );

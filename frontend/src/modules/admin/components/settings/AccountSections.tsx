@@ -4,7 +4,14 @@ import { motion } from "framer-motion";
 import { Save, Loader2, Lock } from "lucide-react";
 import { cn } from "@/shared/utils";
 
-export function ProfileSettings({ form, setForm, onSubmit, loading }: any) {
+interface ProfileFormProps {
+  form: { name: string; email: string };
+  setForm: (f: { name: string; email: string }) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  loading: boolean;
+}
+
+export function ProfileSettings({ form, setForm, onSubmit, loading }: ProfileFormProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-premium p-8 space-y-8">
       <div>
@@ -37,7 +44,14 @@ export function ProfileSettings({ form, setForm, onSubmit, loading }: any) {
   );
 }
 
-export function SecuritySettings({ form, setForm, onSubmit, loading }: any) {
+interface SecurityFormProps {
+  form: { current_password: string; password: string; password_confirmation: string };
+  setForm: (f: { current_password: string; password: string; password_confirmation: string }) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  loading: boolean;
+}
+
+export function SecuritySettings({ form, setForm, onSubmit, loading }: SecurityFormProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-premium p-8 space-y-8">
       <div>

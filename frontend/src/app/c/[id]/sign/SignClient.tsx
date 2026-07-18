@@ -27,8 +27,9 @@ export default function SignClient() {
         setContractUrl(res.data.url);
       }
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Une erreur est survenue lors de la signature.");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || "Une erreur est survenue lors de la signature.");
     } finally {
       setLoading(false);
     }

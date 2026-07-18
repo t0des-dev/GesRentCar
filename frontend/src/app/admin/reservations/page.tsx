@@ -13,7 +13,7 @@ import ReservationsTable from "@/modules/admin/components/dashboard/Reservations
 import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationDrawer";
 import DocumentPreviewModal from "@/modules/admin/components/dashboard/DocumentPreviewModal";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+import { API_URL as API } from "@/lib/api/config";
 
 const STATUS_TABS = [
   { id: "all", label: "Toutes", icon: FileText },

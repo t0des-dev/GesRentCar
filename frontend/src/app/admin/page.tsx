@@ -18,7 +18,7 @@ import { notifyError } from "@/components/Notifications";
 import MaintenanceScheduler from "@/components/MaintenanceScheduler";
 import RevenueForecast from "@/components/RevenueForecast";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+import { API_URL as API } from "@/lib/api/config";
 
 export default function AdminDashboard() {
   const { user, checking } = useAuthGuard("admin");
