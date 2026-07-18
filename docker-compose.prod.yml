@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-vectoria}
       POSTGRES_USER: ${DB_USERNAME:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?ERROR: Set DB_PASSWORD in .env}
+      POSTGRES_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD in .env}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -34,7 +34,7 @@ services:
         limits:
           memory: 256M
           cpus: "0.5"
-    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no --requirepass ${REDIS_PASSWORD:?ERROR: Set REDIS_PASSWORD in .env}
+    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no --requirepass "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "$$REDIS_PASSWORD", "ping"]
       interval: 10s
