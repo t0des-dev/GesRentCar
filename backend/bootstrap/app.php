@@ -28,8 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return $request->expectsJson();
         });
 
-        // Catch infrastructure failures (cache down, DB missing tables, etc.)
-        // and return clean JSON instead of 500 with stack trace.
+        // Catch infrastructure failures and return clean JSON instead of 500 with stack trace.
+        // IMPORTANT: Only return 503 for genuine service outages — NOT for throttling/cache misses
+        // which should be non-blocking (skip rate limiting, continue without cache).
         $exceptions->renderable(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if (! $request->is('api/*')) {
                 return null;
@@ -37,28 +38,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
             $message = class_basename(get_class($e)).': '.$e->getMessage();
 
-            // Cache/store failures (Redis down, missing table)
+            // Throttling/cache failures — let the request through (skip rate limiting)
             if ($e instanceof \Predis\PredisConnectionException
                 || $e instanceof \Illuminate\Redis\Connections\ConnectionException
-                || str_contains($message, 'Connection')
-                || str_contains($message, 'cache')
-                || str_contains($message, 'Redis')
+                || $e instanceof \Symfony\Component\Cache\Exception\TransportExceptionInterface
             ) {
-                return response()->json([
-                    'message' => 'Service temporairement indisponible.',
-                    'error' => 'cache_unavailable',
-                ], 503);
+                return null; // Let Laravel continue without rate limiting / cache
             }
 
-            // Database table missing
-            if (str_contains($message, 'relation')
-                || str_contains($message, 'does not exist')
-                || str_contains($message, 'column')
-                || $e instanceof \PDOException
-            ) {
+            // Database down — only catch genuine connection failures, not "table not found"
+            if ($e instanceof \PDOException && str_contains($message, 'SQLSTATE')) {
                 return response()->json([
-                    'message' => 'Erreur de base de données. Veuillez réessayer.',
-                    'error' => 'database_error',
+                    'message' => 'Service temporairement indisponible.',
+                    'error' => 'database_unavailable',
                 ], 503);
             }
 

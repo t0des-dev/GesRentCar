@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, ArrowRight, Sparkles, KeyRound } from 'lucide-react';
 import { useAuth } from '@/modules/auth/context/context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { notifyInfo } from "@/components/Notifications";
@@ -231,6 +231,24 @@ export default function LoginPage() {
               )}
             </motion.button>
           </form>
+
+          {/* Book without account */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-6"
+          >
+            <Link
+              href="/booking"
+              className="flex items-center justify-center gap-3 w-full h-12 bg-gradient-to-r from-gold to-gold/80 text-ink-1 font-bold rounded-xl hover:shadow-lg hover:shadow-gold/25 transition-all border border-gold/20"
+            >
+              <KeyRound size={16} />
+              Réserver sans compte
+              <ArrowRight size={16} />
+            </Link>
+            <p className="text-center text-[11px] text-white/25 mt-2">Pas besoin de compte pour réserver</p>
+          </motion.div>
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-7">
