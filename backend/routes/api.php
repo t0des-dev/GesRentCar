@@ -71,10 +71,10 @@ $apiRoutes = function () {
 
     Route::get('/user', function (Request $request) {
         return $request->user();
-    })->middleware(['auth:sanctum', 'throttle:api']);
+    })->middleware(['auth:sanctum', 'graceful-throttle']);
 
     // Auth (rate limited: 5 attempts/min per IP)
-    Route::prefix('auth')->middleware('throttle:auth')->group(function () {
+    Route::prefix('auth')->middleware('graceful-throttle')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/register', [AuthController::class, 'register']);
     });
@@ -89,7 +89,7 @@ $apiRoutes = function () {
         });
     });
 
-    Route::middleware('throttle:public')->group(function () {
+    Route::middleware('graceful-throttle')->group(function () {
         Route::get('/config', [ConfigController::class, 'index']);
         Route::get('/health', [HealthController::class, 'index']);
         Route::get('/pages', [PageController::class, 'index']);
@@ -127,7 +127,7 @@ $apiRoutes = function () {
     });
 
     // ─── Stripe (rate limited: 10 req/min per IP) ──────────────────────────────
-    Route::middleware('throttle:payment')->group(function () {
+    Route::middleware('graceful-throttle')->group(function () {
         Route::post('/stripe/intent', [StripeController::class, 'createIntent']);
         Route::post('/stripe/confirm', [StripeController::class, 'confirm']);
         Route::post('/stripe/webhook', [StripeController::class, 'webhook']);
@@ -138,7 +138,7 @@ $apiRoutes = function () {
     });
 
     // Protected routes (auth + audit + rate limit)
-    Route::middleware(['auth:sanctum', 'audit', 'throttle:api'])->group(function () {
+    Route::middleware(['auth:sanctum', 'audit', 'graceful-throttle'])->group(function () {
 
         // ─── User-facing routes ───────────────────────────────────────────
         Route::post('/reservations', [ReservationController::class, 'store']);
