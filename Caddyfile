@@ -1,0 +1,39 @@
+{$DOMAIN:localhost} {
+    # Uncomment for production:
+    # tls your-email@example.com
+
+    # API + Admin
+    handle /api/* {
+        reverse_proxy nginx:80
+    }
+
+    handle /filament-admin/* {
+        reverse_proxy nginx:80
+    }
+
+    handle /storage/* {
+        reverse_proxy nginx:80
+    }
+
+    # Everything else (Next.js frontend via Nginx)
+    handle {
+        reverse_proxy nginx:80
+    }
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+        Permissions-Policy camera=(), microphone=(), geolocation=()
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+
+    # Gzip compression
+    encode gzip zstd
+
+    log {
+        output stdout
+        format json
+    }
+}
