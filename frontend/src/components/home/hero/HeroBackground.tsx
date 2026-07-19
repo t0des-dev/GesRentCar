@@ -6,7 +6,7 @@ import { Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
 
 interface HeroBackgroundProps {
-  heroImage: string;
+  heroImage: string | null;
   heroVideo: string | null;
   scale: MotionValue<number>;
 }
@@ -23,13 +23,13 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
         {heroVideo && !videoError ? (
           <video
             autoPlay loop muted={videoMuted} playsInline
-            poster={heroImage}
+            poster={heroImage || undefined}
             onError={() => setVideoError(true)}
             className="w-full h-full object-cover brightness-[0.45]"
           >
             <source src={heroVideo} type="video/mp4" />
           </video>
-        ) : (
+        ) : heroImage ? (
           <Image
             src={heroImage}
             alt=""
@@ -37,6 +37,8 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
             sizes="100vw"
             className="object-cover brightness-[0.45]"
           />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-ink-2 via-ink-1 to-primary/10" />
         )}
       </motion.div>
 

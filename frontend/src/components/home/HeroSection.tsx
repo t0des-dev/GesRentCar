@@ -43,7 +43,7 @@ export default function HeroSection({
   const y1 = useTransform(scrollY, [0, 500], [0, reduceMotion ? 0 : 150]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
-  const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || "/hero-fallback.jpg";
+  const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || null;
   const heroVideo = heroVideoProp || agency.hero_video_url || "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4";
 
   const scrollText = content?.experience?.cta_text || "Découvrir";
