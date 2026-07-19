@@ -211,6 +211,8 @@ services:
     image: nginx:alpine
     container_name: vectoria-nginx
     restart: unless-stopped
+    ports:
+      - "80:80"
     deploy:
       resources:
         limits:
