@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:clean": "rimraf .next && next dev",
     "clean": "rimraf .next",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
