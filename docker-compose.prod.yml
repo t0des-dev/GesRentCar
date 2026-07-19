@@ -1,3 +1,22 @@
+x-common-env: &common-env
+  - APP_ENV=production
+  - APP_DEBUG=false
+  - DB_CONNECTION=pgsql
+  - DB_HOST=postgres
+  - DB_PORT=5432
+  - DB_DATABASE=${DB_DATABASE:-vectoria}
+  - DB_USERNAME=${DB_USERNAME:-admin}
+  - DB_PASSWORD=${DB_PASSWORD:?ERROR}
+  - REDIS_HOST=redis
+  - REDIS_PASSWORD=${REDIS_PASSWORD:?ERROR}
+  - QUEUE_CONNECTION=redis
+  - SESSION_DRIVER=redis
+  - CACHE_STORE=redis
+  - FRONTEND_URL=${FRONTEND_URL:-https://vectoria.carbonick.com}
+  - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+  - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+  - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+
 services:
   # ─── PostgreSQL ─────────────────────────────────────────────────────────────
   postgres:
@@ -34,9 +53,9 @@ services:
         limits:
           memory: 256M
           cpus: "0.5"
-    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no --requirepass "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"
+    command: redis-server --appendonly yes --stop-writes-on-bgsave-error no --requirepass "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}" --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "$$REDIS_PASSWORD", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a \"$REDIS_PASSWORD\" ping || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -68,24 +87,8 @@ services:
     volumes:
       - storage_data:/var/www/storage
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=${DB_DATABASE:-vectoria}
-      - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:?ERROR}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:?ERROR}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
-      - FRONTEND_URL=${FRONTEND_URL:-https://vectoria.carbonick.com}
+      <<: *common-env
       - SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS:-localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1,vectoria.carbonick.com}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
     depends_on:
       postgres:
         condition: service_healthy
@@ -111,23 +114,7 @@ services:
     volumes:
       - storage_data:/var/www/storage
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=${DB_DATABASE:-vectoria}
-      - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:?ERROR}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:?ERROR}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
-      - FRONTEND_URL=${FRONTEND_URL:-https://vectoria.carbonick.com}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      *common-env
     depends_on:
       postgres:
         condition: service_healthy
@@ -154,23 +141,7 @@ services:
     volumes:
       - storage_data:/var/www/storage
     environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=${DB_DATABASE:-vectoria}
-      - DB_USERNAME=${DB_USERNAME:-admin}
-      - DB_PASSWORD=${DB_PASSWORD:?ERROR}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:?ERROR}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
-      - FRONTEND_URL=${FRONTEND_URL:-https://vectoria.carbonick.com}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      *common-env
     depends_on:
       postgres:
         condition: service_healthy

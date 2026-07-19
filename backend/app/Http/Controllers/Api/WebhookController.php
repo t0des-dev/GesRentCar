@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Webhook;
 use App\Models\WebhookLog;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class WebhookController extends Controller
 {
+    use ApiResponse;
+
     public function index()
     {
         try {
@@ -17,7 +20,7 @@ class WebhookController extends Controller
 
             return response()->json($webhooks);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch webhooks.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec du chargement des webhooks.');
         }
     }
 
@@ -44,9 +47,9 @@ class WebhookController extends Controller
 
             return response()->json($webhook, 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
+            return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to create webhook.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de la création du webhook.');
         }
     }
 
@@ -66,9 +69,9 @@ class WebhookController extends Controller
 
             return response()->json($webhook);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
+            return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update webhook.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de la mise à jour du webhook.');
         }
     }
 
@@ -79,7 +82,7 @@ class WebhookController extends Controller
 
             return response()->json(null, 204);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to delete webhook.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de la suppression du webhook.');
         }
     }
 
@@ -95,7 +98,7 @@ class WebhookController extends Controller
             ];
 
             if ($this->isInternalUrl($webhook->url)) {
-                abort(422, 'URL points to internal network');
+                return $this->errorResponse('URL pointe vers un réseau interne.', 422, 'internal_url');
             }
 
             $response = Http::timeout(10)->withHeaders([
@@ -138,7 +141,7 @@ class WebhookController extends Controller
 
             $webhook->increment('failure_count');
 
-            return response()->json(['error' => 'Failed to send test payload.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de l\'envoi du test webhook.');
         }
     }
 

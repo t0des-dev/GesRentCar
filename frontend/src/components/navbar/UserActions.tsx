@@ -36,7 +36,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300",
-              "bg-slate-100 hover:bg-slate-200 text-slate-800"
+              "bg-surface-1 hover:bg-surface-2 text-ink-2"
             )}
           >
             <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center overflow-hidden">
@@ -55,14 +55,14 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-[60]"
+                className="absolute right-0 mt-2 w-56 bg-surface-0 dark:bg-ink-2 rounded-xl shadow-xl border border-border overflow-hidden z-[60]"
               >
-                <div className="p-4 border-b border-slate-100">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Connecté</p>
-                  <p className="text-sm font-semibold text-slate-700 truncate">{session.user?.email}</p>
+                <div className="p-4 border-b border-border">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-4 mb-1">Connecté</p>
+                  <p className="text-sm font-semibold text-ink-2 truncate">{session.user?.email}</p>
                 </div>
                 <div className="p-2">
-                  <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-700 text-sm font-medium transition-colors">
+                  <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-1 text-ink-2 text-sm font-medium transition-colors">
                     <LayoutDashboard size={16} className="text-primary" />
                     {t("nav_dashboard") || "Tableau de bord"}
                   </Link>
@@ -82,7 +82,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
           size="sm"
           className={cn(
             "rounded-lg",
-            "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            "text-ink-3 hover:text-ink-1 hover:bg-surface-1"
           )}
         >
           <Link href="/login">

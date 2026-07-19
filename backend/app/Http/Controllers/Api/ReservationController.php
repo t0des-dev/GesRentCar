@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use App\Services\ContractService;
 use App\Services\NotificationService;
 use App\Services\PricingService;
+use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ use Stripe\Stripe;
 
 class ReservationController extends Controller
 {
+    use ApiResponse;
     public function __construct(
         protected NotificationService $notificationService,
         protected PricingService $pricing,
@@ -245,7 +247,7 @@ class ReservationController extends Controller
             $currentStatus = $reservation->status;
             $newStatus = $validated['status'];
             if (isset($allowedTransitions[$currentStatus]) && ! in_array($newStatus, $allowedTransitions[$currentStatus])) {
-                return response()->json(['message' => "Transition de {$currentStatus} vers {$newStatus} non autorisée."], 422);
+                return $this->errorResponse("Transition de {$currentStatus} vers {$newStatus} non autorisée.", 422, 'invalid_transition');
             }
         }
 
@@ -338,7 +340,7 @@ class ReservationController extends Controller
     public function accept(Reservation $reservation)
     {
         if ($reservation->status !== 'pending_partner') {
-            return response()->json(['message' => 'Statut de réservation invalide.'], 422);
+            return $this->errorResponse('Statut de réservation invalide.', 422, 'invalid_status');
         }
 
         $reservation->load(['client', 'vehicle']);
@@ -372,7 +374,7 @@ class ReservationController extends Controller
     public function reject(Reservation $reservation)
     {
         if ($reservation->status !== 'pending_partner') {
-            return response()->json(['message' => 'Statut de réservation invalide.'], 422);
+            return $this->errorResponse('Statut de réservation invalide.', 422, 'invalid_status');
         }
 
         $reservation->update(['status' => 'cancelled']);
@@ -395,9 +397,11 @@ class ReservationController extends Controller
         $cancellableStatuses = ['pending', 'pending_payment', 'confirmed', 'pending_partner'];
 
         if (! in_array($reservation->status, $cancellableStatuses)) {
-            return response()->json([
-                'message' => "Impossible d'annuler une réservation en statut : {$reservation->status}.",
-            ], 422);
+            return $this->errorResponse(
+                "Impossible d'annuler une réservation en statut : {$reservation->status}.",
+                422,
+                'invalid_status_for_cancellation'
+            );
         }
 
         $reservation->load(['client', 'vehicle', 'payment']);

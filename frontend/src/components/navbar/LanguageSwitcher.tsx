@@ -25,7 +25,7 @@ export default function LanguageSwitcher({
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 text-xs font-semibold",
-          "text-slate-700 hover:text-black hover:bg-slate-100 font-semibold"
+          "text-ink-2 hover:text-ink-1 hover:bg-surface-1 font-semibold"
         )}
       >
         <Globe size={14} />
@@ -40,7 +40,7 @@ export default function LanguageSwitcher({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-[60]"
+            className="absolute right-0 mt-2 w-40 bg-surface-0 dark:bg-ink-2 rounded-xl shadow-xl border border-border overflow-hidden z-[60]"
           >
             {languages.map((l) => (
               <button
@@ -50,7 +50,7 @@ export default function LanguageSwitcher({
                   "flex items-center justify-between w-full px-4 py-3 text-sm transition-colors",
                   lang === l.code
                     ? "bg-primary/5 text-primary font-semibold"
-                    : "text-slate-600 hover:bg-slate-50"
+                    : "text-ink-3 hover:bg-surface-1"
                 )}
               >
                 <span>{l.label}</span>

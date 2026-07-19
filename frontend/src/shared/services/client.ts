@@ -24,7 +24,10 @@ api.interceptors.request.use(async (config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    isRedirecting = false;
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
       const url = error.config?.url || "";
@@ -42,6 +45,9 @@ api.interceptors.response.use(
         localStorage.removeItem("vectoria_token");
         window.location.href = "/login";
       }
+    }
+    if (error.response?.status && error.response.status < 500) {
+      isRedirecting = false;
     }
     return Promise.reject(error);
   }

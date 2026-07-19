@@ -45,19 +45,19 @@ export default function MobileMenu({
           transition={{ duration: 0.2 }}
           className="md:hidden fixed inset-0 top-0 z-40"
         >
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl overflow-y-auto"
+            className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-surface-0 dark:bg-ink-2 shadow-2xl overflow-y-auto"
           >
-            <div className="flex items-center justify-between p-6 border-b border-slate-100">
-              <span className="font-bold text-lg">Menu</span>
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <span className="font-bold text-lg text-ink-1">Menu</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors text-xl"
+                className="w-10 h-10 rounded-xl bg-surface-1 flex items-center justify-center text-ink-4 hover:bg-surface-2 transition-colors text-xl"
               >
                 ✕
               </button>
@@ -69,7 +69,7 @@ export default function MobileMenu({
                   key={i}
                   href={link.url}
                   onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                  className="block px-4 py-3 rounded-xl text-ink-2 font-medium hover:bg-surface-1 transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -77,7 +77,7 @@ export default function MobileMenu({
             </div>
 
             <div className="px-6 pb-6 space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 px-4">Langue</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-4 px-4">Langue</p>
               <div className="flex gap-2 px-4">
                 {languages.map((l) => (
                   <button
@@ -87,7 +87,7 @@ export default function MobileMenu({
                       "flex-1 py-3 rounded-xl text-sm font-semibold border transition-all",
                       lang === l.code
                         ? "bg-primary text-white border-primary"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                        : "bg-surface-0 text-ink-3 border-border hover:border-ink-4"
                     )}
                   >
                     {l.label}
@@ -102,13 +102,13 @@ export default function MobileMenu({
                   <User size={18} />
                   {t("nav_dashboard") || "MON COMPTE VIP"}
                 </Link>
-                <button onClick={() => { signOut(); setIsOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium">
+                <button onClick={() => { signOut(); setIsOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-ink-4 hover:bg-red-50 hover:text-red-600 transition-colors font-medium">
                   {t("nav_logout") || "Déconnexion"}
                 </button>
               </div>
             ) : (
               <div className="px-6 pb-4">
-                <Button asChild variant="ghost" className="w-full justify-start text-slate-700 font-medium py-6 rounded-xl">
+                <Button asChild variant="ghost" className="w-full justify-start text-ink-2 font-medium py-6 rounded-xl">
                   <Link href="/login" onClick={() => setIsOpen(false)}>
                     {t("nav_login")}
                   </Link>

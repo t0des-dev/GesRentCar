@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    use ApiResponse;
+
     public function index(Request $request)
     {
         try {
@@ -23,7 +26,7 @@ class ReviewController extends Controller
 
             return response()->json($reviews);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch reviews.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec du chargement des avis.');
         }
     }
 
@@ -48,7 +51,7 @@ class ReviewController extends Controller
                 ->exists();
 
             if ($existingReview) {
-                return response()->json(['error' => 'You have already reviewed this reservation.'], 422);
+                return $this->errorResponse('Vous avez déjà avisé cette réservation.', 422, 'already_reviewed');
             }
 
             $reservation = \App\Models\Reservation::where('id', $data['reservation_id'])
@@ -56,7 +59,7 @@ class ReviewController extends Controller
                 ->first();
 
             if (! $reservation) {
-                return response()->json(['error' => 'You can only review after completing a reservation.'], 422);
+                return $this->errorResponse('Vous ne pouvez avisé qu\'après avoir terminé une réservation.', 422, 'reservation_not_completed');
             }
 
             $data['user_id'] = $userId;
@@ -76,9 +79,9 @@ class ReviewController extends Controller
 
             return response()->json($review, 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
+            return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to create review.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de la création de l\'avis.');
         }
     }
 
@@ -87,12 +90,11 @@ class ReviewController extends Controller
         try {
             $review->update(['is_approved' => true]);
 
-            return response()->json([
-                'message' => 'Review approved successfully.',
+            return $this->successResponse([
                 'review' => $review,
-            ]);
+            ], 'Avis approuvé avec succès.');
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to approve review.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec de l\'approbation de l\'avis.');
         }
     }
 
@@ -102,7 +104,7 @@ class ReviewController extends Controller
             $vehicleId = $request->route('vehicleId') ?? $request->get('vehicle_id');
 
             if (! $vehicleId) {
-                return response()->json(['error' => 'vehicle_id is required.'], 422);
+                return $this->errorResponse('vehicle_id est requis.', 422, 'missing_vehicle_id');
             }
 
             $reviews = Review::where('vehicle_id', $vehicleId)
@@ -130,7 +132,7 @@ class ReviewController extends Controller
                 'rating_distribution' => $ratingDistribution,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch vehicle stats.', 'message' => $e->getMessage()], 500);
+            return $this->serverErrorResponse('Échec du chargement des statistiques.');
         }
     }
 }

@@ -38,27 +38,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-// ─── Health Check (no versioning) ─────────────────────────────────────────────
-Route::get('/health', function (): JsonResponse {
-    $checks = [
-        'status' => 'ok',
-        'timestamp' => now()->toIso8601String(),
-        'php' => PHP_VERSION,
-        'laravel' => app()->version(),
-    ];
-
-    try {
-        DB::connection()->getPdo();
-        $checks['database'] = 'ok';
-    } catch (Exception $e) {
-        $checks['database'] = 'error';
-        $checks['status'] = 'degraded';
-    }
-
-    $statusCode = $checks['status'] === 'ok' ? 200 : 503;
-
-    return response()->json($checks, $statusCode);
-});
+// ─── Health Check ─────────────────────────────────────────────────────────────
+Route::get('/health', [HealthController::class, 'index']);
 
 // ─── Sanctum CSRF alias for frontend calling /api/sanctum/csrf-cookie ─────────
 Route::get('/sanctum/csrf-cookie', function () {
@@ -133,8 +114,12 @@ $apiRoutes = function () {
         Route::post('/stripe/webhook', [StripeController::class, 'webhook']);
 
         // ─── CMI Maroc ───────────────────────────────────────────────────────────────
-        Route::post('/cmi/init/{reservation}', [CmiController::class, 'init']);
         Route::post('/cmi/callback', [CmiController::class, 'callback']);
+    });
+
+    // CMI init requires auth (prevent unauthenticated payment initialization)
+    Route::middleware(['auth:sanctum', 'graceful-throttle'])->group(function () {
+        Route::post('/cmi/init/{reservation}', [CmiController::class, 'init']);
     });
 
     // Protected routes (auth + audit + rate limit)
@@ -190,9 +175,6 @@ $apiRoutes = function () {
             ]);
             return response()->json($comparison);
         });
-
-        // Vehicle availability check for waitlist
-        Route::get('/vehicles/{vehicle}/availability', [WaitlistController::class, 'checkAvailability']);
 
         // Blacklist check (during booking)
         Route::post('/blacklist/check', [ClientBlacklistController::class, 'check']);

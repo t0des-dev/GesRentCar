@@ -163,6 +163,17 @@ const translations = {
     cta_title: "Prêt pour la route ?",
     cta_desc: "Réservez votre véhicule de rêve en quelques minutes et profitez de l'excellence.",
 
+    // Footer
+    footer_hours: "Horaires",
+    footer_hours_open: "Lun - Sam: 9h00 - 19h00",
+    footer_hours_closed: "Dim: Fermé",
+    footer_contact: "Contact",
+    footer_newsletter: "Newsletter",
+    footer_newsletter_desc: "Offres exclusives et nouvelles arrivées.",
+    footer_newsletter_thanks: "✓ Merci de votre inscription !",
+    footer_rights: "Tous droits réservés.",
+    footer_secure_payment: "Paiement sécurisé",
+
     // Errors
     errors_title: "Erreur",
     errors_admin: "Une erreur est survenue dans l'administration.",
@@ -327,6 +338,17 @@ const translations = {
     about_val_3_desc: "Technological tools at the service of your comfort.",
     cta_title: "Ready for the road?",
     cta_desc: "Book your dream vehicle in minutes and experience excellence.",
+
+    // Footer
+    footer_hours: "Opening Hours",
+    footer_hours_open: "Mon - Sat: 9AM - 7PM",
+    footer_hours_closed: "Sun: Closed",
+    footer_contact: "Contact",
+    footer_newsletter: "Newsletter",
+    footer_newsletter_desc: "Exclusive offers and new arrivals.",
+    footer_newsletter_thanks: "✓ Thank you for subscribing!",
+    footer_rights: "All rights reserved.",
+    footer_secure_payment: "Secure payment",
 
     // Errors
     errors_title: "Error",

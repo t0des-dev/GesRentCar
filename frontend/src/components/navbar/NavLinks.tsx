@@ -22,7 +22,7 @@ export default function NavLinks({ links, className, isScrolled }: { links: NavL
             href={link.url}
             className={cn(
               "relative px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300 group flex flex-col items-center",
-              isActive ? "text-gold" : "text-slate-700 hover:text-gold"
+              isActive ? "text-gold" : "text-ink-2 hover:text-gold"
             )}
           >
             {link.label}
