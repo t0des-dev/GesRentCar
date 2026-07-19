@@ -8,7 +8,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/vehicles/${id}`);
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    if (typeof window === 'undefined' && apiUrl.startsWith('/')) {
+      apiUrl = `http://nginx${apiUrl}`;
+    }
+    const res = await fetch(`${apiUrl}/vehicles/${id}`);
     const vehicle = await res.json();
     return {
       title: `${vehicle.brand} ${vehicle.model} - Vectoria Rent Car`,
