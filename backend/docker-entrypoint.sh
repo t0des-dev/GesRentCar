@@ -10,18 +10,21 @@ if [ "$DB_CONNECTION" = "pgsql" ]; then
     echo "PostgreSQL is ready!"
 fi
 
-if [ ! -f .env ]; then
-    cp .env.example .env
-    php artisan key:generate --force
+# Only root can write .env and generate key
+if [ "$(id -u)" = "0" ]; then
+    if [ ! -f .env ]; then
+        cp .env.example .env 2>/dev/null || true
+        php artisan key:generate --force 2>/dev/null || true
+    fi
 fi
 
 # Run migrations (never abort on failure)
-php artisan migrate --force || echo "WARNING: Migration failed, continuing anyway..."
+php artisan migrate --force 2>&1 || echo "WARNING: Migration failed, continuing anyway..."
 
-# Fix permissions for the mounted volume
+# Fix permissions for the mounted volume (only as root)
 if [ "$(id -u)" = "0" ]; then
-    chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache || true
-    chmod -R 775 /var/www/storage /var/www/bootstrap/cache || true
+    chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+    chmod -R 775 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
 fi
 
 # Publish and cache Filament admin assets

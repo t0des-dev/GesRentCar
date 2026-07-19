@@ -9,11 +9,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reservations', function (Blueprint $table) {
-            $table->index('status');
-            $table->index('start_date');
-            $table->index('end_date');
-            $table->index(['vehicle_id', 'status', 'start_date', 'end_date']);
-            $table->index('client_id');
+            if (! Schema::hasIndex('reservations', 'reservations_status_index')) {
+                $table->index('status');
+            }
+            if (! Schema::hasIndex('reservations', 'reservations_start_date_index')) {
+                $table->index('start_date');
+            }
+            if (! Schema::hasIndex('reservations', 'reservations_end_date_index')) {
+                $table->index('end_date');
+            }
+            if (! Schema::hasIndex('reservations', 'reservations_vehicle_id_status_start_date_end_date_index')) {
+                $table->index(['vehicle_id', 'status', 'start_date', 'end_date']);
+            }
+            if (! Schema::hasIndex('reservations', 'reservations_client_id_index')) {
+                $table->index('client_id');
+            }
         });
     }
 

@@ -150,10 +150,7 @@ services:
           memory: 256M
           cpus: "0.25"
     command: >
-      sh -c "echo '* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1' > /etc/cron.d/laravel &&
-             chmod 0644 /etc/cron.d/laravel &&
-             crontab /etc/cron.d/laravel &&
-             cron -f"
+      sh -c "php artisan schedule:work --verbose --no-interaction"
     volumes:
       - storage_data:/var/www/storage
     environment:
