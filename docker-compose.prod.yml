@@ -212,7 +212,7 @@ services:
     container_name: vectoria-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     deploy:
       resources:
         limits:
