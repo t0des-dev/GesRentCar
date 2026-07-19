@@ -53,12 +53,14 @@ export default function VehicleCard({
     <Link
       href={`/fleet/${id}`}
       className={cn(
-        "group flex overflow-hidden relative card-premium",
+        "group flex overflow-hidden relative bg-white border-t-2 border-t-transparent rounded-[18px] overflow-hidden flex-col h-full transition-all duration-400",
+        "shadow-[0_1px_0_var(--line)] hover:-translate-y-[5px] hover:shadow-[var(--shadow-theme)] hover:border-t-[var(--gold)]",
         layoutView === "list" ? "flex-col md:flex-row md:h-[280px]" : "flex-col",
         className
       )}
+      style={{ borderTopColor: undefined }}
     >
-      <div className={cn("relative bg-surface-1 overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
+      <div className={cn("relative bg-[var(--light-gray)] overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[5/4] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
@@ -79,9 +81,8 @@ export default function VehicleCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {isPopular && (
-          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-red-500/90 backdrop-blur-md rounded-full shadow-lg border border-red-400/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span className="text-[9px] font-black tracking-widest uppercase text-white">Très demandé</span>
+          <div className="absolute top-4 left-4 z-10 bg-[var(--gold)] text-[var(--navy)] text-[10.5px] font-bold tracking-[0.04em] uppercase px-3.5 py-1.5 rounded-full">
+            Popular
           </div>
         )}
 
@@ -101,18 +102,12 @@ export default function VehicleCard({
           </div>
         )}
 
-        {dynamicReason && !isPromo && (
-          <div className="absolute top-3 right-3 z-10 bg-primary/10 backdrop-blur-sm text-primary text-[9px] font-bold px-2.5 py-1 rounded-lg border border-primary/20">
-            {dynamicReason}
-          </div>
-        )}
-
-        {!dynamicReason && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-white/95 backdrop-blur rounded-lg text-xs shadow-md border border-white/20">
-            <Star size={12} className="fill-gold text-gold" />
-            <span className="font-bold text-ink-1">{rating}</span>
-          </div>
-        )}
+        {/* Wishlist button */}
+        <div className="absolute top-3.5 right-3.5 z-10 w-[30px] h-[30px] rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-110 opacity-0 group-hover:opacity-100">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-[13.5px] h-[13.5px] text-[var(--navy)]">
+            <path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/>
+          </svg>
+        </div>
 
         <div
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
@@ -131,11 +126,11 @@ export default function VehicleCard({
         </div>
       </div>
 
-      <div className={cn("flex flex-col flex-1 p-5 gap-4", layoutView === "list" ? "justify-center" : "")}>
+      <div className={cn("flex flex-col flex-1 p-7 gap-4", layoutView === "list" ? "justify-center" : "")}>
         <div className="flex justify-between items-start gap-3">
           <div className="flex-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-gold mb-0.5">{brand}</p>
-            <h3 className={cn("font-sans font-black tracking-tight text-ink-1 group-hover:text-gold transition-colors duration-300", layoutView === "list" ? "text-2xl" : "text-xl")}>
+            <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gold)] mb-2">{brand}</p>
+            <h3 className={cn("font-[var(--font-sora)] text-[21px] font-bold text-[var(--navy)] tracking-[-0.01em] group-hover:text-[var(--gold)] transition-colors duration-300", layoutView === "list" ? "text-2xl" : "")}>
               {model}
             </h3>
           </div>
@@ -146,38 +141,38 @@ export default function VehicleCard({
           )}
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-ink-3">
+        <div className="grid grid-cols-4 gap-2 text-xs text-[#6b7280] pb-5 mb-5 border-b border-[var(--line)]">
           <Tooltip content={`${seats} places`}>
-            <div className="flex items-center gap-1.5">
-              <Users size={14} className="text-gold" />
-              <span className="font-medium">{seats}x</span>
+            <div className="flex flex-col items-center gap-2">
+              <Users size={23} strokeWidth={1.4} className="text-[#9297a1]" />
+              <span className="text-[11px] font-medium">{seats}x</span>
             </div>
           </Tooltip>
           <Tooltip content={`Carburant: ${fuel}`}>
-            <div className="flex items-center gap-1.5">
-              <Fuel size={14} className="text-gold" />
-              <span className="font-medium">{fuel}</span>
+            <div className="flex flex-col items-center gap-2">
+              <Fuel size={23} strokeWidth={1.4} className="text-[#9297a1]" />
+              <span className="text-[11px] font-medium">{fuel}</span>
             </div>
           </Tooltip>
           <Tooltip content={`Transmission: ${t(`trans_${transmission.toLowerCase()}`) || transmission}`}>
-            <div className="flex items-center gap-1.5">
-              <Gauge size={14} className="text-gold" />
-              <span className="font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
+            <div className="flex flex-col items-center gap-2">
+              <Gauge size={23} strokeWidth={1.4} className="text-[#9297a1]" />
+              <span className="text-[11px] font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
             </div>
           </Tooltip>
           {gps && (
             <Tooltip content="GPS intégré">
-              <div className="flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-500">
+              <div className="flex flex-col items-center gap-2">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#9297a1]">
                   <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
                 </svg>
               </div>
             </Tooltip>
           )}
-          {airConditioning && (
+          {!gps && airConditioning && (
             <Tooltip content="Climatiseur">
-              <div className="flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-sky-500">
+              <div className="flex flex-col items-center gap-2">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#9297a1]">
                   <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
                   <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
                   <line x1="12" x2="12" y1="18" y2="22"/>
@@ -185,9 +180,9 @@ export default function VehicleCard({
               </div>
             </Tooltip>
           )}
-          {equipements.filter((e: string) => e !== "GPS" && e !== "Climatiseur").slice(0, 3).map((eq: string) => (
+          {equipements.filter((e: string) => e !== "GPS" && e !== "Climatiseur").slice(0, 2).map((eq: string) => (
             <Tooltip key={eq} content={eq}>
-              <span className="inline-flex items-center px-2 py-0.5 bg-primary/5 border border-primary/15 text-primary text-[10px] font-bold rounded-md">
+              <span className="inline-flex items-center px-2 py-0.5 bg-[var(--gold)]/[0.08] border border-[var(--gold)]/20 text-[var(--gold)] text-[10px] font-semibold rounded-md">
                 {eq}
               </span>
             </Tooltip>
@@ -197,17 +192,16 @@ export default function VehicleCard({
         <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />
 
         <div className={cn("flex", layoutView === "list" ? "flex-row items-end justify-between mt-auto" : "flex-col")}>
-          <p className="text-ink-4 text-[10px] font-bold uppercase tracking-wider mb-1">À partir de</p>
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-2xl font-black text-ink-1">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="font-[var(--font-sora)] text-[23px] font-bold text-[var(--navy)] tracking-[-0.01em] whitespace-nowrap">
               {convert(displayPrice)}
             </span>
-            <span className="text-ink-3 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-[12px] text-[#8a8f98] whitespace-nowrap">
               / jour
             </span>
             {isPriceChanged && price > 0 && (
               <>
-                <span className="text-xs text-ink-4 line-through ml-auto">{convert(price)}</span>
+                <span className="text-xs text-[#8a8f98] line-through ml-2">{convert(price)}</span>
                 <span className="inline-flex items-center text-[9px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-sm ml-1">
                   −{discountPercent}%
                 </span>
@@ -216,7 +210,7 @@ export default function VehicleCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 mt-auto pt-3">
+        <div className="flex items-center gap-3 mt-auto pt-3">
           <Button
             variant="ghost"
             size="sm"
@@ -226,7 +220,7 @@ export default function VehicleCard({
               if (onReserve) { onReserve(id); return; }
               window.location.href = `/booking?vehicle=${id}`;
             }}
-            className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider border border-gold/30 text-gold hover:bg-gold/5 transition-all duration-300"
+            className="flex-1 h-10 px-5 rounded-full text-[13.5px] font-semibold font-[var(--font-sora)] bg-[var(--navy)] text-white hover:bg-[var(--navy)]/90 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgba(22,33,62,0.5)]"
           >
             <span className="flex items-center justify-center gap-1.5">
               Réserver

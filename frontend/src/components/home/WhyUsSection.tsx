@@ -35,23 +35,24 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
   };
 
   return (
-    <section className="pt-10 pb-24 bg-surface-1">
-      <div className="container mx-auto px-6">
-        <div className="max-w-2xl mb-16">
-          <motion.p
+    <section className="py-24 lg:py-32 bg-surface-1">
+      <div className="max-w-[var(--container)] mx-auto px-8">
+        <div className="section-head max-w-[640px] mb-16">
+          <div className="section-mark" />
+          <motion.div
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-primary font-semibold text-xs uppercase tracking-[0.3em] mb-4"
+            className="eyebrow-theme"
           >
             {content?.eyebrow || "Nos engagements"}
-          </motion.p>
+          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold tracking-tight"
+            className="text-[clamp(30px,3.6vw,44px)] font-bold tracking-tight text-[var(--navy)]"
           >
             {content?.title || t("features_title")}
           </motion.h2>
@@ -60,13 +61,13 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-6 text-lg text-ink-2 leading-relaxed max-w-lg"
+            className="mt-4 text-[17px] text-[#5b6472] leading-[1.65] max-w-lg"
           >
             {content?.subtitle || t("features_subtitle")}
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
           {features.map((feature, idx) => {
             const Icon = getIcon(feature.icon);
             return (
@@ -76,7 +77,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08, duration: 0.5 }}
-                className="group bg-surface-0 rounded-2xl border border-surface-2 hover:border-primary/20 transition-all duration-500 overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5"
+                className="group bg-white rounded-[18px] border border-[var(--line)] overflow-hidden flex flex-col transition-all duration-400 hover:border-[var(--gold)] hover:-translate-y-1 hover:shadow-[var(--shadow-theme)]"
               >
                 {feature.image ? (
                   <div className="w-full h-48 relative overflow-hidden shrink-0 bg-surface-2">
@@ -85,14 +86,14 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
                   </div>
                 ) : (
                   <div className="px-8 pt-8 pb-2">
-                    <div className="w-14 h-14 rounded-2xl bg-surface-1 flex items-center justify-center text-ink-3 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--gold)]/[0.14] flex items-center justify-center text-[var(--gold)] group-hover:bg-[var(--gold)]/20 transition-all duration-500">
                       <Icon size={24} strokeWidth={1.5} />
                     </div>
                   </div>
                 )}
                 <div className="p-8 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-ink-1 mb-3 group-hover:text-primary transition-colors">{feature.title}</h3>
-                  <p className="text-sm text-ink-2 leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-xl font-bold text-[var(--navy)] mb-3 group-hover:text-[var(--gold)] transition-colors">{feature.title}</h3>
+                  <p className="text-sm text-[#5b6472] leading-relaxed">{feature.desc}</p>
                 </div>
               </motion.div>
             );

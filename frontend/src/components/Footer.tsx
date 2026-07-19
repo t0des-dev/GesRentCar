@@ -72,34 +72,26 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-surface-0 border-t border-border/20 mt-auto relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+    <footer className="bg-[var(--charcoal)] text-white/75 pt-22 pb-8 relative overflow-hidden">
+      <div className="max-w-[var(--container)] mx-auto px-8 relative z-10">
 
-      <div className="container mx-auto px-6 lg:px-8 py-16 lg:py-20 relative z-10">
-
-        {/* Main Grid — 4 Column Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        {/* Main Grid — 5 Column Layout (theme style) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
 
           {/* Column 1: Brand & Tagline */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3 group w-fit">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center text-white font-bold text-lg tracking-wider">
-                V
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold tracking-tight text-ink-1">
-                  {agency.agency_name || "Vectoria Rent"}
-                </span>
-                <span className="text-xs text-gold font-semibold tracking-widest uppercase">Luxury Mobility</span>
-              </div>
+              <span className="font-[var(--font-sora)] font-extrabold text-[21px] text-white tracking-tight">
+                Vectoria <span className="text-[var(--gold)]">Rent</span>
+              </span>
             </Link>
 
-            <p className="text-sm leading-relaxed text-ink-3 max-w-sm subtitle-serif">
-              {agency.agency_slogan || "L&apos;expérience ultime du voyage en véhicules de prestige."}
+            <p className="text-[14px] text-white/55 max-w-[280px] leading-relaxed">
+              {agency.agency_slogan || "Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust."}
             </p>
 
             {/* Social Icons */}
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-3 mt-5">
               {Object.entries(social).map(([platform, url]) => {
                 if (!url || typeof url !== "string") return null;
                 const Icon = SOCIAL_ICONS[platform];
@@ -110,148 +102,130 @@ export default function Footer() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center text-ink-3 hover:bg-gold hover:text-white transition-all duration-300 group"
+                    className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/80 hover:border-[var(--gold)] hover:bg-[var(--gold)]/10 transition-all duration-300"
                     aria-label={platform}
                   >
-                    {Icon ? <Icon size={16} /> : <span className="text-xs font-bold uppercase">{platform[0]}</span>}
+                    {Icon ? <Icon size={15} /> : <span className="text-xs font-bold uppercase">{platform[0]}</span>}
                   </a>
                 );
               })}
             </div>
           </div>
 
-          {/* Column 2: Navigation */}
+          {/* Column 2: Fleet */}
           <div className="flex flex-col gap-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">Explorer</h3>
-            <nav className="flex flex-col gap-3">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em]">Fleet</h5>
+            <nav className="flex flex-col gap-3.5">
               {[
-                { href: "/fleet", label: t("nav_fleet") || "Flotte" },
-                { href: "/locations", label: t("nav_locations") || "Agences" },
-                { href: "/about", label: t("nav_about") || "À Propos" },
-                { href: "/faq", label: t("nav_faq") || "FAQ" },
+                { href: "/fleet?category=Economique", label: "Economy" },
+                { href: "/fleet?category=Compacte", label: "Compact" },
+                { href: "/fleet?category=SUV", label: "SUV" },
+                { href: "/fleet?category=Luxe", label: "Luxury" },
+                { href: "/fleet?category=Utilitaire", label: "Utility" },
+              ].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-[14px] text-white/60 hover:text-[var(--gold)] transition-colors duration-300"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Column 3: Company */}
+          <div className="flex flex-col gap-5">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em]">Company</h5>
+            <nav className="flex flex-col gap-3.5">
+              {[
+                { href: "/about", label: t("nav_about") || "About" },
+                { href: "/faq", label: "FAQ" },
                 { href: "/contact", label: t("nav_contact") || "Contact" },
+                { href: "/locations", label: t("nav_locations") || "Locations" },
               ].map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="text-sm text-ink-3 hover:text-gold transition-colors duration-300 flex items-center gap-2 group font-medium"
+                  className="text-[14px] text-white/60 hover:text-[var(--gold)] transition-colors duration-300"
                 >
-                  <span className="w-1.5 h-1.5 bg-gold/40 group-hover:bg-gold rounded-full transition-all" />
                   {label}
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Column 3: Hours & Legal */}
+          {/* Column 4: Legal */}
           <div className="flex flex-col gap-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_hours")}</h3>
-            <div className="flex flex-col gap-3 text-sm text-ink-3">
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-gold shrink-0" />
-                <span className="font-medium">{t("footer_hours_open")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-ink-4 shrink-0" />
-                <span className="font-medium text-ink-4">{t("footer_hours_closed")}</span>
-              </div>
-            </div>
-
-            <div className="h-px bg-border/40 my-1" />
-
-            <nav className="flex flex-col gap-3">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em]">Legal</h5>
+            <nav className="flex flex-col gap-3.5">
               {[
-                { href: "/privacy", label: "Confidentialité" },
-                { href: "/terms", label: "Conditions générales" },
-                { href: "/cookies", label: "Politique cookies" },
+                { href: "/terms", label: "Terms of Service" },
+                { href: "/privacy", label: "Privacy Policy" },
               ].map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="text-sm text-ink-3 hover:text-gold transition-colors duration-300 flex items-center gap-2 group font-medium"
+                  className="text-[14px] text-white/60 hover:text-[var(--gold)] transition-colors duration-300"
                 >
-                  <span className="w-1.5 h-1.5 bg-gold/40 group-hover:bg-gold rounded-full transition-all" />
                   {label}
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* Column 4: Contact & Newsletter */}
+          {/* Column 5: Contact */}
           <div className="flex flex-col gap-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_contact")}</h3>
-            <div className="flex flex-col gap-3">
-              {footer.address && (
-                <div className="flex items-start gap-3 text-sm text-ink-3">
-                  <MapPin size={16} className="text-gold shrink-0 mt-0.5" />
-                  <span className="font-medium">{footer.address}</span>
-                </div>
-              )}
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em]">Contact</h5>
+            <div className="flex flex-col gap-3.5">
               {footer.phone && (
-                <div className="flex items-center gap-3 text-sm text-ink-3">
-                  <Phone size={16} className="text-gold shrink-0" />
-                  <a href={`tel:${footer.phone}`} className="font-medium hover:text-gold transition-colors">
+                <div className="flex items-center gap-2.5 text-[14px] text-white/60">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4 text-[var(--gold)] flex-shrink-0">
+                    <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z" />
+                  </svg>
+                  <a href={`tel:${footer.phone}`} className="hover:text-[var(--gold)] transition-colors">
                     {footer.phone}
                   </a>
                 </div>
               )}
               {footer.email && (
-                <div className="flex items-center gap-3 text-sm text-ink-3">
-                  <Mail size={16} className="text-gold shrink-0" />
-                  <a href={`mailto:${footer.email}`} className="font-medium hover:text-gold transition-colors">
+                <div className="flex items-center gap-2.5 text-[14px] text-white/60">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4 text-[var(--gold)] flex-shrink-0">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="M22 6l-10 7L2 6" />
+                  </svg>
+                  <a href={`mailto:${footer.email}`} className="hover:text-[var(--gold)] transition-colors">
                     {footer.email}
                   </a>
                 </div>
               )}
-            </div>
-
-            {/* Newsletter */}
-            <div className="flex flex-col gap-3 mt-2">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_newsletter")}</h3>
-              <p className="text-xs text-ink-3 leading-relaxed">{t("footer_newsletter_desc")}</p>
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
-                  className="flex-1 bg-surface-1 border border-border rounded-lg px-3 py-2.5 text-sm text-ink-1 placeholder:text-ink-4 focus:border-gold focus:shadow-lg focus:shadow-gold/10 focus:outline-none transition-all duration-300"
-                />
-                <Button
-                  variant="gold"
-                  size="sm"
-                  type="submit"
-                  disabled={subscribeStatus === "loading"}
-                  className="w-fit"
-                >
-                  <ArrowRight size={14} />
-                </Button>
-              </form>
-              {subscribeStatus === "success" && (
-                <p className="text-xs text-emerald-600 font-medium">{t("footer_newsletter_thanks")}</p>
+              {footer.address && (
+                <div className="flex items-start gap-2.5 text-[14px] text-white/60">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4 text-[var(--gold)] flex-shrink-0 mt-0.5">
+                    <path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z" />
+                    <circle cx="12" cy="9.5" r="2.5" />
+                  </svg>
+                  <span>{footer.address}</span>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent my-8" />
-
-        {/* Copyright */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-ink-3">
-          <p className="font-medium">
-            © {new Date().getFullYear()} {agency.agency_name || "Vectoria Rent Car"}.
-            <span className="text-ink-4"> {t("footer_rights")}</span>
-          </p>
-          <div className="flex items-center gap-4">
-            <span className="text-ink-4">{t("footer_secure_payment")}</span>
-            <div className="flex items-center gap-2 opacity-50">
-              {["Visa", "MC", "CMI"].map((card) => (
-                <div key={card} className="px-2 py-1 bg-surface-2 rounded text-[8px] font-bold text-ink-4 uppercase border border-border">
-                  {card}
-                </div>
-              ))}
-            </div>
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/10 text-[13px] text-white/40">
+          <span>© {new Date().getFullYear()} {agency.agency_name || "Vectoria Rent Car"}. All rights reserved.</span>
+          <div className="flex items-center gap-6">
+            <Link href="/terms" className="hover:text-[var(--gold)] transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-[var(--gold)] transition-colors">Privacy</Link>
+            <Link href="/sitemap.xml" className="hover:text-[var(--gold)] transition-colors">Sitemap</Link>
+          </div>
+          <div className="flex items-center gap-2.5">
+            {["Visa", "Mastercard", "CMI", "Cash"].map((card) => (
+              <span key={card} className="flex items-center gap-1.5 px-3 py-1.5 border border-white/15 rounded-md text-[11.5px] font-semibold text-white/50">
+                {card}
+              </span>
+            ))}
           </div>
         </div>
       </div>

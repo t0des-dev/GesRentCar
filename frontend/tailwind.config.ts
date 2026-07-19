@@ -82,9 +82,10 @@ const config: Config = {
         }
       },
       fontFamily: {
-        display: ["var(--font-instrument-serif)", "Georgia", "serif"],
-        sans: ["var(--font-geist-sans)", "Cairo", "system-ui", "sans-serif"],
-        serif: ["var(--font-instrument-serif)", "Georgia", "serif"],
+        display: ["var(--font-sora)", "Sora", "sans-serif"],
+        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        sora: ["var(--font-sora)", "Sora", "sans-serif"],
+        inter: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -24,13 +24,24 @@ const ConciergeBanner = dynamic(() => import("@/modules/ai/components/ConciergeB
 const FAQSection = dynamic(() => import("@/components/FAQSection"), { ssr: false });
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
 const ExperienceSection = dynamic(() => import("@/components/home/ExperienceSection"));
+const TrustBar = dynamic(() => import("@/components/home/TrustBar"), { ssr: false });
+const LuxuryCollection = dynamic(() => import("@/components/home/LuxuryCollection"), { ssr: false });
+const ServicesSection = dynamic(() => import("@/components/home/ServicesSection"), { ssr: false });
+const ProcessSteps = dynamic(() => import("@/components/home/ProcessSteps"), { ssr: false });
+const TestimonialsGrid = dynamic(() => import("@/components/home/TestimonialsGrid"), { ssr: false });
+const FinalCta = dynamic(() => import("@/components/home/FinalCta"), { ssr: false });
 
 import JsonLd from "@/components/SEO/JsonLd";
 
 const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
   hero: "h-screen",
+  trust_bar: "h-24",
   stats: "h-40",
   featured: "h-[500px]",
+  luxury: "h-[500px]",
+  services: "h-[500px]",
+  process: "h-[350px]",
+  testimonials_grid: "h-[500px]",
   why_us: "h-[400px]",
   how_it_works: "h-[350px]",
   experience: "h-[500px]",
@@ -38,6 +49,7 @@ const SECTION_SKELETON_HEIGHTS: Record<string, string> = {
   faq: "h-[500px]",
   cta_banner: "h-80",
   dual_cta: "h-[500px]",
+  final_cta: "h-[400px]",
   concierge_banner: "h-64",
   map: "h-[400px]",
 };
@@ -125,7 +137,12 @@ export default function HomeClient() {
     }
     return [
       { id: "hero",              active: true },
+      { id: "trust_bar",         active: true },
       { id: "featured",          active: true },
+      { id: "luxury",            active: true },
+      { id: "services",          active: true },
+      { id: "process",           active: true },
+      { id: "testimonials_grid", active: true },
       { id: "why_us",            active: true },
       { id: "how_it_works",      active: true },
       { id: "experience",        active: !!sections.experience },
@@ -136,7 +153,8 @@ export default function HomeClient() {
       { id: "vibe_selector",     active: false },
       { id: "map",               active: false },
       { id: "faq",               active: !!sections.faq },
-      { id: "cta_banner",        active: true },
+      { id: "final_cta",         active: true },
+      { id: "dual_cta",          active: true },
     ];
   }, [storefront.sections_order, sections]);
 
@@ -181,6 +199,7 @@ export default function HomeClient() {
           stats={STATS}
         />
       ),
+      trust_bar: () => <TrustBar />,
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
       stats: () => <StatsSection content={storefront.stats_config} />,
       vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
@@ -193,6 +212,10 @@ export default function HomeClient() {
           content={storefront.sections_content.featured_vehicles}
         />
       ),
+      luxury: () => <LuxuryCollection />,
+      services: () => <ServicesSection />,
+      process: () => <ProcessSteps />,
+      testimonials_grid: () => <TestimonialsGrid />,
       testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
       map: () => <ExperienceMap content={storefront.sections_content.map} />,
       concierge_banner: () => <ConciergeBanner content={storefront.concierge_config} />,
@@ -200,6 +223,7 @@ export default function HomeClient() {
         <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />
       ),
       how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
+      final_cta: () => <FinalCta />,
       dual_cta: () => (
         <DualCtaSection
           promotion={storefront.sections_content.promotion_banner}

@@ -47,7 +47,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
   const gridClass = 
     columnsStr === "2" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-2" :
     columnsStr === "4" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" :
-    "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+    "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
 
   // Calculate unique categories
   const categories = useMemo(() => {
@@ -84,92 +84,78 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
   };
 
   return (
-    <section className="py-32 bg-surface-0 relative overflow-hidden transition-colors duration-1000">
-      
-      {/* Dynamic Background Effect */}
-      {dynamicBg && (
-        <div className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-1000 opacity-20">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={hoveredImage || "default"}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="absolute inset-0 bg-cover bg-center blur-[100px] saturate-200"
-              style={{ backgroundImage: `url(${hoveredImage || ""})` }}
-            />
-          </AnimatePresence>
-        </div>
-      )}
+    <section className="py-24 lg:py-32 bg-[var(--warm-white)] relative overflow-hidden transition-colors duration-1000">
       
       {/* Default subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-gold/5 pointer-events-none z-0" />
       
-      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+      <div className="max-w-[var(--container)] mx-auto px-8 relative z-10">
         
-        {/* Header & Filters */}
+        {/* Header & Filters — Theme Section Head */}
         <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-16 gap-8">
-          <div className="max-w-2xl space-y-4">
-            <motion.p
+          <div className="section-head max-w-[640px] mb-0">
+            <div className="section-mark" />
+            <motion.div
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="section-eyebrow"
+              className="eyebrow-theme"
             >
-              {content.eyebrow || "Showroom"}
-            </motion.p>
+              {content.eyebrow || "The Fleet"}
+            </motion.div>
             
             <motion.h2
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08, duration: 0.6 }}
-              className="display-lg text-ink-1"
+              className="text-[clamp(30px,3.6vw,44px)] font-bold leading-[1.15] mb-4 text-[var(--navy)] font-[var(--font-sora)]"
             >
               {content.title || t("featured_vehicles")}
             </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.12 }}
+              className="text-[17px] text-[#5b6472] leading-[1.65]"
+            >
+              Compare specifications at a glance and reserve the right vehicle in seconds.
+            </motion.p>
           </div>
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 shrink-0">
-            {/* Tabs */}
+            {/* Tabs — Pill style */}
             {showFilters && categories.length > 1 && (
-              <div className="flex flex-wrap gap-2 bg-surface-1 p-1.5 rounded-2xl border border-border">
+              <div className="flex flex-wrap gap-2.5">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveTab(cat)}
                     className={cn(
-                      "relative px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors",
-                      activeTab === cat ? "text-white" : "text-ink-3 hover:text-ink-1"
+                      "px-6 py-3 rounded-full border text-[14px] font-semibold font-[var(--font-sora)] transition-all duration-300",
+                      activeTab === cat
+                        ? "bg-[var(--navy)] border-[var(--navy)] text-white"
+                        : "bg-white border-[var(--line)] text-[#5b6472] hover:border-[var(--gold)] hover:text-[var(--navy)]"
                     )}
                   >
-                    {activeTab === cat && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className={cn("absolute inset-0 rounded-xl", !filterColor && "bg-ink-1")}
-                        style={filterColor ? { backgroundColor: filterColor } : {}}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{cat === "Tous" ? t("all") || "Tous" : cat}</span>
+                    {cat === "Tous" ? t("all") || "All Vehicles" : cat}
                   </button>
                 ))}
               </div>
             )}
 
             {/* CTA Link */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.16 }}
-            >
-              <Link href={content.cta_link || "/fleet"} className="nav-link-gold font-bold uppercase text-sm tracking-wider flex items-center">
-                {content.cta_text || "Voir le catalogue"}
-                <ArrowRight size={16} className="ml-2" />
-              </Link>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mt-14"
+          >
+            <Link href={content.cta_link || "/fleet"} className="btn-theme btn-theme-outline-dark">
+              View full fleet
+            </Link>
+          </motion.div>
           </div>
         </div>
 
@@ -228,7 +214,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
             </div>
           ) : (
             /* Grid Layout */
-            <div className={cn("grid gap-8 lg:gap-10", gridClass)}>
+            <div className={cn("grid gap-8 lg:gap-[30px]", gridClass)}>
               <AnimatePresence mode="popLayout">
                 {filteredVehicles.map((v, idx) => (
                   <motion.div

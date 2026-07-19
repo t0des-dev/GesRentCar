@@ -65,10 +65,15 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        "bg-white/95 dark:bg-ink-2/95 backdrop-blur-xl border-b border-border/20 shadow-sm dark:border-border/10"
+        isScrolled
+          ? "bg-white/95 backdrop-blur-xl border-b border-[var(--line)] shadow-sm"
+          : "bg-white/95 backdrop-blur-xl border-b border-border/20"
       )}
+      style={{
+        padding: isScrolled ? undefined : undefined,
+      }}
     >
-      <div className="container mx-auto px-6 lg:px-8">
+      <div className="max-w-[var(--container)] mx-auto px-8">
         <div className="flex items-center justify-between h-16" style={{ height: 'var(--navbar-height)' }}>
           {/* Logo — Premium Typography */}
           <div className="flex items-center gap-3">

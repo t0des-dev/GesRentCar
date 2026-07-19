@@ -55,11 +55,19 @@
     --ring:         221 65% 28%;
 
     /* ── Geometry ─────────────────────────────────────────────────────────── */
-    --radius:       0.75rem;          /* 12px base radius */
-    --radius-sm:    0.5rem;
-    --radius-lg:    1rem;
-    --radius-xl:    1.5rem;
+    --radius:       18px;             /* 18px base radius — theme system */
+    --radius-sm:    12px;
+    --radius-lg:    22px;
+    --radius-xl:    28px;
     --radius-2xl:   2rem;
+
+    /* ── Theme tokens ────────────────────────────────────────────────────── */
+    --charcoal:     221 15% 12%;      /* #1D1D1F — dark text/charcoal */
+    --gold-soft:    38 85% 52% / 0.14; /* gold tint */
+    --line-color:   220 15% 11% / 0.09; /* border line */
+    --shadow-theme: 0 20px 45px -20px rgba(22,33,62,0.18);
+    --container:    1280px;
+    --ease-theme:   cubic-bezier(.22,.61,.36,1);
 
     /* ── Surfaces (layered) ───────────────────────────────────────────────── */
     --surface-0:    0 0% 100%;        /* Pure white */
@@ -157,7 +165,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-geist-sans), "Cairo", system-ui, sans-serif;
+    font-family: var(--font-inter), "Inter", system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
 
@@ -171,9 +179,9 @@
     color: hsl(var(--primary));
   }
 
-  /* ── Display typography — Instrument Serif for luxury headings ── */
+  /* ── Display typography — Sora for headings ── */
   .font-display {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--font-sora), "Sora", sans-serif;
   }
 
   h1, h2 {
@@ -217,40 +225,62 @@
 
   /* ── Typography scale ── */
   .display-2xl {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--font-sora), "Sora", sans-serif;
     font-size: clamp(3rem, 8vw, 6rem);
     line-height: 1.0;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
   .display-xl {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--font-sora), "Sora", sans-serif;
     font-size: clamp(2.25rem, 5vw, 4rem);
     line-height: 1.05;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
   .display-lg {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--font-sora), "Sora", sans-serif;
     font-size: clamp(1.75rem, 4vw, 2.75rem);
     line-height: 1.1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    font-weight: 700;
   }
   .body-xl   { font-size: 1.125rem; line-height: 1.75; }
   .body-lg   { font-size: 1rem; line-height: 1.7; }
   .body-sm   { font-size: 0.875rem; line-height: 1.65; }
   .caption   { font-size: 0.75rem; line-height: 1.5; letter-spacing: 0.01em; }
   .overline  {
-    font-size: 0.6875rem;
+    font-size: 12.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: hsl(var(--ink-3));
+    letter-spacing: 0.14em;
+    color: hsl(var(--gold));
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .overline::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: hsl(var(--gold));
   }
   .overline-gold {
-    font-size: 0.6875rem;
+    font-size: 12.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: hsl(var(--gold-dark));
+    letter-spacing: 0.14em;
+    color: hsl(var(--gold));
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .overline-gold::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: hsl(var(--gold));
   }
 
   /* ── Glass ── */
@@ -308,6 +338,111 @@
     border-color: hsl(var(--gold) / 0.4);
     box-shadow: 0 25px 50px -12px hsla(var(--gold) / 0.08), 0 0 0 1px hsla(var(--gold) / 0.12);
     transform: translateY(-4px) scale(1.005);
+  }
+
+  /* ── Theme: Section Mark (vertical gold gradient line) ── */
+  .section-mark {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient(hsl(var(--gold)), transparent);
+    margin: 0 0 22px;
+  }
+  .section-mark-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Theme: Section Head ── */
+  .section-head {
+    max-width: 640px;
+    margin-bottom: 64px;
+  }
+  .section-head-center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  .section-head h2 {
+    font-family: var(--font-sora), "Sora", sans-serif;
+    font-size: clamp(30px, 3.6vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .section-head p {
+    font-size: 17px;
+    color: #5b6472;
+    line-height: 1.65;
+  }
+
+  /* ── Theme: Buttons (pill style) ── */
+  .btn-theme {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 30px;
+    border-radius: 100px;
+    font-family: var(--font-sora), "Sora", sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.35s var(--ease-theme), background 0.35s, box-shadow 0.35s;
+    white-space: nowrap;
+  }
+  .btn-theme-primary {
+    background: hsl(var(--primary));
+    color: #fff;
+    box-shadow: 0 14px 30px -12px rgba(22,33,62,0.5);
+  }
+  .btn-theme-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px -12px rgba(22,33,62,0.55);
+  }
+  .btn-theme-gold {
+    background: hsl(var(--gold));
+    color: hsl(var(--primary));
+  }
+  .btn-theme-gold:hover {
+    transform: translateY(-2px);
+  }
+  .btn-theme-outline {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+  }
+  .btn-theme-outline:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+  }
+  .btn-theme-outline-dark {
+    background: transparent;
+    color: hsl(var(--primary));
+    border: 1px solid rgba(22,33,62,0.25);
+  }
+  .btn-theme-outline-dark:hover {
+    background: rgba(22,33,62,0.05);
+  }
+
+  /* ── Theme: Eyebrow (gold + line before) ── */
+  .eyebrow-theme {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(var(--gold));
+    margin-bottom: 18px;
+  }
+  .eyebrow-theme::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: hsl(var(--gold));
   }
   .transition-luxury {
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
