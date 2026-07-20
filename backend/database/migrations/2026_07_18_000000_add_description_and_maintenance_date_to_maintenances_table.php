@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::table('maintenances', function (Blueprint $table) {
             $table->text('description')->nullable()->after('type');
-            $table->decimal('cost', 10, 2)->nullable()->after('description');
             $table->date('maintenance_date')->nullable()->after('next_due');
         });
     }
@@ -18,7 +17,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('maintenances', function (Blueprint $table) {
-            $table->dropColumn(['description', 'cost', 'maintenance_date']);
+            $table->dropColumn(['description', 'maintenance_date']);
         });
     }
 };

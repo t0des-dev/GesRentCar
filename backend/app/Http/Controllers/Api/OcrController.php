@@ -113,6 +113,94 @@ class OcrController extends Controller
         }
     }
 
+    public function analyzeDamage(Request $request)
+    {
+        $plate = $request->input('plate') ?? $request->input('plate_number') ?? '';
+
+        // Seed random generator with plate to keep results consistent for a vehicle
+        if (!empty($plate)) {
+            $seed = crc32(strtolower(trim($plate)));
+            srand($seed);
+        } else {
+            srand(time());
+        }
+
+        $scores = [95, 88, 72, 45, 98];
+        $score = $scores[array_rand($scores)];
+
+        $allDetections = [
+            ['part' => 'Pare-chocs avant', 'issue' => 'Rayure superficielle', 'severity' => 'Low', 'cost' => 400],
+            ['part' => 'Aile droite', 'issue' => 'Enfoncement mineur', 'severity' => 'Medium', 'cost' => 1200],
+            ['part' => 'Portière conducteur', 'issue' => 'Rayure profonde', 'severity' => 'Medium', 'cost' => 800],
+            ['part' => 'Pare-brise', 'issue' => 'Fissure impact de gravier', 'severity' => 'High', 'cost' => 3500],
+            ['part' => 'Roue alliage gauche', 'issue' => 'Éraflure trottoir', 'severity' => 'Low', 'cost' => 300],
+            ['part' => 'Rétroviseur gauche', 'issue' => 'Coque fissurée', 'severity' => 'Low', 'cost' => 500],
+            ['part' => 'Aile arrière gauche', 'issue' => 'Éraflure peinture', 'severity' => 'Low', 'cost' => 450],
+        ];
+
+        $detections = [];
+        $cost = 0;
+
+        if ($score < 98 && $score >= 90) {
+            // 1 minor issue
+            $d = $allDetections[array_rand($allDetections)];
+            if ($d['severity'] === 'High') {
+                $d['severity'] = 'Low';
+                $d['issue'] = 'Égratignure légère';
+                $d['cost'] = 250;
+            }
+            $detections[] = [
+                'part' => $d['part'],
+                'issue' => $d['issue'],
+                'severity' => $d['severity'],
+            ];
+            $cost = $d['cost'];
+        } elseif ($score >= 70 && $score < 90) {
+            // 1-2 medium/low issues
+            $keys = array_rand($allDetections, 2);
+            if (!is_array($keys)) {
+                $keys = [$keys];
+            }
+            foreach ($keys as $k) {
+                $d = $allDetections[$k];
+                if ($d['severity'] === 'High') {
+                    $d['severity'] = 'Medium';
+                    $d['cost'] = 1000;
+                }
+                $detections[] = [
+                    'part' => $d['part'],
+                    'issue' => $d['issue'],
+                    'severity' => $d['severity'],
+                ];
+                $cost += $d['cost'];
+            }
+        } elseif ($score < 70) {
+            // Multiple issues, possibly high severity
+            $keys = array_rand($allDetections, 3);
+            if (!is_array($keys)) {
+                $keys = [$keys];
+            }
+            foreach ($keys as $k) {
+                $d = $allDetections[$k];
+                $detections[] = [
+                    'part' => $d['part'],
+                    'issue' => $d['issue'],
+                    'severity' => $d['severity'],
+                ];
+                $cost += $d['cost'];
+            }
+        }
+
+        // Reset random seed to default behavior
+        srand();
+
+        return response()->json([
+            'integrity_score' => $score,
+            'detections' => $detections,
+            'estimated_repair_cost' => $cost,
+        ]);
+    }
+
     private function preprocessImage(string $path): string
     {
         $info = @getimagesize($path);

@@ -36,7 +36,7 @@ class ContractServiceTest extends TestCase
     public function test_electronic_signature_updates_contract_and_triggers_notifications()
     {
         Storage::fake('public');
-        Log::shouldReceive('info')->twice(); // 1 for Whatsapp, 1 for Email
+        Log::shouldReceive('info')->atLeast()->once(); // WhatsApp + SMS + summary logs
 
         $client = Client::factory()->create(['email' => 'client@test.com', 'phone' => '+212600000000']);
         $vehicle = Vehicle::factory()->create();

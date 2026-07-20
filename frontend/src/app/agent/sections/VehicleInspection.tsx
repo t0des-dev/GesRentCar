@@ -25,7 +25,12 @@ export default function VehicleInspection() {
     try {
       const res = await fetch(`${API}/ocr/analyze-damage`, {
         method: "POST",
-        headers: { Accept: "application/json", Authorization: `Bearer ${getToken()}` },
+        headers: { 
+          "Content-Type": "application/json",
+          Accept: "application/json", 
+          Authorization: `Bearer ${getToken()}` 
+        },
+        body: JSON.stringify({ plate: plateInput }),
       });
       const data = await res.json();
       setReport(data);
