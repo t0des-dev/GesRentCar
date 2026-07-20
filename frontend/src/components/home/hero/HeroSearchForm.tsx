@@ -1,11 +1,8 @@
 "use client";
 
-import { motion, MotionValue, AnimatePresence } from "framer-motion";
-import { MapPin, ArrowRight, Calendar, Building2, Plane, Clock, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/shared/ui/button";
+import { motion, MotionValue } from "framer-motion";
+import { MapPin, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
-import MagneticWrapper from "@/shared/ui/MagneticWrapper";
 
 interface HeroSearchFormProps {
   location: string;
@@ -27,194 +24,130 @@ function getTodayString(): string {
 }
 
 const PREDEFINED_LOCATIONS = [
-  { id: "cmn", name: "Aéroport Mohammed V (CMN)", city: "Casablanca", icon: Plane },
-  { id: "casa", name: "Centre Ville", city: "Casablanca", icon: Building2 },
-  { id: "rak", name: "Aéroport Menara (RAK)", city: "Marrakech", icon: Plane },
-  { id: "tng", name: "Aéroport Ibn Battouta (TNG)", city: "Tanger", icon: Plane },
-  { id: "rabat", name: "Centre Ville", city: "Rabat", icon: Building2 },
+  { id: "cmn", name: "Aéroport Mohammed V (CMN)", city: "Casablanca" },
+  { id: "casa", name: "Centre Ville", city: "Casablanca" },
+  { id: "rak", name: "Aéroport Menara (RAK)", city: "Marrakech" },
+  { id: "tng", name: "Aéroport Ibn Battouta (TNG)", city: "Tanger" },
+  { id: "rabat", name: "Centre Ville", city: "Rabat" },
+];
+
+const CATEGORIES = [
+  { id: "all", label: "All categories" },
+  { id: "berline", label: "Berline" },
+  { id: "suv", label: "SUV" },
+  { id: "van", label: "Van / Minivan" },
+  { id: "luxe", label: "Luxe" },
+  { id: "sport", label: "Sportive" },
+  { id: "electrique", label: "Électrique" },
 ];
 
 export default function HeroSearchForm({
   location, setLocation, startDate, setStartDate, endDate, setEndDate,
-  startTime, setStartTime, onSearch, y1, mounted, content = {},
+  startTime, setStartTime, onSearch, y1, mounted,
 }: HeroSearchFormProps) {
   const today = getTodayString();
-  const sf = content?.search_form || {};
-  const locationLabel = sf?.location_label || "Destination";
-  const locationPlaceholder = sf?.location_placeholder || "Ville, aéroport...";
-  const startLabel = sf?.start_label || "Départ";
-  const endLabel = sf?.end_label || "Retour";
-  const searchButton = sf?.search_button || "Chercher un véhicule";
-  const fleetLinkText = sf?.fleet_link_text || "Voir toute la flotte";
-  const fleetLinkHref = sf?.fleet_link_href || "/fleet";
-
-  const [showLocations, setShowLocations] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [category, setCategory] = useState("all");
 
   return (
     <motion.div
       style={mounted ? { y: y1 } : {}}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.5, duration: 0.7, ease: [0.22, 0.61, 0.36, 1] }}
       className="lg:col-span-5"
     >
-      <div className="glass-dark rounded-[24px] p-8 shadow-2xl border border-white/10 backdrop-blur-2xl">
-        <div className="space-y-6">
+      <div className="booking-card">
+        <h3 className="booking-card-title">Reserve your vehicle</h3>
+        <p className="booking-card-sub">Choose your dates, we handle the rest.</p>
 
-          {/* Location Field with Custom Dropdown */}
-          <div className="space-y-2.5 relative">
-            <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
-              {locationLabel}
-            </label>
-            <div className="flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 relative z-20">
-              <MapPin size={18} className="text-gold shrink-0" />
-              <input
-                type="text"
-                placeholder={locationPlaceholder}
+        <div className="booking-form">
+
+          {/* Location */}
+          <div className="booking-field relative">
+            <label className="booking-label">Pick-up location</label>
+            <div className="booking-input-wrap">
+              <MapPin size={16} className="booking-icon" />
+              <select
                 value={location}
                 onChange={e => setLocation(e.target.value)}
-                onFocus={() => setShowLocations(true)}
-                onBlur={() => setTimeout(() => setShowLocations(false), 200)}
-                className="w-full bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none font-medium"
-              />
+                className="booking-input"
+              >
+                <option value="">Ville, aéroport...</option>
+                {PREDEFINED_LOCATIONS.map(loc => (
+                  <option key={loc.id} value={`${loc.city} - ${loc.name}`}>
+                    {loc.city} — {loc.name}
+                  </option>
+                ))}
+              </select>
             </div>
-
-            {/* Custom Autocomplete Dropdown */}
-            <AnimatePresence>
-              {showLocations && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-[calc(100%+8px)] left-0 w-full bg-ink-1/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden z-50 shadow-2xl"
-                >
-                  <div className="p-2 space-y-1">
-                    {PREDEFINED_LOCATIONS.map((loc) => (
-                      <button
-                        key={loc.id}
-                        onClick={() => { setLocation(`${loc.city} - ${loc.name}`); setShowLocations(false); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-left group"
-                      >
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-gold group-hover:bg-gold/10 transition-colors">
-                          <loc.icon size={14} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-white group-hover:text-gold transition-colors">{loc.city}</p>
-                          <p className="text-[10px] text-white/50 uppercase tracking-wider">{loc.name}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
-          {/* Date Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2.5">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
-                {startLabel}
-              </label>
-              <div className="flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                <Calendar size={18} className="text-gold shrink-0" />
+          {/* Date + Time row */}
+          <div className="booking-row">
+            <div className="booking-field">
+              <label className="booking-label">Pick-up date</label>
+              <div className="booking-input-wrap">
+                <Calendar size={16} className="booking-icon" />
                 <input
                   type="date"
                   value={startDate}
                   min={today}
                   onChange={e => setStartDate(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
+                  className="booking-input [color-scheme:light]"
                 />
               </div>
             </div>
-
-            <div className="space-y-2.5">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
-                {endLabel}
-              </label>
-              <div className="flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                <Calendar size={18} className="text-gold shrink-0" />
+            <div className="booking-field">
+              <label className="booking-label">Return date</label>
+              <div className="booking-input-wrap">
+                <Calendar size={16} className="booking-icon" />
                 <input
                   type="date"
                   value={endDate}
                   min={startDate || today}
                   onChange={e => setEndDate(e.target.value)}
-                  className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer premium-date-input"
+                  className="booking-input [color-scheme:light]"
                 />
               </div>
             </div>
           </div>
 
-          {/* Collapsible Time Pickers (mobile: hidden by default) */}
-          <div className={`${expanded ? "block" : "hidden"} lg:block space-y-4`}>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2.5">
-                <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
-                  Heure de départ
-                </label>
-                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                  <Clock size={18} className="text-gold shrink-0" />
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={e => setStartTime(e.target.value)}
-                    className="w-full bg-transparent text-white text-sm focus:outline-none font-medium [color-scheme:dark] relative z-10 cursor-pointer"
-                  />
-                </div>
+          <div className="booking-row">
+            <div className="booking-field">
+              <label className="booking-label">Pick-up time</label>
+              <div className="booking-input-wrap">
+                <Clock size={16} className="booking-icon" />
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                  className="booking-input [color-scheme:light]"
+                />
               </div>
-              <div className="space-y-2.5">
-                <label className="text-[11px] font-bold uppercase tracking-widest text-white/70 ml-1">
-                  Heure de retour
-                </label>
-                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl focus-within:border-gold/50 focus-within:bg-white/10 focus-within:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500 overflow-hidden">
-                  <Clock size={18} className="text-gold shrink-0" />
-                  <input
-                    type="time"
-                    value={startTime}
-                    readOnly
-                    className="w-full bg-transparent text-white/40 text-sm font-medium [color-scheme:dark] relative z-10 cursor-default"
-                  />
-                </div>
+            </div>
+            <div className="booking-field">
+              <label className="booking-label">Vehicle category</label>
+              <div className="booking-input-wrap">
+                <select
+                  value={category}
+                  onChange={e => setCategory(e.target.value)}
+                  className="booking-input"
+                >
+                  {CATEGORIES.map(c => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
 
-          {/* Expand/Collapse times toggle (mobile only) */}
+          {/* Submit */}
           <button
-            onClick={() => setExpanded(!expanded)}
-            className="lg:hidden flex items-center gap-2 mx-auto text-[11px] font-bold uppercase tracking-widest text-white/40 hover:text-gold transition-colors"
+            onClick={onSearch}
+            className="btn-booking-submit"
           >
-            <Clock size={12} />
-            {expanded ? "Masquer les horaires" : "Choisir les horaires"}
-            <ChevronDown size={12} className={`transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
+            Check availability
           </button>
-
-          <MagneticWrapper className="w-full pt-2">
-            <Button
-              onClick={onSearch}
-              data-cursor="Go!"
-              variant="gold"
-              size="lg"
-              className="w-full h-14 rounded-2xl text-sm font-black uppercase tracking-[0.2em] shadow-[0_0_40px_rgba(212,175,55,0.3)] hover:shadow-[0_0_60px_rgba(212,175,55,0.5)] transition-all duration-500"
-            >
-              {searchButton}
-              <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform ml-2" />
-            </Button>
-          </MagneticWrapper>
-
-          <div className="text-center pt-3">
-            <Link
-              href={fleetLinkHref}
-              data-cursor="Flotte"
-              className="inline-flex items-center gap-2 text-xs font-bold text-white/50 hover:text-gold transition-colors duration-300 tracking-widest uppercase group"
-            >
-              {fleetLinkText}
-              <ArrowRight size={12} className="group-hover:translate-x-1 opacity-0 group-hover:opacity-100 transition-all" />
-            </Link>
-          </div>
-
         </div>
       </div>
     </motion.div>

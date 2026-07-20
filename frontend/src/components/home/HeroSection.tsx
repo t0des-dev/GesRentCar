@@ -54,9 +54,6 @@ export default function HeroSection({
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-ink-1 will-change-transform"
       style={{ minHeight: "100dvh" }}
     >
-      {/* Ambient glow */}
-      <div className="absolute w-[600px] h-[600px] bg-primary/8 blur-[150px] rounded-full pointer-events-none z-[1] -top-48 -left-48" />
-
       <HeroBackground
         heroImage={heroImage}
         heroVideo={heroVideo}

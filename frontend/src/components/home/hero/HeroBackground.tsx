@@ -19,13 +19,14 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
 
   return (
     <div className="absolute inset-0 z-0">
+      {/* Image / Video layer */}
       <motion.div style={{ scale }} className="w-full h-full">
         {heroVideo && !videoError ? (
           <video
             autoPlay loop muted={videoMuted} playsInline
             poster={heroImage || undefined}
             onError={() => setVideoError(true)}
-            className="w-full h-full object-cover brightness-[0.45]"
+            className="w-full h-full object-cover"
           >
             <source src={heroVideo} type="video/mp4" />
           </video>
@@ -35,16 +36,17 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
             alt=""
             fill priority
             sizes="100vw"
-            className="object-cover brightness-[0.45]"
+            className="object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-ink-2 via-ink-1 to-primary/10" />
+          <div className="w-full h-full bg-gradient-to-br from-[var(--navy)] via-[var(--navy-light)] to-[var(--charcoal)]" />
         )}
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-ink-1 via-ink-1/40 to-ink-1/60" />
+      {/* Theme diagonal gradient overlay — matches hero.css */}
+      <div className="hero-gradient-overlay" />
 
-      {/* Grain texture — inline SVG, no external dependency */}
+      {/* Grain texture */}
       <div
         className="absolute inset-0 z-[1] pointer-events-none opacity-[0.035] mix-blend-overlay"
         style={{ backgroundImage: GRAIN_SVG, backgroundRepeat: "repeat" }}
