@@ -1,7 +1,7 @@
 # ─── Build stage: PHP + build deps ────────────────────────────────────────
 FROM php:8.4-fpm AS base
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     git \
     curl \
     libpng-dev \
@@ -52,7 +52,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # ─── Runtime stage: minimal image without build tools ─────────────────────
 FROM php:8.4-fpm AS backend
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
