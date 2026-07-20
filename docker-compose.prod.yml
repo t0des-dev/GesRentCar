@@ -70,7 +70,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: backend
     container_name: vectoria-php-fpm
     restart: unless-stopped
     deploy:
@@ -102,7 +101,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: backend
     container_name: vectoria-queue
     restart: unless-stopped
     deploy:
@@ -128,7 +126,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: backend
     container_name: vectoria-scheduler
     restart: unless-stopped
     deploy:
