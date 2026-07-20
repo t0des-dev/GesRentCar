@@ -7,19 +7,19 @@ const TESTIMONIALS = [
     text: "Effortless booking and the car was waiting exactly on time at the airport. Genuinely felt like a premium experience from start to finish.",
     name: "Youssef B.",
     detail: "Casablanca, Morocco · BMW 5 Series",
-    avatar: "https://d2n9kexqau8pti.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png",
+    avatar: "https://ui-avatars.com/api/?name=Youssef+B&background=4f46e5&color=ffffff&bold=true&size=128",
   },
   {
     text: "We rented an SUV for a family trip to Marrakech. Spotless car, transparent price, and the support team answered instantly on WhatsApp.",
     name: "Sophie L.",
     detail: "Marrakech · Tucson SUV",
-    avatar: "https://d2n9kexqau8pti.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png",
+    avatar: "https://ui-avatars.com/api/?name=Sophie+L&background=059669&color=ffffff&bold=true&size=128",
   },
   {
     text: "Our company now books all business travel vehicles through Vectoria. Reliable fleet, clean invoicing, zero surprises.",
     name: "Nadia K.",
     detail: "Rabat · Corporate Account",
-    avatar: "https://d2n9kexqau8pti.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png",
+    avatar: "https://ui-avatars.com/api/?name=Nadia+K&background=d97706&color=ffffff&bold=true&size=128",
   },
 ];
 

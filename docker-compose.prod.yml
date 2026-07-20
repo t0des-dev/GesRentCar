@@ -12,6 +12,8 @@ x-common-env: &common-env
   QUEUE_CONNECTION: redis
   SESSION_DRIVER: redis
   CACHE_STORE: redis
+  APP_URL: ${APP_URL:-https://vectoria.carbonick.com}
+  FILESYSTEM_DISK: public
   FRONTEND_URL: ${FRONTEND_URL:-https://vectoria.carbonick.com}
   STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
   STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
