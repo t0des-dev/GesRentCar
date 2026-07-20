@@ -171,9 +171,9 @@ services:
     # Copy _next/static/ into the shared volume so nginx can serve assets directly.
     # Next.js standalone server.js does NOT serve /_next/static/ itself.
     command: >-
-      sh -c "cp -r /app/.next/static/. /var/nextjs_static/ && node server.js"
+      sh -c "cp -r /app/.next/static/. /app/static_shared/ && node server.js"
     volumes:
-      - nextjs_static:/var/nextjs_static
+      - nextjs_static:/app/static_shared
     depends_on:
       php-fpm:
         condition: service_healthy

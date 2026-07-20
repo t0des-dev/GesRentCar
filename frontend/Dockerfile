@@ -30,11 +30,11 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Standalone output — includes the server.js entrypoint and all traced dependencies.
-# _next/static/ must be copied separately: standalone mode does NOT bundle static assets.
-# Without this COPY the browser gets 404 on all /_next/static/ requests.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Create shared directory and set permissions for nextjs user to avoid permission issues with mounted volume
+RUN mkdir -p /app/static_shared && chown -R nextjs:nodejs /app/static_shared
 
 USER nextjs
 
