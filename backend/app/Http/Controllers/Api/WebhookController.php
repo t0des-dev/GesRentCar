@@ -8,6 +8,7 @@ use App\Models\WebhookLog;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 class WebhookController extends Controller
 {
@@ -46,7 +47,7 @@ class WebhookController extends Controller
             $webhook = Webhook::create($data);
 
             return response()->json($webhook, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Échec de la création du webhook.');
@@ -68,7 +69,7 @@ class WebhookController extends Controller
             $webhook->update($data);
 
             return response()->json($webhook);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Échec de la mise à jour du webhook.');
@@ -203,13 +204,17 @@ class WebhookController extends Controller
     private function isInternalUrl(string $url): bool
     {
         $host = parse_url($url, PHP_URL_HOST);
-        if (!$host) return true;
-        
+        if (! $host) {
+            return true;
+        }
+
         // Resolve the hostname
         $ip = gethostbyname($host);
-        if ($ip === $host) return false; // gethostbyname returns input on failure
-        
+        if ($ip === $host) {
+            return false;
+        } // gethostbyname returns input on failure
+
         // Block private IPs
-        return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        return ! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
     }
 }

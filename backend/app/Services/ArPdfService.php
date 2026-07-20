@@ -18,14 +18,11 @@ class ArPdfService
 
     public function __construct()
     {
-        $this->ar = new Arabic();
+        $this->ar = new Arabic;
     }
 
     /**
      * Shape a raw Arabic UTF-8 string for DomPDF rendering.
-     *
-     * @param  string|null  $text
-     * @return string
      */
     public function shape(?string $text): string
     {
@@ -42,9 +39,6 @@ class ArPdfService
      * Only text nodes that contain Arabic-range characters (U+0600–U+06FF) are
      * processed. HTML tags and attributes are preserved verbatim so DomPDF's
      * parser is not confused by modified attribute values.
-     *
-     * @param  string  $html
-     * @return string
      */
     public function shapeHtml(string $html): string
     {
@@ -60,7 +54,7 @@ class ArPdfService
 
         // Wrap in a full HTML document so DOMDocument parses it correctly,
         // then we extract the body content after shaping.
-        $wrapped = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . $html . '</body></html>';
+        $wrapped = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>'.$html.'</body></html>';
         $doc->loadHTML($wrapped, LIBXML_NOERROR | LIBXML_NOWARNING);
         libxml_clear_errors();
 
@@ -87,6 +81,7 @@ class ArPdfService
             foreach ($body->childNodes as $child) {
                 $result .= $doc->saveHTML($child);
             }
+
             return $result;
         }
 

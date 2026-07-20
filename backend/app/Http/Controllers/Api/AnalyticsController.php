@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Cache;
 class AnalyticsController extends Controller
 {
     private const CACHE_KEY_VIEWS = 'analytics:page_views';
+
     private const CACHE_KEY_VISITORS = 'analytics:unique_visitors';
+
     private const CACHE_TTL = 1440; // 24 hours
 
     public function track(Request $request): JsonResponse
@@ -35,8 +37,8 @@ class AnalyticsController extends Controller
 
             // Track unique visitors per path
             $visitors = Cache::get(self::CACHE_KEY_VISITORS, []);
-            $visitorKey = $path . ':' . $visitorId;
-            if (!isset($visitors[$visitorKey])) {
+            $visitorKey = $path.':'.$visitorId;
+            if (! isset($visitors[$visitorKey])) {
                 $visitors[$visitorKey] = $timestamp;
                 Cache::put(self::CACHE_KEY_VISITORS, $visitors, self::CACHE_TTL);
             }
@@ -57,7 +59,9 @@ class AnalyticsController extends Controller
         // Build unique visitor counts per path
         $uniqueVisitors = [];
         foreach ($visitors as $key => $value) {
-            if (!str_contains($key, ':')) continue;
+            if (! str_contains($key, ':')) {
+                continue;
+            }
             [$path] = explode(':', $key, 2);
             $uniqueVisitors[$path] = ($uniqueVisitors[$path] ?? 0) + 1;
         }
@@ -69,7 +73,9 @@ class AnalyticsController extends Controller
         $popularPages = [];
         $rank = 0;
         foreach ($views as $path => $count) {
-            if ($rank >= 10) break;
+            if ($rank >= 10) {
+                break;
+            }
             $popularPages[] = [
                 'path' => $path,
                 'total_views' => $count,

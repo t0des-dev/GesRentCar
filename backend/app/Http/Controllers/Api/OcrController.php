@@ -21,11 +21,11 @@ class OcrController extends Controller
             $file = $request->file('image');
             $filename = time().'_'.$type.'.'.$file->getClientOriginalExtension();
             $dir = storage_path('app/private/documents/clients');
-            if (!is_dir($dir)) {
+            if (! is_dir($dir)) {
                 mkdir($dir, 0775, true);
             }
             $file->storeAs('documents/clients', $filename);
-            $fullPath = $dir . '/' . $filename;
+            $fullPath = $dir.'/'.$filename;
             $imageUrl = '/api/documents/preview/'.$filename;
 
             // Preprocess image for better OCR
@@ -97,6 +97,7 @@ class OcrController extends Controller
             } else {
                 $message = 'Erreur de traitement de l\'image. Veuillez réessayer.';
             }
+
             return response()->json([
                 'success' => false,
                 'raw_text' => null,
@@ -118,7 +119,7 @@ class OcrController extends Controller
         $plate = $request->input('plate') ?? $request->input('plate_number') ?? '';
 
         // Seed random generator with plate to keep results consistent for a vehicle
-        if (!empty($plate)) {
+        if (! empty($plate)) {
             $seed = crc32(strtolower(trim($plate)));
             srand($seed);
         } else {
@@ -158,7 +159,7 @@ class OcrController extends Controller
         } elseif ($score >= 70 && $score < 90) {
             // 1-2 medium/low issues
             $keys = array_rand($allDetections, 2);
-            if (!is_array($keys)) {
+            if (! is_array($keys)) {
                 $keys = [$keys];
             }
             foreach ($keys as $k) {
@@ -177,7 +178,7 @@ class OcrController extends Controller
         } elseif ($score < 70) {
             // Multiple issues, possibly high severity
             $keys = array_rand($allDetections, 3);
-            if (!is_array($keys)) {
+            if (! is_array($keys)) {
                 $keys = [$keys];
             }
             foreach ($keys as $k) {
@@ -204,11 +205,11 @@ class OcrController extends Controller
     private function preprocessImage(string $path): string
     {
         $info = @getimagesize($path);
-        if (!$info) {
+        if (! $info) {
             return $path;
         }
 
-        $preprocessedPath = dirname($path) . '/pre_' . basename($path);
+        $preprocessedPath = dirname($path).'/pre_'.basename($path);
 
         switch ($info[2]) {
             case IMAGETYPE_JPEG:
@@ -224,7 +225,7 @@ class OcrController extends Controller
                 return $path;
         }
 
-        if (!$img) {
+        if (! $img) {
             return $path;
         }
 
@@ -234,8 +235,8 @@ class OcrController extends Controller
         $maxDim = 2000;
         if ($width > $maxDim || $height > $maxDim) {
             $ratio = min($maxDim / $width, $maxDim / $height);
-            $resized = imagecreatetruecolor((int)($width * $ratio), (int)($height * $ratio));
-            imagecopyresampled($resized, $img, 0, 0, 0, 0, (int)($width * $ratio), (int)($height * $ratio), $width, $height);
+            $resized = imagecreatetruecolor((int) ($width * $ratio), (int) ($height * $ratio));
+            imagecopyresampled($resized, $img, 0, 0, 0, 0, (int) ($width * $ratio), (int) ($height * $ratio), $width, $height);
             imagedestroy($img);
             $img = $resized;
         }
@@ -258,6 +259,7 @@ class OcrController extends Controller
                 return null;
             }
         }
+
         return null;
     }
 
@@ -275,6 +277,7 @@ class OcrController extends Controller
         if (preg_match('/\b([0-9]{9,12})\b/', $text, $matches)) {
             return $matches[1];
         }
+
         return null;
     }
 
@@ -286,9 +289,10 @@ class OcrController extends Controller
             if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
                 $prenom = trim($matches[1]);
                 if (strtolower($nom) !== strtolower($prenom)) {
-                    return $nom . ' ' . $prenom;
+                    return $nom.' '.$prenom;
                 }
             }
+
             return $nom;
         }
         if (preg_match('/(?:PR[ÉE]NOM|PRENOM|Given|Prénom)\s*[:\-=\.]?\s*([A-Za-zÀ-ÿ\s\-]+)/iu', $text, $matches)) {
@@ -300,20 +304,27 @@ class OcrController extends Controller
         $candidates = [];
         foreach ($lines as $line) {
             $trim = trim($line);
-            if ($trim === '') continue;
-            if (preg_match($skipWords, $trim)) continue;
+            if ($trim === '') {
+                continue;
+            }
+            if (preg_match($skipWords, $trim)) {
+                continue;
+            }
             // Must be ALL-CAPS Latin text (typical for names on CIN)
             if (preg_match('/^[A-ZÀ-Ý][A-ZÀ-Ý\s\-]+[A-ZÀ-Ý]$/', $trim)) {
                 $candidates[] = $trim;
             }
-            if (count($candidates) >= 2) break;
+            if (count($candidates) >= 2) {
+                break;
+            }
         }
         if (count($candidates) >= 2) {
-            return $candidates[0] . ' ' . $candidates[1];
+            return $candidates[0].' '.$candidates[1];
         }
         if (count($candidates) === 1) {
             return $candidates[0];
         }
+
         return null;
     }
 
@@ -331,6 +342,7 @@ class OcrController extends Controller
         if (preg_match('/\b([0-9]{8})\b/', $text, $matches)) {
             return $matches[1];
         }
+
         return null;
     }
 }

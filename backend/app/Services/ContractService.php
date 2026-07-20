@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Contract;
 use App\Models\Reservation;
 use App\Models\Setting;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -22,29 +23,29 @@ class ContractService
     {
         $reservation->loadMissing(['client', 'vehicle', 'contract']);
 
-        $padded   = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
+        $padded = str_pad($reservation->id, 5, '0', STR_PAD_LEFT);
         $filename = 'contracts/contract_'.$reservation->id.'.pdf';
 
         $agencyData = $this->getAgencyData();
-        $agentName  = $reservation->vehicle && $reservation->vehicle->agent
+        $agentName = $reservation->vehicle && $reservation->vehicle->agent
             ? $reservation->vehicle->agent->name
             : null;
 
         $viewData = array_merge([
             'reservation' => $reservation,
-            'client'      => $reservation->client,
-            'vehicle'     => $reservation->vehicle,
-            'lang'        => 'fr',
-            'agentName'   => $agentName,
+            'client' => $reservation->client,
+            'vehicle' => $reservation->vehicle,
+            'lang' => 'fr',
+            'agentName' => $agentName,
         ], $agencyData);
 
         // Try DomPDF; gracefully fall back to HTML content for test environments
         try {
-            if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class) && view()->exists('pdf.contract')) {
+            if (class_exists(Pdf::class) && view()->exists('pdf.contract')) {
                 $viewData = $this->prepareImageData($viewData);
-                $pdf      = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.contract', $viewData)
+                $pdf = Pdf::loadView('pdf.contract', $viewData)
                     ->setPaper('a4', 'portrait');
-                $content  = $pdf->output();
+                $content = $pdf->output();
             } else {
                 // Minimal HTML stub used in unit tests / environments without DomPDF
                 $content = '<html><body><h1>Contrat VRC-'.$padded.'</h1></body></html>';
@@ -58,7 +59,7 @@ class ContractService
 
         $contract = Contract::updateOrCreate(
             ['reservation_id' => $reservation->id],
-            ['file_path'      => $filename]
+            ['file_path' => $filename]
         );
 
         return $contract;
@@ -72,7 +73,7 @@ class ContractService
     {
         $contract->update([
             'signature_data' => $signatureData,
-            'signed_at'      => now(),
+            'signed_at' => now(),
         ]);
 
         // Notify client (WhatsApp + Email) — uses Log in test/sandbox environments

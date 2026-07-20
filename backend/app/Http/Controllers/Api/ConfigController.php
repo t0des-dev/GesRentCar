@@ -30,7 +30,7 @@ class ConfigController extends Controller
 
             // Persist URL to settings
             $setting = Setting::firstOrCreate(['key' => 'agency_config']);
-            $field = match($type) {
+            $field = match ($type) {
                 'logo' => 'logo_url',
                 'hero' => 'hero_image_url',
                 'favicon' => 'favicon_url',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ClientBlacklist;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ClientBlacklistController extends Controller
 {
@@ -37,7 +38,7 @@ class ClientBlacklistController extends Controller
             $blacklist = ClientBlacklist::create($data);
 
             return response()->json($blacklist, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to blacklist client.', 'message' => $e->getMessage()], 500);
@@ -78,7 +79,7 @@ class ClientBlacklistController extends Controller
             return response()->json([
                 'blacklisted' => $isBlacklisted,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to check blacklist status.', 'message' => $e->getMessage()], 500);

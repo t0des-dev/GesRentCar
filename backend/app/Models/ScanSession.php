@@ -29,10 +29,10 @@ class ScanSession extends Model
     protected static function booted(): void
     {
         static::creating(function (ScanSession $session) {
-            if (!$session->token) {
+            if (! $session->token) {
                 $session->token = Str::random(64);
             }
-            if (!$session->qr_token) {
+            if (! $session->qr_token) {
                 $session->qr_token = Str::random(32);
             }
         });

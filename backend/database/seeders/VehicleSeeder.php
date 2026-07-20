@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
 
 class VehicleSeeder extends Seeder

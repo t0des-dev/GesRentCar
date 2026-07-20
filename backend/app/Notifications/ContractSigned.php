@@ -33,7 +33,7 @@ class ContractSigned extends Notification
             ->line('Vous trouverez ci-joint votre copie certifiée au format PDF.')
             ->line('Merci de votre confiance.');
 
-        if ($contract && !empty($contract->file_path)) {
+        if ($contract && ! empty($contract->file_path)) {
             $filePath = storage_path('app/public/'.$contract->file_path);
             if (file_exists($filePath)) {
                 $message->attach($filePath, [

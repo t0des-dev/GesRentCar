@@ -38,6 +38,7 @@ class AuditLogController extends Controller
 
         $logs->getCollection()->transform(function ($log) {
             $log->user_name = $log->user?->name ?? 'Système';
+
             return $log;
         });
 

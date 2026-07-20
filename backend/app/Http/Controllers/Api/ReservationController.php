@@ -7,7 +7,9 @@ use App\Models\ActivityLog;
 use App\Models\Client;
 use App\Models\Contract;
 use App\Models\Reservation;
+use App\Models\User;
 use App\Models\Vehicle;
+use App\Notifications\RentalCompleted;
 use App\Services\ContractService;
 use App\Services\NotificationService;
 use App\Services\PricingService;
@@ -23,6 +25,7 @@ use Stripe\Stripe;
 class ReservationController extends Controller
 {
     use ApiResponse;
+
     public function __construct(
         protected NotificationService $notificationService,
         protected PricingService $pricing,
@@ -54,9 +57,9 @@ class ReservationController extends Controller
             $q->where('email', $user->email);
         })
             ->with([
-            'vehicle:id,brand,model,plate,image_url',
-            'client:id,name,email,phone',
-        ])
+                'vehicle:id,brand,model,plate,image_url',
+                'client:id,name,email,phone',
+            ])
             ->latest('id')
             ->get();
 
@@ -301,13 +304,13 @@ class ReservationController extends Controller
                     try {
                         $reservation->load('client', 'vehicle');
                         if ($reservation->client && $reservation->client->email) {
-                            $user = \App\Models\User::where('email', $reservation->client->email)->first();
+                            $user = User::where('email', $reservation->client->email)->first();
                             if ($user) {
-                                $user->notify(new \App\Notifications\RentalCompleted($reservation));
+                                $user->notify(new RentalCompleted($reservation));
                             }
                         }
                     } catch (\Throwable $e) {
-                        \Illuminate\Support\Facades\Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
+                        Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
                     }
                 }
 
@@ -323,13 +326,13 @@ class ReservationController extends Controller
             try {
                 $reservation->load('client', 'vehicle');
                 if ($reservation->client && $reservation->client->email) {
-                    $user = \App\Models\User::where('email', $reservation->client->email)->first();
+                    $user = User::where('email', $reservation->client->email)->first();
                     if ($user) {
-                        $user->notify(new \App\Notifications\RentalCompleted($reservation));
+                        $user->notify(new RentalCompleted($reservation));
                     }
                 }
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
+                Log::warning('Completion notification failed', ['error' => $e->getMessage()]);
             }
         }
 

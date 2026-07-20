@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservation;
 use App\Models\Review;
+use App\Models\User;
+use App\Notifications\ReviewSubmitted;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ReviewController extends Controller
 {
@@ -54,7 +59,7 @@ class ReviewController extends Controller
                 return $this->errorResponse('Vous avez déjà avisé cette réservation.', 422, 'already_reviewed');
             }
 
-            $reservation = \App\Models\Reservation::where('id', $data['reservation_id'])
+            $reservation = Reservation::where('id', $data['reservation_id'])
                 ->where('status', 'completed')
                 ->first();
 
@@ -69,16 +74,16 @@ class ReviewController extends Controller
             $review = Review::create($data);
 
             try {
-                $adminUser = \App\Models\User::where('role', 'admin')->first();
+                $adminUser = User::where('role', 'admin')->first();
                 if ($adminUser) {
-                    $adminUser->notify(new \App\Notifications\ReviewSubmitted($review));
+                    $adminUser->notify(new ReviewSubmitted($review));
                 }
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('Review notification failed', ['error' => $e->getMessage()]);
+                Log::warning('Review notification failed', ['error' => $e->getMessage()]);
             }
 
             return response()->json($review, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return $this->validationErrorResponse($e->errors());
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Échec de la création de l\'avis.');

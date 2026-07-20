@@ -41,8 +41,8 @@ class ConciergeControllerTest extends TestCase
             'reply',
             'vibe',
             'suggestions' => [
-                '*' => ['id', 'brand', 'model', 'price_per_day', 'image_url']
-            ]
+                '*' => ['id', 'brand', 'model', 'price_per_day', 'image_url'],
+            ],
         ]);
 
         $this->assertTrue($response['success']);

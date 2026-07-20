@@ -44,21 +44,21 @@ class HealthController extends Controller
 
         try {
             $free = disk_free_space(storage_path());
-            $checks['storage_free'] = round($free / 1048576, 2) . ' MB';
+            $checks['storage_free'] = round($free / 1048576, 2).' MB';
         } catch (\Throwable $e) {
             $checks['storage_free'] = null;
         }
 
         try {
             $uptime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
-            $checks['uptime'] = round($uptime, 4) . 's';
+            $checks['uptime'] = round($uptime, 4).'s';
         } catch (\Throwable $e) {
             $checks['uptime'] = null;
         }
 
         try {
             $memory = memory_get_peak_usage(true);
-            $checks['memory'] = round($memory / 1048576, 2) . ' MB';
+            $checks['memory'] = round($memory / 1048576, 2).' MB';
         } catch (\Throwable $e) {
             $checks['memory'] = null;
         }

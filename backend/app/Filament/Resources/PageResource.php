@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class PageResource extends Resource
 {
@@ -33,7 +34,7 @@ class PageResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
                                 Forms\Components\TextInput::make('slug')
                                     ->required()
                                     ->unique(ignoreRecord: true)
@@ -245,7 +246,7 @@ class PageResource extends Resource
                     ->label('Aperçu')
                     ->icon('heroicon-m-eye')
                     ->color('gray')
-                    ->url(fn (Page $record) => url('/page/' . $record->slug))
+                    ->url(fn (Page $record) => url('/page/'.$record->slug))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
             ])

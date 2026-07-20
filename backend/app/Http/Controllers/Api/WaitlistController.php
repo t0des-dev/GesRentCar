@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Waitlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class WaitlistController extends Controller
 {
@@ -39,7 +40,7 @@ class WaitlistController extends Controller
             $waitlist = Waitlist::create($data);
 
             return response()->json($waitlist, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to create waitlist entry.', 'message' => $e->getMessage()], 500);

@@ -56,8 +56,8 @@ class SendNotification implements ShouldQueue
             ->timeout(20)
             ->post("https://graph.facebook.com/{$version}/{$phoneId}/messages", $this->payload);
 
-        if (!$response->successful()) {
-            throw new \Exception('Notification API error: ' . $response->status());
+        if (! $response->successful()) {
+            throw new \Exception('Notification API error: '.$response->status());
         }
     }
 
@@ -79,8 +79,8 @@ class SendNotification implements ShouldQueue
                 'Body' => $this->message,
             ]);
 
-        if (!$response->successful()) {
-            throw new \Exception('Notification API error: ' . $response->status());
+        if (! $response->successful()) {
+            throw new \Exception('Notification API error: '.$response->status());
         }
     }
 }

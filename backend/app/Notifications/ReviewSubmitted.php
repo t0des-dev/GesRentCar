@@ -21,11 +21,12 @@ class ReviewSubmitted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $vehicle = $this->review->vehicle;
+
         return (new MailMessage)
             ->subject('Nouvel avis reçu - Vectoria')
             ->line("Un nouvel avis a été soumis pour le véhicule {$vehicle->brand} {$vehicle->model}.")
             ->line("Note globale : {$this->review->rating}/5")
-            ->action('Voir l\'avis', config('app.url') . '/admin')
+            ->action('Voir l\'avis', config('app.url').'/admin')
             ->line('Merci de modérer cet avis dans le panneau admin.');
     }
 }

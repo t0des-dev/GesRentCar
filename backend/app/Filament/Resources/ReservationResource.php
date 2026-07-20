@@ -43,11 +43,11 @@ class ReservationResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('cin_doc')
                             ->content(fn ($record) => $record?->client?->cin_image_url
-                                ? '<a href="' . $record->client->cin_image_url . '" target="_blank" class="text-primary-600 underline">Voir CIN</a>'
+                                ? '<a href="'.$record->client->cin_image_url.'" target="_blank" class="text-primary-600 underline">Voir CIN</a>'
                                 : 'Aucun document CIN'),
                         Forms\Components\Placeholder::make('license_doc')
                             ->content(fn ($record) => $record?->client?->license_image_url
-                                ? '<a href="' . $record->client->license_image_url . '" target="_blank" class="text-primary-600 underline">Voir Permis</a>'
+                                ? '<a href="'.$record->client->license_image_url.'" target="_blank" class="text-primary-600 underline">Voir Permis</a>'
                                 : 'Aucun document Permis'),
                     ])->columns(2),
 
@@ -111,7 +111,7 @@ class ReservationResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Réf.')
-                    ->formatStateUsing(fn ($state) => 'VRC-' . str_pad($state, 5, '0', STR_PAD_LEFT))
+                    ->formatStateUsing(fn ($state) => 'VRC-'.str_pad($state, 5, '0', STR_PAD_LEFT))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('client.name')

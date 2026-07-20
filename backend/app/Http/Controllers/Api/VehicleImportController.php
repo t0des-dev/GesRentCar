@@ -58,6 +58,7 @@ class VehicleImportController extends Controller
 
             if (count($row) < count(array_filter($columnMap))) {
                 $errors[] = "Ligne {$rowNumber} : colonnes manquantes.";
+
                 continue;
             }
 
@@ -65,6 +66,7 @@ class VehicleImportController extends Controller
 
             if (in_array(strtolower($plate), $existingPlates)) {
                 $skipped++;
+
                 continue;
             }
 
@@ -87,13 +89,14 @@ class VehicleImportController extends Controller
                 'price_per_day' => 'required|numeric|min:0',
                 'category' => 'required|string|max:255',
                 'status' => 'required|string|in:available,rented,maintenance',
-                'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+                'year' => 'required|integer|min:1900|max:'.(date('Y') + 1),
                 'fuel_type' => 'required|string|max:100',
                 'mileage' => 'integer|min:0',
             ]);
 
             if ($vehicleValidator->fails()) {
-                $errors[] = "Ligne {$rowNumber} ({$plate}) : " . $vehicleValidator->errors()->first();
+                $errors[] = "Ligne {$rowNumber} ({$plate}) : ".$vehicleValidator->errors()->first();
+
                 continue;
             }
 

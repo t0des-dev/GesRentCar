@@ -4,11 +4,11 @@ namespace App\Filament\Resources\ReservationResource\Pages;
 
 use App\Filament\Resources\ReservationResource;
 use Filament\Actions;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
 
 class ViewReservation extends ViewRecord
 {
@@ -51,7 +51,7 @@ class ViewReservation extends ViewRecord
                     ->schema([
                         TextEntry::make('id')
                             ->label('Référence')
-                            ->formatStateUsing(fn ($state) => 'VRC-' . str_pad($state, 5, '0', STR_PAD_LEFT))
+                            ->formatStateUsing(fn ($state) => 'VRC-'.str_pad($state, 5, '0', STR_PAD_LEFT))
                             ->weight('bold'),
                         TextEntry::make('vehicle.plate')
                             ->label('Véhicule')
@@ -109,7 +109,7 @@ class ViewReservation extends ViewRecord
                         TextEntry::make('contract.file_path')
                             ->label('Fichier')
                             ->placeholder('Aucun contrat généré')
-                            ->url(fn ($record) => $record->contract ? '/api/reservations/' . $record->id . '/contract/file' : null)
+                            ->url(fn ($record) => $record->contract ? '/api/reservations/'.$record->id.'/contract/file' : null)
                             ->openUrlInNewTab(),
                     ]),
             ]);

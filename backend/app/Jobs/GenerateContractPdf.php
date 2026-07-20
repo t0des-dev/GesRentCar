@@ -190,7 +190,7 @@ class GenerateContractPdf implements ShouldQueue
         ], $viewData['vehiclePhotos'] ?? []), fn ($f) => $f && str_starts_with($f, sys_get_temp_dir()));
 
         // Render the view to HTML then shape Arabic text for correct DomPDF rendering
-        $arPdf = new ArPdfService();
+        $arPdf = new ArPdfService;
         $html = view('pdf.contract', $viewData)->render();
         $html = $arPdf->shapeHtml($html);
 

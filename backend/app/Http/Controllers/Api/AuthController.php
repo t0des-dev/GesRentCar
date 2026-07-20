@@ -6,22 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
-
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $throttleKey = 'login:' . ($request->input('email') ?: $request->ip());
+        $throttleKey = 'login:'.($request->input('email') ?: $request->ip());
 
         try {
             if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
                 $seconds = RateLimiter::availableIn($throttleKey);
                 throw ValidationException::withMessages([
-                    'email' => ['Trop de tentatives. Veuillez réessayer dans ' . $seconds . ' secondes.'],
+                    'email' => ['Trop de tentatives. Veuillez réessayer dans '.$seconds.' secondes.'],
                 ]);
             }
         } catch (ValidationException $e) {

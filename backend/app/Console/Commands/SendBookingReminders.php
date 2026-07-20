@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class SendBookingReminders extends Command
 {
     protected $signature = 'reminders:send-booking';
+
     protected $description = 'Send booking reminder emails for reservations starting tomorrow';
 
     public function handle(): int
@@ -32,7 +33,8 @@ class SendBookingReminders extends Command
             }
         }
 
-        $this->info("Sent {$count} booking reminders for " . $tomorrow->format('d/m/Y'));
+        $this->info("Sent {$count} booking reminders for ".$tomorrow->format('d/m/Y'));
+
         return Command::SUCCESS;
     }
 }

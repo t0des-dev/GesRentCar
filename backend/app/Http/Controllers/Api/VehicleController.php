@@ -20,65 +20,65 @@ class VehicleController extends Controller
             try {
                 $query = Vehicle::query();
 
-            if ($request->has(['start_date', 'end_date'])) {
-                $query->available($request->start_date, $request->end_date);
-            }
-
-            if ($request->has('ids')) {
-                $ids = is_array($request->ids) ? $request->ids : explode(',', $request->ids);
-                $query->whereIn('id', $ids);
-            }
-
-            if ($request->has('brand')) {
-                $query->where('brand', 'like', '%'.$request->brand.'%');
-            }
-
-            if ($request->has('type')) {
-                $type = strtolower($request->type);
-                if (in_array($type, ['internal', 'collaborator'])) {
-                    $query->where('type', $type);
-                } else {
-                    $query->where('category', $type);
-                }
-            }
-
-            if ($request->has('category')) {
-                $query->where('category', strtolower($request->category));
-            }
-
-            if ($request->has('max_price')) {
-                $query->where('price_per_day', '<=', $request->max_price);
-            }
-
-            $perPage = $request->query('per_page', 6);
-
-            $vehicles = $query->withSum(['reservations as total_revenue' => function ($q) {
-                $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
-            }], 'total_price')
-                ->withSum('maintenances as total_maintenance_cost', 'cost')
-                ->withExists(['reservations as is_currently_rented' => function ($q) {
-                    $q->whereIn('status', ['ongoing', 'confirmed'])
-                        ->where('start_date', '<=', now())
-                        ->where('end_date', '>=', now());
-                }])
-                ->paginate($perPage);
-
-            $totalVehicles = Vehicle::count();
-            $rentedVehicles = Vehicle::where('status', 'rented')->count();
-            $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
-
-            $vehicles->getCollection()->transform(function ($vehicle) use ($pricing, $occupancyRate) {
-                $dynamic = $pricing->getDynamicRate($vehicle, $occupancyRate);
-                $vehicle->dynamic_price = $dynamic['price'];
-                $vehicle->dynamic_reason = $dynamic['reason'];
-
-                // Calcul Auto du Statut (si pas en maintenance forcée)
-                if ($vehicle->status !== 'maintenance') {
-                    $vehicle->status = $vehicle->is_currently_rented ? 'rented' : 'available';
+                if ($request->has(['start_date', 'end_date'])) {
+                    $query->available($request->start_date, $request->end_date);
                 }
 
-                return $vehicle;
-            });
+                if ($request->has('ids')) {
+                    $ids = is_array($request->ids) ? $request->ids : explode(',', $request->ids);
+                    $query->whereIn('id', $ids);
+                }
+
+                if ($request->has('brand')) {
+                    $query->where('brand', 'like', '%'.$request->brand.'%');
+                }
+
+                if ($request->has('type')) {
+                    $type = strtolower($request->type);
+                    if (in_array($type, ['internal', 'collaborator'])) {
+                        $query->where('type', $type);
+                    } else {
+                        $query->where('category', $type);
+                    }
+                }
+
+                if ($request->has('category')) {
+                    $query->where('category', strtolower($request->category));
+                }
+
+                if ($request->has('max_price')) {
+                    $query->where('price_per_day', '<=', $request->max_price);
+                }
+
+                $perPage = $request->query('per_page', 6);
+
+                $vehicles = $query->withSum(['reservations as total_revenue' => function ($q) {
+                    $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
+                }], 'total_price')
+                    ->withSum('maintenances as total_maintenance_cost', 'cost')
+                    ->withExists(['reservations as is_currently_rented' => function ($q) {
+                        $q->whereIn('status', ['ongoing', 'confirmed'])
+                            ->where('start_date', '<=', now())
+                            ->where('end_date', '>=', now());
+                    }])
+                    ->paginate($perPage);
+
+                $totalVehicles = Vehicle::count();
+                $rentedVehicles = Vehicle::where('status', 'rented')->count();
+                $occupancyRate = $totalVehicles > 0 ? ($rentedVehicles / $totalVehicles) : 0;
+
+                $vehicles->getCollection()->transform(function ($vehicle) use ($pricing, $occupancyRate) {
+                    $dynamic = $pricing->getDynamicRate($vehicle, $occupancyRate);
+                    $vehicle->dynamic_price = $dynamic['price'];
+                    $vehicle->dynamic_reason = $dynamic['reason'];
+
+                    // Calcul Auto du Statut (si pas en maintenance forcée)
+                    if ($vehicle->status !== 'maintenance') {
+                        $vehicle->status = $vehicle->is_currently_rented ? 'rented' : 'available';
+                    }
+
+                    return $vehicle;
+                });
 
                 return response()->json($vehicles);
             } catch (\Exception $e) {

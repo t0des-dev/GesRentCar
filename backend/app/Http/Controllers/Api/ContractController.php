@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\GenerateContractPdf;
 use App\Models\Contract;
 use App\Models\Reservation;
-use App\Models\Setting;
 use App\Services\ArPdfService;
 use App\Services\ContractService;
 use App\Services\NotificationService;
@@ -17,14 +16,16 @@ use Illuminate\Support\Facades\Storage;
 class ContractController extends Controller
 {
     protected $notificationService;
+
     protected ContractService $contractService;
+
     protected ArPdfService $arPdf;
 
     public function __construct(NotificationService $notificationService, ContractService $contractService)
     {
         $this->notificationService = $notificationService;
         $this->contractService = $contractService;
-        $this->arPdf = new ArPdfService();
+        $this->arPdf = new ArPdfService;
     }
 
     /**
@@ -37,6 +38,7 @@ class ContractController extends Controller
             return false;
         }
         $expected = hash_hmac('sha256', (string) $reservation->id, config('app.key'));
+
         return hash_equals($expected, $token);
     }
 

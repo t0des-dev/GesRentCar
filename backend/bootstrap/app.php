@@ -2,9 +2,11 @@
 
 use App\Http\Middleware\AuditMiddleware;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\GracefulThrottle;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'audit' => AuditMiddleware::class,
-            'graceful-throttle' => \App\Http\Middleware\GracefulThrottle::class,
+            'graceful-throttle' => GracefulThrottle::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -30,13 +32,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // Catch infrastructure failures and return clean JSON instead of 500 with stack trace.
-        $exceptions->renderable(function (\Throwable $e, \Illuminate\Http\Request $request) {
+        $exceptions->renderable(function (Throwable $e, Request $request) {
             if (! $request->is('api/*')) {
                 return null;
             }
 
             // Database down — only catch genuine connection failures
-            if ($e instanceof \PDOException && str_contains($e->getMessage(), 'SQLSTATE')) {
+            if ($e instanceof PDOException && str_contains($e->getMessage(), 'SQLSTATE')) {
                 return response()->json([
                     'message' => 'Service temporairement indisponible.',
                     'error' => 'database_unavailable',

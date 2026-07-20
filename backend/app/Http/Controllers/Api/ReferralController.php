@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Referral;
 use App\Services\ReferralService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ReferralController extends Controller
 {
@@ -62,7 +63,7 @@ class ReferralController extends Controller
                 'referrer_bonus' => $result['referrer_bonus'],
                 'new_user_bonus' => $result['new_user_bonus'],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to apply referral.', 'message' => $e->getMessage()], 500);

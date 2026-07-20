@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\MaintenanceSchedule;
-use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class MaintenanceScheduleController extends Controller
 {
@@ -48,7 +48,7 @@ class MaintenanceScheduleController extends Controller
             $schedule = MaintenanceSchedule::create($data);
 
             return response()->json($schedule, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to create maintenance schedule.', 'message' => $e->getMessage()], 500);
@@ -73,7 +73,7 @@ class MaintenanceScheduleController extends Controller
             $maintenanceSchedule->update($data);
 
             return response()->json($maintenanceSchedule);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update maintenance schedule.', 'message' => $e->getMessage()], 500);
@@ -130,7 +130,7 @@ class MaintenanceScheduleController extends Controller
             ]);
 
             return response()->json($schedule, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to auto-schedule maintenance.', 'message' => $e->getMessage()], 500);

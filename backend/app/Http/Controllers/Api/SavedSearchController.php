@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SavedSearch;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class SavedSearchController extends Controller
 {
@@ -37,7 +38,7 @@ class SavedSearchController extends Controller
             $savedSearch = SavedSearch::create($data);
 
             return response()->json($savedSearch, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to save search.', 'message' => $e->getMessage()], 500);

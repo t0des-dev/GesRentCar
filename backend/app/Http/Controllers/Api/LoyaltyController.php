@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LoyaltyPoint;
 use App\Models\UserLoyaltyProfile;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class LoyaltyController extends Controller
 {
@@ -77,7 +78,7 @@ class LoyaltyController extends Controller
                 'new_available' => $profile->available_points,
                 'tier' => $profile->tier,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to earn points.', 'message' => $e->getMessage()], 500);
@@ -117,7 +118,7 @@ class LoyaltyController extends Controller
                 'new_available' => $profile->available_points,
                 'tier' => $profile->tier,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed.', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to redeem points.', 'message' => $e->getMessage()], 500);

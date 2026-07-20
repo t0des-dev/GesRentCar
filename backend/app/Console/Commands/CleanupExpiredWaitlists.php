@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class CleanupExpiredWaitlists extends Command
 {
     protected $signature = 'waitlist:cleanup';
+
     protected $description = 'Mark waitlist entries older than 30 days as expired';
 
     public function handle(): int
@@ -17,6 +18,7 @@ class CleanupExpiredWaitlists extends Command
             ->update(['status' => 'expired']);
 
         $this->info("Marked {$expired} waitlist entries as expired.");
+
         return Command::SUCCESS;
     }
 }

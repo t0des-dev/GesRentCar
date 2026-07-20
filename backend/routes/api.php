@@ -1,49 +1,52 @@
 <?php
 
+use App\Http\Controllers\Api\AnalyticsController;
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingReminderController;
+use App\Http\Controllers\Api\ClientBlacklistController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CmiController;
+use App\Http\Controllers\Api\ConciergeController;
 use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\ContractController;
 use App\Http\Controllers\Api\DemoController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\InvoiceController;
-use App\Http\Controllers\Api\ConciergeController;
+use App\Http\Controllers\Api\LoyaltyController;
 use App\Http\Controllers\Api\MaintenanceController;
+use App\Http\Controllers\Api\MaintenanceScheduleController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OcrController;
+use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PromoController;
+use App\Http\Controllers\Api\ReferralController;
 use App\Http\Controllers\Api\ReservationController;
-use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SavedSearchController;
 use App\Http\Controllers\Api\ScanSessionController;
+use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\VehicleImportController;
-use App\Http\Controllers\Api\AuditLogController;
-use App\Http\Controllers\Api\HealthController;
-use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\WaitlistController;
-use App\Http\Controllers\Api\SavedSearchController;
-use App\Http\Controllers\Api\MaintenanceScheduleController;
-use App\Http\Controllers\Api\ClientBlacklistController;
-use App\Http\Controllers\Api\LoyaltyController;
-use App\Http\Controllers\Api\ReferralController;
-use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\WebhookController;
-use App\Http\Controllers\Api\BookingReminderController;
-use Illuminate\Http\JsonResponse;
+use App\Models\VehicleComparison;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 Route::get('/health', [HealthController::class, 'index']);
 
 // ─── Sanctum CSRF alias for frontend calling /api/sanctum/csrf-cookie ─────────
 Route::get('/sanctum/csrf-cookie', function () {
-    return app()->make(\Laravel\Sanctum\Http\Controllers\CsrfCookieController::class)
+    return app()->make(CsrfCookieController::class)
         ->show(request());
 });
 
@@ -97,10 +100,10 @@ $apiRoutes = function () {
         Route::get('/documents/preview/{filename}', [DocumentController::class, 'preview']);
 
         // Promo validation
-        Route::post('/promos/validate', [\App\Http\Controllers\Api\PromoController::class, 'validateCode']);
+        Route::post('/promos/validate', [PromoController::class, 'validateCode']);
 
         // Analytics (track only - stats is admin-only in authenticated group)
-        Route::post('/analytics/track', [\App\Http\Controllers\Api\AnalyticsController::class, 'track']);
+        Route::post('/analytics/track', [AnalyticsController::class, 'track']);
 
         // Cross-device scan: phone uploads (no auth, token-based)
         Route::get('/scan-sessions/{token}/status', [ScanSessionController::class, 'phoneShow']);
@@ -139,7 +142,7 @@ $apiRoutes = function () {
         Route::put('/user/password', [AuthController::class, 'updatePassword']);
 
         // Notifications polling
-        Route::get('/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'index']);
+        Route::get('/notifications', [NotificationController::class, 'index']);
 
         // Waitlist
         Route::post('/waitlist', [WaitlistController::class, 'store']);
@@ -168,11 +171,12 @@ $apiRoutes = function () {
         // Comparisons
         Route::post('/comparisons', function (Request $request) {
             $request->validate(['vehicle_ids' => 'required|array|min:2|max:4']);
-            $comparison = \App\Models\VehicleComparison::create([
+            $comparison = VehicleComparison::create([
                 'user_id' => $request->user()?->id,
                 'vehicle_ids' => $request->vehicle_ids,
                 'session_id' => $request->header('X-Session-Id'),
             ]);
+
             return response()->json($comparison);
         });
 
@@ -204,7 +208,7 @@ $apiRoutes = function () {
             Route::get('/stats', [StatsController::class, 'generalStats']);
 
             // Analytics Stats
-            Route::get('/analytics/stats', [\App\Http\Controllers\Api\AnalyticsController::class, 'stats']);
+            Route::get('/analytics/stats', [AnalyticsController::class, 'stats']);
 
             // Payments
             Route::post('/payments', [PaymentController::class, 'store']);
