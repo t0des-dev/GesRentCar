@@ -10,34 +10,34 @@
 @layer base {
   :root {
     /* ── Core Palette — Luxury Navy + Gold ────────────────────────────────── */
-    --background:   30 18% 98%;       /* Warm off-white — creamy, not cold */
-    --foreground:   221 60% 16%;      /* Deep midnight ink */
+    --background:   60 8% 97%;        /* #F8F8F6 — Warm White */
+    --foreground:   223 48% 16%;      /* #16213E — Deep Navy */
 
     --card:         0 0% 100%;
-    --card-foreground: 221 60% 16%;
+    --card-foreground: 223 48% 16%;
 
     --popover:      0 0% 100%;
-    --popover-foreground: 221 60% 16%;
+    --popover-foreground: 223 48% 16%;
 
     /* ── Brand — Deep Navy Profond ────────────────────────────────────────── */
-    --primary:      221 65% 28%;      /* Deep midnight blue — prestigious */
-    --primary-foreground: 210 40% 98%;
+    --primary:      223 48% 16%;      /* #16213E — Deep Navy */
+    --primary-foreground: 60 8% 97%;
 
     /* ── Gold Accent — Luxury Signature ────────────────────────────────────── */
-    --gold:         38 85% 52%;       /* Vibrant gold for premium touches */
-    --gold-light:   38 85% 92%;       /* Gold tint surface */
-    --gold-dark:    38 85% 38%;       /* Deep gold for dark BG */
+    --gold:         41 46% 56%;       /* #C2A15B — Luxury Gold */
+    --gold-light:   41 46% 92%;       /* Light gold tint */
+    --gold-dark:    41 46% 38%;       /* Deep gold */
 
     /* ── Secondary ────────────────────────────────────────────────────────── */
-    --secondary:    220 20% 94%;      /* Warm light surface */
-    --secondary-foreground: 221 60% 16%;
+    --secondary:    210 25% 95%;      /* #EEF2F6 — Light Gray */
+    --secondary-foreground: 223 48% 16%;
 
     /* ── Semantic ─────────────────────────────────────────────────────────── */
-    --muted:        220 14% 95%;
+    --muted:        210 25% 95%;
     --muted-foreground: 220 10% 52%;
 
-    --accent:       221 65% 28%;
-    --accent-foreground: 210 40% 98%;
+    --accent:       223 48% 16%;
+    --accent-foreground: 60 8% 97%;
 
     --destructive:  0 78% 56%;
     --destructive-foreground: 0 0% 100%;
@@ -52,7 +52,7 @@
     --border:       220 15% 88%;      /* Warm, subtle border */
     --border-subtle: 220 15% 93%;
     --input:        220 15% 88%;
-    --ring:         221 65% 28%;
+    --ring:         223 48% 16%;
 
     /* ── Geometry ─────────────────────────────────────────────────────────── */
     --radius:       18px;             /* 18px base radius — theme system */
@@ -62,8 +62,8 @@
     --radius-2xl:   2rem;
 
     /* ── Theme tokens ────────────────────────────────────────────────────── */
-    --charcoal:     221 15% 12%;      /* #1D1D1F — dark text/charcoal */
-    --gold-soft:    38 85% 52% / 0.14; /* gold tint */
+    --charcoal:     240 3% 12%;       /* #1D1D1F — dark text/charcoal */
+    --gold-soft:    41 46% 56% / 0.14; /* gold tint */
     --line-color:   220 15% 11% / 0.09; /* border line */
     --shadow-theme: 0 20px 45px -20px rgba(22,33,62,0.18);
     --container:    1280px;
@@ -71,12 +71,12 @@
 
     /* ── Surfaces (layered) ───────────────────────────────────────────────── */
     --surface-0:    0 0% 100%;        /* Pure white */
-    --surface-1:    30 18% 98%;       /* Warm near-white */
-    --surface-2:    220 14% 96%;      /* Light neutral */
+    --surface-1:    60 8% 97%;        /* Warm near-white */
+    --surface-2:    210 25% 95%;      /* Light neutral (#EEF2F6) */
     --surface-3:    220 13% 92%;      /* Medium neutral */
 
     /* ── Ink scale ────────────────────────────────────────────────────────── */
-    --ink-1:        221 60% 16%;      /* Headings — deep midnight */
+    --ink-1:        223 48% 16%;      /* Headings — deep Navy */
     --ink-2:        220 20% 35%;      /* Body text */
     --ink-3:        220 10% 55%;      /* Muted secondary */
     --ink-4:        220 10% 72%;      /* Placeholder */
