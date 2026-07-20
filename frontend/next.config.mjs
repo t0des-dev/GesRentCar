@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  env: {
-    NEXT_PUBLIC_API_URL: "/api",
-  },
   output: "standalone",
   images: {
     unoptimized: true,
@@ -12,7 +9,9 @@ const nextConfig = {
       { protocol: "https", hostname: "www.transparenttextures.com" },
     ],
   },
-  trailingSlash: true,
+  // NOTE: trailingSlash must NOT be set to true in standalone mode.
+  // It breaks _next/static/ asset resolution: the browser requests chunks
+  // without a trailing slash but Next.js standalone would route them with one → 404.
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
