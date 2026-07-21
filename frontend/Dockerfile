@@ -33,9 +33,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Create shared directory and set permissions for nextjs user to avoid permission issues with mounted volume
-RUN mkdir -p /app/static_shared && chown -R nextjs:nodejs /app/static_shared
-
 USER nextjs
 
 EXPOSE 3000

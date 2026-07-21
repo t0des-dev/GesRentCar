@@ -170,12 +170,6 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
-    # Copy _next/static/ into the shared volume so nginx can serve assets directly.
-    # Next.js standalone server.js does NOT serve /_next/static/ itself.
-    command: >-
-      sh -c "cp -r /app/.next/static/. /app/static_shared/ && node server.js"
-    volumes:
-      - nextjs_static:/app/static_shared
     depends_on:
       php-fpm:
         condition: service_healthy
@@ -204,8 +198,6 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./backend:/var/www:ro
       - storage_data:/var/www/storage:ro
-      # Serve Next.js static assets directly (no proxy RTT, correct 200 responses)
-      - nextjs_static:/var/nextjs_static:ro
     depends_on:
       frontend:
         condition: service_healthy
@@ -244,8 +236,6 @@ volumes:
   postgres_data:
   storage_data:
   redis_data:
-  # Shared volume: frontend writes _next/static/ here; nginx reads it directly
-  nextjs_static:
   # caddy_data:
   # caddy_config:
 

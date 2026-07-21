@@ -31,6 +31,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://vectoria.carbonick.com"),
   title: "VectoriaRentCar - Premium Car Rental",
   description: "Location de véhicules premium au Maroc. Flotte d'exception, service conciergerie 24/7.",
   manifest: "/manifest.json",
