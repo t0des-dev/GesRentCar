@@ -27,7 +27,10 @@ export default function PWAInstallPrompt() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
     const handler = (e: Event) => {
+      if (!isMobile) return;
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
@@ -41,7 +44,6 @@ export default function PWAInstallPrompt() {
     window.addEventListener("beforeinstallprompt", handler);
     window.addEventListener("appinstalled", onInstalled);
 
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     let timer: ReturnType<typeof setTimeout> | undefined;
     if (isMobile) {
       timer = setTimeout(() => setVisible(true), 5000);
