@@ -244,6 +244,22 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
           </motion.div>
         )}
 
+        {/* View Full Fleet CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mt-14"
+        >
+          <Link
+            href={content.cta_link || "/fleet"}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#182232] hover:bg-slate-800 text-white font-bold text-sm px-8 py-3.5 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+          >
+            <span>{content.cta_text || "View full fleet"}</span>
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
+
       </div>
 
       {/* Quick View Modal */}
