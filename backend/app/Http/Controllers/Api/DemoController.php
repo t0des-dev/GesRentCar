@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Models\UserLoyaltyProfile;
 use App\Models\Vehicle;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -165,6 +166,8 @@ class DemoController extends Controller
                 }
             });
 
+            Cache::flush();
+
             return response()->json(['message' => 'Données démo initialisées avec succès !']);
 
         } catch (\Exception $e) {
@@ -192,6 +195,8 @@ class DemoController extends Controller
                 Client::query()->delete();
                 User::where('role', 'client')->delete();
             });
+
+            Cache::flush();
 
             return response()->json(['message' => 'Toutes les données de démo ont été supprimées avec succès !']);
 
