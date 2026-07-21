@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('deposit_amount', 12, 2)->default(0);
             $table->decimal('remaining_amount', 12, 2)->default(0);
             $table->string('status')->default('issued'); // issued, paid, overdue, cancelled
-            $table->timestamp('issued_at');
+            $table->timestamp('issued_at')->nullable();
             $table->timestamp('due_at')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
