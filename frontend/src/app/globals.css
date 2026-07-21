@@ -403,7 +403,7 @@
   }
   .btn-theme-gold {
     background: hsl(var(--gold));
-    color: hsl(var(--primary));
+    color: #fff;
   }
   .btn-theme-gold:hover {
     transform: translateY(-2px);
@@ -532,7 +532,7 @@
     font-weight: 600;
     font-size: 15px;
     background: hsl(var(--gold));
-    color: hsl(var(--primary));
+    color: #fff;
     border: none;
     cursor: pointer;
     transition: transform 0.35s var(--ease-theme), background 0.35s, box-shadow 0.35s;
@@ -669,7 +669,7 @@
     font-size: 15.5px;
     letter-spacing: 0.01em;
     background: hsl(var(--gold));
-    color: hsl(var(--primary));
+    color: #fff;
     border: none;
     cursor: pointer;
     transition: transform 0.35s var(--ease-theme), box-shadow 0.35s;
