@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('last_triggered_at')->nullable();
             $table->integer('failure_count')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('webhook_logs', function (Blueprint $table) {

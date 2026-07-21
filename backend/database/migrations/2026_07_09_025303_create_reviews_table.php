@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_approved')->default(false);
             $table->timestamps();
+            $table->softDeletes();
             $table->unique(['user_id', 'reservation_id']);
         });
     }

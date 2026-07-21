@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->foreignId('blocked_by')->constrained('users');
             $table->timestamps();
+            $table->softDeletes();
             $table->unique('email');
         });
     }
