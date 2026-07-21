@@ -832,7 +832,7 @@ class DemoController extends Controller
 
             $reservation = Reservation::where('client_id', $users[$data['email']]->id)
                 ->where('vehicle_id', $vehicles[$data['plate']]->id)
-                ->first();
+                ->first() ?? Reservation::where('client_id', $users[$data['email']]->id)->first();
 
             Review::updateOrCreate(
                 ['vehicle_id' => $vehicles[$data['plate']]->id, 'user_id' => $users[$data['email']]->id],
