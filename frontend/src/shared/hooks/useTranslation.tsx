@@ -406,9 +406,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <LanguageContext.Provider value={{ lang, switchLang, t, isReady }}>
-      <div className={isReady ? "opacity-100 transition-opacity duration-500" : "opacity-0"}>
-        {children}
-      </div>
+      {children}
     </LanguageContext.Provider>
   );
 }
