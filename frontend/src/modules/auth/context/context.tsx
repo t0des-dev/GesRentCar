@@ -28,7 +28,8 @@ const CSRF_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 async function safeCsrf() {
   try {
-    await fetch("/api/sanctum/csrf-cookie", { credentials: "include" });
+    const base = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace(/\/api\/v1$/, "");
+    await fetch(`${base}/sanctum/csrf-cookie`, { credentials: "include" });
   } catch {}
 }
 
