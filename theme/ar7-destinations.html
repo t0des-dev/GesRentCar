@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Destinations — Explore Morocco | AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;--charcoal:#1D1D1F;--gold:#C2A15B;--gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;--light-gray:#EEF2F6;--white:#FFFFFF;--line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);--radius:18px;--container:1440px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 40px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .section-mark{width:1px;height:36px;background:linear-gradient(var(--gold),transparent);margin:0 0 22px;}
+  .section-head{max-width:640px;margin-bottom:52px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center .section-mark{margin-left:auto;margin-right:auto;}
+  .section-head h2{font-size:clamp(26px,3.2vw,38px);font-weight:700;line-height:1.2;margin-bottom:16px;}
+  .section-head p{font-size:16px;color:#5b6472;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35);}
+  .btn-outline:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:110px 0;}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .4s var(--ease);background:transparent;}
+  header.scrolled{background:rgba(248,248,246,0.9);backdrop-filter:blur(14px);padding:14px 0;box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;max-width:1440px;margin:0 auto;padding:0 40px;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);letter-spacing:-0.02em;transition:color .4s;}
+  .logo span{color:var(--gold);}
+  header.scrolled .logo{color:var(--navy);}
+  .nav-links{display:flex;gap:36px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,0.85);transition:color .3s;}
+  header.scrolled .nav-links a{color:var(--charcoal);}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--white);transition:color .4s;}
+  header.scrolled .nav-phone{color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s;}
+  header.scrolled .burger span{background:var(--navy);}
+
+  /* ---------- HERO ---------- */
+  .dest-hero{position:relative;height:82vh;min-height:600px;display:flex;align-items:center;overflow:hidden;}
+  .dest-hero-bg{position:absolute;inset:0;z-index:0;}
+  .dest-hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .dest-hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(15,20,38,0.82) 0%,rgba(15,20,38,0.5) 46%,rgba(15,20,38,0.22) 100%);}
+  .dest-hero-inner{position:relative;z-index:1;max-width:660px;}
+  .dest-hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:12.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:26px;}
+  .dest-hero-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .dest-hero h1{font-size:clamp(36px,5vw,58px);font-weight:700;color:var(--white);line-height:1.12;letter-spacing:-0.02em;margin-bottom:24px;}
+  .dest-hero-sub{font-size:17px;line-height:1.65;color:rgba(255,255,255,0.82);max-width:540px;margin-bottom:40px;}
+  .dest-hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
+
+  /* ---------- CATEGORY FILTER CARDS ---------- */
+  .cat-strip{margin-top:-70px;position:relative;z-index:2;}
+  .cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;}
+  .cat-card{background:var(--white);border-radius:16px;box-shadow:0 24px 50px -22px rgba(22,33,62,0.25);padding:24px 14px;text-align:center;cursor:pointer;transition:all .3s var(--ease);border:1.5px solid transparent;}
+  .cat-card:hover{transform:translateY(-4px);}
+  .cat-card.active{border-color:var(--gold);background:var(--gold-soft);}
+  .cat-emoji{font-size:26px;margin-bottom:10px;}
+  .cat-card b{font-size:12.5px;color:var(--navy);}
+
+  /* ---------- FEATURED DESTINATIONS ---------- */
+  .dest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;}
+  .dest-card{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;box-shadow:0 1px 0 var(--line);transition:all .4s var(--ease);}
+  .dest-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);}
+  .dest-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);}
+  .dest-card:hover img{transform:scale(1.05);}
+  .dest-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,22,0.05) 0%,rgba(6,10,22,0.4) 55%,rgba(6,10,22,0.94) 100%);}
+  .dest-content{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;}
+  .dest-distance{position:absolute;top:20px;left:20px;z-index:1;background:rgba(6,10,22,0.5);backdrop-filter:blur(6px);color:var(--white);font-size:11px;font-weight:600;padding:7px 14px;border-radius:100px;}
+  .dest-name{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:8px;}
+  .dest-desc{font-size:12.5px;color:rgba(255,255,255,0.7);margin-bottom:16px;line-height:1.55;}
+  .dest-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+  .dest-tags span{font-size:10px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.12);padding:5px 11px;border-radius:100px;}
+  .dest-footer{display:flex;align-items:center;justify-content:space-between;}
+  .dest-vehicle{font-size:11px;color:var(--gold);font-weight:600;}
+  .dest-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--white);}
+  .dest-btn svg{width:13px;height:13px;transition:transform .3s;}
+  .dest-card:hover .dest-btn svg{transform:translateX(4px);}
+
+  /* ---------- INTERACTIVE MAP ---------- */
+  .map-panel{background:var(--navy);border-radius:var(--radius);padding:60px 50px;position:relative;overflow:hidden;min-height:520px;}
+  .map-panel::before{content:"";position:absolute;top:-30%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(194,161,91,0.1) 0%,transparent 70%);}
+  .map-route-lines{position:absolute;inset:0;opacity:0.15;}
+  .map-stage{position:relative;height:420px;max-width:520px;margin:60px auto 0;}
+  .map-pin{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;transform:translate(-50%,-50%);transition:transform .3s var(--ease);}
+  .map-pin::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(194,161,91,0.4);animation:pinPulse 2.4s ease-out infinite;}
+  .map-pin:hover{transform:translate(-50%,-50%) scale(1.3);}
+  @keyframes pinPulse{0%{transform:scale(1);opacity:1;}100%{transform:scale(2.2);opacity:0;}}
+  .map-pin-label{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);white-space:nowrap;}
+  .map-tooltip{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);width:210px;background:var(--white);border-radius:14px;padding:16px;box-shadow:0 20px 40px -12px rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:all .25s var(--ease);z-index:5;}
+  .map-pin:hover .map-tooltip{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+  .map-tooltip b{display:block;font-size:13.5px;color:var(--navy);margin-bottom:8px;}
+  .map-tooltip .tt-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#5b6472;margin-bottom:5px;}
+  .map-tooltip .tt-row svg{width:12px;height:12px;color:var(--gold);flex-shrink:0;}
+  .map-tooltip a{display:block;margin-top:10px;text-align:center;background:var(--navy);color:var(--white);font-size:11.5px;font-weight:600;padding:8px;border-radius:100px;}
+  .map-legend{text-align:center;color:rgba(255,255,255,0.5);font-size:12px;margin-top:20px;}
+
+  /* ---------- WHY RENT ---------- */
+  .why-rent-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+  .why-rent-media{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;}
+  .why-rent-media img{width:100%;height:100%;object-fit:cover;}
+  .why-rent-list{display:flex;flex-direction:column;gap:20px;}
+  .why-rent-item{display:flex;gap:16px;align-items:flex-start;}
+  .why-rent-icon{width:44px;height:44px;border-radius:12px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .why-rent-icon svg{width:20px;height:20px;color:var(--gold);}
+  .why-rent-item h4{font-size:15px;margin-bottom:5px;}
+  .why-rent-item p{font-size:13px;color:#8a8f98;}
+
+  /* ---------- VEHICLE PER DESTINATION TABLE ---------- */
+  .rec-table{width:100%;border-collapse:collapse;}
+  .rec-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;font-weight:600;padding:0 20px 16px;border-bottom:1px solid var(--line);}
+  .rec-table td{padding:20px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle;}
+  .rec-table tr:last-child td{border-bottom:none;}
+  .rec-dest{display:flex;align-items:center;gap:12px;font-family:'Sora',sans-serif;font-weight:700;color:var(--navy);}
+  .rec-dest img{width:44px;height:44px;border-radius:10px;object-fit:cover;}
+  .rec-vehicle{font-weight:600;color:var(--navy);}
+  .rec-reason{color:#8a8f98;font-size:13px;}
+
+  /* ---------- ROAD TRIP INSPIRATION ---------- */
+  .route-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+  .route-card{display:flex;gap:0;background:var(--white);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);transition:all .3s;}
+  .route-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+  .route-media{width:38%;flex-shrink:0;}
+  .route-media img{width:100%;height:100%;object-fit:cover;}
+  .route-info{padding:24px;flex:1;}
+  .route-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .route-title svg{width:14px;height:14px;color:var(--gold);}
+  .route-meta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;}
+  .route-meta-item{font-size:11.5px;color:#8a8f98;}
+  .route-meta-item b{display:block;color:var(--navy);font-size:13px;}
+  .route-vehicle{font-size:11.5px;font-weight:600;color:var(--gold);}
+
+  /* ---------- AIRPORT PICKUP ---------- */
+  .airport-panel{display:flex;gap:44px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:44px;box-shadow:0 1px 0 var(--line);}
+  .airport-media{width:340px;flex-shrink:0;border-radius:14px;overflow:hidden;aspect-ratio:4/3;}
+  .airport-media img{width:100%;height:100%;object-fit:cover;}
+  .airport-content p{font-size:14.5px;color:#5b6472;margin-bottom:22px;}
+  .airport-list{display:flex;flex-wrap:wrap;gap:10px;}
+  .airport-pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;background:var(--light-gray);font-size:13px;font-weight:600;color:var(--navy);}
+  .airport-pill svg{width:15px;height:15px;color:var(--gold);}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .testi-card{background:var(--white);border-radius:var(--radius);padding:28px 26px;border:1px solid var(--line);}
+  .testi-tag{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:100px;background:var(--gold-soft);font-size:11px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+  .testi-stars{color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:14px;}
+  .testi-text{font-size:14px;color:#3d4249;margin-bottom:22px;line-height:1.7;}
+  .testi-person{display:flex;align-items:center;gap:12px;}
+  .avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--gold-soft);}
+  .testi-meta b{display:block;font-size:14px;color:var(--navy);}
+  .testi-meta span{font-size:11.5px;color:#8a8f98;}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{background:var(--navy);text-align:center;position:relative;overflow:hidden;}
+  .final-cta::before{content:"";position:absolute;top:-50%;left:50%;width:900px;height:900px;transform:translateX(-50%);background:radial-gradient(circle,rgba(194,161,91,0.14) 0%,transparent 70%);}
+  .final-cta-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+  .final-cta h2{color:var(--white);font-size:clamp(30px,4vw,44px);line-height:1.15;margin-bottom:18px;}
+  .final-cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .final-cta-btns .btn{padding:18px 34px;font-size:15px;}
+
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:80px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:56px;max-width:1280px;margin-left:auto;margin-right:auto;}
+  footer .wrap{max-width:1280px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);}
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);}
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1200px){
+    .cat-grid{grid-template-columns:repeat(3,1fr);}
+    .dest-grid{grid-template-columns:repeat(2,1fr);}
+    .why-rent-grid{grid-template-columns:1fr;gap:32px;}
+    .route-grid{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .airport-panel{flex-direction:column;}
+    .airport-media{width:100%;}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+    .rec-table{font-size:13px;}
+  }
+  @media (max-width:760px){
+    .wrap{padding:0 20px;}
+    section{padding:80px 0;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    .dest-hero{height:auto;min-height:560px;padding:140px 0 90px;}
+    .cat-grid{grid-template-columns:repeat(2,1fr);overflow-x:visible;}
+    .dest-grid{grid-template-columns:1fr;}
+    .map-panel{padding:36px 24px;}
+    .map-stage{display:none;}
+    .rec-table{display:block;overflow-x:auto;white-space:nowrap;}
+    .route-card{flex-direction:column;}
+    .route-media{width:100%;aspect-ratio:16/9;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html">Fleet</a></li>
+      <li><a href="ar7-luxury-collection.html">Luxury</a></li>
+      <li><a href="ar7-destinations.html" class="active">Destinations</a></li>
+      <li><a href="ar7-about.html">About</a></li>
+      <li><a href="ar7-contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <a href="ar7-fleet.html" class="btn btn-gold">Reserve now</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="dest-hero">
+  <div class="dest-hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_085045_f1f4316d-0b5b-4b73-983f-50ac58c40d8a.png" alt="Luxury sedan on a desert road near the Atlas Mountains">
+  </div>
+  <div class="wrap">
+    <div class="dest-hero-inner">
+      <div class="dest-hero-eyebrow">Destinations</div>
+      <h1>Explore Morocco with Confidence</h1>
+      <p class="dest-hero-sub">Discover Morocco's most beautiful destinations with the perfect vehicle for every journey.</p>
+      <div class="dest-hero-btns">
+        <a href="ar7-fleet.html" class="btn btn-gold">Browse Our Fleet</a>
+        <a href="ar7-luxury-collection.html" class="btn btn-outline">Luxury Collection</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY FILTERS -->
+<div class="wrap cat-strip">
+  <div class="cat-grid" id="catGrid">
+    <div class="cat-card active" data-filter="all"><div class="cat-emoji">🧭</div><b>All</b></div>
+    <div class="cat-card" data-filter="cities"><div class="cat-emoji">🏙️</div><b>Cities</b></div>
+    <div class="cat-card" data-filter="beaches"><div class="cat-emoji">🏝️</div><b>Beaches</b></div>
+    <div class="cat-card" data-filter="mountains"><div class="cat-emoji">🏔️</div><b>Mountains</b></div>
+    <div class="cat-card" data-filter="desert"><div class="cat-emoji">🏜️</div><b>Desert</b></div>
+    <div class="cat-card" data-filter="luxury"><div class="cat-emoji">✨</div><b>Luxury Escapes</b></div>
+  </div>
+</div>
+
+<!-- FEATURED DESTINATIONS -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Featured Destinations</div>
+      <h2>Six journeys worth taking the wheel for.</h2>
+    </div>
+    <div class="dest-grid" id="destGrid">
+
+      <a href="ar7-fleet.html?destination=marrakech" class="dest-card" data-filter="cities luxury">
+        <span class="dest-distance">From Casablanca · 240 km</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222705_9b765011-002e-4ddb-91df-f2ea86f26f44.png" alt="Marrakech avenue at golden hour" style="display:none;">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260707_180717_62a443e0-f21c-4a0b-828a-72dc8456d2b7.png" alt="Marrakech avenue at golden hour">
+        <div class="dest-content">
+          <div class="dest-name">Marrakech</div>
+          <p class="dest-desc">The Red City — riads, souks, and golf resorts framed by the Atlas Mountains.</p>
+          <div class="dest-tags"><span>Luxury</span><span>Business</span><span>Golf</span><span>Riads</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">SUV · Luxury Sedan</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="ar7-fleet.html?destination=casablanca" class="dest-card" data-filter="cities">
+        <span class="dest-distance">Main Hub · Airport</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_084109_103cc7c2-ddb6-4b81-b8fd-e4c8a11845dc.png" alt="Casablanca business district">
+        <div class="dest-content">
+          <div class="dest-name">Casablanca</div>
+          <p class="dest-desc">Morocco's economic capital — glass towers, coastal corniche, and executive pace.</p>
+          <div class="dest-tags"><span>Business</span><span>Executive</span><span>Luxury</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">Sedan · Electric</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="ar7-fleet.html?destination=agadir" class="dest-card" data-filter="beaches">
+        <span class="dest-distance">Coastal · 508 km</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_234846_ddb46cb6-92fc-4bea-84c5-66c6286c6d41.png" alt="Coastal road near Agadir">
+        <div class="dest-content">
+          <div class="dest-name">Agadir</div>
+          <p class="dest-desc">Long sandy beaches and a laid-back resort atmosphere for family holidays.</p>
+          <div class="dest-tags"><span>Beach</span><span>Family</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">SUV · Convertible</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="ar7-fleet.html?destination=essaouira" class="dest-card" data-filter="beaches">
+        <span class="dest-distance">Coastal · 350 km</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260708_233823_2cb847de-8c44-4df3-8b9f-b0dd7912ca17.png" alt="Elevated coastal view near Essaouira">
+        <div class="dest-content">
+          <div class="dest-name">Essaouira</div>
+          <p class="dest-desc">Windswept ramparts and a relaxed fishing-port charm — a perfect weekend escape.</p>
+          <div class="dest-tags"><span>Weekend</span><span>Coast</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">Convertible · Compact</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="ar7-fleet.html?destination=ouarzazate" class="dest-card" data-filter="desert mountains">
+        <span class="dest-distance">Gateway to the Desert · 200 km</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222730_73c4c460-1a9f-41d2-8cbc-dd7af1f780c7.png" alt="Open road toward Ouarzazate">
+        <div class="dest-content">
+          <div class="dest-name">Ouarzazate</div>
+          <p class="dest-desc">Kasbahs, film studios, and the dramatic road over the High Atlas.</p>
+          <div class="dest-tags"><span>Adventure</span><span>SUV</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">SUV · 4x4</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="ar7-fleet.html?destination=merzouga" class="dest-card" data-filter="desert luxury">
+        <span class="dest-distance">Sahara · 560 km</span>
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_085045_f1f4316d-0b5b-4b73-983f-50ac58c40d8a.png" alt="Desert road toward Merzouga dunes">
+        <div class="dest-content">
+          <div class="dest-name">Merzouga</div>
+          <p class="dest-desc">The golden dunes of the Sahara — camps, camel treks, and endless horizons.</p>
+          <div class="dest-tags"><span>Desert</span><span>4x4</span></div>
+          <div class="dest-footer">
+            <span class="dest-vehicle">4x4 · Luxury SUV</span>
+            <span class="dest-btn">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE MAP -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Interactive Map</div>
+      <h2>Every city, one click away.</h2>
+      <p>Hover any pin to see availability, then explore the destination.</p>
+    </div>
+    <div class="map-panel">
+      <div class="map-stage" id="mapStage">
+        <div class="map-pin" style="top:8%;left:38%;">
+          <div class="map-tooltip"><b>Tangier</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>40+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=tangier">Explore</a>
+          </div>
+          <div class="map-pin-label">Tangier</div>
+        </div>
+        <div class="map-pin" style="top:32%;left:22%;">
+          <div class="map-tooltip"><b>Rabat</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>55+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=rabat">Explore</a>
+          </div>
+          <div class="map-pin-label">Rabat</div>
+        </div>
+        <div class="map-pin" style="top:38%;left:15%;">
+          <div class="map-tooltip"><b>Casablanca</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>120+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=casablanca">Explore</a>
+          </div>
+          <div class="map-pin-label">Casablanca</div>
+        </div>
+        <div class="map-pin" style="top:56%;left:36%;">
+          <div class="map-tooltip"><b>Marrakech</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>95+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=marrakech">Explore</a>
+          </div>
+          <div class="map-pin-label">Marrakech</div>
+        </div>
+        <div class="map-pin" style="top:50%;left:8%;">
+          <div class="map-tooltip"><b>Essaouira</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>22+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>No Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=essaouira">Explore</a>
+          </div>
+          <div class="map-pin-label">Essaouira</div>
+        </div>
+        <div class="map-pin" style="top:74%;left:6%;">
+          <div class="map-tooltip"><b>Agadir</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>48+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=agadir">Explore</a>
+          </div>
+          <div class="map-pin-label">Agadir</div>
+        </div>
+        <div class="map-pin" style="top:70%;left:52%;">
+          <div class="map-tooltip"><b>Ouarzazate</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>18+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>No Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>4x4 &amp; SUV</div>
+            <a href="ar7-fleet.html?destination=ouarzazate">Explore</a>
+          </div>
+          <div class="map-pin-label">Ouarzazate</div>
+        </div>
+        <div class="map-pin" style="top:82%;left:78%;">
+          <div class="map-tooltip"><b>Merzouga</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>9+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>No Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>4x4 Luxury SUV</div>
+            <a href="ar7-fleet.html?destination=merzouga">Explore</a>
+          </div>
+          <div class="map-pin-label">Merzouga</div>
+        </div>
+        <div class="map-pin" style="top:20%;left:62%;">
+          <div class="map-tooltip"><b>Fes</b>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/></svg>34+ Available Vehicles</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Airport Delivery</div>
+            <div class="tt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Luxury Vehicles</div>
+            <a href="ar7-fleet.html?destination=fes">Explore</a>
+          </div>
+          <div class="map-pin-label">Fes</div>
+        </div>
+      </div>
+      <div class="map-legend">Approximate positions — hover a city to see live availability</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY RENT IN MOROCCO -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="why-rent-grid">
+      <div class="why-rent-media">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222726_a797a1d2-b8e0-46f3-a399-5bc725a6b1a6.png" alt="Premium sedan front detail">
+      </div>
+      <div>
+        <div class="section-mark"></div>
+        <div class="eyebrow">Why Rent in Morocco</div>
+        <h2 style="font-size:clamp(24px,2.8vw,32px);font-weight:700;line-height:1.24;margin-bottom:24px;">Freedom to follow the road.</h2>
+        <div class="why-rent-list">
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg></div><div><h4>Freedom</h4><p>Go beyond fixed tour schedules and discover Morocco at your own pace.</p></div></div>
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div><div><h4>Flexibility</h4><p>Change plans, add stops, and linger wherever the journey calls for it.</p></div></div>
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg></div><div><h4>Comfort</h4><p>Modern, air-conditioned vehicles built for long Moroccan road trips.</p></div></div>
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg></div><div><h4>Safety</h4><p>Inspected vehicles, full insurance, and 24/7 roadside assistance.</p></div></div>
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div><div><h4>Privacy</h4><p>Travel without sharing a schedule, or a vehicle, with strangers.</p></div></div>
+          <div class="why-rent-item"><div class="why-rent-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><h4>Premium Experience</h4><p>The same standard of care, from airport pickup to the final mile.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEST VEHICLE FOR EACH DESTINATION -->
+<section>
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Best Vehicle for Each Destination</div>
+      <h2>Matched to the road ahead.</h2>
+    </div>
+    <table class="rec-table">
+      <thead><tr><th>Destination</th><th>Recommended Vehicle</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="rec-dest"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260707_180717_62a443e0-f21c-4a0b-828a-72dc8456d2b7.png" alt="Marrakech">Marrakech</div></td>
+          <td class="rec-vehicle">BMW 5 Series</td>
+          <td class="rec-reason">Business &amp; Luxury</td>
+        </tr>
+        <tr>
+          <td><div class="rec-dest"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_085045_f1f4316d-0b5b-4b73-983f-50ac58c40d8a.png" alt="Merzouga">Merzouga</div></td>
+          <td class="rec-vehicle">Toyota Prado</td>
+          <td class="rec-reason">Desert Roads</td>
+        </tr>
+        <tr>
+          <td><div class="rec-dest"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260708_233823_2cb847de-8c44-4df3-8b9f-b0dd7912ca17.png" alt="Essaouira">Essaouira</div></td>
+          <td class="rec-vehicle">Mini Cooper</td>
+          <td class="rec-reason">Weekend Escape</td>
+        </tr>
+        <tr>
+          <td><div class="rec-dest"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_084109_103cc7c2-ddb6-4b81-b8fd-e4c8a11845dc.png" alt="Casablanca">Casablanca</div></td>
+          <td class="rec-vehicle">Mercedes E-Class</td>
+          <td class="rec-reason">Executive Travel</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ROAD TRIP INSPIRATION -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Road Trip Inspiration</div>
+      <h2>Routes worth the drive.</h2>
+    </div>
+    <div class="route-grid">
+      <div class="route-card">
+        <div class="route-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_214652_0869d037-7497-47c7-9df7-d313125aa05b.png" alt="Highway toward Essaouira"></div>
+        <div class="route-info">
+          <div class="route-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Marrakech → Essaouira</div>
+          <div class="route-meta"><div class="route-meta-item">Distance<b>190 km</b></div><div class="route-meta-item">Duration<b>~2.5 hrs</b></div></div>
+          <div class="route-vehicle">Recommended: Convertible</div>
+        </div>
+      </div>
+      <div class="route-card">
+        <div class="route-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222730_73c4c460-1a9f-41d2-8cbc-dd7af1f780c7.png" alt="Road toward Ouarzazate"></div>
+        <div class="route-info">
+          <div class="route-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Marrakech → Ouarzazate</div>
+          <div class="route-meta"><div class="route-meta-item">Distance<b>200 km</b></div><div class="route-meta-item">Duration<b>~3.5 hrs</b></div></div>
+          <div class="route-vehicle">Recommended: SUV / 4x4</div>
+        </div>
+      </div>
+      <div class="route-card">
+        <div class="route-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_083454_3e096e29-cb09-44a9-81a6-2f549e47c120.png" alt="Evening drive toward Chefchaouen"></div>
+        <div class="route-info">
+          <div class="route-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Casablanca → Chefchaouen</div>
+          <div class="route-meta"><div class="route-meta-item">Distance<b>370 km</b></div><div class="route-meta-item">Duration<b>~4.5 hrs</b></div></div>
+          <div class="route-vehicle">Recommended: Compact Sedan</div>
+        </div>
+      </div>
+      <div class="route-card">
+        <div class="route-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_084104_2f1b9c00-ec11-411f-b816-fe7b735f0d1f.png" alt="Coastal street near Taghazout"></div>
+        <div class="route-info">
+          <div class="route-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Agadir → Taghazout</div>
+          <div class="route-meta"><div class="route-meta-item">Distance<b>20 km</b></div><div class="route-meta-item">Duration<b>~25 min</b></div></div>
+          <div class="route-vehicle">Recommended: Compact</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AIRPORT PICKUP -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Airport Pickup</div>
+      <h2>Land, and drive straight into the journey.</h2>
+    </div>
+    <div class="airport-panel">
+      <div class="airport-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260710_084059_5c134fcd-ae1b-4480-8d6d-fe86c1420af9.png" alt="Vehicle ready at the airport"></div>
+      <div class="airport-content">
+        <p>Reserve before you land and your vehicle is ready the moment you clear arrivals — flight monitored, no waiting, no detours before your trip begins.</p>
+        <div class="airport-list">
+          <span class="airport-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Marrakech</span>
+          <span class="airport-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Casablanca</span>
+          <span class="airport-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Agadir</span>
+          <span class="airport-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Rabat</span>
+          <span class="airport-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/></svg>Tangier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CUSTOMER EXPERIENCES -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Customer Experiences</div>
+      <h2>Real journeys across Morocco.</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-tag">Atlas Mountains</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Driving the pass toward Ouarzazate in the Range Rover was the highlight of our trip — the SUV handled every switchback with total confidence.</p>
+        <div class="testi-person"><img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png" alt="Sophie L."><div class="testi-meta"><b>Sophie L.</b><span>Marrakech → Ouarzazate</span></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-tag">Casablanca Business</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Three days of back-to-back meetings across Casablanca, and the Mercedes never once felt like "just a rental." Exactly what the trip needed.</p>
+        <div class="testi-person"><img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" alt="Youssef B."><div class="testi-meta"><b>Youssef B.</b><span>Casablanca</span></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-tag">Agadir Family Vacation</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">The SUV had space for the whole family and all our beach gear, and airport pickup meant we were on the sand within the hour.</p>
+        <div class="testi-person"><img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png" alt="Nadia K."><div class="testi-meta"><b>Nadia K.</b><span>Agadir</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-inner">
+      <h2>Ready to Explore Morocco?</h2>
+      <div class="final-cta-btns">
+        <a href="ar7-fleet.html" class="btn btn-gold">Browse Our Fleet</a>
+        <a href="ar7-contact.html" class="btn btn-outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="ar7-victoria-car.html" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h5>Fleet</h5><ul><li><a href="ar7-fleet.html">Economy</a></li><li><a href="ar7-fleet.html">Compact</a></li><li><a href="ar7-fleet.html">SUV</a></li><li><a href="ar7-luxury-collection.html">Luxury</a></li><li><a href="ar7-fleet.html">Utility</a></li></ul></div>
+      <div class="footer-col"><h5>Company</h5><ul><li><a href="ar7-about.html">About Us</a></li><li><a href="ar7-services.html">Services</a></li><li><a href="ar7-destinations.html">Destinations</a></li><li><a href="ar7-faq.html">FAQ</a></li></ul></div>
+      <div class="footer-col"><h5>Legal</h5><ul><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Rental Agreement</a></li><li><a href="#">Insurance Policy</a></li></ul></div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links"><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a></div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const filter = card.dataset.filter;
+      document.querySelectorAll('.dest-card').forEach(dest => {
+        const tags = dest.dataset.filter || '';
+        dest.style.display = (filter === 'all' || tags.includes(filter)) ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

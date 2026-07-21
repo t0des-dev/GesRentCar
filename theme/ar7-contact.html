@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --green:#2f9e5e;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .section-mark{width:1px;height:36px;background:linear-gradient(var(--gold),transparent);margin:0 0 22px;}
+  .section-head{max-width:640px;margin-bottom:48px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center .section-mark{margin-left:auto;margin-right:auto;}
+  .section-head h2{font-size:clamp(26px,3.2vw,36px);font-weight:700;line-height:1.2;margin-bottom:14px;}
+  .section-head p{font-size:15.5px;color:#5b6472;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35);}
+  .btn-outline:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:100px 0;}
+
+  /* ---------- HEADER (reused) ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 0;background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--navy);letter-spacing:-0.02em;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:var(--charcoal);}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;}
+
+  /* ---------- COMPACT HERO ---------- */
+  .page-hero{position:relative;height:400px;display:flex;align-items:center;overflow:hidden;}
+  .page-hero-bg{position:absolute;inset:0;z-index:0;}
+  .page-hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .page-hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(15,20,38,0.85) 0%,rgba(15,20,38,0.6) 50%,rgba(15,20,38,0.35) 100%);}
+  .page-hero-inner{position:relative;z-index:1;padding-top:70px;max-width:620px;}
+  .page-hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:18px;}
+  .page-hero-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .page-hero h1{font-size:clamp(28px,3.8vw,42px);font-weight:700;color:var(--white);line-height:1.18;margin-bottom:16px;}
+  .page-hero p{font-size:15.5px;color:rgba(255,255,255,0.8);max-width:520px;margin-bottom:30px;}
+  .page-hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+
+  /* Contact method cards */
+  .contact-methods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:-90px;position:relative;z-index:2;}
+  .method-card{background:var(--white);border-radius:var(--radius);padding:30px 26px;box-shadow:0 30px 60px -24px rgba(22,33,62,0.25);text-align:left;transition:all .3s var(--ease);position:relative;}
+  .method-card:hover{transform:translateY(-4px);}
+  .method-card.preferred{border:1.5px solid var(--gold);}
+  .preferred-tag{position:absolute;top:-11px;right:20px;background:var(--gold);color:var(--navy);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:100px;}
+  .method-icon{width:46px;height:46px;border-radius:13px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+  .method-icon svg{width:21px;height:21px;color:var(--gold);}
+  .method-card h4{font-size:14px;color:#8a8f98;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;font-size:11px;}
+  .method-card .value{font-size:15.5px;font-weight:700;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:18px;display:block;}
+  .method-card .btn{width:100%;padding:12px;font-size:13px;}
+
+  /* Opening hours */
+  .hours-card{display:flex;gap:40px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:34px 32px;align-items:center;}
+  .hours-list{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .hours-item label{display:block;font-size:12px;color:#8a8f98;font-weight:600;margin-bottom:6px;}
+  .hours-item span{font-size:15px;font-weight:700;color:var(--navy);font-family:'Sora',sans-serif;}
+  .hours-note{font-size:12.5px;color:#5b6472;display:flex;gap:8px;align-items:flex-start;max-width:260px;flex-shrink:0;padding-left:32px;border-left:1px solid var(--line);}
+  .hours-note svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:1px;}
+
+  /* Contact form */
+  .contact-form-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:50px;align-items:start;}
+  .form-card{background:var(--white);border-radius:var(--radius);padding:40px 36px;box-shadow:0 1px 0 var(--line);border:1px solid var(--line);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .form-field{margin-bottom:0;}
+  .form-field.full{grid-column:1/-1;}
+  .form-field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;margin-bottom:8px;}
+  .form-field select,.form-field input,.form-field textarea{
+    width:100%;padding:15px 16px;border-radius:12px;border:1px solid var(--line);
+    font-family:'Inter',sans-serif;font-size:14.5px;color:var(--charcoal);background:var(--light-gray);
+    appearance:none;outline:none;transition:border-color .3s,background .3s;resize:vertical;
+  }
+  .form-field select:focus,.form-field input:focus,.form-field textarea:focus{border-color:var(--gold);background:var(--white);}
+  .form-error{font-size:11.5px;color:#c1503f;margin-top:6px;display:none;}
+  .form-field.invalid select,.form-field.invalid input,.form-field.invalid textarea{border-color:#c1503f;}
+  .form-field.invalid .form-error{display:block;}
+  .form-card .btn{width:100%;margin-top:22px;padding:17px;}
+  .form-success{display:none;text-align:center;padding:30px 10px;}
+  .form-success.show{display:block;}
+  .form-success svg{width:44px;height:44px;color:var(--green);margin:0 auto 16px;}
+  .form-success h4{font-size:17px;margin-bottom:8px;}
+  .form-success p{font-size:13.5px;color:#5b6472;}
+
+  /* Right side: mini contact info + map preview */
+  .contact-side{display:flex;flex-direction:column;gap:20px;}
+  .side-card{background:var(--white);border-radius:var(--radius);padding:26px 24px;border:1px solid var(--line);}
+  .side-card h5{font-size:13.5px;margin-bottom:14px;}
+  .side-contact-item{display:flex;align-items:flex-start;gap:11px;font-size:13.5px;color:#3d4249;margin-bottom:12px;}
+  .side-contact-item:last-child{margin-bottom:0;}
+  .side-contact-item svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:1px;}
+  .map-embed{border-radius:14px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line);}
+  .map-embed iframe{width:100%;height:100%;border:0;}
+
+  /* Google Maps section */
+  .map-section-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;}
+  .map-large{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line);box-shadow:0 1px 0 var(--line);}
+  .map-large iframe{width:100%;height:100%;border:0;}
+  .map-info-list{display:flex;flex-direction:column;gap:16px;margin-bottom:26px;}
+  .map-info-item{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;color:#3d4249;}
+  .map-info-item svg{width:18px;height:18px;color:var(--gold);flex-shrink:0;margin-top:1px;}
+  .map-info-item b{display:block;color:var(--navy);font-size:13px;}
+
+  /* Quick assistance */
+  .assist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .assist-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:30px 20px;border:1px solid var(--line);border-radius:var(--radius);background:var(--white);transition:all .3s var(--ease);}
+  .assist-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow);}
+  .assist-icon{width:50px;height:50px;border-radius:14px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;}
+  .assist-icon svg{width:23px;height:23px;color:var(--gold);}
+  .assist-card b{font-size:14px;color:var(--navy);}
+  .assist-card span{font-size:12px;color:#8a8f98;}
+
+  /* FAQ */
+  .faq{max-width:780px;margin:0 auto;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:24px 4px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;font-size:16px;color:var(--navy);gap:20px;}
+  .faq-q .icon{width:20px;height:20px;flex-shrink:0;position:relative;}
+  .faq-q .icon::before,.faq-q .icon::after{content:"";position:absolute;background:var(--navy);top:50%;left:50%;transform:translate(-50%,-50%);}
+  .faq-q .icon::before{width:14px;height:1.5px;}
+  .faq-q .icon::after{width:1.5px;height:14px;transition:transform .3s var(--ease);}
+  .faq-item.open .faq-q .icon::after{transform:translate(-50%,-50%) rotate(90deg) scaleY(0);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+  .faq-a p{padding:0 4px 24px;font-size:14.5px;color:#5b6472;max-width:680px;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-more{text-align:center;margin-top:36px;}
+
+  /* Why contact */
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .why-card{background:var(--white);border-radius:var(--radius);padding:30px 26px;border:1px solid var(--line);transition:all .3s var(--ease);}
+  .why-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+  .why-icon{width:46px;height:46px;border-radius:13px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+  .why-icon svg{width:21px;height:21px;color:var(--gold);}
+  .why-card h4{font-size:15px;margin-bottom:8px;}
+  .why-card p{font-size:13px;color:#8a8f98;}
+
+  /* Final CTA (reused) */
+  .final-cta{background:var(--navy);text-align:center;position:relative;overflow:hidden;}
+  .final-cta::before{content:"";position:absolute;top:-50%;left:50%;width:900px;height:900px;transform:translateX(-50%);background:radial-gradient(circle,rgba(194,161,91,0.14) 0%,transparent 70%);}
+  .final-cta-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+  .final-cta h2{color:var(--white);font-size:clamp(30px,4vw,44px);line-height:1.15;margin-bottom:18px;}
+  .final-cta p{color:rgba(255,255,255,0.68);font-size:16.5px;margin-bottom:40px;}
+  .final-cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .final-cta-btns .btn{padding:18px 34px;font-size:15px;}
+
+  /* Sticky WhatsApp floating button (mobile) */
+  .fab-whatsapp{display:none;position:fixed;bottom:24px;right:20px;z-index:95;width:58px;height:58px;border-radius:50%;background:var(--green);box-shadow:0 14px 30px -8px rgba(47,158,94,0.6);align-items:center;justify-content:center;}
+  .fab-whatsapp svg{width:26px;height:26px;color:var(--white);}
+
+  /* ---------- FOOTER (reused) ---------- */
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:80px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:56px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);}
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);}
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1080px){
+    .contact-methods-grid{grid-template-columns:repeat(2,1fr);margin-top:-60px;}
+    .hours-card{flex-direction:column;align-items:stretch;gap:24px;}
+    .hours-note{padding-left:0;border-left:none;border-top:1px solid var(--line);padding-top:20px;max-width:none;}
+    .hours-list{grid-template-columns:repeat(3,1fr);}
+    .contact-form-grid{grid-template-columns:1fr;}
+    .map-section-grid{grid-template-columns:1fr;}
+    .assist-grid{grid-template-columns:repeat(2,1fr);}
+    .why-grid{grid-template-columns:repeat(2,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    section{padding:70px 0;}
+    .page-hero{height:auto;padding:120px 0 130px;}
+    .contact-methods-grid{grid-template-columns:1fr;margin-top:-90px;}
+    .form-card{padding:28px 22px;}
+    .form-grid{grid-template-columns:1fr;}
+    .hours-list{grid-template-columns:1fr 1fr;}
+    .assist-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+    .page-hero-btns .btn{flex:1;}
+    .fab-whatsapp{display:flex;}
+    body{padding-bottom:0;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html">Fleet</a></li>
+      <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+      <li><a href="ar7-about.html">About</a></li>
+      <li><a href="ar7-contact.html" class="active">Contact</a></li>
+      <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <a href="ar7-fleet.html" class="btn btn-gold">Reserve now</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- COMPACT HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_083454_3e096e29-cb09-44a9-81a6-2f549e47c120.png" alt="AR7 Victoria Car office at dusk">
+  </div>
+  <div class="wrap page-hero-inner">
+    <div class="page-hero-eyebrow">Contact AR7 Victoria Car</div>
+    <h1>We're Here to Help You Drive with Confidence</h1>
+    <p>Whether you need help choosing a vehicle, confirming a reservation or arranging airport delivery, our team is ready to assist you.</p>
+    <div class="page-hero-btns">
+      <a href="tel:+212500000000" class="btn btn-gold">Call Us</a>
+      <a href="https://wa.me/212500000000" class="btn btn-outline">Chat on WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT METHODS -->
+<div class="wrap">
+  <div class="contact-methods-grid">
+    <div class="method-card">
+      <div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg></div>
+      <h4>Phone</h4>
+      <span class="value">+212 5 00 00 00 00</span>
+      <a href="tel:+212500000000" class="btn btn-outline-dark">Call Now</a>
+    </div>
+    <div class="method-card preferred">
+      <div class="preferred-tag">Preferred</div>
+      <div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg></div>
+      <h4>WhatsApp</h4>
+      <span class="value">+212 5 00 00 00 00</span>
+      <a href="https://wa.me/212500000000" class="btn btn-gold">Start Chat</a>
+    </div>
+    <div class="method-card">
+      <div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></div>
+      <h4>Email</h4>
+      <span class="value">reservations@ar7victoriacar.ma</span>
+      <a href="mailto:reservations@ar7victoriacar.ma" class="btn btn-outline-dark">Send Email</a>
+    </div>
+    <div class="method-card">
+      <div class="method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+      <h4>Office</h4>
+      <span class="value">Mohammed V Airport, Casablanca</span>
+      <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-outline-dark">Open in Google Maps</a>
+    </div>
+  </div>
+</div>
+
+<!-- OPENING HOURS -->
+<section>
+  <div class="wrap">
+    <div class="hours-card">
+      <div class="hours-list">
+        <div class="hours-item"><label>Monday – Friday</label><span>08:00 – 20:00</span></div>
+        <div class="hours-item"><label>Saturday</label><span>09:00 – 18:00</span></div>
+        <div class="hours-item"><label>Sunday</label><span>Emergency support only</span></div>
+      </div>
+      <div class="hours-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>Airport deliveries are available outside office hours upon request.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section style="background:var(--white);padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Send a Message</div>
+      <h2>Tell us how we can help.</h2>
+      <p>We typically respond within a few hours during office hours.</p>
+    </div>
+    <div class="contact-form-grid">
+      <div class="form-card">
+        <form id="contactForm">
+          <div class="form-grid">
+            <div class="form-field"><label>First Name</label><input type="text" required placeholder="Yasmine"></div>
+            <div class="form-field"><label>Last Name</label><input type="text" required placeholder="El Amrani"></div>
+            <div class="form-field"><label>Email</label><input type="email" required placeholder="yasmine@email.com"><span class="form-error">Enter a valid email address.</span></div>
+            <div class="form-field"><label>Phone</label><input type="tel" placeholder="+212 6 00 00 00 00"></div>
+            <div class="form-field full">
+              <label>Reason for Contact</label>
+              <select>
+                <option>General Information</option>
+                <option>Reservation Assistance</option>
+                <option>Airport Delivery</option>
+                <option>Corporate Rental</option>
+                <option>Luxury Collection</option>
+                <option>Long-Term Rental</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-field full"><label>Subject</label><input type="text" required placeholder="How can we help?"></div>
+            <div class="form-field full"><label>Message</label><textarea rows="5" required placeholder="Tell us a bit more..."></textarea></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+          <h4>Message sent successfully.</h4>
+          <p>Our team will get back to you within a few hours.</p>
+        </div>
+      </div>
+
+      <div class="contact-side">
+        <div class="side-card">
+          <h5>Quick Contact</h5>
+          <div class="side-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></div>
+          <div class="side-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></div>
+          <div class="side-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day</span></div>
+        </div>
+        <div class="map-embed">
+          <iframe src="https://www.google.com/maps?q=Mohammed+V+International+Airport,+Casablanca,+Morocco&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="AR7 Victoria Car office location"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOOGLE MAPS (large) -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Our Office</div>
+      <h2>Visit us at Casablanca's main airport counter.</h2>
+    </div>
+    <div class="map-section-grid">
+      <div>
+        <div class="map-info-list">
+          <div class="map-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><b>Address</b>Mohammed V International Airport, Terminal 1 Arrivals, Casablanca, Morocco</div></div>
+          <div class="map-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><div><b>Parking</b>Free short-term parking available directly outside Arrivals.</div></div>
+          <div class="map-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><div><b>Hours</b>Open 24/7 for airport pickups and returns.</div></div>
+        </div>
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-outline-dark">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          Open in Google Maps
+        </a>
+      </div>
+      <div class="map-large">
+        <iframe src="https://www.google.com/maps?q=Mohammed+V+International+Airport,+Casablanca,+Morocco&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="AR7 Victoria Car main office map"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK ASSISTANCE -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Quick Assistance</div>
+      <h2>Need Immediate Assistance?</h2>
+    </div>
+    <div class="assist-grid">
+      <a href="tel:+212500000000" class="assist-card">
+        <div class="assist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg></div>
+        <b>Call Us</b><span>+212 5 00 00 00 00</span>
+      </a>
+      <a href="https://wa.me/212500000000" class="assist-card">
+        <div class="assist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg></div>
+        <b>WhatsApp</b><span>Fastest response</span>
+      </a>
+      <a href="tel:+212500000001" class="assist-card">
+        <div class="assist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+        <b>Emergency Assistance</b><span>24/7 roadside support</span>
+      </a>
+      <a href="ar7-victoria-car.html#booking" class="assist-card">
+        <div class="assist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div>
+        <b>Airport Pickup</b><span>Arrange delivery</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">FAQ</div>
+      <h2>Common contact questions.</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item open">
+        <div class="faq-q"><span>How quickly do you reply?</span><span class="icon"></span></div>
+        <div class="faq-a"><p>We typically respond within a few hours during office hours, and WhatsApp messages are usually answered fastest.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Do you deliver to Marrakech Airport?</span><span class="icon"></span></div>
+        <div class="faq-a"><p>Yes, airport delivery is available at Marrakech Menara, along with Casablanca, Tangier and Rabat.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Can I contact you via WhatsApp?</span><span class="icon"></span></div>
+        <div class="faq-a"><p>Yes — WhatsApp is our preferred and fastest contact method for reservation and delivery questions.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Do you offer 24/7 assistance?</span><span class="icon"></span></div>
+        <div class="faq-a"><p>Yes, our roadside and emergency support line is available 24 hours a day, every day.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Can I visit your office?</span><span class="icon"></span></div>
+        <div class="faq-a"><p>Yes, our main counter at Mohammed V Airport in Casablanca is open 24/7 for walk-ins.</p></div>
+      </div>
+    </div>
+    <div class="faq-more"><a href="#" class="btn btn-outline-dark">View All FAQs</a></div>
+  </div>
+</section>
+
+<!-- WHY CONTACT AR7 -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Why Contact AR7</div>
+      <h2>Support that matches the premium experience.</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg></div><h4>Fast Response</h4><p>Most inquiries answered within a few hours.</p></div>
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h4>24/7 Support</h4><p>Emergency assistance around the clock.</p></div>
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div><h4>Airport Delivery</h4><p>Arranged directly through our team.</p></div>
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg></div><h4>Professional Team</h4><p>Knowledgeable, courteous, always available.</p></div>
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 6L9 17l-5-5"/></svg></div><h4>Trusted Partner Network</h4><p>The same standard, wherever your vehicle comes from.</p></div>
+      <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div><h4>Transparent Communication</h4><p>Clear answers, no runaround.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-inner">
+      <h2>Ready to Reserve Your Vehicle?</h2>
+      <p>Browse the fleet or speak with our team — either way, we're ready to help.</p>
+      <div class="final-cta-btns">
+        <a href="ar7-fleet.html" class="btn btn-gold">Browse Our Fleet</a>
+        <a href="tel:+212500000000" class="btn btn-outline">Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="ar7-victoria-car.html" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="ar7-fleet.html">Economy</a></li>
+          <li><a href="ar7-fleet.html">Compact</a></li>
+          <li><a href="ar7-fleet.html">SUV</a></li>
+          <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+          <li><a href="ar7-fleet.html">Utility</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="ar7-about.html">About Us</a></li>
+          <li><a href="ar7-victoria-car.html#services">Services</a></li>
+          <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+          <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Rental Agreement</a></li>
+          <li><a href="#">Insurance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a>
+      </div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY MOBILE WHATSAPP -->
+<a href="https://wa.me/212500000000" class="fab-whatsapp" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>
+</a>
+
+<script>
+  // Header shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('siteHeader').style.boxShadow = window.scrollY > 10 ? '0 2px 12px rgba(22,33,62,0.08)' : 'none';
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Inline validation on blur
+  document.querySelectorAll('#contactForm [required]').forEach(input => {
+    input.addEventListener('blur', () => {
+      const field = input.closest('.form-field');
+      const valid = input.type === 'email'
+        ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)
+        : input.value.trim().length > 0;
+      field.classList.toggle('invalid', !valid);
+    });
+  });
+
+  // Form submit (prototype: no backend, show success state)
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+    document.querySelectorAll('#contactForm [required]').forEach(input => {
+      const field = input.closest('.form-field');
+      const fieldValid = input.type === 'email'
+        ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)
+        : input.value.trim().length > 0;
+      field.classList.toggle('invalid', !fieldValid);
+      if (!fieldValid) valid = false;
+    });
+    if (!valid) return;
+    e.target.style.display = 'none';
+    document.getElementById('formSuccess').classList.add('show');
+  });
+</script>
+
+</body>
+</html>

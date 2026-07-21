@@ -138,7 +138,7 @@ function FleetContent() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mb-10"
         >
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <div className="bg-surface-0 rounded-2xl border border-border shadow-sm p-5 space-y-4">
 
             {/* Row 1: Lifestyle chips */}
             <div className="flex items-center gap-2 flex-wrap">
@@ -153,7 +153,7 @@ function FleetContent() {
                       "flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border",
                       active
                         ? "bg-gold text-white border-gold shadow-sm shadow-gold/20"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-gold/40 hover:text-gold"
+                        : "bg-surface-1 text-ink-4 border-border hover:border-gold/40 hover:text-gold"
                     )}
                   >
                     <Icon size={14} />
@@ -166,7 +166,7 @@ function FleetContent() {
             {/* Row 2: Category + Transmission + Seats */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Category */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
+              <div className="flex items-center gap-1.5 bg-surface-1 rounded-lg px-2 py-1 border border-border">
                 {TYPES.map((type) => {
                   const active = filters.type === type;
                   return (
@@ -175,7 +175,7 @@ function FleetContent() {
                       onClick={() => handleFilterChange("type", type)}
                       className={cn(
                         "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
+                        active ? "bg-gold text-white shadow-sm" : "text-ink-4 hover:text-ink-1"
                       )}
                     >
                       {type === "All" ? t("all") : (t(`cat_${type.toLowerCase()}`) || type)}
@@ -184,10 +184,10 @@ function FleetContent() {
                 })}
               </div>
 
-              <div className="w-px h-6 bg-slate-200" />
+              <div className="w-px h-6 bg-border" />
 
               {/* Transmission */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
+              <div className="flex items-center gap-1.5 bg-surface-1 rounded-lg px-2 py-1 border border-border">
                 {TRANSMISSIONS.map((tr) => {
                   const active = filters.transmission === tr;
                   return (
@@ -196,7 +196,7 @@ function FleetContent() {
                       onClick={() => handleFilterChange("transmission", tr)}
                       className={cn(
                         "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
+                        active ? "bg-gold text-white shadow-sm" : "text-ink-4 hover:text-ink-1"
                       )}
                     >
                       {tr === "All" ? t("all") : (t(`trans_${tr.toLowerCase()}`) || tr)}
@@ -205,10 +205,10 @@ function FleetContent() {
                 })}
               </div>
 
-              <div className="w-px h-6 bg-slate-200" />
+              <div className="w-px h-6 bg-border" />
 
               {/* Seats */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
+              <div className="flex items-center gap-1.5 bg-surface-1 rounded-lg px-2 py-1 border border-border">
                 {SEATS.map((s) => {
                   const active = filters.seats === s;
                   return (
@@ -217,7 +217,7 @@ function FleetContent() {
                       onClick={() => handleFilterChange("seats", s)}
                       className={cn(
                         "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
+                        active ? "bg-gold text-white shadow-sm" : "text-ink-4 hover:text-ink-1"
                       )}
                     >
                       {s === "All" ? t("all") : `${s} place${s !== "2" ? "s" : ""}`}
@@ -226,14 +226,14 @@ function FleetContent() {
                 })}
               </div>
 
-              <div className="w-px h-6 bg-slate-200" />
+              <div className="w-px h-6 bg-border" />
 
               {/* Advanced toggle */}
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border",
-                  showAdvanced ? "bg-primary/5 text-primary border-primary/20" : "text-slate-400 border-slate-100 hover:border-slate-200"
+                  showAdvanced ? "bg-primary/5 text-primary border-primary/20" : "text-ink-4 border-border hover:border-ink-4/40"
                 )}
               >
                 <Wallet size={12} />
@@ -263,8 +263,8 @@ function FleetContent() {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="flex items-center gap-4 pt-2 border-t border-slate-100">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Prix max</span>
+                  <div className="flex items-center gap-4 pt-2 border-t border-border">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-ink-4">Prix max</span>
                     <input
                       type="range"
                       min="200"
@@ -287,7 +287,7 @@ function FleetContent() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="sticky top-24 z-30 flex items-center justify-between mb-8 pb-4 pt-4 border-b border-border flex-wrap gap-4 bg-white/70 backdrop-blur-xl rounded-t-2xl px-4 -mx-4 sm:mx-0 shadow-[0_4px_30px_rgba(0,0,0,0.02)]"
+          className="sticky top-24 z-30 flex items-center justify-between mb-8 pb-4 pt-4 border-b border-border flex-wrap gap-4 bg-surface-0/80 backdrop-blur-xl rounded-t-2xl px-4 -mx-4 sm:mx-0 shadow-[0_4px_30px_rgba(22,33,62,0.04)]"
         >
           <div className="flex items-center gap-3">
             {/* Text Search */}
@@ -327,14 +327,14 @@ function FleetContent() {
             <div className="hidden md:flex items-center gap-1 bg-surface-1 p-1 rounded-lg border border-border">
               <button
                 onClick={() => setLayoutView("grid")}
-                className={cn("p-1.5 rounded-md transition-all", layoutView === "grid" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
+                className={cn("p-1.5 rounded-md transition-all", layoutView === "grid" ? "bg-surface-0 text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
                 aria-label="Vue Grille"
               >
                 <LayoutGrid size={16} />
               </button>
               <button
                 onClick={() => setLayoutView("list")}
-                className={cn("p-1.5 rounded-md transition-all", layoutView === "list" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
+                className={cn("p-1.5 rounded-md transition-all", layoutView === "list" ? "bg-surface-0 text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
                 aria-label="Vue Liste"
               >
                 <List size={16} />
@@ -348,10 +348,10 @@ function FleetContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="appearance-none bg-white border-2 border-border rounded-lg px-4 py-2.5 text-xs font-bold text-ink-1 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all cursor-pointer pr-9"
+                  className="appearance-none bg-surface-0 border-2 border-border rounded-lg px-4 py-2.5 text-xs font-bold text-ink-1 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all cursor-pointer pr-9"
                 >
                   {sortOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-white text-ink-1">
+                    <option key={opt.value} value={opt.value} className="bg-surface-0 text-ink-1">
                       {opt.label}
                     </option>
                   ))}
@@ -381,7 +381,7 @@ function FleetContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold shadow-xl"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold shadow-xl shadow-primary/30"
           >
             Lien copié !
           </motion.div>

@@ -2,373 +2,395 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { cn } from "@/shared/utils";
-import {
-  Award,
-  Shield,
-  Lightbulb,
-  Handshake,
-  ArrowRight,
-  Car,
-  Clock,
-  Users,
-  TrendingUp,
-} from "lucide-react";
 import Image from "next/image";
+import {
+  Heart,
+  CreditCard,
+  MapPin,
+  Clock,
+  ShieldCheck,
+  Car,
+  Users,
+  Award,
+  CheckCircle2,
+} from "lucide-react";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 30 },
   visible: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 0.61, 0.36, 1] as const },
   }),
 };
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.8 } },
-};
-
 const values = [
-  {
-    icon: Award,
-    title: "Excellence",
-    description:
-      "Chaque véhicule de notre flotte est sélectionné avec un souci du détail absolu. Nous n'acceptons que l'excellence, de l'entretien à la présentation.",
-    color: "text-gold",
-    bg: "bg-gold-light",
-  },
-  {
-    icon: Shield,
-    title: "Confiance",
-    description:
-      "La transparence est au cœur de chaque interaction. Pas de frais cachés, pas de mauvaises surprises — juste un service fiable et honnête.",
-    color: "text-primary",
-    bg: "bg-primary/10",
-  },
-  {
-    icon: Lightbulb,
-    title: "Innovation",
-    description:
-      "De la réservation en ligne au suivi GPS en temps réel, nous intégrons la technologie pour rendre votre expérience fluide et moderne.",
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10",
-  },
-  {
-    icon: Handshake,
-    title: "Service",
-    description:
-      "Notre équipe est disponible 24h/24, 7j/7. Conciergerie personnelle, livraison à l'aéroport, assistance sur route — nous sommes toujours là.",
-    color: "text-amber-500",
-    bg: "bg-amber-500/10",
-  },
-];
-
-const team = [
-  {
-    name: "Youssef El Mansouri",
-    role: "Fondateur & CEO",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    name: "Karim Benali",
-    role: "Directeur des Opérations",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    name: "Sara Ait Brahim",
-    role: "Responsable Clientèle",
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=600",
-  },
+  { icon: Heart, title: "Premium Experience", desc: "Every touchpoint designed around comfort and confidence." },
+  { icon: CreditCard, title: "Transparency", desc: "Clear pricing, no hidden fees, no surprises at pickup." },
+  { icon: MapPin, title: "Reliable Mobility", desc: "Available where and when you need it, across Morocco." },
+  { icon: ShieldCheck, title: "High Standards", desc: "Every vehicle inspected and maintained to the same standard." },
 ];
 
 const stats = [
-  { value: "15+", label: "Ans d'Expérience", icon: TrendingUp },
-  { value: "2400+", label: "Clients Satisfaits", icon: Users },
-  { value: "80+", label: "Véhicules Premium", icon: Car },
-  { value: "24/7", label: "Support Dédié", icon: Clock },
+  { num: "500+", label: "Vehicles", icon: Car },
+  { num: "25+", label: "Trusted Partners", icon: Users },
+  { num: "15+", label: "Cities Covered", icon: MapPin },
+  { num: "2,400+", label: "Reservations", icon: Award },
+  { num: "24/7", label: "Customer Support", icon: Clock },
+  { num: "4.9/5", label: "Customer Rating", icon: Award },
+];
+
+const features = [
+  { icon: CreditCard, title: "Transparent Pricing" },
+  { icon: MapPin, title: "Airport Delivery" },
+  { icon: Clock, title: "24/7 Assistance" },
+  { icon: ShieldCheck, title: "Secure Booking" },
+  { icon: Car, title: "Modern Fleet" },
+  { icon: Award, title: "Certified Partners" },
+  { icon: Users, title: "Premium Customer Service" },
+  { icon: CheckCircle2, title: "Flexible Rental Solutions" },
+];
+
+const processSteps = [
+  { num: "01", title: "Choose Vehicle", desc: "Browse the fleet and compare specs in seconds." },
+  { num: "02", title: "Reserve", desc: "Confirm your dates and details online." },
+  { num: "03", title: "Confirmation", desc: "Instant or partner-verified — you'll always know." },
+  { num: "04", title: "Vehicle Delivery", desc: "Pick up at the airport or your chosen location." },
+  { num: "05", title: "Enjoy Your Journey", desc: "Unlimited mileage, 24/7 support along the way." },
+];
+
+const testimonials = [
+  { name: "Youssef B.", city: "Casablanca", text: "Effortless booking and the car was waiting exactly on time at the airport. Genuinely premium from start to finish.", img: "https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" },
+  { name: "Sophie L.", city: "Marrakech", text: "We rented an SUV for a family trip to Marrakech. Spotless car, transparent price, instant WhatsApp support.", img: "https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png" },
+  { name: "Nadia K.", city: "Rabat", text: "Our company books all business travel through AR7 now. Reliable fleet, clean invoicing, zero surprises.", img: "https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png" },
+  { name: "Karim T.", city: "Tangier", text: "The partner-verified booking felt just as premium as an instant one — clear updates the whole way through.", img: "https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" },
 ];
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
-      {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--gold-light))] via-[hsl(var(--surface-0))] to-[hsl(var(--gold-light))]" />
-        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_30%_20%,hsl(var(--gold)),transparent_50%)]" />
+      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      <section className="relative min-h-[78vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260708_233823_2cb847de-8c44-4df3-8b9f-b0dd7912ca17.png"
+            alt="Premium sedan overlooking Morocco"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(100deg, rgba(15,20,38,0.82) 0%, rgba(15,20,38,0.58) 46%, rgba(15,20,38,0.28) 100%)" }} />
+        </div>
 
-        <div className="page-container px-6 relative z-10 py-32">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            className="max-w-3xl"
-          >
-            <span className="overline-gold mb-6 inline-block">
-              Notre Histoire
-            </span>
-            <h1 className="font-display text-ink-1 mb-8 leading-[0.95] tracking-tight text-5xl md:text-7xl lg:text-8xl">
-              Vectoria
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10 py-40">
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-[660px]">
+            <div className="eyebrow font-sora">
+              <span className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-gold mb-[18px]">
+                <span className="w-[22px] h-[1px] bg-gold" />
+                About AR7 Victoria Car
+              </span>
+            </div>
+            <h1 className="font-sora text-[clamp(36px,5vw,54px)] font-bold text-white leading-[1.16] tracking-[-0.02em] mb-6">
+              Driven by <em className="not-italic text-gold">Excellence.</em> Trusted Across Morocco.
             </h1>
-            <p className="text-ink-2 text-xl md:text-2xl leading-relaxed max-w-2xl font-medium">
-              La reference de la location vehicule premium au Maroc, au service
-              de l&apos;excellence depuis 2010.
+            <p className="text-[17.5px] leading-[1.65] text-white/82 max-w-[560px] mb-10">
+              AR7 Victoria Car was built on a simple idea: renting a premium vehicle should feel as effortless and trustworthy as the journey it enables. From Casablanca to Marrakech, we combine a modern fleet, transparent pricing, and a certified partner network to deliver the same premium standard, every time.
             </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── STORY SECTION ────────────────────────────────────────────────── */}
-      <section className="section-gap-lg">
-        <div className="page-container px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="relative"
-            >
-              <div className="relative rounded-2xl overflow-hidden border-2 border-border">
-                <Image
-                  src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=1200"
-                  alt="Fleet Vectoria"
-                  width={1200}
-                  height={1500}
-                  className="w-full aspect-[4/5] object-cover"
-                />
-              </div>
-
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={2}
-                className="absolute -bottom-8 -right-4 md:-right-8 bg-primary text-primary-foreground p-8 rounded-2xl shadow-lg z-10 hidden md:block"
-              >
-                <p className="font-display text-4xl mb-1">5.0</p>
-                <p className="text-xs font-bold uppercase tracking-wider opacity-80">
-                  Note Client
-                </p>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              custom={1}
-              className="space-y-8"
-            >
-              <div>
-                <span className="overline-gold mb-4 inline-block">
-                  Notre Parcours
-                </span>
-                <h2 className="font-display text-ink-1 mb-6 text-3xl md:text-5xl leading-tight tracking-tight">
-                  L&apos;Art du Mouvement
-                </h2>
-              </div>
-
-              <div className="space-y-5 text-ink-2 body-text leading-relaxed">
-                <p>
-                  Depuis 2010, Vectoria redéfinit la location de véhicules
-                  premium au Maroc. Fondée avec une vision claire — offrir une
-                  expérience de conduite qui dépasse les attentes — notre
-                  entreprise est devenue la référence pour ceux qui exigent
-                  l&apos;excellence.
-                </p>
-                <p>
-                  Nous croyons que chaque trajet mérite d&apos;être
-                  extraordinaire. C&apos;est pourquoi nous sélectionnons
-                  rigoureusement chaque véhicule de notre flotte pour garantir
-                  des performances optimales et un luxe sans compromis.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 pt-4">
-                <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
-                  <p className="font-display text-ink-1 text-3xl mb-1">24/7</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                    Disponible
-                  </p>
-                </div>
-                <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
-                  <p className="font-display text-ink-1 text-3xl mb-1">100%</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                    Satisfaction
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── VALUES SECTION ───────────────────────────────────────────────── */}
-      <section className="section-gap surface-1">
-        <div className="page-container px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="text-center mb-16"
-          >
-            <span className="overline-gold mb-4 inline-block">
-              Nos Principes
-            </span>
-            <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
-              Ce Qui Nous Definit
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((val, i) => (
-              <motion.div
-                key={val.title}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={i}
-                className="card-premium p-8 rounded-2xl border-2 border-border text-center group"
-              >
-                <div
-                  className={cn(
-                    "w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-transform duration-300 group-hover:scale-110",
-                    val.bg,
-                    val.color
-                  )}
-                >
-                  <val.icon size={28} />
-                </div>
-                <h3 className="text-ink-1 font-bold uppercase tracking-wider text-sm mb-3">
-                  {val.title}
-                </h3>
-                <p className="text-ink-3 text-sm leading-relaxed">
-                  {val.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TEAM SECTION ─────────────────────────────────────────────────── */}
-      <section className="section-gap">
-        <div className="page-container px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="text-center mb-16"
-          >
-            <span className="overline-gold mb-4 inline-block">
-              L&apos;Equipe
-            </span>
-            <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
-              Les Visages de Vectoria
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {team.map((member, i) => (
-              <motion.div
-                key={member.name}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={i}
-                className="card-premium rounded-2xl border-2 border-border overflow-hidden group"
-              >
-                <div className="aspect-[3/4] overflow-hidden">
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    width={600}
-                    height={800}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-6 text-center">
-                  <h3 className="font-bold uppercase tracking-wider text-ink-1 text-sm mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-ink-3 text-xs uppercase tracking-wider font-semibold">
-                    {member.role}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── STATS SECTION ────────────────────────────────────────────────── */}
-      <section className="section-gap surface-1">
-        <div className="page-container px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={i}
-                className="stat-display"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gold-light flex items-center justify-center mx-auto mb-5">
-                  <stat.icon size={24} className="text-gold-dark" />
-                </div>
-                <p className="number text-ink-1">{stat.value}</p>
-                <p className="label text-ink-3">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA SECTION ──────────────────────────────────────────────────── */}
-      <section className="section-gap-lg relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--gold-light))] via-[hsl(var(--surface-0))] to-[hsl(var(--gold-light))]" />
-
-        <div className="page-container px-6 relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <span className="overline-gold mb-6 inline-block">
-              Rejoignez-nous
-            </span>
-            <h2 className="font-display text-ink-1 text-3xl md:text-5xl lg:text-6xl tracking-tight mb-8">
-              Rejoignez l&apos;aventure Vectoria
-            </h2>
-            <p className="text-ink-2 body-text mb-12">
-              Decouvrez une experience de location sans equal. Reservez votre
-              vehicule premium en quelques clics et laissez-vous porter par
-              l&apos;excellence.
-            </p>
-
-            <Link
-              href="/register"
-              className="btn-gold inline-flex items-center gap-2 rounded-2xl px-10 py-4"
-            >
-              Creer Mon Compte
-              <ArrowRight size={18} />
+            <Link href="/fleet" className="inline-flex items-center justify-center gap-2 px-[30px] py-[16px] rounded-full font-sora font-semibold text-[15px] bg-gold text-navy transition-all hover:-translate-y-0.5">
+              Explore Our Fleet
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ── OUR VISION ───────────────────────────────────────────────── */}
+      <section className="py-[120px]">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px] items-start">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <div className="w-[1px] h-[36px] bg-gradient-to-b from-gold to-transparent mb-[22px]" />
+              <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-[18px]">
+                <span className="w-[22px] h-[1px] bg-gold" />
+                Our Vision
+              </div>
+              <h2 className="font-sora text-[clamp(26px,3vw,34px)] font-bold leading-[1.2] text-navy mb-5">
+                Why AR7 Victoria Car exists.
+              </h2>
+              <p className="text-[15.5px] leading-[1.65] text-[#5b6472] mb-5">
+                We believe premium mobility shouldn&apos;t be complicated. AR7 Victoria Car exists to give travelers, businesses, and families across Morocco a rental experience built on clarity, consistency, and care — the same standard whether you&apos;re picking up a compact car or a flagship sedan.
+              </p>
+              <p className="text-[15.5px] leading-[1.65] text-[#5b6472]">
+                Every decision we make, from the vehicles we add to the fleet to the partners we work with, is guided by one question: would we trust this experience ourselves?
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-2 gap-[18px]">
+              {values.map((v, i) => (
+                <motion.div
+                  key={v.title}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  custom={i}
+                  className="bg-white border border-[rgba(29,29,31,0.09)] rounded-[14px] p-[26px_22px] transition-all hover:border-gold hover:-translate-y-[3px]"
+                >
+                  <div className="w-[42px] h-[42px] rounded-[12px] bg-[rgba(194,161,91,0.14)] flex items-center justify-center mb-4">
+                    <v.icon size={20} className="text-gold" />
+                  </div>
+                  <h4 className="font-sora text-[14.5px] font-bold text-navy mb-[6px]">{v.title}</h4>
+                  <p className="text-[12.5px] text-[#8a8f98] leading-[1.5]">{v.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AR7 IN NUMBERS ──────────────────────────────────────────── */}
+      <section className="py-[120px] bg-navy text-white relative overflow-hidden">
+        <div className="absolute top-[-40%] left-1/2 w-[800px] h-[800px] -translate-x-1/2 bg-[radial-gradient(circle,rgba(194,161,91,0.12)_0%,transparent_70%)]" />
+        <div className="max-w-[1280px] mx-auto px-8 relative z-10">
+          <div className="text-center mb-[56px] max-w-[640px] mx-auto">
+            <div className="w-[1px] h-[36px] bg-gradient-to-b from-gold to-transparent mx-auto mb-[22px]" />
+            <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-[18px] justify-center">
+              <span className="w-[22px] h-[1px] bg-gold" />
+              AR7 in Numbers
+            </div>
+            <h2 className="font-sora text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.18] text-white mb-4">
+              A fleet and a network built on scale.
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+            {stats.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="text-center p-2"
+              >
+                <div className="w-[44px] h-[44px] rounded-[12px] bg-[rgba(194,161,91,0.14)] flex items-center justify-center mx-auto mb-[18px]">
+                  <s.icon size={20} className="text-gold" />
+                </div>
+                <div className="font-sora text-[clamp(26px,2.6vw,34px)] font-bold text-white mb-2 tracking-[-0.01em]">{s.num}</div>
+                <div className="text-[12.5px] text-white/60">{s.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FLEET & PARTNER NETWORK ─────────────────────────────────── */}
+      <section className="py-[120px]">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px] items-center">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="rounded-[18px] overflow-hidden aspect-[4/3] shadow-[0_1px_0_rgba(29,29,31,0.09)]">
+              <img
+                src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_082429_831bf7af-bc21-4476-94b9-568702fa4dc9.png"
+                alt="Fleet of modern rental vehicles"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}>
+              <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-4">
+                <span className="w-[22px] h-[1px] bg-gold" />
+                Our Fleet &amp; Partner Network
+              </div>
+              <h2 className="font-sora text-[clamp(24px,3vw,32px)] font-bold leading-[1.22] text-navy mb-[18px]">
+                One standard, whether the vehicle is ours or a partner&apos;s.
+              </h2>
+              <p className="text-[15px] text-[#5b6472] mb-6">
+                AR7 Victoria Car combines company-owned vehicles with a carefully selected network of partner agencies across Morocco — giving you a wider range of vehicles without compromising on quality.
+              </p>
+              <div className="flex flex-col gap-[14px]">
+                {[
+                  "Every vehicle is inspected before it reaches you.",
+                  "Every partner agency follows AR7's quality standards.",
+                  "You receive the same premium experience, regardless of the vehicle's owner.",
+                ].map((text) => (
+                  <div key={text} className="flex items-start gap-3 text-[14.5px] text-[#3d4249]">
+                    <CheckCircle2 size={19} className="text-gold shrink-0 mt-[1px]" />
+                    {text}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY CHOOSE AR7 ──────────────────────────────────────────── */}
+      <section className="py-[120px] bg-white">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="text-center mb-[56px] max-w-[640px] mx-auto">
+            <div className="w-[1px] h-[36px] bg-gradient-to-b from-gold to-transparent mx-auto mb-[22px]" />
+            <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-[18px] justify-center">
+              <span className="w-[22px] h-[1px] bg-gold" />
+              Why Choose AR7
+            </div>
+            <h2 className="font-sora text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.18] text-navy mb-4">
+              Every detail, built around your confidence.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[22px]">
+            {features.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="bg-white rounded-[18px] p-[32px_26px] border border-[rgba(29,29,31,0.09)] transition-all duration-300 hover:border-gold hover:-translate-y-1 hover:shadow-[0_20px_45px_-20px_rgba(22,33,62,0.18)]"
+              >
+                <div className="w-[48px] h-[48px] rounded-[13px] bg-[rgba(194,161,91,0.14)] flex items-center justify-center mb-5">
+                  <f.icon size={22} className="text-gold" />
+                </div>
+                <h4 className="font-sora text-[15px] font-bold text-navy">{f.title}</h4>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── QUALITY COMMITMENT ──────────────────────────────────────── */}
+      <section className="py-[120px]">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px] items-center">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-4">
+                <span className="w-[22px] h-[1px] bg-gold" />
+                Quality Commitment
+              </div>
+              <h2 className="font-sora text-[clamp(24px,3vw,32px)] font-bold leading-[1.22] text-navy mb-[18px]">
+                Every vehicle, prepared like it&apos;s the only one.
+              </h2>
+              <p className="text-[15px] text-[#5b6472] mb-6">
+                Before any vehicle reaches you — company-owned or partner — it passes through the same quality process, so the standard never depends on who happens to own the car.
+              </p>
+              <div className="flex flex-col gap-[14px]">
+                {[
+                  "Regular maintenance on every vehicle in the fleet.",
+                  "Professional cleaning before every handover.",
+                  "Full technical inspections for safety and reliability.",
+                  "Premium presentation, every single pickup.",
+                ].map((text) => (
+                  <div key={text} className="flex items-start gap-3 text-[14.5px] text-[#3d4249]">
+                    <CheckCircle2 size={19} className="text-gold shrink-0 mt-[1px]" />
+                    {text}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="order-1 lg:order-2 rounded-[18px] overflow-hidden aspect-[4/3] shadow-[0_1px_0_rgba(29,29,31,0.09)]">
+              <img
+                src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_082432_55ff02cb-e10d-4490-b635-31f141524031.png"
+                alt="Professional detailing of a luxury vehicle"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ────────────────────────────────────────────── */}
+      <section className="py-[120px] bg-[#EEF2F6]">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="text-center mb-[56px] max-w-[640px] mx-auto">
+            <div className="w-[1px] h-[36px] bg-gradient-to-b from-gold to-transparent mx-auto mb-[22px]" />
+            <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-[18px] justify-center">
+              <span className="w-[22px] h-[1px] bg-gold" />
+              How It Works
+            </div>
+            <h2 className="font-sora text-[clamp(26px,3.2vw,36px)] font-bold leading-[1.2] text-navy">
+              A simple journey, from search to the open road.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+            <div className="absolute top-[27px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-[rgba(194,161,91,0.4)] to-transparent hidden lg:block" />
+            {processSteps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="text-center relative"
+              >
+                <div className="w-[54px] h-[54px] rounded-full bg-white border border-[rgba(194,161,91,0.14)] flex items-center justify-center mx-auto mb-5 relative z-10 font-sora font-bold text-gold text-[16px]">
+                  {step.num}
+                </div>
+                <h4 className="font-sora text-[15.5px] font-bold text-navy mb-[9px]">{step.title}</h4>
+                <p className="text-[13px] text-[#6b7280] leading-[1.6]">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ────────────────────────────────────────────── */}
+      <section className="py-[120px] bg-white">
+        <div className="max-w-[1280px] mx-auto px-8">
+          <div className="text-center mb-[56px] max-w-[640px] mx-auto">
+            <div className="w-[1px] h-[36px] bg-gradient-to-b from-gold to-transparent mx-auto mb-[22px]" />
+            <div className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold mb-[18px] justify-center">
+              <span className="w-[22px] h-[1px] bg-gold" />
+              Customer Testimonials
+            </div>
+            <h2 className="font-sora text-[clamp(28px,3.4vw,40px)] font-bold leading-[1.18] text-navy mb-4">
+              Trusted by thousands across Morocco.
+            </h2>
+            <div className="flex items-center justify-center gap-[10px] text-[14.5px] text-[#5b6472] font-medium">
+              <span className="text-gold tracking-[2px]">★★★★★</span>
+              <span className="font-sora font-bold text-navy">4.9/5</span> — Based on 2,400+ verified reservations
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[22px]">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+                custom={i}
+                className="bg-white rounded-[18px] p-[28px_26px] border border-[rgba(29,29,31,0.09)]"
+              >
+                <div className="text-gold text-[13px] tracking-[2px] mb-[14px]">★★★★★</div>
+                <p className="text-[13.5px] text-[#3d4249] leading-[1.65] mb-5">{t.text}</p>
+                <div className="flex items-center gap-3">
+                  <img src={t.img} alt={t.name} className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[rgba(194,161,91,0.14)]" />
+                  <div>
+                    <div className="font-sora text-[13.5px] font-bold text-navy">{t.name}</div>
+                    <div className="text-[11.5px] text-[#8a8f98]">{t.city}</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ───────────────────────────────────────────────── */}
+      <section className="py-[110px] bg-navy text-center relative overflow-hidden">
+        <div className="absolute top-[-50%] left-1/2 w-[900px] h-[900px] -translate-x-1/2 bg-[radial-gradient(circle,rgba(194,161,91,0.14)_0%,transparent_70%)]" />
+        <div className="max-w-[620px] mx-auto relative z-10 px-8">
+          <h2 className="font-sora text-[clamp(32px,4.4vw,50px)] font-bold text-white leading-[1.15] mb-5">
+            Ready to Experience Premium Car Rental?
+          </h2>
+          <p className="text-white/68 text-[17.5px] mb-11">
+            Join thousands of travelers who trust AR7 Victoria Car for every journey across Morocco.
+          </p>
+          <div className="flex gap-[18px] justify-center flex-wrap">
+            <Link href="/fleet" className="inline-flex items-center justify-center gap-2 px-[38px] py-[19px] rounded-full font-sora font-semibold text-[15.5px] bg-gold text-navy transition-all hover:-translate-y-0.5">
+              Reserve Your Vehicle
+            </Link>
+            <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-[38px] py-[19px] rounded-full font-sora font-semibold text-[15.5px] bg-transparent text-white border border-white/35 transition-all hover:bg-white/8 hover:-translate-y-0.5">
+              Contact Us
+            </Link>
+          </div>
         </div>
       </section>
     </main>

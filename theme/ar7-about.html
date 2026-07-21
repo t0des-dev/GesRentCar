@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .section-mark{width:1px;height:36px;background:linear-gradient(var(--gold),transparent);margin:0 0 22px;}
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center .section-mark{margin-left:auto;margin-right:auto;}
+  .section-head h2{font-size:clamp(28px,3.4vw,40px);font-weight:700;line-height:1.18;margin-bottom:16px;}
+  .section-head p{font-size:16px;color:#5b6472;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35);}
+  .btn-outline:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:120px 0;}
+
+  /* ---------- HEADER (reused) ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 0;transition:all .4s var(--ease);background:transparent;}
+  header.scrolled{background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);padding:14px 0;box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);letter-spacing:-0.02em;transition:color .4s;}
+  .logo span{color:var(--gold);}
+  header.scrolled .logo{color:var(--navy);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,0.85);transition:color .3s;}
+  header.scrolled .nav-links a{color:var(--charcoal);}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--white);transition:color .4s;}
+  header.scrolled .nav-phone{color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s;}
+  header.scrolled .burger span{background:var(--navy);}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;min-height:78vh;display:flex;align-items:center;padding:160px 0 100px;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;z-index:0;}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg, rgba(15,20,38,0.82) 0%, rgba(15,20,38,0.58) 46%, rgba(15,20,38,0.28) 100%);}
+  .hero-inner{position:relative;z-index:1;max-width:660px;}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:12.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:26px;}
+  .hero-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .hero h1{font-size:clamp(36px,5vw,54px);font-weight:700;color:var(--white);line-height:1.16;letter-spacing:-0.02em;margin-bottom:24px;}
+  .hero h1 em{font-style:normal;color:var(--gold);}
+  .hero-sub{font-size:17.5px;line-height:1.65;color:rgba(255,255,255,0.82);max-width:560px;margin-bottom:40px;}
+
+  /* ---------- VISION ---------- */
+  .vision-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+  .vision-text p{font-size:15.5px;color:#5b6472;margin-bottom:18px;}
+  .vision-values{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .value-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:26px 22px;transition:all .3s;}
+  .value-card:hover{border-color:var(--gold);transform:translateY(-3px);}
+  .value-icon{width:42px;height:42px;border-radius:12px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .value-icon svg{width:20px;height:20px;color:var(--gold);}
+  .value-card h4{font-size:14.5px;margin-bottom:6px;}
+  .value-card p{font-size:12.5px;color:#8a8f98;}
+
+  /* ---------- STATS ---------- */
+  .stats-section{background:var(--navy);color:var(--white);position:relative;overflow:hidden;}
+  .stats-section::before{content:"";position:absolute;top:-40%;left:50%;width:800px;height:800px;transform:translateX(-50%);background:radial-gradient(circle,rgba(194,161,91,0.12) 0%,transparent 70%);}
+  .stats-section .section-head h2,.stats-section .section-head p{color:var(--white);}
+  .stats-section .section-head p{color:rgba(255,255,255,0.62);}
+  .stats-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(6,1fr);gap:20px;}
+  .stat-card{text-align:center;padding:8px;}
+  .stat-icon{width:44px;height:44px;border-radius:12px;background:rgba(194,161,91,0.14);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+  .stat-icon svg{width:20px;height:20px;color:var(--gold);}
+  .stat-num{font-family:'Sora',sans-serif;font-size:clamp(26px,2.6vw,34px);font-weight:700;color:var(--white);margin-bottom:8px;letter-spacing:-0.01em;}
+  .stat-label{font-size:12.5px;color:rgba(255,255,255,0.6);}
+
+  /* ---------- FLEET & PARTNER NETWORK / QUALITY (alternating image+text) ---------- */
+  .split-row{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+  .split-row.reverse .split-media{order:2;}
+  .split-media{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;box-shadow:0 1px 0 var(--line);}
+  .split-media img{width:100%;height:100%;object-fit:cover;}
+  .split-content .eyebrow{margin-bottom:16px;}
+  .split-content h2{font-size:clamp(24px,3vw,32px);font-weight:700;line-height:1.22;margin-bottom:18px;}
+  .split-content p{font-size:15px;color:#5b6472;margin-bottom:24px;}
+  .check-list{display:flex;flex-direction:column;gap:14px;}
+  .check-list-item{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;color:#3d4249;}
+  .check-list-item svg{width:19px;height:19px;color:var(--gold);flex-shrink:0;margin-top:1px;}
+
+  /* ---------- WHY CHOOSE ---------- */
+  .why-choose-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .feature-card{background:var(--white);border-radius:var(--radius);padding:32px 26px;border:1px solid var(--line);transition:all .4s var(--ease);}
+  .feature-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow);}
+  .feature-icon{width:48px;height:48px;border-radius:13px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+  .feature-icon svg{width:22px;height:22px;color:var(--gold);}
+  .feature-card h4{font-size:15px;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .process{background:var(--light-gray);}
+  .process-track{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;position:relative;}
+  .process-track::before{content:"";position:absolute;top:27px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(194,161,91,0.4) 12%,rgba(194,161,91,0.4) 88%,transparent);}
+  .process-step{text-align:center;position:relative;}
+  .step-num{width:54px;height:54px;border-radius:50%;background:var(--white);border:1px solid var(--gold-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;position:relative;z-index:1;font-family:'Sora',sans-serif;font-weight:700;color:var(--gold);font-size:16px;}
+  .process-step h4{font-size:15.5px;margin-bottom:9px;}
+  .process-step p{font-size:13px;color:#6b7280;line-height:1.6;}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .overall-rating{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;font-size:14.5px;color:#5b6472;font-weight:500;}
+  .overall-rating .stars{font-size:15px;color:var(--gold);letter-spacing:2px;}
+  .overall-rating b{color:var(--navy);font-family:'Sora',sans-serif;}
+  .testi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .testi-card{background:var(--white);border-radius:var(--radius);padding:28px 26px;border:1px solid var(--line);}
+  .testi-stars{color:var(--gold);font-size:13px;letter-spacing:2px;margin-bottom:14px;}
+  .testi-text{font-size:13.5px;color:#3d4249;margin-bottom:20px;line-height:1.65;}
+  .testi-person{display:flex;align-items:center;gap:12px;}
+  .avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--gold-soft);}
+  .testi-meta b{display:block;font-size:13.5px;color:var(--navy);}
+  .testi-meta span{font-size:11.5px;color:#8a8f98;}
+
+  /* ---------- FINAL CTA (reused) ---------- */
+  .final-cta{background:var(--navy);text-align:center;position:relative;overflow:hidden;}
+  .final-cta::before{content:"";position:absolute;top:-50%;left:50%;width:900px;height:900px;transform:translateX(-50%);background:radial-gradient(circle,rgba(194,161,91,0.14) 0%,transparent 70%);}
+  .final-cta-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+  .final-cta h2{color:var(--white);font-size:clamp(32px,4.4vw,50px);line-height:1.15;margin-bottom:20px;}
+  .final-cta p{color:rgba(255,255,255,0.68);font-size:17.5px;margin-bottom:44px;}
+  .final-cta-btns{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+  .final-cta-btns .btn{padding:19px 38px;font-size:15.5px;}
+
+  /* ---------- FOOTER (reused) ---------- */
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:80px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:56px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);}
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);}
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1080px){
+    .vision-grid{grid-template-columns:1fr;gap:36px;}
+    .stats-grid{grid-template-columns:repeat(3,1fr);row-gap:36px;}
+    .split-row{grid-template-columns:1fr;gap:32px;}
+    .split-row.reverse .split-media{order:0;}
+    .why-choose-grid{grid-template-columns:repeat(2,1fr);}
+    .testi-grid{grid-template-columns:repeat(2,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+    .process-track{grid-template-columns:repeat(5,1fr);}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px;}
+    section{padding:80px 0;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    .vision-values{grid-template-columns:1fr;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .why-choose-grid{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .process-track{grid-template-columns:1fr;gap:36px;}
+    .process-track::before{display:none;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+    .hero{padding:140px 0 70px;min-height:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html">Fleet</a></li>
+      <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+      <li><a href="ar7-victoria-car.html#services">Services</a></li>
+      <li><a href="ar7-about.html" class="active">About</a></li>
+      <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <a href="ar7-fleet.html" class="btn btn-gold">Reserve now</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260708_233823_2cb847de-8c44-4df3-8b9f-b0dd7912ca17.png" alt="Premium sedan overlooking a Moroccan coastal city at golden hour">
+  </div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">About AR7 Victoria Car</div>
+      <h1>Driven by <em>Excellence.</em> Trusted Across Morocco.</h1>
+      <p class="hero-sub">AR7 Victoria Car was built on a simple idea: renting a premium vehicle should feel as effortless and trustworthy as the journey it enables. From Casablanca to Marrakech, we combine a modern fleet, transparent pricing, and a certified partner network to deliver the same premium standard, every time.</p>
+      <a href="ar7-fleet.html" class="btn btn-gold">Explore Our Fleet</a>
+    </div>
+  </div>
+</section>
+
+<!-- OUR VISION -->
+<section>
+  <div class="wrap">
+    <div class="vision-grid">
+      <div class="vision-text">
+        <div class="section-mark"></div>
+        <div class="eyebrow">Our Vision</div>
+        <h2 style="font-size:clamp(26px,3vw,34px);font-weight:700;line-height:1.2;margin-bottom:20px;">Why AR7 Victoria Car exists.</h2>
+        <p>We believe premium mobility shouldn't be complicated. AR7 Victoria Car exists to give travelers, businesses, and families across Morocco a rental experience built on clarity, consistency, and care — the same standard whether you're picking up a compact car or a flagship sedan.</p>
+        <p>Every decision we make, from the vehicles we add to the fleet to the partners we work with, is guided by one question: would we trust this experience ourselves?</p>
+      </div>
+      <div class="vision-values">
+        <div class="value-card">
+          <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+          <h4>Premium Experience</h4><p>Every touchpoint designed around comfort and confidence.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div>
+          <h4>Transparency</h4><p>Clear pricing, no hidden fees, no surprises at pickup.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div>
+          <h4>Reliable Mobility</h4><p>Available where and when you need it, across Morocco.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <h4>High Standards</h4><p>Every vehicle inspected and maintained to the same standard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AR7 IN NUMBERS -->
+<section class="stats-section">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">AR7 in Numbers</div>
+      <h2>A fleet and a network built on scale.</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg></div><div class="stat-num">500+</div><div class="stat-label">Vehicles</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg></div><div class="stat-num">25+</div><div class="stat-label">Trusted Partners</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div><div class="stat-num">15+</div><div class="stat-label">Cities Covered</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div><div class="stat-num">2,400+</div><div class="stat-label">Reservations</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div class="stat-num">24/7</div><div class="stat-label">Customer Support</div></div>
+      <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 17.3l-5.4 3 1.4-6L3 10l6-.5L12 4l3 5.5 6 .5-5 4.3 1.4 6z"/></svg></div><div class="stat-num">4.9/5</div><div class="stat-label">Customer Rating</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLEET & PARTNER NETWORK -->
+<section>
+  <div class="wrap">
+    <div class="split-row">
+      <div class="split-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_082429_831bf7af-bc21-4476-94b9-568702fa4dc9.png" alt="Fleet of modern rental vehicles"></div>
+      <div class="split-content">
+        <div class="eyebrow">Our Fleet &amp; Partner Network</div>
+        <h2>One standard, whether the vehicle is ours or a partner's.</h2>
+        <p>AR7 Victoria Car combines company-owned vehicles with a carefully selected network of partner agencies across Morocco — giving you a wider range of vehicles without compromising on quality.</p>
+        <div class="check-list">
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Every vehicle is inspected before it reaches you.</div>
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Every partner agency follows AR7's quality standards.</div>
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>You receive the same premium experience, regardless of the vehicle's owner.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE AR7 -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Why Choose AR7</div>
+      <h2>Every detail, built around your confidence.</h2>
+    </div>
+    <div class="why-choose-grid">
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div><h4>Transparent Pricing</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div><h4>Airport Delivery</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h4>24/7 Assistance</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div><h4>Secure Booking</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg></div><h4>Modern Fleet</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6L9 17l-5-5"/></svg></div><h4>Certified Partners</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg></div><h4>Premium Customer Service</h4></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div><h4>Flexible Rental Solutions</h4></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUALITY COMMITMENT -->
+<section>
+  <div class="wrap">
+    <div class="split-row reverse">
+      <div class="split-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260709_082432_55ff02cb-e10d-4490-b635-31f141524031.png" alt="Professional detailing of a luxury vehicle"></div>
+      <div class="split-content">
+        <div class="eyebrow">Quality Commitment</div>
+        <h2>Every vehicle, prepared like it's the only one.</h2>
+        <p>Before any vehicle reaches you — company-owned or partner — it passes through the same quality process, so the standard never depends on who happens to own the car.</p>
+        <div class="check-list">
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Regular maintenance on every vehicle in the fleet.</div>
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Professional cleaning before every handover.</div>
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Full technical inspections for safety and reliability.</div>
+          <div class="check-list-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Premium presentation, every single pickup.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="process">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">How It Works</div>
+      <h2>A simple journey, from search to the open road.</h2>
+    </div>
+    <div class="process-track">
+      <div class="process-step"><div class="step-num">01</div><h4>Choose Vehicle</h4><p>Browse the fleet and compare specs in seconds.</p></div>
+      <div class="process-step"><div class="step-num">02</div><h4>Reserve</h4><p>Confirm your dates and details online.</p></div>
+      <div class="process-step"><div class="step-num">03</div><h4>Confirmation</h4><p>Instant or partner-verified — you'll always know.</p></div>
+      <div class="process-step"><div class="step-num">04</div><h4>Vehicle Delivery</h4><p>Pick up at the airport or your chosen location.</p></div>
+      <div class="process-step"><div class="step-num">05</div><h4>Enjoy Your Journey</h4><p>Unlimited mileage, 24/7 support along the way.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Customer Testimonials</div>
+      <h2>Trusted by thousands across Morocco.</h2>
+      <div class="overall-rating"><span class="stars">★★★★★</span> <b>4.9/5</b> — Based on 2,400+ verified reservations</div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Effortless booking and the car was waiting exactly on time at the airport. Genuinely premium from start to finish.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" alt="Youssef B.">
+          <div class="testi-meta"><b>Youssef B.</b><span>Casablanca</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">We rented an SUV for a family trip to Marrakech. Spotless car, transparent price, instant WhatsApp support.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png" alt="Sophie L.">
+          <div class="testi-meta"><b>Sophie L.</b><span>Marrakech</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Our company books all business travel through AR7 now. Reliable fleet, clean invoicing, zero surprises.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png" alt="Nadia K.">
+          <div class="testi-meta"><b>Nadia K.</b><span>Rabat</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">The partner-verified booking felt just as premium as an instant one — clear updates the whole way through.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" alt="Karim T.">
+          <div class="testi-meta"><b>Karim T.</b><span>Tangier</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-inner">
+      <h2>Ready to Experience Premium Car Rental?</h2>
+      <p>Join thousands of travelers who trust AR7 Victoria Car for every journey across Morocco.</p>
+      <div class="final-cta-btns">
+        <a href="ar7-fleet.html" class="btn btn-gold">Reserve Your Vehicle</a>
+        <a href="ar7-victoria-car.html#footer" class="btn btn-outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="ar7-victoria-car.html" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="ar7-fleet.html">Economy</a></li>
+          <li><a href="ar7-fleet.html">Compact</a></li>
+          <li><a href="ar7-fleet.html">SUV</a></li>
+          <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+          <li><a href="ar7-fleet.html">Utility</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="ar7-about.html">About Us</a></li>
+          <li><a href="ar7-victoria-car.html#services">Services</a></li>
+          <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+          <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Rental Agreement</a></li>
+          <li><a href="#">Insurance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a>
+      </div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+</script>
+
+</body>
+</html>

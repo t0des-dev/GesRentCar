@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservation Confirmation — BMW 7 Series | AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1200px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --green:#2f9e5e;
+    --amber:#b8862f;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--gold);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:64px 0;}
+
+  /* ---------- HEADER (reused) ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 0;background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--navy);letter-spacing:-0.02em;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:var(--charcoal);}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;}
+
+  .page-top{padding:130px 0 0;}
+
+  /* Demo scenario toggle */
+  .demo-toggle-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:34px;flex-wrap:wrap;}
+  .demo-toggle-bar span{font-size:11.5px;color:#adb2ba;font-weight:600;}
+  .demo-pill{padding:8px 16px;border-radius:100px;border:1px solid var(--line);background:var(--white);font-size:12px;font-weight:600;color:#5b6472;cursor:pointer;transition:all .25s;}
+  .demo-pill.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+  .demo-pill-small{padding:6px 13px;border-radius:100px;border:1px solid var(--line);background:var(--white);font-size:11px;font-weight:600;color:#5b6472;cursor:pointer;transition:all .25s;}
+  .demo-pill-small.active{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+
+  /* Hero confirmation card */
+  .confirm-hero{background:var(--white);border-radius:var(--radius);box-shadow:0 30px 60px -22px rgba(22,33,62,0.22);padding:56px 48px;text-align:center;margin-bottom:44px;}
+  .success-icon{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 26px;background:rgba(47,158,94,0.1);animation:iconPop .5s var(--ease);}
+  .success-icon.pending{background:rgba(184,134,47,0.12);}
+  .success-icon svg{width:42px;height:42px;color:var(--green);}
+  .success-icon.pending svg{color:var(--amber);}
+  .success-icon .check-path{stroke-dasharray:30;stroke-dashoffset:30;animation:drawCheck .5s .3s var(--ease) forwards;}
+  .success-icon.pending svg{animation:pulseClock 2.2s ease-in-out infinite;}
+  @keyframes iconPop{0%{transform:scale(0.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @keyframes drawCheck{to{stroke-dashoffset:0;}}
+  @keyframes pulseClock{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  .confirm-hero h1{font-size:clamp(24px,3vw,32px);margin-bottom:10px;}
+  .confirm-hero .sub{font-size:15px;color:#5b6472;max-width:480px;margin:0 auto 24px;}
+  .confirm-meta{display:flex;align-items:center;justify-content:center;gap:26px;flex-wrap:wrap;margin-bottom:22px;}
+  .confirm-meta-item{text-align:left;}
+  .confirm-meta-item label{display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;margin-bottom:5px;}
+  .confirm-meta-item span{font-size:15px;font-weight:700;color:var(--navy);font-family:'Sora',sans-serif;}
+  .copy-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;margin-left:6px;}
+  .copy-btn svg{width:12px;height:12px;}
+  .status-badge{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:100px;font-size:13px;font-weight:700;}
+  .status-badge.instant{background:rgba(47,158,94,0.1);color:var(--green);}
+  .status-badge.partner{background:rgba(184,134,47,0.12);color:var(--amber);}
+  .status-badge svg{width:15px;height:15px;}
+
+  /* Section head */
+  .block-head{margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .block-head h2{font-size:19px;font-weight:700;}
+
+  .card{background:var(--white);border-radius:var(--radius);padding:30px 28px;box-shadow:0 1px 0 var(--line);border:1px solid var(--line);}
+  .card + .card{margin-top:24px;}
+
+  /* Reservation summary */
+  .veh-summary-card{display:flex;gap:20px;}
+  .veh-summary-card img{width:150px;height:112px;border-radius:12px;object-fit:cover;flex-shrink:0;}
+  .veh-summary-info{flex:1;min-width:0;}
+  .veh-summary-cat{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .veh-summary-name{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+  .readonly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px;}
+  .readonly-field{background:var(--light-gray);border-radius:12px;padding:14px 16px;}
+  .readonly-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;margin-bottom:6px;}
+  .readonly-field span{display:block;font-size:13.5px;font-weight:600;color:var(--navy);font-family:'Sora',sans-serif;}
+
+  /* Payment summary */
+  .price-line{display:flex;align-items:baseline;justify-content:space-between;font-size:13.5px;color:#5b6472;margin-bottom:11px;}
+  .price-line span:last-child{color:var(--navy);font-weight:600;}
+  .price-divider{height:1px;background:var(--line);margin:16px 0;}
+  .price-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;}
+  .price-total span:first-child{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--navy);}
+  .price-total span:last-child{font-family:'Sora',sans-serif;font-weight:700;font-size:19px;color:var(--navy);}
+  .payment-status-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding-top:20px;border-top:1px solid var(--line);}
+  .deposit-figure b{display:block;font-size:22px;color:var(--navy);font-family:'Sora',sans-serif;}
+  .deposit-figure span{font-size:12px;color:#8a8f98;}
+
+  /* Timeline */
+  .timeline{display:flex;flex-direction:column;gap:0;}
+  .timeline-step{display:flex;gap:18px;position:relative;padding-bottom:32px;}
+  .timeline-step:last-child{padding-bottom:0;}
+  .timeline-step::before{content:"";position:absolute;left:17px;top:36px;bottom:0;width:1px;background:var(--line);}
+  .timeline-step:last-child::before{display:none;}
+  .timeline-step.done::before{background:var(--gold);}
+  .timeline-dot{width:36px;height:36px;border-radius:50%;background:var(--light-gray);border:2px solid transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1;transition:all .3s;}
+  .timeline-step.done .timeline-dot{background:var(--gold);}
+  .timeline-step.done .timeline-dot svg{width:14px;height:14px;color:var(--navy);}
+  .timeline-step.active .timeline-dot{background:var(--navy);}
+  .timeline-step.active .timeline-dot span{color:var(--white);font-family:'Sora',sans-serif;font-weight:700;font-size:13px;}
+  .timeline-step:not(.done):not(.active) .timeline-dot span{color:#8a8f98;font-family:'Sora',sans-serif;font-weight:700;font-size:13px;}
+  .timeline-content{padding-top:6px;}
+  .timeline-content b{display:block;font-size:14.5px;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:2px;}
+  .timeline-content span{font-size:12.5px;color:#8a8f98;}
+  .timeline-step.active .timeline-content b{color:var(--gold);}
+
+  /* Contact card */
+  .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .contact-tile{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 14px;border:1px solid var(--line);border-radius:14px;text-align:center;transition:all .25s;}
+  .contact-tile:hover{border-color:var(--gold);background:var(--gold-soft);}
+  .contact-tile svg{width:22px;height:22px;color:var(--gold);}
+  .contact-tile b{font-size:13px;color:var(--navy);font-family:'Sora',sans-serif;}
+
+  /* Documents */
+  .doc-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line);gap:14px;}
+  .doc-row:last-child{border-bottom:none;}
+  .doc-left{display:flex;align-items:center;gap:14px;min-width:0;}
+  .doc-icon{width:40px;height:40px;border-radius:11px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .doc-icon svg{width:18px;height:18px;color:var(--gold);}
+  .doc-name{font-size:13.5px;font-weight:600;color:var(--navy);font-family:'Sora',sans-serif;}
+  .doc-type{font-size:11.5px;color:#8a8f98;}
+  .doc-download{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--navy);flex-shrink:0;transition:all .25s;}
+  .doc-download:hover{border-color:var(--gold);background:var(--gold-soft);}
+  .doc-download svg{width:13px;height:13px;}
+  .doc-row.disabled{opacity:0.45;}
+  .doc-row.disabled .doc-download{pointer-events:none;}
+
+  /* Flight reminder */
+  .flight-reminder{background:var(--gold-soft);border-radius:var(--radius);padding:26px 28px;}
+  .flight-reminder-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .flight-reminder-head svg{width:19px;height:19px;color:var(--gold);}
+  .flight-reminder-head b{font-family:'Sora',sans-serif;font-size:15px;color:var(--navy);}
+  .flight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+  .flight-grid .readonly-field{background:var(--white);}
+  .flight-note{font-size:12.5px;color:#5b6472;display:flex;gap:8px;align-items:flex-start;}
+  .flight-note svg{width:14px;height:14px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+
+  /* Pickup info */
+  .pickup-info-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;}
+  .pickup-info-list{display:flex;flex-direction:column;gap:14px;}
+  .pickup-info-item{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:#3d4249;}
+  .pickup-info-item svg{width:17px;height:17px;color:var(--gold);flex-shrink:0;margin-top:1px;}
+  .pickup-info-item b{display:block;color:var(--navy);font-size:12.5px;}
+
+  /* Trust row */
+  .trust-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+  .trust-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px 14px;text-align:center;transition:all .25s;}
+  .trust-card:hover{border-color:var(--gold);}
+  .trust-card svg{width:22px;height:22px;color:var(--gold);margin:0 auto 12px;}
+  .trust-card span{font-size:12px;font-weight:600;color:var(--navy);}
+
+  /* CTA row */
+  .cta-row{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:52px 0 0;}
+
+  /* ---------- FOOTER (reused) ---------- */
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:80px 0 32px;margin-top:70px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:56px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);}
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);}
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1000px){
+    .readonly-grid{grid-template-columns:repeat(2,1fr);}
+    .contact-grid{grid-template-columns:1fr;}
+    .trust-grid{grid-template-columns:repeat(3,1fr);}
+    .pickup-info-grid{grid-template-columns:1fr;}
+    .flight-grid{grid-template-columns:repeat(2,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    .confirm-hero{padding:40px 24px;}
+    .confirm-meta{flex-direction:column;gap:16px;}
+    .veh-summary-card{flex-direction:column;}
+    .veh-summary-card img{width:100%;height:160px;}
+    .readonly-grid{grid-template-columns:1fr 1fr;}
+    .flight-grid{grid-template-columns:1fr;}
+    .trust-grid{grid-template-columns:repeat(2,1fr);}
+    .cta-row{flex-direction:column;align-items:stretch;}
+    .cta-row .btn{width:100%;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html">Fleet</a></li>
+      <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+      <li><a href="ar7-victoria-car.html#services">Services</a></li>
+      <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+      <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-top" id="top">
+  <div class="wrap">
+
+    <div class="demo-toggle-bar">
+      <span>Preview scenario:</span>
+      <button class="demo-pill active" data-scenario="instant" id="demoInstant">AR7 Fleet — Instant</button>
+      <button class="demo-pill" data-scenario="partner" id="demoPartner">Partner Vehicle</button>
+      <span style="margin-left:10px;">Airport pickup:</span>
+      <button class="demo-pill-small active" id="airportOn">Selected</button>
+      <button class="demo-pill-small" id="airportOff">Not selected</button>
+    </div>
+
+    <!-- HERO CONFIRMATION CARD -->
+    <div class="confirm-hero">
+      <div class="success-icon" id="successIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" id="successIconSvg">
+          <path class="check-path" d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h1 id="heroTitle">Reservation Confirmed</h1>
+      <p class="sub" id="heroSub">Your vehicle has been successfully reserved. A confirmation email is on its way to you.</p>
+
+      <div class="confirm-meta">
+        <div class="confirm-meta-item">
+          <label>Reservation Number</label>
+          <span>#AR7-2026-001458 <button class="copy-btn" id="copyResBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg><span id="copyLabel">Copy</span></button></span>
+        </div>
+        <div class="confirm-meta-item">
+          <label>Reservation Date</label>
+          <span>July 9, 2026</span>
+        </div>
+      </div>
+
+      <div class="status-badge instant" id="statusBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" id="statusBadgeSvg"><path d="M20 6L9 17l-5-5"/></svg>
+        <span id="statusBadgeText">Confirmed</span>
+      </div>
+    </div>
+
+    <!-- RESERVATION SUMMARY -->
+    <div class="card">
+      <div class="block-head"><h2>Reservation Summary</h2></div>
+      <div class="veh-summary-card">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="BMW 7 Series">
+        <div class="veh-summary-info">
+          <div class="veh-summary-cat">Luxury Sedan</div>
+          <div class="veh-summary-name">BMW 7 Series or Similar</div>
+        </div>
+      </div>
+      <div class="readonly-grid">
+        <div class="readonly-field"><label>Pickup Location</label><span>Casablanca — Mohammed V Airport</span></div>
+        <div class="readonly-field"><label>Return Location</label><span>Casablanca — Mohammed V Airport</span></div>
+        <div class="readonly-field"><label>Pickup Date</label><span>Jul 20, 2026</span></div>
+        <div class="readonly-field"><label>Pickup Time</label><span>10:00</span></div>
+        <div class="readonly-field"><label>Return Date</label><span>Jul 25, 2026</span></div>
+        <div class="readonly-field"><label>Return Time</label><span>10:00</span></div>
+        <div class="readonly-field"><label>Rental Duration</label><span>5 Days</span></div>
+      </div>
+    </div>
+
+    <!-- PAYMENT SUMMARY -->
+    <div class="card">
+      <div class="block-head"><h2>Payment Summary</h2></div>
+      <div class="price-line"><span>Vehicle Rental (5 Days)</span><span>7,250 MAD</span></div>
+      <div class="price-line"><span>Extras</span><span>150 MAD</span></div>
+      <div class="price-line"><span>Insurance</span><span>750 MAD</span></div>
+      <div class="price-line"><span>Taxes</span><span>Included</span></div>
+      <div class="price-divider"></div>
+      <div class="price-total"><span>Total Rental</span><span>8,150 MAD</span></div>
+      <div class="payment-status-row">
+        <div class="deposit-figure">
+          <span id="depositLabel">Deposit Paid Today (30%)</span>
+          <b id="depositValue">2,445 MAD</b>
+        </div>
+        <div class="status-badge instant" id="paymentStatusBadge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" id="paymentStatusSvg"><path d="M20 6L9 17l-5-5"/></svg>
+          <span id="paymentStatusText">Deposit Received</span>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:#8a8f98;margin-top:14px;" id="remainingNote">Remaining balance <b style="color:var(--navy);">5,705 MAD</b> — payable upon vehicle pickup.</p>
+    </div>
+
+    <!-- WHAT'S NEXT TIMELINE -->
+    <div class="card">
+      <div class="block-head"><h2>What's Next?</h2></div>
+
+      <div class="timeline" id="timelineInstant">
+        <div class="timeline-step done">
+          <div class="timeline-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="timeline-content"><b>Reservation Confirmed</b><span>Your 30% deposit has been received.</span></div>
+        </div>
+        <div class="timeline-step done">
+          <div class="timeline-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="timeline-content"><b>Confirmation Email Sent</b><span>Check your inbox for your rental agreement.</span></div>
+        </div>
+        <div class="timeline-step active">
+          <div class="timeline-dot"><span>3</span></div>
+          <div class="timeline-content"><b>Our Team Prepares Your Vehicle</b><span>Cleaning, inspection and final checks.</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"><span>4</span></div>
+          <div class="timeline-content"><b>Vehicle Ready for Pickup</b><span>We'll notify you once it's ready at the counter.</span></div>
+        </div>
+      </div>
+
+      <div class="timeline" id="timelinePartner" style="display:none;">
+        <div class="timeline-step done">
+          <div class="timeline-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="timeline-content"><b>Reservation Request Received</b><span>Your request has been logged with our team.</span></div>
+        </div>
+        <div class="timeline-step active">
+          <div class="timeline-dot"><span>2</span></div>
+          <div class="timeline-content"><b>Availability Verification</b><span>We're confirming this vehicle with our partner.</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"><span>3</span></div>
+          <div class="timeline-content"><b>Reservation Confirmation</b><span>We'll email and WhatsApp you as soon as it's confirmed.</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"><span>4</span></div>
+          <div class="timeline-content"><b>Deposit Payment</b><span>Your 30% deposit is only requested after confirmation.</span></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"><span>5</span></div>
+          <div class="timeline-content"><b>Vehicle Ready</b><span>We'll notify you once it's ready at the counter.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLIGHT REMINDER (conditional) -->
+    <div class="card flight-reminder" id="flightReminderCard">
+      <div class="flight-reminder-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg><b>Airport Pickup Selected</b></div>
+      <div class="flight-grid">
+        <div class="readonly-field"><label>Flight Number</label><span>AT201</span></div>
+        <div class="readonly-field"><label>Arrival Time</label><span>15:30</span></div>
+      </div>
+      <div class="flight-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>We will monitor your flight and adjust the delivery time if your flight is delayed.</div>
+    </div>
+
+    <!-- CUSTOMER INFORMATION -->
+    <div class="card">
+      <div class="block-head"><h2>Customer Information</h2></div>
+      <div class="readonly-grid">
+        <div class="readonly-field"><label>Name</label><span>Yasmine El Amrani</span></div>
+        <div class="readonly-field"><label>Phone</label><span>+212 6 00 00 00 00</span></div>
+        <div class="readonly-field"><label>Email</label><span>yasmine@email.com</span></div>
+        <div class="readonly-field"><label>Driver License</label><span>DL-2291837</span></div>
+        <div class="readonly-field"><label>Pickup Contact</label><span>Same as above</span></div>
+      </div>
+    </div>
+
+    <!-- VEHICLE PICKUP INFORMATION -->
+    <div class="card">
+      <div class="block-head"><h2>Vehicle Pickup Information</h2></div>
+      <div class="pickup-info-grid">
+        <div class="pickup-info-list">
+          <div class="pickup-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><b>Pickup Address</b>Mohammed V Airport, Terminal 1 Arrivals, Casablanca</div></div>
+          <div class="pickup-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><div><b>Opening Hours</b>Open 24/7, every day</div></div>
+          <div class="pickup-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><div><b>Estimated Pickup Time</b>Jul 20, 2026 — 10:00</div></div>
+          <div class="pickup-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><div><b>Emergency Phone / WhatsApp</b>+212 5 00 00 00 00</div></div>
+        </div>
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-outline-dark" style="width:100%;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          View on Google Maps
+        </a>
+      </div>
+    </div>
+
+    <!-- RESERVATION DOCUMENTS -->
+    <div class="card">
+      <div class="block-head"><h2>Reservation Documents</h2></div>
+      <div class="doc-row">
+        <div class="doc-left"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div class="doc-name">Rental Confirmation</div><div class="doc-type">PDF</div></div></div>
+        <a href="#" class="doc-download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download</a>
+      </div>
+      <div class="doc-row">
+        <div class="doc-left"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div class="doc-name">Reservation Receipt</div><div class="doc-type">PDF</div></div></div>
+        <a href="#" class="doc-download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download</a>
+      </div>
+      <div class="doc-row">
+        <div class="doc-left"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div class="doc-name">Rental Terms</div><div class="doc-type">PDF</div></div></div>
+        <a href="#" class="doc-download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download</a>
+      </div>
+      <div class="doc-row" id="invoiceRow">
+        <div class="doc-left"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div class="doc-name">Invoice</div><div class="doc-type" id="invoiceStatus">PDF</div></div></div>
+        <a href="#" class="doc-download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download</a>
+      </div>
+    </div>
+
+    <!-- CONTACT CARD -->
+    <div class="card">
+      <div class="block-head"><h2>Need Help?</h2></div>
+      <p style="font-size:13.5px;color:#5b6472;margin-bottom:22px;">Our team is available 24/7.</p>
+      <div class="contact-grid">
+        <a href="https://wa.me/212500000000" class="contact-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><b>WhatsApp</b></a>
+        <a href="tel:+212500000000" class="contact-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><b>Call Us</b></a>
+        <a href="mailto:reservations@ar7victoriacar.ma" class="contact-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><b>Email</b></a>
+      </div>
+    </div>
+
+    <!-- TRUST SECTION -->
+    <div class="trust-grid" style="margin-top:44px;">
+      <div class="trust-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg><span>Secure Payment</span></div>
+      <div class="trust-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg><span>Reservation Guaranteed</span></div>
+      <div class="trust-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>24/7 Support</span></div>
+      <div class="trust-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg><span>Airport Delivery</span></div>
+      <div class="trust-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><span>Free Cancellation*</span></div>
+    </div>
+
+    <!-- CTA ROW -->
+    <div class="cta-row">
+      <a href="#top" class="btn btn-primary">View My Reservation</a>
+      <a href="ar7-victoria-car.html" class="btn btn-outline-dark">Return to Homepage</a>
+      <a href="ar7-fleet.html" class="btn btn-outline-dark">Browse More Vehicles</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER (reused) -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="ar7-victoria-car.html" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="ar7-fleet.html">Economy</a></li>
+          <li><a href="ar7-fleet.html">Compact</a></li>
+          <li><a href="ar7-fleet.html">SUV</a></li>
+          <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+          <li><a href="ar7-fleet.html">Utility</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="ar7-victoria-car.html#services">Services</a></li>
+          <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+          <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Rental Agreement</a></li>
+          <li><a href="#">Insurance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a>
+      </div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Header shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('siteHeader').style.boxShadow = window.scrollY > 10 ? '0 2px 12px rgba(22,33,62,0.08)' : 'none';
+  });
+
+  // ---------- Copy reservation number ----------
+  document.getElementById('copyResBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText('AR7-2026-001458').then(() => {
+      const label = document.getElementById('copyLabel');
+      label.textContent = 'Copied';
+      setTimeout(() => label.textContent = 'Copy', 1800);
+    });
+  });
+
+  // ---------- Demo scenario toggle: Instant vs Partner ----------
+  const demoInstant = document.getElementById('demoInstant');
+  const demoPartner = document.getElementById('demoPartner');
+  const successIcon = document.getElementById('successIcon');
+  const successIconSvg = document.getElementById('successIconSvg');
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSub = document.getElementById('heroSub');
+  const statusBadge = document.getElementById('statusBadge');
+  const statusBadgeSvg = document.getElementById('statusBadgeSvg');
+  const statusBadgeText = document.getElementById('statusBadgeText');
+  const paymentStatusBadge = document.getElementById('paymentStatusBadge');
+  const paymentStatusSvg = document.getElementById('paymentStatusSvg');
+  const paymentStatusText = document.getElementById('paymentStatusText');
+  const depositLabel = document.getElementById('depositLabel');
+  const depositValue = document.getElementById('depositValue');
+  const remainingNote = document.getElementById('remainingNote');
+  const timelineInstant = document.getElementById('timelineInstant');
+  const timelinePartner = document.getElementById('timelinePartner');
+  const invoiceRow = document.getElementById('invoiceRow');
+  const invoiceStatus = document.getElementById('invoiceStatus');
+
+  const CHECK_PATH = '<path class="check-path" d="M20 6L9 17l-5-5"/>';
+  const CLOCK_PATH = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l2.5 2.5"/>';
+
+  function setScenario(scenario){
+    const isInstant = scenario === 'instant';
+    demoInstant.classList.toggle('active', isInstant);
+    demoPartner.classList.toggle('active', !isInstant);
+
+    successIcon.classList.toggle('pending', !isInstant);
+    successIconSvg.innerHTML = isInstant ? CHECK_PATH : CLOCK_PATH;
+
+    heroTitle.textContent = isInstant ? 'Reservation Confirmed' : 'Reservation Request Sent';
+    heroSub.textContent = isInstant
+      ? 'Your vehicle has been successfully reserved. A confirmation email is on its way to you.'
+      : 'Our team is now verifying vehicle availability with our trusted partner. We will contact you as soon as the vehicle is confirmed. No payment is required until confirmation.';
+
+    statusBadge.classList.toggle('instant', isInstant);
+    statusBadge.classList.toggle('partner', !isInstant);
+    statusBadgeSvg.innerHTML = isInstant ? CHECK_PATH : CLOCK_PATH;
+    statusBadgeText.textContent = isInstant ? 'Confirmed' : 'Pending Partner Confirmation';
+
+    paymentStatusBadge.classList.toggle('instant', isInstant);
+    paymentStatusBadge.classList.toggle('partner', !isInstant);
+    paymentStatusSvg.innerHTML = isInstant ? CHECK_PATH : CLOCK_PATH;
+    paymentStatusText.textContent = isInstant ? 'Deposit Received' : 'Waiting for Confirmation';
+
+    depositLabel.textContent = isInstant ? 'Deposit Paid Today (30%)' : 'Deposit Due (30%) — after confirmation';
+    depositValue.textContent = isInstant ? '2,445 MAD' : '0 MAD';
+    remainingNote.innerHTML = isInstant
+      ? 'Remaining balance <b style="color:var(--navy);">5,705 MAD</b> — payable upon vehicle pickup.'
+      : 'No payment has been taken yet. Your deposit will be requested only after partner confirmation.';
+
+    timelineInstant.style.display = isInstant ? 'flex' : 'none';
+    timelinePartner.style.display = isInstant ? 'none' : 'flex';
+
+    invoiceRow.classList.toggle('disabled', !isInstant);
+    invoiceStatus.textContent = isInstant ? 'PDF' : 'Available after confirmation';
+  }
+  demoInstant.addEventListener('click', () => setScenario('instant'));
+  demoPartner.addEventListener('click', () => setScenario('partner'));
+  setScenario('instant');
+
+  // ---------- Demo airport pickup toggle ----------
+  const airportOn = document.getElementById('airportOn');
+  const airportOff = document.getElementById('airportOff');
+  const flightReminderCard = document.getElementById('flightReminderCard');
+  function setAirport(selected){
+    airportOn.classList.toggle('active', selected);
+    airportOff.classList.toggle('active', !selected);
+    flightReminderCard.style.display = selected ? 'block' : 'none';
+  }
+  airportOn.addEventListener('click', () => setAirport(true));
+  airportOff.addEventListener('click', () => setAirport(false));
+  setAirport(true);
+</script>
+
+</body>
+</html>

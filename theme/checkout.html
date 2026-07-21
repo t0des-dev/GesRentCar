@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservation & Checkout — BMW 7 Series | AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --green:#2f9e5e;
+    --amber:#b8862f;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--gold);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s,opacity .3s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+
+  /* ---------- HEADER (reused) ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 0;background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--navy);letter-spacing:-0.02em;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:var(--charcoal);}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;}
+
+  /* ---------- COMPACT SUB-HEADER (no hero, per brief) ---------- */
+  .checkout-topbar{padding:118px 0 34px;border-bottom:1px solid var(--line);background:var(--white);}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:#8a8f98;margin-bottom:22px;flex-wrap:wrap;}
+  .breadcrumb a:hover{color:var(--gold);}
+  .breadcrumb span{color:#c7cbd1;}
+  .breadcrumb b{color:var(--navy);font-weight:600;}
+
+  /* Progress tracker */
+  .progress-track{display:flex;align-items:flex-start;gap:0;}
+  .progress-step{display:flex;align-items:center;gap:12px;flex:1;position:relative;}
+  .progress-step:not(:last-child)::after{content:"";position:absolute;top:18px;left:calc(50% + 30px);right:calc(-50% + 30px);height:1px;background:var(--line);}
+  .progress-step.done:not(:last-child)::after,.progress-step.active:not(:last-child)::after{background:var(--gold);}
+  .progress-num{width:36px;height:36px;border-radius:50%;background:var(--light-gray);color:#8a8f98;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;flex-shrink:0;transition:all .35s var(--ease);position:relative;z-index:1;border:2px solid transparent;}
+  .progress-step.active .progress-num{background:var(--navy);color:var(--white);}
+  .progress-step.done .progress-num{background:var(--gold);color:var(--navy);}
+  .progress-label{font-size:13px;font-weight:600;color:#8a8f98;transition:color .35s;}
+  .progress-step.active .progress-label{color:var(--navy);}
+  .progress-step.done .progress-label{color:var(--charcoal);}
+
+  /* ---------- CHECKOUT SHELL: true 70/30 two-column grid ---------- */
+  .checkout-shell-wrap{padding:52px 0 0;}
+  .checkout-shell{display:grid;grid-template-columns:2.3fr 1fr;gap:44px;align-items:stretch;}
+  .checkout-left{min-width:0;}
+  .checkout-right{min-width:0;}
+
+  .content-block{padding:44px 0;border-bottom:1px solid var(--line);}
+  .content-block:first-child{padding-top:0;}
+  .content-block:last-child{border-bottom:none;}
+  .block-head{margin-bottom:26px;}
+  .block-head h2{font-size:21px;font-weight:700;margin-bottom:6px;}
+  .block-head p{font-size:13.5px;color:#8a8f98;}
+
+  /* Section 1 — Reservation summary card */
+  .veh-summary-card{display:flex;gap:22px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+  .veh-summary-card img{width:150px;height:112px;border-radius:12px;object-fit:cover;flex-shrink:0;}
+  .veh-summary-info{flex:1;min-width:0;}
+  .veh-summary-cat{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .veh-summary-name{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:12px;}
+  .veh-summary-meta{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:14px;}
+  .veh-meta-item{font-size:12.5px;color:#5b6472;}
+  .veh-meta-item b{display:block;color:var(--navy);font-weight:600;font-size:13.5px;margin-top:2px;}
+  .status-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;font-size:12.5px;font-weight:700;}
+  .status-badge.instant{background:rgba(47,158,94,0.1);color:var(--green);}
+  .status-badge.partner{background:rgba(184,134,47,0.12);color:var(--amber);}
+  .status-badge svg{width:14px;height:14px;}
+
+  /* Demo scenario toggle (illustrates both business flows) */
+  .demo-toggle{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);flex-wrap:wrap;}
+  .demo-toggle span{font-size:11.5px;color:#adb2ba;font-weight:600;}
+  .demo-pill{padding:7px 14px;border-radius:100px;border:1px solid var(--line);background:var(--white);font-size:11.5px;font-weight:600;color:#5b6472;cursor:pointer;transition:all .25s;}
+  .demo-pill.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+
+  /* Section 2 — Rental details form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-field{margin-bottom:0;}
+  .form-field.full{grid-column:1/-1;}
+  .form-field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;margin-bottom:8px;}
+  .form-field select,.form-field input{
+    width:100%;padding:16px 16px;border-radius:12px;border:1px solid var(--line);
+    font-family:'Inter',sans-serif;font-size:14.5px;color:var(--charcoal);background:var(--light-gray);
+    appearance:none;outline:none;transition:border-color .3s,background .3s;
+  }
+  .form-field select:focus,.form-field input:focus{border-color:var(--gold);background:var(--white);}
+  .form-error{font-size:11.5px;color:#c1503f;margin-top:6px;display:none;}
+  .form-field.invalid select,.form-field.invalid input{border-color:#c1503f;}
+  .form-field.invalid .form-error{display:block;}
+  .field-row-4{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;grid-column:1/-1;}
+
+  .flight-block{grid-column:1/-1;background:var(--gold-soft);border-radius:14px;padding:22px 22px 6px;margin-top:4px;display:none;}
+  .flight-block.show{display:block;}
+  .flight-block .flight-head{display:flex;align-items:center;gap:9px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:var(--navy);margin-bottom:16px;}
+  .flight-block .flight-head svg{width:17px;height:17px;color:var(--gold);}
+
+  /* Read-only rental details (Section 2) */
+  .readonly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .readonly-field{background:var(--light-gray);border-radius:12px;padding:16px 18px;position:relative;}
+  .readonly-field label{display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f98;margin-bottom:7px;}
+  .readonly-field span{display:block;font-size:14px;font-weight:600;color:var(--navy);font-family:'Sora',sans-serif;}
+  .readonly-lock{position:absolute;top:14px;right:14px;width:14px;height:14px;color:#c7cbd1;}
+  .readonly-edit-link{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:13px;font-weight:600;color:var(--gold);}
+  .readonly-edit-link:hover{text-decoration:underline;}
+  .readonly-edit-link svg{width:14px;height:14px;}
+  .airport-check{margin-top:28px;}
+  .flight-helper{font-size:12.5px;color:#5b6472;margin-top:14px;padding-bottom:16px;display:flex;gap:8px;align-items:flex-start;}
+  .flight-helper svg{width:14px;height:14px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+
+  /* Section 3 — Extras */
+  .extras-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .extra-card{display:flex;align-items:center;gap:14px;padding:18px 18px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .25s var(--ease);background:var(--white);}
+  .extra-card:hover{border-color:var(--gold);}
+  .extra-card.selected{border-color:var(--gold);background:var(--gold-soft);}
+  .extra-icon{width:40px;height:40px;border-radius:11px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .25s;}
+  .extra-card.selected .extra-icon{background:var(--white);}
+  .extra-icon svg{width:19px;height:19px;color:var(--gold);}
+  .extra-info{flex:1;min-width:0;}
+  .extra-info b{display:block;font-size:13.5px;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:2px;}
+  .extra-info span{font-size:12px;color:#8a8f98;}
+  .extra-toggle{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);flex-shrink:0;position:relative;transition:all .25s var(--ease);}
+  .extra-card.selected .extra-toggle{background:var(--gold);border-color:var(--gold);}
+  .extra-toggle::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:9px;border:solid var(--white);border-width:0 1.6px 1.6px 0;transform:rotate(45deg) scale(0);transition:transform .2s var(--ease);}
+  .extra-card.selected .extra-toggle::after{transform:rotate(45deg) scale(1);}
+
+  /* Section 4 — Customer info already uses .form-grid/.form-field */
+
+  /* Section 5 — Reservation flow info card */
+  .info-card{display:flex;gap:16px;background:var(--gold-soft);border-radius:var(--radius);padding:26px 26px;}
+  .info-card .info-icon{width:44px;height:44px;border-radius:12px;background:var(--white);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .info-card .info-icon svg{width:21px;height:21px;color:var(--gold);}
+  .info-card h4{font-size:15px;margin-bottom:8px;}
+  .info-card p{font-size:13.5px;color:#4a4f57;}
+
+  /* Section 6 — Payment */
+  /* Section 6 — Payment method selection (extensible) */
+  .payment-tabs{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .payment-tab{display:flex;align-items:center;gap:12px;padding:16px 20px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:all .25s var(--ease);background:var(--white);flex:1;min-width:220px;}
+  .payment-tab:hover{border-color:var(--gold);}
+  .payment-tab.active{border-color:var(--gold);background:var(--gold-soft);}
+  .payment-tab-icon{width:40px;height:40px;border-radius:11px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .25s;}
+  .payment-tab.active .payment-tab-icon{background:var(--white);}
+  .payment-tab-icon svg{width:19px;height:19px;color:var(--gold);}
+  .payment-tab-info b{display:block;font-size:13.5px;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:2px;}
+  .payment-tab-info span{font-size:12px;color:#8a8f98;}
+  .payment-panel{display:none;}
+  .payment-panel.active{display:block;}
+  .payment-methods-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;}
+  .pay-icon{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--line);border-radius:10px;font-size:12.5px;font-weight:600;color:#5b6472;background:var(--white);}
+  .pay-icon svg{width:18px;height:18px;}
+
+  /* Section 7 — Terms */
+  .terms-list{display:flex;flex-direction:column;gap:14px;margin-bottom:26px;}
+  .term-check{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:#3d4249;cursor:pointer;}
+  .term-check input{appearance:none;width:19px;height:19px;border-radius:6px;border:1.5px solid var(--line);background:var(--white);flex-shrink:0;position:relative;cursor:pointer;margin-top:1px;transition:all .2s;}
+  .term-check input:checked{background:var(--navy);border-color:var(--navy);}
+  .term-check input:checked::after{content:"";position:absolute;left:5.5px;top:2px;width:5px;height:9px;border:solid var(--white);border-width:0 1.6px 1.6px 0;transform:rotate(45deg);}
+  .term-check a{color:var(--navy);font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+  .term-check a:hover{color:var(--gold);}
+
+  /* ---------- RIGHT COLUMN: sticky summary ---------- */
+  .checkout-summary{position:sticky;top:110px;display:flex;flex-direction:column;gap:18px;}
+  .summary-card{background:var(--white);border-radius:var(--radius);padding:28px 26px;box-shadow:0 30px 60px -22px rgba(22,33,62,0.22);}
+  .summary-veh{display:flex;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .summary-veh img{width:88px;height:66px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+  .summary-veh-info b{display:block;font-size:14.5px;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:3px;}
+  .summary-veh-info span{font-size:12px;color:#8a8f98;display:block;}
+  .price-line{display:flex;align-items:baseline;justify-content:space-between;font-size:13.5px;color:#5b6472;margin-bottom:11px;}
+  .price-line span:last-child{color:var(--navy);font-weight:600;}
+  .price-divider{height:1px;background:var(--line);margin:16px 0;}
+  .price-total{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+  .price-total span:first-child{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;color:var(--navy);}
+  .price-total span:last-child{font-family:'Sora',sans-serif;font-weight:700;font-size:19px;color:var(--navy);}
+  .deposit-box{background:var(--gold-soft);border-radius:12px;padding:16px 18px;margin-top:16px;}
+  .deposit-row{display:flex;align-items:baseline;justify-content:space-between;}
+  .deposit-row span:first-child{font-size:12.5px;font-weight:600;color:var(--navy);}
+  .deposit-row span:last-child{font-family:'Sora',sans-serif;font-weight:700;font-size:22px;color:var(--navy);}
+  .remaining-note{font-size:11.5px;color:#8a8f98;margin-top:8px;}
+  .summary-card .btn-primary{width:100%;margin-top:20px;padding:17px;font-size:14.5px;}
+
+  .trust-mini{display:flex;flex-direction:column;gap:11px;}
+  .trust-mini-item{display:flex;align-items:center;gap:9px;font-size:13px;color:#3d4249;}
+  .trust-mini-item svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;}
+
+  .contact-mini{display:flex;flex-direction:column;gap:10px;}
+  .contact-mini h5{font-size:13px;color:var(--navy);margin-bottom:2px;}
+  .contact-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .contact-mini-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:100px;border:1px solid var(--line);font-family:'Sora',sans-serif;font-weight:600;font-size:12px;color:var(--navy);transition:all .3s;}
+  .contact-mini-btn:hover{border-color:var(--gold);background:var(--gold-soft);}
+  .contact-mini-btn svg{width:14px;height:14px;flex-shrink:0;}
+
+  .reviews-mini{display:flex;align-items:center;gap:12px;}
+  .reviews-mini .stars{color:var(--gold);font-size:14px;letter-spacing:1.5px;}
+  .reviews-mini b{font-family:'Sora',sans-serif;font-size:14px;color:var(--navy);}
+  .reviews-mini span{display:block;font-size:11.5px;color:#8a8f98;}
+
+  /* Mobile fixed booking bar */
+  .mobile-book-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--white);box-shadow:0 -12px 30px -10px rgba(22,33,62,0.18);padding:14px 20px;flex-direction:column;border-top:1px solid var(--line);}
+  .mobile-book-bar.expanded .mb-details{max-height:340px;padding-top:16px;margin-bottom:14px;}
+  .mb-details{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+  .mb-row{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#5b6472;margin-bottom:8px;}
+  .mb-row b{color:var(--navy);}
+  .mb-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;}
+  .mb-price{font-family:'Sora',sans-serif;}
+  .mb-price b{font-size:18px;color:var(--navy);display:block;}
+  .mb-price small{font-size:11px;color:#8a8f98;}
+  .mb-actions{display:flex;align-items:center;gap:10px;}
+  .mb-expand{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--white);}
+  .mb-expand svg{width:15px;height:15px;transition:transform .3s;}
+  .mobile-book-bar.expanded .mb-expand svg{transform:rotate(180deg);}
+  .mobile-book-bar .btn{padding:13px 22px;font-size:13.5px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1080px){
+    .checkout-shell{grid-template-columns:1fr;}
+    .checkout-summary{position:static;top:auto;}
+    .extras-grid{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .field-row-4{grid-template-columns:repeat(2,1fr);}
+    .mobile-book-bar{display:flex;}
+    body{padding-bottom:82px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    .checkout-topbar{padding:110px 0 28px;}
+    .progress-label{display:none;}
+    .progress-step::after{left:calc(50% + 18px) !important;right:calc(-50% + 18px) !important;}
+    .veh-summary-card{flex-direction:column;}
+    .veh-summary-card img{width:100%;height:160px;}
+    .field-row-4{grid-template-columns:1fr;}
+    .content-block{padding:36px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html">Fleet</a></li>
+      <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+      <li><a href="ar7-victoria-car.html#services">Services</a></li>
+      <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+      <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- COMPACT TOPBAR: breadcrumb + progress tracker, no hero -->
+<div class="checkout-topbar">
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="ar7-victoria-car.html">Home</a><span>/</span><a href="ar7-fleet.html">Fleet</a><span>/</span><a href="ar7-vehicle-bmw-7-series.html">BMW 7 Series</a><span>/</span><b>Reservation</b>
+    </div>
+    <div class="progress-track" id="progressTrack">
+      <div class="progress-step active" data-step="1"><div class="progress-num">1</div><div class="progress-label">Reservation</div></div>
+      <div class="progress-step" data-step="2"><div class="progress-num">2</div><div class="progress-label">Personal Information</div></div>
+      <div class="progress-step" data-step="3"><div class="progress-num">3</div><div class="progress-label">Validation</div></div>
+      <div class="progress-step" data-step="4"><div class="progress-num">4</div><div class="progress-label">Deposit Payment</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUE TWO-COLUMN CHECKOUT SHELL -->
+<div class="wrap checkout-shell-wrap">
+  <div class="checkout-shell">
+
+    <div class="checkout-left">
+
+      <!-- SECTION 1 — RESERVATION SUMMARY -->
+      <div class="content-block" id="sec-reservation">
+        <div class="block-head">
+          <div class="eyebrow">Section 1</div>
+          <h2>Reservation Summary</h2>
+        </div>
+        <div class="veh-summary-card">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="BMW 7 Series">
+          <div class="veh-summary-info">
+            <div class="veh-summary-cat">Luxury Sedan</div>
+            <div class="veh-summary-name">BMW 7 Series or Similar</div>
+            <div class="veh-summary-meta">
+              <div class="veh-meta-item">Pickup<b id="metaPickup">Jul 20, 2026</b></div>
+              <div class="veh-meta-item">Return<b id="metaReturn">Jul 25, 2026</b></div>
+              <div class="veh-meta-item">Duration<b id="metaDuration">5 Days</b></div>
+              <div class="veh-meta-item">Location<b id="metaLocation">Casablanca Airport</b></div>
+            </div>
+            <div class="status-badge instant" id="statusBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg><span id="statusBadgeText">Instant Confirmation</span></div>
+            <div class="demo-toggle">
+              <span>Preview flow:</span>
+              <button class="demo-pill active" data-scenario="instant" id="demoInstant">AR7 Fleet — Instant</button>
+              <button class="demo-pill" data-scenario="partner" id="demoPartner">Partner Vehicle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2 — RENTAL DETAILS (read-only, set on the Vehicle page) -->
+      <div class="content-block">
+        <div class="block-head">
+          <div class="eyebrow">Section 2</div>
+          <h2>Rental Details</h2>
+          <p>These were set on the vehicle page and are locked for checkout.</p>
+        </div>
+
+        <div class="readonly-grid">
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Pickup Location</label><span id="roPickupLocation">Casablanca — Mohammed V Airport</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Return Location</label><span>Casablanca — Mohammed V Airport</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Pickup Date</label><span>Jul 20, 2026</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Pickup Time</label><span>10:00</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Return Date</label><span>Jul 25, 2026</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Return Time</label><span>10:00</span>
+          </div>
+          <div class="readonly-field">
+            <svg class="readonly-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+            <label>Rental Duration</label><span id="roDuration">5 Days</span>
+          </div>
+        </div>
+
+        <a href="ar7-vehicle-bmw-7-series.html" class="readonly-edit-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Need to change these details? Go back to the Vehicle page
+        </a>
+
+        <!-- Hidden values retained for price/day calculations -->
+        <input type="hidden" id="pickupDate" value="2026-07-20">
+        <input type="hidden" id="returnDate" value="2026-07-25">
+
+        <label class="term-check airport-check">
+          <input type="checkbox" id="airportPickupCheck">I would like airport pickup / delivery
+        </label>
+
+        <div class="form-grid" style="margin-top:18px;">
+          <div class="flight-block" id="flightBlock">
+            <div class="flight-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg>Flight Information</div>
+            <div class="field-row-4">
+              <div class="form-field"><label>Airline</label><input type="text" placeholder="e.g. Royal Air Maroc"></div>
+              <div class="form-field"><label>Flight Number</label><input type="text" placeholder="e.g. AT 201"></div>
+            </div>
+            <div class="form-field full" style="margin-top:16px;"><label>Estimated Arrival Time</label><input type="time" value="14:30"></div>
+            <div class="flight-helper"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>We monitor your flight to ensure timely vehicle delivery, even in case of delays.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 — RENTAL EXTRAS -->
+      <div class="content-block">
+        <div class="block-head">
+          <div class="eyebrow">Section 3</div>
+          <h2>Rental Extras</h2>
+          <p>Optional add-ons — the total updates instantly.</p>
+        </div>
+        <div class="extras-grid" id="extrasGrid">
+          <div class="extra-card" data-price="50" data-label="GPS Navigation">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+            <div class="extra-info"><b>GPS Navigation</b><span>50 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="40" data-label="Child Seat">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div>
+            <div class="extra-info"><b>Child Seat</b><span>40 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="40" data-label="Baby Seat">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="7" r="3.2"/><path d="M6 21c0-4 2.7-6.5 6-6.5S18 17 18 21"/></svg></div>
+            <div class="extra-info"><b>Baby Seat</b><span>40 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="100" data-label="Additional Driver">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg></div>
+            <div class="extra-info"><b>Additional Driver</b><span>100 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="60" data-label="Wi-Fi Hotspot">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12.5a10 10 0 0114 0M8 15.5a6 6 0 018 0"/><circle cx="12" cy="19" r="1.2"/></svg></div>
+            <div class="extra-info"><b>Wi-Fi Hotspot</b><span>60 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="150" data-label="Full Insurance">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg></div>
+            <div class="extra-info"><b>Full Insurance</b><span>150 MAD / day</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+          <div class="extra-card" data-price="200" data-flat="true" data-label="Airport Meet &amp; Greet">
+            <div class="extra-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div>
+            <div class="extra-info"><b>Airport Meet &amp; Greet</b><span>200 MAD one-time</span></div>
+            <div class="extra-toggle"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4 — CUSTOMER INFORMATION -->
+      <div class="content-block" id="sec-personal">
+        <div class="block-head">
+          <div class="eyebrow">Section 4</div>
+          <h2>Customer Information</h2>
+          <p>We'll use this to prepare your rental agreement.</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><label>First Name</label><input type="text" required placeholder="Yasmine"></div>
+          <div class="form-field"><label>Last Name</label><input type="text" required placeholder="El Amrani"></div>
+          <div class="form-field"><label>Email</label><input type="email" required placeholder="yasmine@email.com"><span class="form-error">Enter a valid email address.</span></div>
+          <div class="form-field"><label>Phone</label><input type="tel" required placeholder="+212 6 00 00 00 00"></div>
+          <div class="form-field"><label>Country</label><input type="text" placeholder="Morocco"></div>
+          <div class="form-field"><label>Passport / National ID</label><input type="text" required placeholder="ID number"></div>
+          <div class="form-field"><label>Driver License Number</label><input type="text" required placeholder="License number"></div>
+          <div class="form-field"><label>Profession <span style="text-transform:none;color:#c7cbd1;">(optional)</span></label><input type="text" placeholder="e.g. Consultant"></div>
+          <div class="form-field full"><label>Hotel Address <span style="text-transform:none;color:#c7cbd1;">(optional)</span></label><input type="text" placeholder="Hotel name and address in Morocco"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 5 — RESERVATION FLOW -->
+      <div class="content-block" id="sec-validation">
+        <div class="block-head">
+          <div class="eyebrow">Section 5</div>
+          <h2>Reservation Flow</h2>
+        </div>
+        <div class="info-card" id="flowCardInstant">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg></div>
+          <div>
+            <h4>This vehicle is available immediately.</h4>
+            <p>Your reservation will be confirmed instantly after payment of the 30% deposit.</p>
+          </div>
+        </div>
+        <div class="info-card" id="flowCardPartner" style="display:none;">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l2.5 2.5"/></svg></div>
+          <div>
+            <h4>This vehicle belongs to one of our trusted partners.</h4>
+            <p>We will verify its availability before requesting your deposit payment. No payment will be requested until the vehicle is confirmed.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 6 — PAYMENT (visible only when payment is required) -->
+      <div class="content-block" id="sec-payment">
+        <div class="block-head">
+          <div class="eyebrow">Section 6</div>
+          <h2>Payment</h2>
+          <p>Your 30% deposit secures the reservation — the rest is payable at pickup.</p>
+        </div>
+
+        <div class="payment-tabs" id="paymentTabs">
+          <div class="payment-tab active" data-method="card">
+            <div class="payment-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg></div>
+            <div class="payment-tab-info"><b>Credit / Debit Card</b><span>Online Payment</span></div>
+          </div>
+          <div class="payment-tab" data-method="bank">
+            <div class="payment-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18"/></svg></div>
+            <div class="payment-tab-info"><b>Bank Transfer</b><span>Pay after confirmation</span></div>
+          </div>
+        </div>
+
+        <div class="payment-panel active" id="panelCard">
+          <div class="payment-methods-row">
+            <span class="pay-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+            <span class="pay-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+            <span class="pay-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17l3-10h3l-2 10H4zM12 17l2-10h3l2 10h-3l-.3-1.5h-2.8L12.5 17H12zm2.4-3.2h1.6l-.6-3.3-1 3.3z"/></svg>Apple Pay</span>
+            <span class="pay-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>Google Pay</span>
+          </div>
+          <div class="form-field full"><label>Card Number</label><input type="text" placeholder="0000 0000 0000 0000"></div>
+          <div class="field-row-4" style="margin-top:16px;">
+            <div class="form-field"><label>Expiry Date</label><input type="text" placeholder="MM / YY"></div>
+            <div class="form-field"><label>CVC</label><input type="text" placeholder="123"></div>
+          </div>
+          <p style="font-size:12px;color:#8a8f98;margin-top:16px;display:flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--gold);flex-shrink:0;"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>Payments are encrypted and processed securely. We never store your full card details.</p>
+        </div>
+
+        <div class="payment-panel" id="panelBank">
+          <div class="info-card">
+            <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18"/></svg></div>
+            <div>
+              <h4>Payment instructions will be sent after reservation confirmation.</h4>
+              <p>Once your reservation is confirmed, we'll email you our bank details along with a reference number to complete the transfer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-block" id="sec-payment-pending" style="display:none;">
+        <div class="block-head">
+          <div class="eyebrow">Section 6</div>
+          <h2>Payment</h2>
+        </div>
+        <div class="info-card">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></div>
+          <div>
+            <h4>Payment will open once your vehicle is confirmed.</h4>
+            <p>We'll email and WhatsApp you the moment our partner confirms availability — usually within a few hours.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 7 — TERMS -->
+      <div class="content-block">
+        <div class="block-head">
+          <div class="eyebrow">Section 7</div>
+          <h2>Terms</h2>
+        </div>
+        <div class="terms-list">
+          <label class="term-check"><input type="checkbox" id="term1">I accept the <a href="#">rental terms</a>.</label>
+          <label class="term-check"><input type="checkbox" id="term2">I accept the <a href="#">privacy policy</a>.</label>
+        </div>
+      </div>
+
+    </div><!-- /.checkout-left -->
+
+    <aside class="checkout-right">
+      <div class="checkout-summary">
+
+        <div class="summary-card">
+          <div class="summary-veh">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="BMW 7 Series">
+            <div class="summary-veh-info">
+              <b>BMW 7 Series or Similar</b>
+              <span id="summaryRate">1,450 MAD / day</span>
+              <span id="summaryDuration">5 Days · Jul 20 → Jul 25</span>
+            </div>
+          </div>
+
+          <div class="price-line"><span id="rentalLabel">Vehicle Rental (5 Days)</span><span id="rentalValue">7,250 MAD</span></div>
+          <div class="price-line"><span>Extras</span><span id="extrasValue">0 MAD</span></div>
+          <div class="price-line"><span>Insurance</span><span id="insuranceValue">Not included</span></div>
+          <div class="price-line"><span>Taxes</span><span>Included</span></div>
+          <div class="price-divider"></div>
+          <div class="price-total"><span>Total Rental</span><span id="totalValue">7,250 MAD</span></div>
+
+          <div class="deposit-box">
+            <div class="deposit-row"><span>Deposit Due Today (30%)</span><span id="depositValue">2,175 MAD</span></div>
+            <div class="remaining-note">Remaining balance <b id="remainingValue">5,075 MAD</b> — payable upon vehicle pickup.</div>
+          </div>
+
+          <button class="btn btn-primary" id="primaryCta" disabled>Reserve &amp; Pay Deposit</button>
+        </div>
+
+        <div class="summary-card">
+          <div class="trust-mini">
+            <div class="trust-mini-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>Secure Payment</div>
+            <div class="trust-mini-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>Free Cancellation</div>
+            <div class="trust-mini-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg>Airport Delivery</div>
+            <div class="trust-mini-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>24/7 Support</div>
+            <div class="trust-mini-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg>Trusted Local Partner Network</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="contact-mini">
+            <h5>Need Help?</h5>
+            <div class="contact-mini-row">
+              <a href="https://wa.me/212500000000" class="contact-mini-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>WhatsApp</a>
+              <a href="tel:+212500000000" class="contact-mini-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>Call Us</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="reviews-mini">
+            <span class="stars">★★★★★</span>
+            <div><b>4.9 / 5</b><span>Based on 2,400+ reservations</span></div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- /.checkout-shell -->
+</div><!-- /.checkout-shell-wrap -->
+
+<div style="height:80px;"></div>
+
+<!-- MOBILE FIXED BOOKING BAR -->
+<div class="mobile-book-bar" id="mobileBookBar">
+  <div class="mb-details" id="mbDetails">
+    <div class="mb-row"><span>Vehicle Rental (5 Days)</span><b id="mbRental">7,250 MAD</b></div>
+    <div class="mb-row"><span>Extras</span><b id="mbExtras">0 MAD</b></div>
+    <div class="mb-row"><span>Total Rental</span><b id="mbTotal">7,250 MAD</b></div>
+  </div>
+  <div class="mb-summary">
+    <div class="mb-price"><b id="mbDeposit">2,175 MAD</b><small>Deposit due today</small></div>
+    <div class="mb-actions">
+      <button class="mb-expand" id="mbExpandBtn" aria-label="Show details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+      <a href="#sec-reservation" class="btn btn-gold" id="mbReserveBtn">Reserve</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Progress tracker: highlight step based on scroll position ----------
+  const sectionIds = ['sec-reservation','sec-personal','sec-validation','sec-payment'];
+  const steps = Array.from(document.querySelectorAll('.progress-step'));
+  function updateProgress(){
+    let activeIndex = 0;
+    sectionIds.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 170) activeIndex = i;
+    });
+    steps.forEach((step, i) => {
+      step.classList.toggle('active', i === activeIndex);
+      step.classList.toggle('done', i < activeIndex);
+    });
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ---------- Airport pickup checkbox -> reveal flight info ----------
+  const airportPickupCheck = document.getElementById('airportPickupCheck');
+  const flightBlock = document.getElementById('flightBlock');
+  airportPickupCheck.addEventListener('change', () => {
+    flightBlock.classList.toggle('show', airportPickupCheck.checked);
+  });
+
+  // ---------- Extras selection + live price ----------
+  const RATE_PER_DAY = 1450;
+  let days = 5;
+
+  function formatMAD(n){
+    return n.toLocaleString('en-US') + ' MAD';
+  }
+
+  function recalcDays(){
+    const p = new Date(document.getElementById('pickupDate').value);
+    const r = new Date(document.getElementById('returnDate').value);
+    const diff = Math.round((r - p) / (1000*60*60*24));
+    days = diff > 0 ? diff : 1;
+  }
+
+  function recalcPrice(){
+    recalcDays();
+    const rental = RATE_PER_DAY * days;
+    let extrasTotal = 0;
+    let insuranceTotal = 0;
+    let insuranceIncluded = false;
+    document.querySelectorAll('.extra-card.selected').forEach(card => {
+      const price = parseInt(card.dataset.price, 10);
+      const isFlat = card.dataset.flat === 'true';
+      const cost = isFlat ? price : price * days;
+      if (card.dataset.label === 'Full Insurance') {
+        insuranceTotal = cost;
+        insuranceIncluded = true;
+      } else {
+        extrasTotal += cost;
+      }
+    });
+    const total = rental + extrasTotal + insuranceTotal;
+    const deposit = Math.round(total * 0.3);
+    const remaining = total - deposit;
+
+    document.getElementById('rentalLabel').textContent = 'Vehicle Rental (' + days + ' Day' + (days > 1 ? 's' : '') + ')';
+    document.getElementById('rentalValue').textContent = formatMAD(rental);
+    document.getElementById('extrasValue').textContent = formatMAD(extrasTotal);
+    document.getElementById('insuranceValue').textContent = insuranceIncluded ? formatMAD(insuranceTotal) : 'Not included';
+    document.getElementById('totalValue').textContent = formatMAD(total);
+    document.getElementById('depositValue').textContent = formatMAD(deposit);
+    document.getElementById('remainingValue').textContent = formatMAD(remaining);
+    document.getElementById('summaryDuration').textContent = days + ' Days · Jul 20 → Jul 25';
+
+    // Mobile bar mirror
+    document.getElementById('mbRental').textContent = formatMAD(rental);
+    document.getElementById('mbExtras').textContent = formatMAD(extrasTotal + insuranceTotal);
+    document.getElementById('mbTotal').textContent = formatMAD(total);
+    document.getElementById('mbDeposit').textContent = formatMAD(deposit);
+
+    document.getElementById('metaDuration').textContent = days + ' Days';
+    document.getElementById('roDuration').textContent = days + ' Day' + (days > 1 ? 's' : '');
+  }
+
+  document.querySelectorAll('.extra-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      recalcPrice();
+    });
+  });
+  document.getElementById('pickupDate').addEventListener('change', recalcPrice);
+  document.getElementById('returnDate').addEventListener('change', recalcPrice);
+  recalcPrice();
+
+  // ---------- Demo scenario toggle: Instant vs Partner ----------
+  const demoInstant = document.getElementById('demoInstant');
+  const demoPartner = document.getElementById('demoPartner');
+  const statusBadge = document.getElementById('statusBadge');
+  const statusBadgeText = document.getElementById('statusBadgeText');
+  const flowCardInstant = document.getElementById('flowCardInstant');
+  const flowCardPartner = document.getElementById('flowCardPartner');
+  const secPayment = document.getElementById('sec-payment');
+  const secPaymentPending = document.getElementById('sec-payment-pending');
+  const primaryCta = document.getElementById('primaryCta');
+  const mbReserveBtn = document.getElementById('mbReserveBtn');
+
+  function setScenario(scenario){
+    const isInstant = scenario === 'instant';
+    demoInstant.classList.toggle('active', isInstant);
+    demoPartner.classList.toggle('active', !isInstant);
+
+    statusBadge.classList.toggle('instant', isInstant);
+    statusBadge.classList.toggle('partner', !isInstant);
+    statusBadgeText.textContent = isInstant ? 'Instant Confirmation' : 'Partner Availability Required';
+    statusBadge.querySelector('svg').innerHTML = isInstant
+      ? '<path d="M20 6L9 17l-5-5"/>'
+      : '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l2.5 2.5"/>';
+
+    flowCardInstant.style.display = isInstant ? 'flex' : 'none';
+    flowCardPartner.style.display = isInstant ? 'none' : 'flex';
+
+    secPayment.style.display = isInstant ? 'block' : 'none';
+    secPaymentPending.style.display = isInstant ? 'none' : 'block';
+
+    const ctaText = isInstant ? 'Reserve & Pay Deposit' : 'Send Reservation Request';
+    primaryCta.textContent = ctaText;
+    mbReserveBtn.textContent = isInstant ? 'Reserve' : 'Request';
+  }
+  demoInstant.addEventListener('click', () => setScenario('instant'));
+  demoPartner.addEventListener('click', () => setScenario('partner'));
+  setScenario('instant');
+
+  // ---------- Terms checkboxes enable primary CTA ----------
+  const term1 = document.getElementById('term1');
+  const term2 = document.getElementById('term2');
+  function syncCta(){
+    primaryCta.disabled = !(term1.checked && term2.checked);
+  }
+  term1.addEventListener('change', syncCta);
+  term2.addEventListener('change', syncCta);
+  syncCta();
+
+  // ---------- Basic inline validation on blur ----------
+  document.querySelectorAll('.form-field input[required]').forEach(input => {
+    input.addEventListener('blur', () => {
+      const field = input.closest('.form-field');
+      const valid = input.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value) : input.value.trim().length > 0;
+      field.classList.toggle('invalid', !valid);
+    });
+  });
+
+  // ---------- Payment method tabs (extensible: card / bank, more can be added) ----------
+  const paymentTabs = document.querySelectorAll('.payment-tab');
+  paymentTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      paymentTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const method = tab.dataset.method;
+      document.querySelectorAll('.payment-panel').forEach(panel => panel.classList.remove('active'));
+      const panel = document.getElementById(method === 'card' ? 'panelCard' : 'panelBank');
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // ---------- Mobile bar expand/collapse ----------
+  document.getElementById('mbExpandBtn').addEventListener('click', () => {
+    document.getElementById('mobileBookBar').classList.toggle('expanded');
+  });
+
+  // ---------- Header background always solid on this page (no hero) ----------
+</script>
+
+</body>
+</html>

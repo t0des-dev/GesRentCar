@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMW 7 Series or Similar — Luxury Sedan Rental | AR7 Victoria Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--warm-white);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .section-mark{width:1px;height:36px;background:linear-gradient(var(--gold),transparent);margin:0 0 22px;}
+  .section-head{max-width:640px;margin-bottom:40px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center .section-mark{margin-left:auto;margin-right:auto;}
+  .section-head h2{font-size:clamp(24px,2.6vw,32px);font-weight:700;line-height:1.2;margin-bottom:12px;}
+  .section-head p{font-size:15.5px;color:#5b6472;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;white-space:nowrap;}
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35);}
+  .btn-outline:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:100px 0;}
+
+  /* ---------- HEADER (reused) ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 0;transition:all .4s var(--ease);background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--navy);letter-spacing:-0.02em;}
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:var(--charcoal);transition:color .3s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--navy);margin:5px 0;}
+
+  /* ---------- COMPACT HERO (reused from fleet page) ---------- */
+  .page-hero{position:relative;height:360px;display:flex;align-items:flex-end;overflow:hidden;}
+  .page-hero-bg{position:absolute;inset:0;z-index:0;}
+  .page-hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .page-hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,38,0.55) 0%,rgba(15,20,38,0.78) 100%);}
+  .page-hero-inner{position:relative;z-index:1;padding-bottom:44px;width:100%;}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:18px;flex-wrap:wrap;}
+  .breadcrumb a:hover{color:var(--gold);}
+  .breadcrumb span{color:rgba(255,255,255,0.4);}
+  .breadcrumb b{color:var(--white);font-weight:500;}
+  .page-hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:16px;}
+  .page-hero-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .page-hero h1{font-size:clamp(28px,3.4vw,40px);font-weight:700;color:var(--white);line-height:1.15;margin-bottom:10px;}
+  .page-hero p{font-size:15px;color:rgba(255,255,255,0.78);max-width:560px;}
+
+  /* ---------- TRUE TWO-COLUMN SHELL ---------- */
+  /* Everything from the gallery through the FAQ lives in this single grid so the
+     right column stays permanently reserved for the booking card and the left
+     column never flows underneath it. */
+  .vehicle-shell-wrap{padding:56px 0 0;}
+  .vehicle-shell{display:grid;grid-template-columns:1.85fr 1fr;gap:44px;align-items:stretch;}
+  .content-left{min-width:0;}
+  .content-right{min-width:0;}
+
+  .content-block{padding:64px 0;}
+  .content-block:first-child{padding-top:0;}
+  .content-block.panel{background:var(--white);border-radius:var(--radius);padding:56px 48px;}
+
+  /* Gallery */
+  .gallery-main{border-radius:var(--radius);overflow:hidden;aspect-ratio:16/10;background:var(--light-gray);box-shadow:0 1px 0 var(--line);position:relative;cursor:zoom-in;}
+  .gallery-main img{width:100%;height:100%;object-fit:cover;transition:opacity .3s ease;}
+  .gallery-tag{position:absolute;bottom:18px;left:18px;background:rgba(6,10,22,0.55);backdrop-filter:blur(6px);color:var(--white);font-size:12px;font-weight:600;padding:7px 14px;border-radius:100px;}
+  .gallery-expand{position:absolute;bottom:18px;right:18px;background:rgba(6,10,22,0.55);backdrop-filter:blur(6px);color:var(--white);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .gallery-expand svg{width:15px;height:15px;}
+  .gallery-thumbs{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:14px;}
+  .thumb{border-radius:11px;overflow:hidden;aspect-ratio:1/1;cursor:pointer;border:2px solid transparent;opacity:0.65;transition:all .3s var(--ease);background:var(--light-gray);}
+  .thumb img{width:100%;height:100%;object-fit:cover;}
+  .thumb:hover{opacity:0.9;}
+  .thumb.active{border-color:var(--gold);opacity:1;}
+
+  /* Lightbox */
+  .lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(6,10,22,0.94);align-items:center;justify-content:center;}
+  .lightbox.open{display:flex;}
+  .lightbox-img-wrap{max-width:min(1100px,88vw);max-height:80vh;}
+  .lightbox-img-wrap img{width:100%;height:100%;max-height:80vh;object-fit:contain;}
+  .lightbox-close{position:absolute;top:26px;right:30px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;transition:background .3s;}
+  .lightbox-close:hover{background:rgba(255,255,255,0.18);}
+  .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .3s;}
+  .lightbox-nav:hover{background:rgba(255,255,255,0.18);}
+  .lightbox-nav svg{width:20px;height:20px;}
+  .lightbox-prev{left:24px;}
+  .lightbox-next{right:24px;}
+  .lightbox-counter{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.8);font-size:13px;font-weight:600;background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:100px;}
+
+  /* Reservation card — true CSS sticky, contained entirely by .vehicle-shell */
+  .reservation-sidebar{position:sticky;top:110px;}
+  .res-card{background:var(--white);border-radius:var(--radius);padding:34px 30px;box-shadow:0 30px 60px -22px rgba(22,33,62,0.22);}
+  .res-price{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;}
+  .res-price b{font-family:'Sora',sans-serif;font-size:30px;font-weight:700;color:var(--navy);letter-spacing:-0.01em;}
+  .res-price small{font-size:13.5px;color:#8a8f98;}
+  .res-avail{display:flex;align-items:center;gap:8px;font-size:13px;color:#2f9e5e;font-weight:600;margin-bottom:26px;}
+  .res-avail svg{width:16px;height:16px;flex-shrink:0;}
+  .res-avail.pending{color:#b8862f;}
+  .res-field{margin-bottom:14px;}
+  .res-field label{display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#8a8f98;margin-bottom:7px;}
+  .res-field select,.res-field input{width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--line);font-family:'Inter',sans-serif;font-size:13.5px;color:var(--charcoal);background:var(--light-gray);appearance:none;outline:none;transition:border-color .3s,background .3s;}
+  .res-field select:focus,.res-field input:focus{border-color:var(--gold);background:var(--white);}
+  .res-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .res-card .btn-primary{width:100%;margin-top:8px;padding:16px;font-size:14.5px;}
+  .res-alt-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  .res-alt{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:100px;border:1px solid var(--line);font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px;color:var(--navy);transition:all .3s;}
+  .res-alt:hover{border-color:var(--gold);background:var(--gold-soft);}
+  .res-alt svg{width:15px;height:15px;flex-shrink:0;}
+  .res-trust{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px;}
+  .res-trust-item{display:flex;align-items:center;gap:9px;font-size:13px;color:#3d4249;}
+  .res-trust-item svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;}
+
+  /* Mobile fixed booking bar */
+  .mobile-book-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--white);box-shadow:0 -12px 30px -10px rgba(22,33,62,0.18);padding:14px 20px;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);}
+  .mobile-book-bar .mb-price{font-family:'Sora',sans-serif;}
+  .mobile-book-bar .mb-price b{font-size:19px;color:var(--navy);}
+  .mobile-book-bar .mb-price small{font-size:11.5px;color:#8a8f98;}
+  .mobile-book-bar .btn{padding:13px 26px;font-size:14px;flex-shrink:0;}
+
+  /* Quick specs */
+  .quick-specs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .qspec{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px 12px;text-align:center;transition:border-color .3s;}
+  .qspec:hover{border-color:var(--gold);}
+  .qspec svg{width:24px;height:24px;color:var(--gold);margin:0 auto 11px;stroke-width:1.4;}
+  .qspec b{display:block;font-size:13.5px;color:var(--navy);font-family:'Sora',sans-serif;margin-bottom:3px;}
+  .qspec span{font-size:11px;color:#8a8f98;}
+
+  /* Description */
+  .desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .desc-card h4{font-size:16px;margin-bottom:10px;}
+  .desc-card p{font-size:14.5px;color:#5b6472;}
+  .use-case-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .use-case-pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;background:var(--light-gray);font-size:13px;font-weight:600;color:var(--navy);}
+  .use-case-pill svg{width:15px;height:15px;color:var(--gold);}
+
+  /* Features */
+  .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .feature-item{display:flex;align-items:center;gap:12px;padding:18px 20px;background:var(--white);border:1px solid var(--line);border-radius:14px;transition:border-color .3s;}
+  .feature-item:hover{border-color:var(--gold);}
+  .feature-item svg{width:20px;height:20px;color:var(--gold);flex-shrink:0;}
+  .feature-item span{font-size:13.5px;font-weight:500;color:var(--charcoal);}
+
+  /* Why choose */
+  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .why-card{background:var(--white);border-radius:var(--radius);padding:28px 24px;border:1px solid var(--line);text-align:center;transition:all .4s var(--ease);}
+  .why-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow);}
+  .why-icon{width:48px;height:48px;border-radius:13px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+  .why-icon svg{width:22px;height:22px;color:var(--gold);}
+  .why-card h4{font-size:14.5px;}
+
+  /* Rental conditions */
+  .conditions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .condition-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px;}
+  .condition-card h4{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:9px;}
+  .condition-card h4 svg{width:17px;height:17px;color:var(--gold);flex-shrink:0;}
+  .condition-card p{font-size:13.5px;color:#5b6472;}
+
+  /* Similar vehicles / reused fleet cards */
+  .car-card{background:var(--white);border-radius:var(--radius);overflow:hidden;border-top:2px solid transparent;display:flex;flex-direction:column;height:100%;box-shadow:0 1px 0 var(--line);transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s var(--ease);}
+  .car-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-top-color:var(--gold);}
+  .car-media{position:relative;aspect-ratio:6/5;background:var(--light-gray);overflow:hidden;flex-shrink:0;}
+  .car-media img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);}
+  .car-card:hover .car-media img{transform:scale(1.025);}
+  .car-badge{position:absolute;top:16px;left:16px;background:var(--gold);color:var(--navy);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 13px;border-radius:100px;}
+  .wishlist{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s;}
+  .wishlist:hover{transform:scale(1.1);}
+  .wishlist svg{width:13.5px;height:13.5px;color:var(--navy);stroke-width:1.6;}
+  .car-body{padding:26px 24px 28px;display:flex;flex-direction:column;flex:1;}
+  .car-category{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
+  .car-name{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:16px;letter-spacing:-0.01em;}
+  .car-specs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--line);}
+  .spec{display:flex;flex-direction:column;align-items:center;gap:7px;}
+  .spec svg{width:20px;height:20px;color:#9297a1;stroke-width:1.4;}
+  .spec span{font-size:10.5px;color:#6b7280;font-weight:500;}
+  .car-footer{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:auto;}
+  .car-price{font-family:'Sora',sans-serif;white-space:nowrap;display:flex;align-items:baseline;gap:5px;}
+  .car-price b{font-size:21px;color:var(--navy);font-weight:700;letter-spacing:-0.01em;white-space:nowrap;}
+  .car-price small{font-size:12px;color:#8a8f98;white-space:nowrap;}
+  .car-footer .btn{width:100%;padding:14px 22px;font-size:13.5px;}
+  .similar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
+
+  /* Reviews (reused pattern) */
+  .overall-rating{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;font-size:14.5px;color:#5b6472;font-weight:500;}
+  .overall-rating .stars{font-size:15px;color:var(--gold);letter-spacing:2px;}
+  .overall-rating b{color:var(--navy);font-family:'Sora',sans-serif;}
+  .testi-grid{display:grid;grid-template-columns:1fr;gap:20px;}
+  .testi-card{background:var(--white);border-radius:var(--radius);padding:30px 32px;border:1px solid var(--line);}
+  .testi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .testi-stars{color:var(--gold);font-size:14px;letter-spacing:2px;}
+  .verified-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#2f9e5e;}
+  .verified-badge svg{width:13px;height:13px;}
+  .testi-text{font-size:14.5px;color:#3d4249;margin-bottom:22px;line-height:1.7;}
+  .testi-person{display:flex;align-items:center;gap:13px;}
+  .avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--gold-soft);}
+  .testi-meta b{display:block;font-size:14px;color:var(--navy);}
+  .testi-meta span{font-size:12px;color:#8a8f98;}
+
+  /* FAQ */
+  .faq{max-width:100%;margin:0;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:22px 4px;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;font-size:15.5px;color:var(--navy);gap:20px;}
+  .faq-q .icon{width:20px;height:20px;flex-shrink:0;position:relative;}
+  .faq-q .icon::before,.faq-q .icon::after{content:"";position:absolute;background:var(--navy);top:50%;left:50%;transform:translate(-50%,-50%);}
+  .faq-q .icon::before{width:14px;height:1.5px;}
+  .faq-q .icon::after{width:1.5px;height:14px;transition:transform .3s var(--ease);}
+  .faq-item.open .faq-q .icon::after{transform:translate(-50%,-50%) rotate(90deg) scaleY(0);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+  .faq-a p{padding:0 4px 22px;font-size:14.5px;color:#5b6472;}
+  .faq-item.open .faq-a{max-height:200px;}
+
+  /* Final CTA (reused, full width, outside the two-column shell) */
+  .final-cta{background:var(--navy);text-align:center;position:relative;overflow:hidden;padding:110px 0;}
+  .final-cta::before{content:"";position:absolute;top:-50%;left:50%;width:900px;height:900px;transform:translateX(-50%);background:radial-gradient(circle,rgba(194,161,91,0.14) 0%,transparent 70%);}
+  .final-cta-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+  .final-cta h2{color:var(--white);font-size:clamp(30px,4vw,44px);line-height:1.15;margin-bottom:18px;}
+  .final-cta p{color:rgba(255,255,255,0.68);font-size:16.5px;margin-bottom:40px;}
+  .final-cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .final-cta-btns .btn{padding:18px 34px;font-size:15px;}
+
+  /* Footer (reused, full width, outside the two-column shell) */
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:80px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:56px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);}
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);}
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1080px){
+    .vehicle-shell{grid-template-columns:1fr;}
+    .reservation-sidebar{position:static;top:auto;}
+    .quick-specs-grid{grid-template-columns:repeat(3,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+    .desc-grid{grid-template-columns:1fr;}
+    .gallery-thumbs{grid-template-columns:repeat(4,1fr);}
+    .content-block.panel{padding:44px 36px;}
+    .mobile-book-bar{display:flex;}
+    body{padding-bottom:78px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    section{padding:70px 0;}
+    .content-block{padding:48px 0;}
+    .quick-specs-grid{grid-template-columns:repeat(2,1fr);}
+    .features-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:1fr;}
+    .conditions-grid{grid-template-columns:1fr;}
+    .similar-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+    .page-hero{height:300px;}
+    .gallery-thumbs{grid-template-columns:repeat(4,1fr);}
+    .res-row{grid-template-columns:1fr 1fr;}
+    .lightbox-nav{width:40px;height:40px;}
+    .lightbox-prev{left:10px;}
+    .lightbox-next{right:10px;}
+    .content-block.panel{padding:36px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="ar7-victoria-car.html" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="ar7-fleet.html" class="active">Fleet</a></li>
+      <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+      <li><a href="ar7-victoria-car.html#services">Services</a></li>
+      <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+      <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <a href="#reserve" class="btn btn-gold">Reserve now</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- COMPACT HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260707_180717_62a443e0-f21c-4a0b-828a-72dc8456d2b7.png" alt="BMW 7 Series premium low-angle shot at golden hour">
+  </div>
+  <div class="wrap page-hero-inner">
+    <div class="breadcrumb">
+      <a href="ar7-victoria-car.html">Home</a><span>/</span><a href="ar7-fleet.html">Fleet</a><span>/</span><b>BMW 7 Series</b>
+    </div>
+    <div class="page-hero-eyebrow">Luxury Sedan</div>
+    <h1>BMW 7 Series or Similar</h1>
+    <p>Elegant transportation designed for executives, business travel and premium experiences across Morocco.</p>
+  </div>
+</section>
+
+<!-- TRUE TWO-COLUMN SHELL: gallery through FAQ -->
+<div class="wrap vehicle-shell-wrap">
+  <div class="vehicle-shell">
+
+    <div class="content-left">
+
+      <!-- GALLERY -->
+      <div class="content-block">
+        <div class="gallery-main" id="galleryMain">
+          <img id="galleryMainImg" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="BMW 7 Series three-quarter view">
+          <span class="gallery-tag" id="galleryTag">Front Three-Quarter</span>
+          <span class="gallery-expand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg></span>
+        </div>
+        <div class="gallery-thumbs">
+          <div class="thumb active" data-tag="Front Three-Quarter" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="Front three-quarter thumbnail">
+          </div>
+          <div class="thumb" data-tag="Front View" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222726_a797a1d2-b8e0-46f3-a399-5bc725a6b1a6.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222726_a797a1d2-b8e0-46f3-a399-5bc725a6b1a6.png" alt="Front view thumbnail">
+          </div>
+          <div class="thumb" data-tag="Side View" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222705_9b765011-002e-4ddb-91df-f2ea86f26f44.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222705_9b765011-002e-4ddb-91df-f2ea86f26f44.png" alt="Side view thumbnail">
+          </div>
+          <div class="thumb" data-tag="Interior" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222709_384c828c-842d-491e-8760-b42e5dc2d6ce.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222709_384c828c-842d-491e-8760-b42e5dc2d6ce.png" alt="Interior dashboard thumbnail">
+          </div>
+          <div class="thumb" data-tag="Rear Seats" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222713_f8f02652-013f-4d55-a4c5-2f780203373b.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222713_f8f02652-013f-4d55-a4c5-2f780203373b.png" alt="Rear seats thumbnail">
+          </div>
+          <div class="thumb" data-tag="Luggage" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222717_d3da9346-c21d-432d-b55e-bb0f5534e402.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222717_d3da9346-c21d-432d-b55e-bb0f5534e402.png" alt="Luggage compartment thumbnail">
+          </div>
+          <div class="thumb" data-tag="Night View" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222722_3b1944b5-d6f4-41ba-be0d-429523341b94.png">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_222722_3b1944b5-d6f4-41ba-be0d-429523341b94.png" alt="Night view thumbnail">
+          </div>
+        </div>
+
+        <div class="lightbox" id="lightbox">
+          <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+          <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div class="lightbox-img-wrap"><img id="lightboxImg" src="" alt="Vehicle gallery full view"></div>
+          <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="lightbox-counter" id="lightboxCounter">1 / 7</div>
+        </div>
+      </div>
+
+      <!-- QUICK SPECIFICATIONS -->
+      <div class="content-block">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">Quick Specifications</div>
+          <h2>Everything you need to know at a glance.</h2>
+        </div>
+        <div class="quick-specs-grid">
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><b>5 Seats</b><span>Seating</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><b>Automatic</b><span>Transmission</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><b>Petrol</b><span>Fuel Type</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 12h18"/></svg><b>4 Doors</b><span>Body</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg><b>Dual Zone</b><span>Air Conditioning</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><b>3 Bags</b><span>Luggage</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><b>Included</b><span>GPS Navigation</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 12a5.5 5.5 0 0111 0M9 12a2.5 2.5 0 015 0M12 12v6"/></svg><b>Yes</b><span>Bluetooth</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 9l-2 3 2 3M16 9l2 3-2 3M13 8l-2 8"/></svg><b>Yes</b><span>Apple CarPlay</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 9l-2 3 2 3M16 9l2 3-2 3M13 8l-2 8"/></svg><b>Yes</b><span>Android Auto</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><b>Unlimited</b><span>Mileage</span></div>
+          <div class="qspec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><b>23 Years</b><span>Minimum Driver Age</span></div>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="content-block panel">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">About This Vehicle</div>
+          <h2>Executive comfort, wherever the road takes you.</h2>
+        </div>
+        <div class="desc-grid">
+          <div class="desc-card">
+            <h4>Comfort</h4>
+            <p>Spacious leather seating, dual-zone climate control and a whisper-quiet cabin make every journey feel effortless, whether crossing the city or the country.</p>
+          </div>
+          <div class="desc-card">
+            <h4>Driving Experience</h4>
+            <p>A refined, automatic drivetrain delivers smooth acceleration and confident handling, so every trip feels composed and controlled from the first mile.</p>
+          </div>
+          <div class="desc-card">
+            <h4>Ideal Customer</h4>
+            <p>Built for executives, VIP guests and travelers who want their vehicle to reflect the same standard as the meetings and moments they're headed to.</p>
+          </div>
+          <div class="desc-card">
+            <h4>Use Cases</h4>
+            <p>A natural fit for airport transfers, board meetings, and special occasions where arriving well is part of the impression you leave.</p>
+          </div>
+        </div>
+        <div class="use-case-row">
+          <div class="use-case-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Business</div>
+          <div class="use-case-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg>Airport</div>
+          <div class="use-case-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Family</div>
+          <div class="use-case-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>Road Trips</div>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="content-block">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">Vehicle Features</div>
+          <h2>Thoughtfully equipped, inside and out.</h2>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic Transmission</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M4 12h3M17 12h3M12 4v3M12 17v3"/></svg><span>Cruise Control</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="12" cy="14" r="2.5"/><path d="M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><span>Reverse Camera</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>Leather Seats</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Navigation</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>USB Ports</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 12a5.5 5.5 0 0111 0M9 12a2.5 2.5 0 015 0M12 12v6"/></svg><span>Bluetooth</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 9l-2 3 2 3M16 9l2 3-2 3M13 8l-2 8"/></svg><span>Apple CarPlay</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 9l-2 3 2 3M16 9l2 3-2 3M13 8l-2 8"/></svg><span>Android Auto</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg><span>Full Airbag System</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>ABS Braking</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Child Seat Available</span></div>
+          <div class="feature-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg><span>Air Conditioning</span></div>
+        </div>
+      </div>
+
+      <!-- WHY CHOOSE -->
+      <div class="content-block panel">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">Why Choose This Vehicle</div>
+          <h2>Built for the moments that matter.</h2>
+        </div>
+        <div class="why-grid">
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div><h4>Ideal for Business</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg></div><h4>Luxury Comfort</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg></div><h4>Fuel Efficient</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div><h4>Airport Friendly</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div><h4>Family Trips</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg></div><h4>Road Trips</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l4-4h10l4 4M3 12v6h18v-6M3 12h18"/></svg></div><h4>Modern Design</h4></div>
+          <div class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6L9 17l-5-5"/></svg></div><h4>Reliable</h4></div>
+        </div>
+      </div>
+
+      <!-- RENTAL CONDITIONS -->
+      <div class="content-block">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">Rental Conditions</div>
+          <h2>Clear terms, no surprises.</h2>
+        </div>
+        <div class="conditions-grid">
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Minimum Age</h4><p>Drivers must be at least 23 years old with a valid license for this vehicle category.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 13h7"/></svg>Driving License</h4><p>Valid for at least 2 years, plus a passport or national ID at pickup.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>Deposit</h4><p>A refundable security deposit of 6,000 MAD is held on your card at pickup.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg>Insurance</h4><p>Comprehensive coverage and 24/7 roadside assistance included at no extra cost.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg>Fuel Policy</h4><p>Vehicle is provided full and should be returned full — like-for-like.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Mileage Policy</h4><p>Unlimited mileage included on every rental, with no hidden per-kilometer fees.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>Late Return</h4><p>A grace period of 29 minutes is allowed; late returns are billed per hour after.</p></div>
+          <div class="condition-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20a6 6 0 0112 0M14.5 20a5 5 0 018 0"/></svg>Additional Driver</h4><p>Add a second driver for 100 MAD/day — their license is verified at pickup.</p></div>
+        </div>
+      </div>
+
+      <!-- SIMILAR VEHICLES -->
+      <div class="content-block panel">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">Similar Vehicles</div>
+          <h2>You may also like these vehicles.</h2>
+        </div>
+        <div class="similar-grid">
+
+          <div class="car-card">
+            <div class="car-media">
+              <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235042_2d759c04-bd6e-4883-a7e3-5dee08ce28dc.png" alt="Mercedes S-Class">
+              <span class="car-badge">Luxury</span>
+              <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+            </div>
+            <div class="car-body">
+              <div class="car-category">Luxury</div>
+              <div class="car-name">Mercedes S-Class or similar</div>
+              <div class="car-specs">
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+              </div>
+              <div class="car-footer">
+                <div class="car-price"><b>1,520 MAD</b><small> / day</small></div>
+                <a href="#" class="btn btn-primary">Reserve</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="car-card">
+            <div class="car-media">
+              <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235048_10b5f129-200d-4db8-b1ec-ccc55209a087.png" alt="Range Rover Vogue">
+              <span class="car-badge">4x4</span>
+              <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+            </div>
+            <div class="car-body">
+              <div class="car-category">Luxury SUV</div>
+              <div class="car-name">Range Rover Vogue or similar</div>
+              <div class="car-specs">
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Diesel</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>4 bags</span></div>
+              </div>
+              <div class="car-footer">
+                <div class="car-price"><b>1,780 MAD</b><small> / day</small></div>
+                <a href="#" class="btn btn-primary">Reserve</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="car-card">
+            <div class="car-media">
+              <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235053_7906c576-88ad-4e99-83f4-d59e4fd94f9e.png" alt="Audi A8">
+              <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+            </div>
+            <div class="car-body">
+              <div class="car-category">Luxury</div>
+              <div class="car-name">Audi A8 or similar</div>
+              <div class="car-specs">
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+                <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+              </div>
+              <div class="car-footer">
+                <div class="car-price"><b>1,390 MAD</b><small> / day</small></div>
+                <a href="#" class="btn btn-primary">Reserve</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CUSTOMER REVIEWS -->
+      <div class="content-block">
+        <div class="section-head center">
+          <div class="section-mark"></div>
+          <div class="eyebrow" style="justify-content:center;">Customer Reviews</div>
+          <h2>What renters say about this vehicle.</h2>
+          <div class="overall-rating"><span class="stars">★★★★★</span> <b>4.9/5</b> — Based on 148 verified reviews</div>
+        </div>
+        <div class="testi-grid">
+          <div class="testi-card">
+            <div class="testi-top">
+              <div class="testi-stars">★★★★★</div>
+              <div class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Verified Booking</div>
+            </div>
+            <p class="testi-text">Immaculate condition and unbelievably smooth on the highway to Marrakech. Felt like flying first class on the ground.</p>
+            <div class="testi-person">
+              <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" alt="Youssef B.">
+              <div class="testi-meta"><b>Youssef B.</b><span>Rented June 2026 · Casablanca</span></div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-top">
+              <div class="testi-stars">★★★★★</div>
+              <div class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Verified Booking</div>
+            </div>
+            <p class="testi-text">Picked it up at the airport with zero wait. The rear seats made the transfer to our hotel feel like part of the vacation.</p>
+            <div class="testi-person">
+              <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png" alt="Sophie L.">
+              <div class="testi-meta"><b>Sophie L.</b><span>Rented May 2026 · Marrakech</span></div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-top">
+              <div class="testi-stars">★★★★★</div>
+              <div class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Verified Booking</div>
+            </div>
+            <p class="testi-text">We book this exact model for every client visit now. Reliable, professional, and always spotless at pickup.</p>
+            <div class="testi-person">
+              <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png" alt="Nadia K.">
+              <div class="testi-meta"><b>Nadia K.</b><span>Rented April 2026 · Rabat</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-block panel">
+        <div class="section-head">
+          <div class="section-mark"></div>
+          <div class="eyebrow">FAQ</div>
+          <h2>Questions about this vehicle.</h2>
+        </div>
+        <div class="faq">
+          <div class="faq-item open">
+            <div class="faq-q"><span>Is insurance included?</span><span class="icon"></span></div>
+            <div class="faq-a"><p>Yes — comprehensive insurance and 24/7 roadside assistance are included at no extra cost with this vehicle.</p></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q"><span>Can I drive outside Marrakech?</span><span class="icon"></span></div>
+            <div class="faq-a"><p>Yes, this vehicle is approved for travel anywhere within Morocco, including one-way rentals to our other cities.</p></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q"><span>Can I add another driver?</span><span class="icon"></span></div>
+            <div class="faq-a"><p>Yes, additional drivers can be added for 100 MAD/day; their license is verified at pickup alongside yours.</p></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q"><span>How much is the deposit?</span><span class="icon"></span></div>
+            <div class="faq-a"><p>A refundable security deposit of 6,000 MAD is held on your credit card at the time of pickup.</p></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q"><span>Can I pick up the vehicle at the airport?</span><span class="icon"></span></div>
+            <div class="faq-a"><p>Yes, this vehicle is available for pickup at every major airport location across Morocco.</p></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.content-left -->
+
+    <aside class="content-right">
+      <div class="reservation-sidebar" id="reserve">
+        <div class="res-card">
+          <div class="res-price"><b>1,450 MAD</b><small>/ day</small></div>
+          <div class="res-avail" id="resAvail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Available Today</div>
+
+          <div class="res-field">
+            <label>Pickup Location</label>
+            <select><option>Casablanca — Mohammed V Airport</option><option>Marrakech Menara Airport</option><option>Rabat City Center</option><option>Tangier Ibn Battuta Airport</option></select>
+          </div>
+          <div class="res-row res-field">
+            <div><label>Pickup Date</label><input type="date"></div>
+            <div><label>Pickup Time</label><input type="time" value="10:00"></div>
+          </div>
+          <div class="res-row res-field">
+            <div><label>Return Date</label><input type="date"></div>
+            <div><label>Return Time</label><input type="time" value="10:00"></div>
+          </div>
+
+          <button class="btn btn-primary">Reserve Now</button>
+          <div class="res-alt-actions">
+            <a href="https://wa.me/212500000000" class="res-alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>WhatsApp</a>
+            <a href="tel:+212500000000" class="res-alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>Call Us</a>
+          </div>
+
+          <div class="res-trust">
+            <div class="res-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Free Cancellation</div>
+            <div class="res-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Insurance Included</div>
+            <div class="res-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Airport Delivery</div>
+            <div class="res-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Secure Booking</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /.vehicle-shell -->
+</div><!-- /.vehicle-shell-wrap -->
+
+<!-- FINAL CTA (full width, outside the two-column grid) -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-inner">
+      <h2>Ready to reserve your vehicle?</h2>
+      <p>Confirm your BMW 7 Series today and experience premium car rental the way it should be.</p>
+      <div class="final-cta-btns">
+        <a href="#reserve" class="btn btn-gold">Reserve Now</a>
+        <a href="tel:+212500000000" class="btn btn-outline">Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER (full width, outside the two-column grid) -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="ar7-victoria-car.html" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="ar7-fleet.html">Economy</a></li>
+          <li><a href="ar7-fleet.html">Compact</a></li>
+          <li><a href="ar7-fleet.html">SUV</a></li>
+          <li><a href="ar7-victoria-car.html#luxury">Luxury</a></li>
+          <li><a href="ar7-fleet.html">Utility</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="ar7-victoria-car.html#services">Services</a></li>
+          <li><a href="ar7-victoria-car.html#process">How it works</a></li>
+          <li><a href="ar7-victoria-car.html#testimonials">Reviews</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Rental Agreement</a></li>
+          <li><a href="#">Insurance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a>
+      </div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE FIXED BOOKING BAR -->
+<div class="mobile-book-bar" id="mobileBookBar">
+  <div class="mb-price"><b>1,450 MAD</b><small> / day</small></div>
+  <a href="#reserve" class="btn btn-gold">Reserve Now</a>
+</div>
+
+<script>
+  // Header shadow on scroll
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.style.boxShadow = window.scrollY > 10 ? '0 2px 12px rgba(22,33,62,0.08)' : 'none';
+  });
+
+  // Gallery data (used by both thumbnails and lightbox)
+  const galleryItems = Array.from(document.querySelectorAll('.thumb')).map(t => ({
+    src: t.dataset.src, tag: t.dataset.tag
+  }));
+  let currentIndex = 0;
+
+  const mainImg = document.getElementById('galleryMainImg');
+  const galleryTag = document.getElementById('galleryTag');
+
+  function setMainImage(index, animate){
+    currentIndex = (index + galleryItems.length) % galleryItems.length;
+    const item = galleryItems[currentIndex];
+    document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentIndex));
+    if (animate) mainImg.style.opacity = 0;
+    setTimeout(() => {
+      mainImg.src = item.src;
+      galleryTag.textContent = item.tag;
+      mainImg.style.opacity = 1;
+    }, animate ? 150 : 0);
+  }
+
+  document.querySelectorAll('.thumb').forEach((thumb, i) => {
+    thumb.addEventListener('click', () => setMainImage(i, true));
+  });
+
+  // Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCounter = document.getElementById('lightboxCounter');
+
+  function openLightbox(index){
+    currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function updateLightbox(){
+    const item = galleryItems[currentIndex];
+    lightboxImg.src = item.src;
+    lightboxImg.alt = item.tag;
+    lightboxCounter.textContent = (currentIndex + 1) + ' / ' + galleryItems.length;
+    setMainImage(currentIndex, false);
+  }
+  function lightboxStep(dir){
+    currentIndex = (currentIndex + dir + galleryItems.length) % galleryItems.length;
+    updateLightbox();
+  }
+
+  document.getElementById('galleryMain').addEventListener('click', () => openLightbox(currentIndex));
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxPrev').addEventListener('click', () => lightboxStep(-1));
+  document.getElementById('lightboxNext').addEventListener('click', () => lightboxStep(1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lightboxStep(-1);
+    if (e.key === 'ArrowRight') lightboxStep(1);
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR7 Victoria Car — Premium Car Rental, Morocco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16213E;
+    --charcoal:#1D1D1F;
+    --gold:#C2A15B;
+    --gold-soft:rgba(194,161,91,0.14);
+    --warm-white:#F8F8F6;
+    --light-gray:#EEF2F6;
+    --white:#FFFFFF;
+    --line:rgba(29,29,31,0.09);
+    --line-dark:rgba(248,248,246,0.14);
+    --shadow:0 20px 45px -20px rgba(22,33,62,0.18);
+    --radius:18px;
+    --container:1280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    color:var(--charcoal);
+    background:var(--warm-white);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,h4{font-family:'Sora',sans-serif;margin:0;color:var(--navy);letter-spacing:-0.01em;}
+  p{margin:0;line-height:1.65;}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  /* Signature mark — the thin gold tick used consistently above every major section as AR7's recognizable motif */
+  .section-mark{width:1px;height:36px;background:linear-gradient(var(--gold),transparent);margin:0 0 22px;}
+  .section-head.center .section-mark{margin-left:auto;margin-right:auto;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:16px 30px;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;
+    cursor:pointer;border:none;transition:transform .35s var(--ease),background .35s,box-shadow .35s;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--navy);color:var(--white);box-shadow:0 14px 30px -12px rgba(22,33,62,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px rgba(22,33,62,0.55);}
+  .btn-gold{background:var(--gold);color:var(--navy);}
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35);}
+  .btn-outline:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+  .btn-outline-dark{background:transparent;color:var(--navy);border:1px solid rgba(22,33,62,0.25);}
+  .btn-outline-dark:hover{background:rgba(22,33,62,0.05);}
+  section{padding:120px 0;}
+  .section-head{max-width:640px;margin-bottom:64px;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head h2{font-size:clamp(30px,3.6vw,44px);font-weight:700;line-height:1.15;margin-bottom:16px;}
+  .section-head p{font-size:17px;color:#5b6472;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:22px 0;transition:all .4s var(--ease);
+    background:transparent;
+  }
+  header.scrolled{
+    background:rgba(248,248,246,0.86);backdrop-filter:blur(14px);
+    padding:14px 0;box-shadow:0 1px 0 var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);letter-spacing:-0.02em;transition:color .4s;}
+  .logo span{color:var(--gold);}
+  header.scrolled .logo{color:var(--navy);}
+  .nav-links{display:flex;gap:38px;list-style:none;margin:0;padding:0;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,0.85);transition:color .3s;}
+  header.scrolled .nav-links a{color:var(--charcoal);}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-phone{font-size:14px;font-weight:600;color:var(--white);transition:color .4s;}
+  header.scrolled .nav-phone{color:var(--navy);}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s;}
+  header.scrolled .burger span{background:var(--navy);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;min-height:100vh;display:flex;align-items:center;
+    padding:160px 0 100px;overflow:hidden;
+  }
+  .hero-bg{position:absolute;inset:0;z-index:0;}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .hero-bg::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(100deg, rgba(15,20,38,0.72) 0%, rgba(15,20,38,0.42) 40%, rgba(15,20,38,0.08) 66%, rgba(15,20,38,0.03) 100%);
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr 0.78fr;gap:80px;align-items:center;width:100%;}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:10px;color:var(--gold);
+    font-size:12.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:28px;
+  }
+  .hero-eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);}
+  .hero h1{
+    font-size:clamp(38px,4.8vw,58px);font-weight:700;color:var(--white);line-height:1.18;
+    letter-spacing:-0.02em;margin-bottom:26px;max-width:560px;
+  }
+  .hero h1 em{font-style:normal;color:var(--gold);}
+  .hero-sub{font-size:17.5px;line-height:1.6;color:rgba(255,255,255,0.8);max-width:440px;margin-bottom:44px;}
+  .hero-cta{display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-bottom:0;}
+  .hero-trust{display:flex;align-items:center;gap:14px;padding-left:26px;border-left:1px solid rgba(255,255,255,0.22);}
+  .stars{color:var(--gold);font-size:14px;letter-spacing:2px;}
+  .hero-trust-text{font-size:13px;color:rgba(255,255,255,0.72);line-height:1.45;}
+  .hero-trust-text b{color:var(--white);}
+
+  /* Booking card — refined to feel like a premium SaaS widget */
+  .booking-card{
+    background:rgba(255,255,255,0.98);border-radius:var(--radius);
+    padding:44px 40px;box-shadow:0 40px 90px -24px rgba(6,10,22,0.55);
+  }
+  .booking-card h3{font-size:21px;margin-bottom:7px;}
+  .booking-card .sub{font-size:13.5px;color:#6b7280;margin-bottom:32px;display:block;}
+  .field-group{margin-bottom:18px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#8a8f98;margin-bottom:8px;}
+  select,input{
+    width:100%;padding:16px 17px;border-radius:12px;border:1px solid var(--line);
+    font-family:'Inter',sans-serif;font-size:14.5px;color:var(--charcoal);background:var(--light-gray);
+    appearance:none;outline:none;transition:border-color .3s,background .3s;
+  }
+  select:focus,input:focus{border-color:var(--gold);background:var(--white);}
+  .booking-card .btn{width:100%;margin-top:12px;padding:18px;font-size:15.5px;letter-spacing:0.01em;}
+
+  /* ---------- TRUST BAR ---------- */
+  .trust-bar{background:var(--white);padding:0;border-bottom:1px solid var(--line);}
+  .trust-inner{
+    display:grid;grid-template-columns:repeat(6,1fr);
+    padding:44px 0;
+  }
+  .trust-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:0 18px;border-right:1px solid var(--line);}
+  .trust-item:last-child{border-right:none;}
+  .trust-icon{width:26px;height:26px;color:var(--navy);stroke-width:1.4;}
+  .trust-item span{font-size:12.5px;font-weight:600;color:var(--charcoal);letter-spacing:0.01em;}
+
+  /* ---------- FLEET ---------- */
+  .fleet{background:var(--warm-white);}
+  .fleet-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px;}
+  .tab{
+    padding:12px 24px;border-radius:100px;border:1px solid var(--line);background:var(--white);
+    font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#5b6472;cursor:pointer;
+    transition:all .3s var(--ease);
+  }
+  .tab:hover{border-color:var(--gold);color:var(--navy);}
+  .tab.active{background:var(--navy);border-color:var(--navy);color:var(--white);}
+  .fleet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;align-items:stretch;}
+  .car-card{
+    background:var(--white);border-radius:var(--radius);overflow:hidden;
+    border-top:2px solid transparent;display:flex;flex-direction:column;height:100%;
+    box-shadow:0 1px 0 var(--line);transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s var(--ease);
+  }
+  .car-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-top-color:var(--gold);}
+  .car-media{position:relative;aspect-ratio:5/4;background:var(--light-gray);overflow:hidden;flex-shrink:0;}
+  .car-media img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);}
+  .car-card:hover .car-media img{transform:scale(1.035);}
+  .car-badge{
+    position:absolute;top:16px;left:16px;background:var(--gold);color:var(--navy);
+    font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 13px;border-radius:100px;
+  }
+  .wishlist{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
+    background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .3s;
+  }
+  .wishlist:hover{transform:scale(1.1);}
+  .wishlist svg{width:13.5px;height:13.5px;color:var(--navy);stroke-width:1.6;}
+  .car-body{padding:28px 26px 30px;display:flex;flex-direction:column;flex:1;}
+  .car-category{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+  .car-name{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:18px;letter-spacing:-0.01em;}
+  .car-specs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--line);}
+  .spec{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .spec svg{width:23px;height:23px;color:#9297a1;stroke-width:1.4;}
+  .spec span{font-size:11px;color:#6b7280;font-weight:500;}
+  .car-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:auto;}
+  .car-price{font-family:'Sora',sans-serif;white-space:nowrap;display:flex;align-items:baseline;gap:4px;flex-shrink:0;}
+  .car-price b{font-size:23px;color:var(--navy);font-weight:700;letter-spacing:-0.01em;white-space:nowrap;}
+  .car-price small{font-size:12px;color:#8a8f98;white-space:nowrap;}
+  .car-footer .btn{padding:12px 22px;font-size:13.5px;flex-shrink:0;}
+  .fleet-more{text-align:center;margin-top:56px;}
+
+  /* ---------- LUXURY COLLECTION ---------- */
+  .luxury{background:var(--navy);color:var(--white);position:relative;overflow:hidden;}
+  .luxury::before{
+    content:"";position:absolute;top:0;left:50%;width:1px;height:120px;background:linear-gradient(var(--gold),transparent);
+  }
+  .luxury .section-head h2,.luxury .section-head p{color:var(--white);}
+  .luxury .section-head p{color:rgba(255,255,255,0.65);}
+  .luxury-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;}
+  .luxury-card{position:relative;display:block;border-radius:var(--radius);overflow:hidden;aspect-ratio:3/4;cursor:pointer;outline-offset:4px;}
+  .luxury-card:focus-visible{outline:2px solid var(--gold);}
+  .luxury-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);}
+  .luxury-card:hover img{transform:scale(1.04);}
+  .luxury-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(6,10,22,0.94) 100%);}
+  .luxury-label{position:absolute;bottom:26px;left:26px;z-index:1;}
+  .luxury-label .make{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:5px;display:block;}
+  .luxury-label .model{font-family:'Sora',sans-serif;font-size:21px;font-weight:700;color:var(--white);letter-spacing:-0.01em;display:flex;align-items:center;gap:8px;}
+  .luxury-arrow{width:17px;height:17px;color:var(--gold);transition:transform .3s var(--ease);flex-shrink:0;}
+  .luxury-card:hover .luxury-arrow{transform:translateX(4px);}
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .service-card{
+    background:var(--white);border-radius:var(--radius);padding:46px 40px;
+    border:1px solid var(--line);transition:all .4s var(--ease);
+  }
+  .service-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow);}
+  .service-icon{
+    width:60px;height:60px;border-radius:16px;background:var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;margin-bottom:28px;
+  }
+  .service-icon svg{width:27px;height:27px;color:var(--gold);stroke-width:1.4;}
+  .service-card h3{font-size:18.5px;margin-bottom:12px;}
+  .service-card p{font-size:14.5px;color:#5b6472;line-height:1.7;}
+
+  /* ---------- PROCESS ---------- */
+  .process{background:var(--light-gray);}
+  .process-track{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;position:relative;}
+  .process-track::before{
+    content:"";position:absolute;top:27px;left:10%;right:10%;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(194,161,91,0.4) 12%,rgba(194,161,91,0.4) 88%,transparent);
+  }
+  .process-step{text-align:center;position:relative;}
+  .step-num{
+    width:54px;height:54px;border-radius:50%;background:var(--white);border:1px solid var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;position:relative;z-index:1;
+    font-family:'Sora',sans-serif;font-weight:700;color:var(--gold);font-size:16px;
+  }
+  .process-step h4{font-size:15.5px;margin-bottom:9px;}
+  .process-step p{font-size:13px;color:#6b7280;line-height:1.6;}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .overall-rating{
+    display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;
+    font-size:14.5px;color:#5b6472;font-weight:500;
+  }
+  .overall-rating .stars{font-size:15px;}
+  .overall-rating b{color:var(--navy);font-family:'Sora',sans-serif;}
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .testi-card{background:var(--white);border-radius:var(--radius);padding:36px;border:1px solid var(--line);}
+  .testi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .testi-stars{color:var(--gold);font-size:14px;letter-spacing:2px;}
+  .google-mark{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#8a8f98;}
+  .google-mark svg{width:14px;height:14px;}
+  .testi-text{font-size:15px;color:#3d4249;margin-bottom:28px;line-height:1.7;}
+  .testi-person{display:flex;align-items:center;gap:14px;}
+  .avatar{
+    width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;
+    border:2px solid var(--gold-soft);
+  }
+  .testi-meta b{display:block;font-size:14.5px;color:var(--navy);}
+  .testi-meta span{font-size:12.5px;color:#8a8f98;}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    background:var(--navy);text-align:center;position:relative;overflow:hidden;
+  }
+  .final-cta::before{
+    content:"";position:absolute;top:-50%;left:50%;width:900px;height:900px;transform:translateX(-50%);
+    background:radial-gradient(circle,rgba(194,161,91,0.14) 0%,transparent 70%);
+  }
+  .final-cta-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+  .final-cta h2{color:var(--white);font-size:clamp(32px,4.4vw,50px);line-height:1.15;margin-bottom:20px;}
+  .final-cta p{color:rgba(255,255,255,0.68);font-size:17.5px;margin-bottom:44px;}
+  .final-cta-btns{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+  .final-cta-btns .btn{padding:19px 38px;font-size:15.5px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:88px 0 32px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:64px;}
+  .footer-logo{font-family:'Sora',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:16px;display:block;}
+  .footer-logo span{color:var(--gold);}
+  .footer-about{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;max-width:280px;}
+  .footer-col h5{font-family:'Sora',sans-serif;font-size:13.5px;color:var(--white);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .footer-col a{font-size:14px;color:rgba(255,255,255,0.6);transition:color .3s;}
+  .footer-col a:hover{color:var(--gold);}
+  .footer-contact li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,0.6);}
+  .footer-contact svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+  .social-row{display:flex;gap:12px;margin-top:20px;}
+  .social-row a{
+    width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;transition:all .3s;
+  }
+  .social-row a:hover{border-color:var(--gold);background:rgba(194,161,91,0.1);}
+  .social-row svg{width:15px;height:15px;}
+  .footer-bottom{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+    padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.4);
+  }
+  .payment-icons{display:flex;gap:10px;}
+  .payment-icons span{
+    display:flex;align-items:center;gap:6px;
+    padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.5);
+  }
+  .payment-icons svg{width:15px;height:15px;flex-shrink:0;}
+  .legal-links{display:flex;gap:22px;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 1080px){
+    .fleet-grid{grid-template-columns:repeat(2,1fr);}
+    .luxury-grid{grid-template-columns:repeat(2,1fr);}
+    .services-grid{grid-template-columns:repeat(2,1fr);}
+    .testi-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px 24px;}
+    .hero-grid{grid-template-columns:1fr;}
+    .booking-card{max-width:460px;}
+    .trust-inner{grid-template-columns:repeat(3,1fr);row-gap:24px;}
+    .trust-item{border-right:none;border-bottom:1px solid var(--line);padding-bottom:20px;}
+    .process-track{grid-template-columns:repeat(5,1fr);}
+  }
+  @media (max-width: 720px){
+    .wrap{padding:0 20px;}
+    section{padding:80px 0;}
+    .nav-links,.nav-phone{display:none;}
+    .burger{display:block;}
+    .fleet-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;}
+    .fleet-grid{grid-template-columns:1fr;}
+    .luxury-grid{grid-template-columns:1fr 1fr;}
+    .services-grid{grid-template-columns:1fr;}
+    .process-track{grid-template-columns:1fr;gap:36px;}
+    .process-track::before{display:none;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+    .hero{padding:140px 0 70px;}
+    .hero-cta{flex-direction:column;align-items:flex-start;gap:20px;}
+    .hero-trust{border-left:none;padding-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="#" class="logo">AR7 <span>Victoria</span> Car</a>
+    <ul class="nav-links">
+      <li><a href="#fleet">Fleet</a></li>
+      <li><a href="#luxury">Luxury</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">How it works</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="tel:+212500000000" class="nav-phone">+212 5 00 00 00 00</a>
+      <a href="#booking" class="btn btn-gold">Reserve now</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="booking">
+  <div class="hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100631_71ee3921-1833-453f-a2a2-6626fb9a4894.png" alt="Premium sedan on a Moroccan coastal road at golden hour">
+  </div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">Premium Car Rental · Morocco</div>
+        <h1>Drive Morocco with <em>confidence</em>, not compromise.</h1>
+        <p class="hero-sub">A modern fleet, transparent pricing, and airport-ready delivery — built for business travel, family trips, and everything in between.</p>
+        <div class="hero-cta">
+          <a href="#fleet" class="btn btn-gold">Browse the fleet</a>
+          <div class="hero-trust">
+            <div class="stars">★★★★★</div>
+            <div class="hero-trust-text"><b>4.9 / 5</b> on Google · 2,300+ rentals</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-card">
+        <h3>Reserve your vehicle</h3>
+        <span class="sub">Confirmed in under 2 minutes.</span>
+        <div class="field-group">
+          <label>Pick-up location</label>
+          <select><option>Casablanca — Mohammed V Airport</option><option>Marrakech Menara Airport</option><option>Rabat City Center</option><option>Tangier Ibn Battuta Airport</option></select>
+        </div>
+        <div class="field-row field-group">
+          <div><label>Pick-up date</label><input type="date"></div>
+          <div><label>Pick-up time</label><input type="time" value="10:00"></div>
+        </div>
+        <div class="field-row field-group">
+          <div><label>Return date</label><input type="date"></div>
+          <div><label>Return time</label><input type="time" value="10:00"></div>
+        </div>
+        <div class="field-group">
+          <label>Vehicle category</label>
+          <select><option>Any category</option><option>Economy</option><option>Compact</option><option>SUV</option><option>Luxury</option><option>Utility</option></select>
+        </div>
+        <button class="btn btn-primary">Check availability</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="wrap trust-inner">
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>24/7 Assistance</span>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13l2-5a2 2 0 012-1h10a2 2 0 012 1l2 5"/><path d="M3 13v4a1 1 0 001 1h1a1 1 0 001-1v-1h12v1a1 1 0 001 1h1a1 1 0 001-1v-4"/><circle cx="7.5" cy="17" r="1.2"/><circle cx="16.5" cy="17" r="1.2"/></svg>
+      <span>Airport Delivery</span>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 118 0 4 4 0 01-8 0z"/></svg>
+      <span>Unlimited Mileage</span>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"/></svg>
+      <span>Insurance Included</span>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
+      <span>Transparent Pricing</span>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/></svg>
+      <span>Fast Booking</span>
+    </div>
+  </div>
+</div>
+
+<!-- FLEET -->
+<section class="fleet" id="fleet">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">The Fleet</div>
+      <h2>A modern fleet, built for every kind of journey.</h2>
+      <p>Compare specifications at a glance and reserve the right vehicle in seconds — every car is inspected, insured, and ready.</p>
+    </div>
+
+    <div class="fleet-tabs">
+      <button class="tab active" data-filter="all">All Vehicles</button>
+      <button class="tab" data-filter="economy">Economy</button>
+      <button class="tab" data-filter="compact">Compact</button>
+      <button class="tab" data-filter="suv">SUV</button>
+      <button class="tab" data-filter="luxury">Luxury</button>
+      <button class="tab" data-filter="utility">Utility</button>
+    </div>
+
+    <div class="fleet-grid" id="fleetGrid">
+
+      <div class="car-card" data-cat="economy">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_234944_9ce0a05a-2c90-460a-9b39-6fa93fd8007a.png" alt="Economy hatchback">
+          <span class="car-badge">Popular</span>
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Economy</div>
+          <div class="car-name">Clio Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Manual</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>2 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>350 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="compact">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_234949_9433789d-ed38-4914-95cc-97fedb03bc17.png" alt="Compact sedan">
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Compact</div>
+          <div class="car-name">Elantra Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>420 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="suv">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_234954_e58b6992-40f4-4373-a7ac-bbf3bdd34443.png" alt="Mid-size SUV">
+          <span class="car-badge">New</span>
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">SUV</div>
+          <div class="car-name">Tucson Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Diesel</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>4 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>680 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="luxury">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_234959_602a69e1-5744-4046-a0c2-7a10e3caf2be.png" alt="Full-size luxury sedan">
+          <span class="car-badge">Luxury</span>
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Luxury</div>
+          <div class="car-name">7-Series Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>1,450 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="compact">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235029_8587618a-c824-4f83-9e0a-c58d7c888b33.png" alt="Compact crossover">
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Compact</div>
+          <div class="car-name">Ceed Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>450 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="suv">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235023_6b301433-82be-4209-bb7f-3f2f6db250c7.png" alt="4x4 SUV">
+          <span class="car-badge">4x4</span>
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">SUV</div>
+          <div class="car-name">Duster 4x4 or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Manual</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Diesel</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>4 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>620 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="luxury">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235004_574a6f88-faa4-48e4-989e-df4482b1c266.png" alt="Premium sedan">
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Premium Sedan</div>
+          <div class="car-name">A6 Class or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>5 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Automatic</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Petrol</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>3 bags</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>980 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card" data-cat="utility">
+        <div class="car-media">
+          <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235009_73e2f63e-7e81-4bb2-b6ba-fb9fa8f3426b.png" alt="Utility van">
+          <div class="wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg></div>
+        </div>
+        <div class="car-body">
+          <div class="car-category">Utility</div>
+          <div class="car-name">Cargo Van or similar</div>
+          <div class="car-specs">
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17h16M6 17V9l2-4h8l2 4v8"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg><span>3 seats</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Manual</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v18M6 8h9a3 3 0 013 3v2a2 2 0 002 2"/><circle cx="18" cy="6" r="1.5"/></svg><span>Diesel</span></div>
+            <div class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="7" width="16" height="12" rx="1.5"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><span>XL cargo</span></div>
+          </div>
+          <div class="car-footer">
+            <div class="car-price"><b>590 MAD</b><small> / day</small></div>
+            <a href="#" class="btn btn-primary">Reserve</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fleet-more"><a href="#" class="btn btn-outline-dark">View full fleet</a></div>
+  </div>
+</section>
+
+<!-- LUXURY COLLECTION -->
+<section class="luxury" id="luxury">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Luxury Collection</div>
+      <h2>For the moments that call for more.</h2>
+      <p>Flagship sedans and SUVs, reserved for clients who expect the best.</p>
+    </div>
+    <div class="luxury-grid">
+      <a href="#vehicle-bmw-7-series" class="luxury-card">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235034_619b7dbe-138a-47c0-99bc-2bc4b809db95.png" alt="BMW-class flagship sedan">
+        <div class="luxury-label"><span class="make">BMW</span><span class="model">7 Series <svg class="luxury-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      </a>
+      <a href="#vehicle-mercedes-s-class" class="luxury-card">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235042_2d759c04-bd6e-4883-a7e3-5dee08ce28dc.png" alt="Mercedes-class flagship sedan">
+        <div class="luxury-label"><span class="make">Mercedes</span><span class="model">S-Class <svg class="luxury-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      </a>
+      <a href="#vehicle-range-rover-vogue" class="luxury-card">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235048_10b5f129-200d-4db8-b1ec-ccc55209a087.png" alt="Range Rover-class luxury SUV">
+        <div class="luxury-label"><span class="make">Range Rover</span><span class="model">Vogue <svg class="luxury-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      </a>
+      <a href="#vehicle-audi-a8" class="luxury-card">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260705_235053_7906c576-88ad-4e99-83f4-d59e4fd94f9e.png" alt="Audi-class flagship sedan">
+        <div class="luxury-label"><span class="make">Audi</span><span class="model">A8 <svg class="luxury-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-mark"></div>
+      <div class="eyebrow">Professional Services</div>
+      <h2>Built for business, not just vacations.</h2>
+      <p>Fleet solutions for companies, hotels, and frequent travelers who need reliability at scale.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div>
+        <h3>Corporate Rentals</h3>
+        <p>Dedicated fleet accounts, monthly invoicing, and priority support for teams and travel managers.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l9 4.5v9L12 20l-9-4.5v-9L12 2z"/><path d="M12 11v9M3 6.5l9 4.5 9-4.5"/></svg></div>
+        <h3>Airport Delivery</h3>
+        <p>Your vehicle is ready the moment you land, at every major airport across Morocco.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.35-9.5-9C1 8.5 2.5 5 6 5c2 0 3.7 1.3 6 4 2.3-2.7 4-4 6-4 3.5 0 5 3.5 3.5 7-2.5 4.65-9.5 9-9.5 9z"/></svg></div>
+        <h3>VIP Service</h3>
+        <p>Chauffeur-driven flagship vehicles for executives, delegations, and special occasions.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></div>
+        <h3>Long-Term Rental</h3>
+        <p>Flexible monthly plans with maintenance included — ideal for expats and relocations.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17h4l3-9h4l3 9h4M3 17v2a1 1 0 001 1h1M21 17v2a1 1 0 01-1 1h-1"/></svg></div>
+        <h3>Business Fleet</h3>
+        <p>Multi-vehicle contracts with a single point of contact and consolidated reporting.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div>
+        <h3>Luxury Chauffeur</h3>
+        <p>Professional, discreet drivers for airport transfers, meetings, and city touring.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">How It Works</div>
+      <h2>Five steps from booking to the open road.</h2>
+    </div>
+    <div class="process-track">
+      <div class="process-step"><div class="step-num">01</div><h4>Choose Vehicle</h4><p>Filter by category and compare specs instantly.</p></div>
+      <div class="process-step"><div class="step-num">02</div><h4>Book Online</h4><p>Reserve in under two minutes, no hidden fees.</p></div>
+      <div class="process-step"><div class="step-num">03</div><h4>Pickup</h4><p>Collect at the airport or one of our city locations.</p></div>
+      <div class="process-step"><div class="step-num">04</div><h4>Drive</h4><p>Unlimited mileage, 24/7 roadside assistance.</p></div>
+      <div class="process-step"><div class="step-num">05</div><h4>Return</h4><p>Drop off and go — we handle the rest.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="wrap">
+    <div class="section-head center">
+      <div class="section-mark"></div>
+      <div class="eyebrow" style="justify-content:center;">Testimonials</div>
+      <h2>Trusted by thousands of travelers.</h2>
+      <div class="overall-rating"><span class="stars">★★★★★</span> <b>4.9/5</b> based on 2,400+ verified customers</div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-top">
+          <div class="testi-stars">★★★★★</div>
+          <div class="google-mark"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.7 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8C4.1 20.6 7.8 23 12 23z"/><path fill="#FBBC05" d="M6 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3V6.9H2.3C1.5 8.5 1 10.2 1 12s.5 3.5 1.3 5.1L6 14.3z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.4 2.1 15 1 12 1 7.8 1 4.1 3.4 2.3 6.9L6 9.7c.9-2.5 3.2-4.3 6-4.3z"/></svg>Google Review</div>
+        </div>
+        <p class="testi-text">Effortless booking and the car was waiting exactly on time at the airport. Genuinely felt like a premium experience from start to finish.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100639_47cc9be8-658d-44d6-a28b-cb0e911f09b2.png" alt="Youssef B.">
+          <div class="testi-meta"><b>Youssef B.</b><span>Casablanca, Morocco · BMW 5 Series</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-top">
+          <div class="testi-stars">★★★★★</div>
+          <div class="google-mark"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.7 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8C4.1 20.6 7.8 23 12 23z"/><path fill="#FBBC05" d="M6 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3V6.9H2.3C1.5 8.5 1 10.2 1 12s.5 3.5 1.3 5.1L6 14.3z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.4 2.1 15 1 12 1 7.8 1 4.1 3.4 2.3 6.9L6 9.7c.9-2.5 3.2-4.3 6-4.3z"/></svg>Google Review</div>
+        </div>
+        <p class="testi-text">We rented an SUV for a family trip to Marrakech. Spotless car, transparent price, and the support team answered instantly on WhatsApp.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100643_a60a1bb7-a788-49b6-b88e-8ef78d9f39ff.png" alt="Sophie L.">
+          <div class="testi-meta"><b>Sophie L.</b><span>Marrakech · Tucson SUV</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-top">
+          <div class="testi-stars">★★★★★</div>
+          <div class="google-mark"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.7 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.4-1 7.2-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8C4.1 20.6 7.8 23 12 23z"/><path fill="#FBBC05" d="M6 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3V6.9H2.3C1.5 8.5 1 10.2 1 12s.5 3.5 1.3 5.1L6 14.3z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.4 2.1 15 1 12 1 7.8 1 4.1 3.4 2.3 6.9L6 9.7c.9-2.5 3.2-4.3 6-4.3z"/></svg>Google Review</div>
+        </div>
+        <p class="testi-text">Our company now books all business travel vehicles through AR7 Victoria Car. Reliable fleet, clean invoicing, zero surprises.</p>
+        <div class="testi-person">
+          <img class="avatar" src="https://d8j0ntlcm91z4.cloudfront.net/user_37ViyXy5wzTHehYko7ikpcrqfdW/hf_20260706_100646_65efbb8d-e13b-4d25-9c18-eef7fc12c8b6.png" alt="Nadia K.">
+          <div class="testi-meta"><b>Nadia K.</b><span>Rabat · Corporate Account</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-inner">
+      <h2>Ready to hit the road?</h2>
+      <p>Reserve your vehicle today and experience premium car rental the way it should be.</p>
+      <div class="final-cta-btns">
+        <a href="#booking" class="btn btn-gold">Reserve your vehicle</a>
+        <a href="tel:+212500000000" class="btn btn-outline">Call +212 5 00 00 00 00</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <a href="#" class="footer-logo">AR7 <span>Victoria</span> Car</a>
+        <p class="footer-about">Premium car rental across Morocco — modern fleet, transparent pricing, and service you can trust.</p>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H8v3h3v6h3v-6h3l1-3h-4V9z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Fleet</h5>
+        <ul>
+          <li><a href="#fleet">Economy</a></li>
+          <li><a href="#fleet">Compact</a></li>
+          <li><a href="#fleet">SUV</a></li>
+          <li><a href="#luxury">Luxury</a></li>
+          <li><a href="#fleet">Utility</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#process">How it works</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Rental Agreement</a></li>
+          <li><a href="#">Insurance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.7a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span><a href="https://wa.me/212500000000">+212 5 00 00 00 00 · WhatsApp</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span>reservations@ar7victoriacar.ma</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><a href="https://maps.google.com" target="_blank" rel="noopener">Mohammed V Airport, Casablanca — View on Google Maps</a></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Open 24/7, every day — Airport counters &amp; city offices</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AR7 Victoria Car. All rights reserved.</span>
+      <div class="legal-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Sitemap</a>
+      </div>
+      <div class="payment-icons">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg>Visa</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.55"/><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.85"/></svg>Mastercard</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Amex</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M10 9v6M14 9v6"/></svg>Cash</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Sticky header on scroll
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Fleet filtering
+  const tabs = document.querySelectorAll('.tab');
+  const cards = document.querySelectorAll('.car-card');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      cards.forEach(card => {
+        const show = filter === 'all' || card.dataset.cat === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+</script>
+
+</body>
+</html>
