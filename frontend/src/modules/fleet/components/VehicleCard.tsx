@@ -2,11 +2,9 @@ import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
 import Link from "next/link";
-import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
+import { Fuel, Users, Clock, Briefcase, Eye, Heart } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useCurrency } from "@/shared/hooks/useCurrency";
-import { Button } from "@/shared/ui/button";
-import Tooltip from "@/components/Tooltip";
 
 interface VehicleCardProps {
   id: number;
@@ -47,188 +45,149 @@ export default function VehicleCard({
   const displayPrice = dynamicPrice || price;
   const isPriceChanged = dynamicPrice && dynamicPrice !== price;
   const discountPercent = isPriceChanged && price > 0 ? Math.round((1 - displayPrice / price) * 100) : 0;
-  const isPromo = dynamicReason === "Offre spéciale";
+
+  const catLabel = (category || type || "Economy").toUpperCase();
+  
+  const badgeLabel = isPopular
+    ? "POPULAR"
+    : year && year >= 2024
+    ? "NEW"
+    : catLabel.includes("LUXURY")
+    ? "LUXURY"
+    : null;
+
+  const getBagsCount = () => {
+    const c = catLabel.toLowerCase();
+    if (c.includes("suv") || seats >= 7) return "4 bags";
+    if (c.includes("compact") || c.includes("luxury")) return "3 bags";
+    return "2 bags";
+  };
+
+  const displayName = model.toLowerCase().includes("class") || model.toLowerCase().includes("similar")
+    ? model
+    : `${model} Class or similar`;
 
   return (
-    <Link
-      href={`/fleet/${id}`}
+    <div
       className={cn(
-        "group flex overflow-hidden relative bg-white border-t-2 border-t-transparent rounded-[18px] overflow-hidden flex-col h-full transition-all duration-400",
-        "shadow-[0_1px_0_var(--line)] hover:-translate-y-[5px] hover:shadow-[var(--shadow-theme)] hover:border-t-[var(--gold)]",
-        layoutView === "list" ? "flex-col md:flex-row md:h-[280px]" : "flex-col",
+        "group flex flex-col justify-between bg-white rounded-[24px] overflow-hidden border border-gray-100/90 shadow-[0_2px_14px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.09)] transition-all duration-300 h-full",
+        layoutView === "list" ? "md:flex-row md:h-[280px]" : "",
         className
       )}
-      style={{ borderTopColor: undefined }}
     >
-      <div className={cn("relative bg-[var(--light-gray)] overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[5/4] w-full")}>
+      {/* Top Image Box */}
+      <div className={cn("relative bg-[#f6f5f2] overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
             alt={`${brand} ${model}`}
             fill
             loading="lazy"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-all duration-700 group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className="object-cover transition-all duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-gold/5">
-            <span className="text-5xl font-bold tracking-tighter text-primary/20">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-amber-50">
+            <span className="text-4xl font-bold tracking-tighter text-slate-300">
               {brand?.[0]}{model?.[0]}
             </span>
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-        {isPopular && (
-          <div className="absolute top-4 left-4 z-10 bg-[var(--gold)] text-[var(--navy)] text-[10.5px] font-bold tracking-[0.04em] uppercase px-3.5 py-1.5 rounded-full">
-            Popular
+        {/* Top-Left Badge */}
+        {badgeLabel && (
+          <div className="absolute top-3.5 left-3.5 z-10 bg-[#d7b268] text-[#111827] text-[10px] font-extrabold tracking-wider uppercase px-3 py-1.5 rounded-md shadow-sm">
+            {badgeLabel}
           </div>
         )}
 
-        {isPromo && (
-          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-amber-600 text-[9px] font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 shadow-sm">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/>
-              <path d="M6 9.01V9"/>
-              <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/>
-            </svg>
-            <span className="uppercase tracking-wider">Offre spéciale</span>
-            {isPriceChanged && price > 0 && (
-              <span className="text-[8px] font-black text-white bg-amber-500 px-1.5 py-0.5 rounded-sm">
-                −{discountPercent}%
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Wishlist button */}
-        <div className="absolute top-3.5 right-3.5 z-10 w-[30px] h-[30px] rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-110 opacity-0 group-hover:opacity-100">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-[13.5px] h-[13.5px] text-[var(--navy)]">
-            <path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.4 0 5 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/>
-          </svg>
-        </div>
-
-        <div
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
-          className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer bg-gradient-to-t from-black/60 via-transparent to-transparent translate-y-4 group-hover:translate-y-0"
+        {/* Top-Right Favorite / Wishlist Button */}
+        <div 
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          className="absolute top-3.5 right-3.5 z-10 w-8 h-8 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
         >
-          <div className="px-6 py-2.5 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-2 text-white border border-white/30 hover:bg-white/30 hover:scale-105 transition-all shadow-xl">
-            <Eye size={16} strokeWidth={2} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Aperçu rapide</span>
-          </div>
+          <Heart size={15} strokeWidth={1.8} className="text-slate-700" />
         </div>
 
-        <div className="absolute bottom-3 left-3 z-10">
-          <span className="inline-block px-3 py-1 bg-gold/10 backdrop-blur-md text-gold text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm border border-gold/30">
-            {category ? (t(`cat_${category.toLowerCase()}`) || category) : (t(`cat_${type.toLowerCase()}`) || type)}
-          </span>
-        </div>
+        {/* Quick View Overlay */}
+        {onQuickView && (
+          <div
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView(); }}
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/30 backdrop-blur-[2px] cursor-pointer"
+          >
+            <div className="px-5 py-2 rounded-full bg-white/90 text-slate-900 text-xs font-bold flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform">
+              <Eye size={14} />
+              <span>Aperçu rapide</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className={cn("flex flex-col flex-1 p-7 gap-4", layoutView === "list" ? "justify-center" : "")}>
-        <div className="flex justify-between items-start gap-3">
-          <div className="flex-1">
-            <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--gold)] mb-2">{brand}</p>
-            <h3 className={cn("font-[var(--font-sora)] text-[21px] font-bold text-[var(--navy)] tracking-[-0.01em] group-hover:text-[var(--gold)] transition-colors duration-300", layoutView === "list" ? "text-2xl" : "")}>
-              {model}
+      {/* Card Content Body */}
+      <div className="flex flex-col flex-1 p-6 justify-between">
+        <div>
+          {/* Category Eyebrow */}
+          <p className="text-[11px] font-extrabold tracking-widest uppercase text-[#c39a4d] mb-1">
+            {catLabel}
+          </p>
+
+          {/* Vehicle Title */}
+          <Link href={`/fleet/${id}`}>
+            <h3 className="text-[18px] font-bold text-slate-900 leading-snug group-hover:text-[#c39a4d] transition-colors duration-300 mb-5">
+              {displayName}
             </h3>
-          </div>
-          {year && (
-            <span className="text-[10px] font-bold text-ink-3 bg-surface-1 px-2.5 py-1 rounded-lg border border-border whitespace-nowrap">
-              {year}
-            </span>
-          )}
-        </div>
+          </Link>
 
-        <div className="grid grid-cols-4 gap-2 text-xs text-[#6b7280] pb-5 mb-5 border-b border-[var(--line)]">
-          <Tooltip content={`${seats} places`}>
-            <div className="flex flex-col items-center gap-2">
-              <Users size={23} strokeWidth={1.4} className="text-[#9297a1]" />
-              <span className="text-[11px] font-medium">{seats}x</span>
+          {/* Specification Icons Grid */}
+          <div className="grid grid-cols-4 gap-1 py-3 text-center border-t border-gray-100/90">
+            <div className="flex flex-col items-center">
+              <Users size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
+              <span className="text-[11px] font-medium text-gray-500">{seats} seats</span>
             </div>
-          </Tooltip>
-          <Tooltip content={`Carburant: ${fuel}`}>
-            <div className="flex flex-col items-center gap-2">
-              <Fuel size={23} strokeWidth={1.4} className="text-[#9297a1]" />
-              <span className="text-[11px] font-medium">{fuel}</span>
-            </div>
-          </Tooltip>
-          <Tooltip content={`Transmission: ${t(`trans_${transmission.toLowerCase()}`) || transmission}`}>
-            <div className="flex flex-col items-center gap-2">
-              <Gauge size={23} strokeWidth={1.4} className="text-[#9297a1]" />
-              <span className="text-[11px] font-medium">{t(`trans_${transmission.toLowerCase()}`) || transmission}</span>
-            </div>
-          </Tooltip>
-          {gps && (
-            <Tooltip content="GPS intégré">
-              <div className="flex flex-col items-center gap-2">
-                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#9297a1]">
-                  <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                </svg>
-              </div>
-            </Tooltip>
-          )}
-          {!gps && airConditioning && (
-            <Tooltip content="Climatiseur">
-              <div className="flex flex-col items-center gap-2">
-                <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="text-[#9297a1]">
-                  <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
-                  <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
-                  <line x1="12" x2="12" y1="18" y2="22"/>
-                </svg>
-              </div>
-            </Tooltip>
-          )}
-          {equipements.filter((e: string) => e !== "GPS" && e !== "Climatiseur").slice(0, 2).map((eq: string) => (
-            <Tooltip key={eq} content={eq}>
-              <span className="inline-flex items-center px-2 py-0.5 bg-[var(--gold)]/[0.08] border border-[var(--gold)]/20 text-[var(--gold)] text-[10px] font-semibold rounded-md">
-                {eq}
+            <div className="flex flex-col items-center">
+              <Clock size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
+              <span className="text-[11px] font-medium text-gray-500 capitalize">
+                {transmission.toLowerCase().includes("auto") ? "Automatic" : "Manual"}
               </span>
-            </Tooltip>
-          ))}
+            </div>
+            <div className="flex flex-col items-center">
+              <Fuel size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
+              <span className="text-[11px] font-medium text-gray-500 capitalize">
+                {fuel.toLowerCase().includes("ess") || fuel.toLowerCase().includes("petrol") ? "Petrol" : "Diesel"}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <Briefcase size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
+              <span className="text-[11px] font-medium text-gray-500">{getBagsCount()}</span>
+            </div>
+          </div>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-1" />
-
-        <div className={cn("flex", layoutView === "list" ? "flex-row items-end justify-between mt-auto" : "flex-col")}>
-          <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className="font-[var(--font-sora)] text-[23px] font-bold text-[var(--navy)] tracking-[-0.01em] whitespace-nowrap">
+        {/* Card Footer: Price & Action */}
+        <div className="flex items-center justify-between pt-4 mt-3 border-t border-gray-100/90">
+          <div className="flex items-baseline gap-1">
+            <span className="text-[22px] font-extrabold text-slate-900">
               {convert(displayPrice)}
             </span>
-            <span className="text-[12px] text-[#8a8f98] whitespace-nowrap">
-              / jour
+            <span className="text-xs text-gray-400 font-normal">
+              / day
             </span>
-            {isPriceChanged && price > 0 && (
-              <>
-                <span className="text-xs text-[#8a8f98] line-through ml-2">{convert(price)}</span>
-                <span className="inline-flex items-center text-[9px] font-black text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-sm ml-1">
-                  −{discountPercent}%
-                </span>
-              </>
-            )}
           </div>
-        </div>
 
-        <div className="flex items-center gap-3 mt-auto pt-3">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               if (onReserve) { onReserve(id); return; }
               window.location.href = `/booking?vehicle=${id}`;
             }}
-            className="flex-1 h-10 px-5 rounded-full text-[13.5px] font-semibold font-[var(--font-sora)] bg-[var(--navy)] text-white hover:bg-[var(--navy)]/90 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_rgba(22,33,62,0.5)]"
+            className="rounded-full bg-[#182232] hover:bg-slate-800 text-white text-xs font-semibold px-6 py-2.5 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-[1.02]"
           >
-            <span className="flex items-center justify-center gap-1.5">
-              Réserver
-              <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
-            </span>
-          </Button>
+            Reserve
+          </button>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
+

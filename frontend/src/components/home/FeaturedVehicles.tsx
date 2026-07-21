@@ -91,15 +91,15 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
       
       <div className="max-w-[var(--container)] mx-auto px-8 relative z-10">
         
-        {/* Header & Filters — Theme Section Head */}
-        <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-16 gap-8">
-          <div className="section-head max-w-[640px] mb-0">
-            <div className="section-mark" />
+        {/* Header & Category Pills */}
+        <div className="mb-12">
+          {/* Eyebrow & Title */}
+          <div className="max-w-[640px] mb-8">
             <motion.div
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="eyebrow-theme"
+              className="text-xs font-bold uppercase tracking-widest text-[#c39a4d] mb-2"
             >
               {content.eyebrow || "The Fleet"}
             </motion.div>
@@ -109,54 +109,42 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08, duration: 0.6 }}
-              className="text-[clamp(30px,3.6vw,44px)] font-bold leading-[1.15] mb-4 text-[var(--navy)] font-[var(--font-sora)]"
+              className="text-[clamp(28px,3.2vw,40px)] font-extrabold leading-tight text-slate-900 tracking-tight mb-3"
             >
               {content.title || t("featured_vehicles")}
             </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.12 }}
-              className="text-[17px] text-[#5b6472] leading-[1.65]"
-            >
-              Compare specifications at a glance and reserve the right vehicle in seconds.
-            </motion.p>
           </div>
-          
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6 shrink-0">
-            {/* Tabs — Pill style */}
-            {showFilters && categories.length > 1 && (
-              <div className="flex flex-wrap gap-2.5">
-                {categories.map((cat) => (
+
+          {/* Category Filter Pills (Exact style from photo) */}
+          {showFilters && (
+            <div className="flex flex-wrap items-center gap-3">
+              {(categories.length > 1 ? categories : ["Tous", "economy", "compact", "suv", "luxury", "utility"]).map((cat) => {
+                const label =
+                  cat === "Tous" ? "All Vehicles" :
+                  cat.toLowerCase() === "economy" ? "Economy" :
+                  cat.toLowerCase() === "compact" ? "Compact" :
+                  cat.toLowerCase() === "suv" ? "SUV" :
+                  cat.toLowerCase() === "luxury" ? "Luxury" :
+                  cat.toLowerCase() === "utility" ? "Utility" :
+                  cat.charAt(0).toUpperCase() + cat.slice(1);
+
+                return (
                   <button
                     key={cat}
                     onClick={() => setActiveTab(cat)}
                     className={cn(
-                      "px-6 py-3 rounded-full border text-[14px] font-semibold font-[var(--font-sora)] transition-all duration-300",
+                      "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-sm",
                       activeTab === cat
-                        ? "bg-[var(--navy)] border-[var(--navy)] text-white"
-                        : "bg-white border-[var(--line)] text-[#5b6472] hover:border-[var(--gold)] hover:text-[var(--navy)]"
+                        ? "bg-[#182232] text-white shadow-md scale-[1.02]"
+                        : "bg-white text-slate-600 border border-gray-200/90 hover:text-slate-900 hover:border-gray-300"
                     )}
                   >
-                    {cat === "Tous" ? t("all") || "All Vehicles" : cat}
+                    {label}
                   </button>
-                ))}
-              </div>
-            )}
-
-            {/* CTA Link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-14"
-          >
-            <Link href={content.cta_link || "/fleet"} className="btn-theme btn-theme-outline-dark">
-              View full fleet
-            </Link>
-          </motion.div>
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Vehicles Content */}
