@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, MotionValue } from "framer-motion";
-import { MapPin, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
 
 interface HeroSearchFormProps {
@@ -32,13 +31,12 @@ const PREDEFINED_LOCATIONS = [
 ];
 
 const CATEGORIES = [
-  { id: "all", label: "All categories" },
-  { id: "berline", label: "Berline" },
+  { id: "all", label: "Any category" },
+  { id: "economy", label: "Economy" },
+  { id: "compact", label: "Compact" },
   { id: "suv", label: "SUV" },
-  { id: "van", label: "Van / Minivan" },
-  { id: "luxe", label: "Luxe" },
-  { id: "sport", label: "Sportive" },
-  { id: "electrique", label: "Électrique" },
+  { id: "luxury", label: "Luxury" },
+  { id: "utility", label: "Utility" },
 ];
 
 export default function HeroSearchForm({
@@ -47,6 +45,7 @@ export default function HeroSearchForm({
 }: HeroSearchFormProps) {
   const today = getTodayString();
   const [category, setCategory] = useState("all");
+  const [returnTime, setReturnTime] = useState("10:00");
 
   return (
     <motion.div
@@ -54,97 +53,106 @@ export default function HeroSearchForm({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.7, ease: [0.22, 0.61, 0.36, 1] }}
-      className="lg:col-span-5"
+      className="lg:col-span-5 w-full max-w-[420px] lg:ml-auto"
     >
-      <div className="booking-card">
-        <h3 className="booking-card-title">Reserve your vehicle</h3>
-        <p className="booking-card-sub">Choose your dates, we handle the rest.</p>
+      <div className="bg-white rounded-[28px] p-7 md:p-8 shadow-2xl border border-gray-100/90 text-slate-900">
+        <h3 className="text-xl font-extrabold text-slate-900 mb-1 tracking-tight">Reserve your vehicle</h3>
+        <p className="text-xs text-gray-400 font-medium mb-6">Confirmed in under 2 minutes.</p>
 
-        <div className="booking-form">
+        <div className="space-y-4">
+          {/* PICK-UP LOCATION */}
+          <div>
+            <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+              PICK-UP LOCATION
+            </label>
+            <select
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 appearance-none focus:bg-white focus:border-[#182232] outline-none transition-all cursor-pointer"
+            >
+              <option value="">Casablanca — Mohammed V Airport</option>
+              {PREDEFINED_LOCATIONS.map(loc => (
+                <option key={loc.id} value={`${loc.city} - ${loc.name}`}>
+                  {loc.city} — {loc.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {/* Location */}
-          <div className="booking-field relative">
-            <label className="booking-label">Pick-up location</label>
-            <div className="booking-input-wrap">
-              <MapPin size={16} className="booking-icon" />
-              <select
-                value={location}
-                onChange={e => setLocation(e.target.value)}
-                className="booking-input"
-              >
-                <option value="">Ville, aéroport...</option>
-                {PREDEFINED_LOCATIONS.map(loc => (
-                  <option key={loc.id} value={`${loc.city} - ${loc.name}`}>
-                    {loc.city} — {loc.name}
-                  </option>
-                ))}
-              </select>
+          {/* PICK-UP DATE & PICK-UP TIME */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+                PICK-UP DATE
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                min={today}
+                onChange={e => setStartDate(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-3.5 py-3 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-[#182232] transition-all [color-scheme:light]"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+                PICK-UP TIME
+              </label>
+              <input
+                type="time"
+                value={startTime || "10:00"}
+                onChange={e => setStartTime(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-3.5 py-3 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-[#182232] transition-all [color-scheme:light]"
+              />
             </div>
           </div>
 
-          {/* Date + Time row */}
-          <div className="booking-row">
-            <div className="booking-field">
-              <label className="booking-label">Pick-up date</label>
-              <div className="booking-input-wrap">
-                <Calendar size={16} className="booking-icon" />
-                <input
-                  type="date"
-                  value={startDate}
-                  min={today}
-                  onChange={e => setStartDate(e.target.value)}
-                  className="booking-input [color-scheme:light]"
-                />
-              </div>
+          {/* RETURN DATE & RETURN TIME */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+                RETURN DATE
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                min={startDate || today}
+                onChange={e => setEndDate(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-3.5 py-3 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-[#182232] transition-all [color-scheme:light]"
+              />
             </div>
-            <div className="booking-field">
-              <label className="booking-label">Return date</label>
-              <div className="booking-input-wrap">
-                <Calendar size={16} className="booking-icon" />
-                <input
-                  type="date"
-                  value={endDate}
-                  min={startDate || today}
-                  onChange={e => setEndDate(e.target.value)}
-                  className="booking-input [color-scheme:light]"
-                />
-              </div>
+            <div>
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+                RETURN TIME
+              </label>
+              <input
+                type="time"
+                value={returnTime}
+                onChange={e => setReturnTime(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-3.5 py-3 text-xs font-medium text-slate-800 outline-none focus:bg-white focus:border-[#182232] transition-all [color-scheme:light]"
+              />
             </div>
           </div>
 
-          <div className="booking-row">
-            <div className="booking-field">
-              <label className="booking-label">Pick-up time</label>
-              <div className="booking-input-wrap">
-                <Clock size={16} className="booking-icon" />
-                <input
-                  type="time"
-                  value={startTime}
-                  onChange={e => setStartTime(e.target.value)}
-                  className="booking-input [color-scheme:light]"
-                />
-              </div>
-            </div>
-            <div className="booking-field">
-              <label className="booking-label">Vehicle category</label>
-              <div className="booking-input-wrap">
-                <select
-                  value={category}
-                  onChange={e => setCategory(e.target.value)}
-                  className="booking-input"
-                >
-                  {CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          {/* VEHICLE CATEGORY */}
+          <div>
+            <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
+              VEHICLE CATEGORY
+            </label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200/90 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 appearance-none focus:bg-white focus:border-[#182232] outline-none transition-all cursor-pointer"
+            >
+              {CATEGORIES.map(c => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
+            </select>
           </div>
 
-          {/* Submit */}
+          {/* CHECK AVAILABILITY BUTTON */}
           <button
             onClick={onSearch}
-            className="btn-booking-submit"
+            className="w-full bg-[#182232] hover:bg-slate-800 text-white font-bold py-3.5 rounded-full text-sm transition-all duration-300 shadow-md hover:shadow-lg mt-2 cursor-pointer"
           >
             Check availability
           </button>
@@ -153,3 +161,4 @@ export default function HeroSearchForm({
     </motion.div>
   );
 }
+
