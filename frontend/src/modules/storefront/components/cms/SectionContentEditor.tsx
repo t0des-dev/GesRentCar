@@ -6,11 +6,12 @@ import Image from "next/image";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import AssetUpload from "@/components/AssetUpload";
 import { getImageUrl } from "@/shared/utils/image";
+import IconPicker from "./IconPicker";
 
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "color";
+  type: "text" | "textarea" | "image" | "color" | "icon";
   placeholder?: string;
 }
 
@@ -169,6 +170,9 @@ function StringField({ value, onChange, field }: { value: string; onChange: (v: 
         />
       </div>
     );
+  }
+  if (field.type === "icon") {
+    return <IconPicker value={value ?? ""} onChange={onChange} />;
   }
   if (field.type === "image") {
     return (
@@ -367,7 +371,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "id", label: "ID (unique)", type: "text" },
               { key: "title", label: "Titre", type: "text" },
               { key: "subtitle", label: "Sous-titre", type: "text" },
-              { key: "icon", label: "Icône", type: "text" },
+              { key: "icon", label: "Icône", type: "icon" },
               { key: "image", label: "Image", type: "image" },
               { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
               { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
@@ -388,10 +392,10 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
             items={(content?.benefits ?? []).map((b: any, i: number) => ({ ...b, _idx: String(i) }))}
             onChange={(items) => onChange({ ...content, benefits: items })}
             fields={[
-              { key: "icon", label: "Icône", type: "text" },
+              { key: "icon", label: "Icône", type: "icon" },
               { key: "text", label: "Texte", type: "text" },
             ]}
-            defaultItem={{ icon: "", text: "" }}
+            defaultItem={{ icon: "CheckCircle", text: "" }}
           />
         </div>
       )}
@@ -404,7 +408,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
             items={content?.features ?? []}
             onChange={(items) => onChange({ ...content, features: items })}
             fields={[
-              { key: "icon", label: "Icône (ex: Crown, Star, Shield...)", type: "text" },
+              { key: "icon", label: "Icône", type: "icon" },
               { key: "image", label: "Ou Image (URL de l'image)", type: "image" },
               { key: "title", label: "Titre", type: "text" },
               { key: "desc", label: "Description", type: "textarea" },
@@ -440,7 +444,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
                 { key: "id", label: "ID", type: "text" },
                 { key: "title", label: "Titre", type: "text" },
                 { key: "subtitle", label: "Sous-titre", type: "text" },
-                { key: "icon", label: "Icône", type: "text" },
+                { key: "icon", label: "Icône", type: "icon" },
                 { key: "image", label: "URL image", type: "text" },
                 { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
                 { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
@@ -558,9 +562,6 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
       {sectionId === "stats" && (
         <div>
           <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Éléments de la barre</label>
-          <p className="text-[11px] text-slate-400 mb-3">
-            Icônes disponibles : Clock, Car, Target, Shield, CreditCard, Zap, Users, Phone, Star, Award, MapPin, TrendingUp, Heart, Globe, Crown, CheckCircle, Headphones, Sparkles, ShieldCheck
-          </p>
           <ReorderableArrayEditor
             items={content?.items ?? []}
             onChange={(items) => onChange({ ...content, items })}
@@ -568,8 +569,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "id", label: "ID (unique)", type: "text", placeholder: "s1" },
               { key: "value", label: "Valeur (optionnel, ex : 2400+)", type: "text", placeholder: "" },
               { key: "label", label: "Étiquette (ex : Clients satisfaits)", type: "text" },
-              { key: "icon", label: "Icône (ex : Clock, Shield, Star...)", type: "text", placeholder: "Clock" },
-              { key: "color", label: "Couleur accent (ex : primary)", type: "text", placeholder: "primary" },
+              { key: "icon", label: "Icône", type: "icon" },
             ]}
             defaultItem={{ id: "", label: "", value: "", icon: "Star", color: "primary" }}
           />
