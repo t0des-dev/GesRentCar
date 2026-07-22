@@ -73,7 +73,7 @@ export const defaultStorefrontForm: StorefrontForm = {
   ],
   concierge_config: { title: "Conciergerie Digitale", text: "Besoin d'un itinéraire ou d'un conseil ? Notre IA vous accompagne." },
   sections_content: {
-    hero: { badge: "Collection Exclusive 2026", title: "L'excellence en mouvement.", subtitle: "Découvrez une nouvelle dimension du voyage avec notre flotte de prestige." },
+    hero: { badge: "— PREMIUM CAR RENTAL • MOROCCO", title: "Drive Morocco with confidence, not compromise.", subtitle: "A modern fleet, transparent pricing, and airport-ready delivery — built for business travel, family trips, and everything in between.", cta_text: "Browse the fleet", cta_link: "/fleet", rating_text: "4.9 / 5 on Google · 2,300+ rentals" },
     why_us: { 
       title: "Pourquoi choisir Vectoria ?", 
       subtitle: "Nous redéfinissons les standards de la location de luxe au Maroc.",
@@ -106,6 +106,6 @@ export const defaultStorefrontForm: StorefrontForm = {
     comparator: { badge: "Le Garage Comparateur", title: "Confrontez l'Excellence.", subtitle: "Choisissez deux modèles.", vs_label: "VS", vehicles: [] },
     sticky_booking: { placeholder: "Destination", search_label: "Rechercher" },
     featured_vehicles: { eyebrow: "Showroom", cta_text: "Voir le catalogue", cta_link: "/fleet", loading_text: "Chargement...", empty_heading: "Aucun véhicule", empty_description: "Bientôt disponible" },
-    search_form: { location_label: "Destination", location_placeholder: "Ville, aéroport...", start_label: "Départ", end_label: "Retour", search_button: "Chercher un véhicule", fleet_link_text: "Voir toute la flotte", fleet_link_href: "/fleet" },
+    search_form: { form_title: "Reserve your vehicle", form_subtitle: "Confirmed in under 2 minutes.", location_label: "Destination", location_placeholder: "Ville, aéroport...", start_label: "Départ", end_label: "Retour", search_button: "Check availability", fleet_link_text: "Voir toute la flotte", fleet_link_href: "/fleet" },
   },
 };

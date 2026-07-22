@@ -111,7 +111,7 @@ export interface ConciergeConfig {
 }
 
 export interface SectionsContent {
-  hero: { badge: string; title: string; subtitle: string; benefits?: { icon: string; text: string }[] };
+  hero: { badge: string; title: string; subtitle: string; cta_text?: string; cta_link?: string; rating_text?: string; benefits?: { icon: string; text: string }[] };
   why_us: { title: string; subtitle: string; features?: { icon: string; image?: string; title: string; desc: string }[] };
   vibe: { title: string; subtitle: string; eyebrow?: string; columns?: string; items?: LifestyleItem[] };
   lifestyle: { title: string; subtitle: string; text: string; stats?: { value: string; label: string }[]; images?: LifestyleImage[] };
@@ -177,6 +177,8 @@ export interface SectionsContent {
     empty_description: string;
   };
   search_form: {
+    form_title?: string;
+    form_subtitle?: string;
     location_label: string;
     location_placeholder: string;
     start_label: string;

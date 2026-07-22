@@ -29,6 +29,9 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "badge", label: "Badge", type: "text" },
     { key: "title", label: "Titre", type: "text" },
     { key: "subtitle", label: "Sous-titre", type: "textarea" },
+    { key: "cta_text", label: "Texte du bouton CTA", type: "text" },
+    { key: "cta_link", label: "Lien du bouton CTA", type: "text" },
+    { key: "rating_text", label: "Texte de réputation / Note", type: "text" },
   ],
   why_us: [
     { key: "title", label: "Titre", type: "text" },
@@ -113,6 +116,8 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "empty_description", label: "Description vide", type: "textarea" },
   ],
   search_form: [
+    { key: "form_title", label: "Titre du formulaire", type: "text" },
+    { key: "form_subtitle", label: "Sous-titre du formulaire", type: "text" },
     { key: "location_label", label: "Étiquette destination", type: "text" },
     { key: "location_placeholder", label: "Placeholder destination", type: "text" },
     { key: "start_label", label: "Étiquette début", type: "text" },

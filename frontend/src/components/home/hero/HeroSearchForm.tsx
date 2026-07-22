@@ -41,11 +41,19 @@ const CATEGORIES = [
 
 export default function HeroSearchForm({
   location, setLocation, startDate, setStartDate, endDate, setEndDate,
-  startTime, setStartTime, onSearch, y1, mounted,
+  startTime, setStartTime, onSearch, y1, mounted, content,
 }: HeroSearchFormProps) {
   const today = getTodayString();
   const [category, setCategory] = useState("all");
   const [returnTime, setReturnTime] = useState("10:00");
+
+  const searchForm = content?.search_form;
+  const formTitle = searchForm?.form_title || "Reserve your vehicle";
+  const formSubtitle = searchForm?.form_subtitle || "Confirmed in under 2 minutes.";
+  const locationLabel = searchForm?.location_label || "PICK-UP LOCATION";
+  const startLabel = searchForm?.start_label || "PICK-UP DATE";
+  const endLabel = searchForm?.end_label || "RETURN DATE";
+  const searchButtonText = searchForm?.search_button || "Check availability";
 
   return (
     <motion.div
@@ -56,14 +64,14 @@ export default function HeroSearchForm({
       className="lg:col-span-5 w-full max-w-[420px] lg:ml-auto"
     >
       <div className="bg-white rounded-[28px] p-7 md:p-8 shadow-2xl border border-gray-100/90 text-slate-900">
-        <h3 className="text-xl font-extrabold text-slate-900 mb-1 tracking-tight">Reserve your vehicle</h3>
-        <p className="text-xs text-gray-400 font-medium mb-6">Confirmed in under 2 minutes.</p>
+        <h3 className="text-xl font-extrabold text-slate-900 mb-1 tracking-tight">{formTitle}</h3>
+        <p className="text-xs text-gray-400 font-medium mb-6">{formSubtitle}</p>
 
         <div className="space-y-4">
           {/* PICK-UP LOCATION */}
           <div>
             <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
-              PICK-UP LOCATION
+              {locationLabel}
             </label>
             <select
               value={location}
@@ -83,7 +91,7 @@ export default function HeroSearchForm({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
-                PICK-UP DATE
+                {startLabel}
               </label>
               <input
                 type="date"
@@ -110,7 +118,7 @@ export default function HeroSearchForm({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-1.5 block">
-                RETURN DATE
+                {endLabel}
               </label>
               <input
                 type="date"
@@ -154,7 +162,7 @@ export default function HeroSearchForm({
             onClick={onSearch}
             className="w-full bg-[#182232] hover:bg-slate-800 text-white font-bold py-3.5 rounded-full text-sm transition-all duration-300 shadow-md hover:shadow-lg mt-2 cursor-pointer"
           >
-            Check availability
+            {searchButtonText}
           </button>
         </div>
       </div>

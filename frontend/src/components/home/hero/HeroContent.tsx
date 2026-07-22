@@ -15,8 +15,12 @@ interface HeroContentProps {
 
 export default function HeroContent({ content, aboutText, stats, y1, mounted, t }: HeroContentProps) {
   const heroSection = content?.hero ?? content;
+  const title = (heroSection && "title" in heroSection ? heroSection.title : undefined) || "Drive Morocco with confidence, not compromise.";
   const subtitle = (heroSection && "subtitle" in heroSection ? heroSection.subtitle : undefined) || "A modern fleet, transparent pricing, and airport-ready delivery — built for business travel, family trips, and everything in between.";
   const badge = (heroSection && "badge" in heroSection ? heroSection.badge : undefined) || "— PREMIUM CAR RENTAL • MOROCCO";
+  const ctaText = (heroSection && "cta_text" in heroSection ? heroSection.cta_text : undefined) || "Browse the fleet";
+  const ctaLink = (heroSection && "cta_link" in heroSection ? heroSection.cta_link : undefined) || "/fleet";
+  const ratingText = (heroSection && "rating_text" in heroSection ? heroSection.rating_text : undefined) || "4.9 / 5 on Google · 2,300+ rentals";
 
   return (
     <motion.div
@@ -40,7 +44,7 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
-        Drive Morocco with <span className="text-[#d4b068]">confidence,</span> not compromise.
+        {title}
       </motion.h1>
 
       {/* Subtitle */}
@@ -61,10 +65,10 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
         transition={{ delay: 0.5, duration: 0.6 }}
       >
         <a 
-          href="/fleet" 
+          href={ctaLink} 
           className="bg-[#c69c46] hover:bg-[#b88d38] text-slate-950 px-8 py-3.5 rounded-full font-bold text-sm transition-all duration-300 shadow-lg hover:scale-[1.02]"
         >
-          Browse the fleet
+          {ctaText}
         </a>
         <div className="flex items-center gap-2 text-white text-xs font-semibold">
           <div className="flex items-center gap-0.5">
@@ -72,7 +76,7 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
               <Star key={s} size={13} className="text-[#d4b068] fill-[#d4b068]" />
             ))}
           </div>
-          <span><strong>4.9 / 5</strong> on Google · 2,300+ rentals</span>
+          <span>{ratingText}</span>
         </div>
       </motion.div>
     </motion.div>
