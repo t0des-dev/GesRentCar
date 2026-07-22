@@ -17,7 +17,7 @@ import {
   Lock, Key, Fingerprint, Eye, EyeOff, Bell, BellOff,
   Wifi, Bluetooth, Battery, Plug, Monitor, Smartphone, Laptop,
   Mail, MessageCircle, Send, Share, Link, QrCode,
-  Settings, Sliders, ToggleLeft, ToggleRight, Tool,
+  Settings, Sliders, ToggleLeft, ToggleRight, Wrench,
   ArrowRight, ArrowLeft, ArrowUp, ArrowDown, ChevronRight, RefreshCw,
   Plus, Minus, X as XIcon, Check as CheckIcon, AlertCircle, Info,
   Briefcase, BookOpen, Clipboard, FileText, FolderOpen,
@@ -69,7 +69,7 @@ export const ALL_ICONS: Record<string, IconComponent> = {
   // Documents
   Briefcase, BookOpen, Clipboard, FileText, FolderOpen,
   // Divers
-  Globe, Globe2, Heart, Sparkles, Flag, Layers, Settings, Sliders, Tool,
+  Globe, Globe2, Heart, Sparkles, Flag, Layers, Settings, Sliders, Wrench,
   // Émotions
   ThumbsUp, ThumbsDown, Smile, Frown, Meh, Bug,
   // Espace

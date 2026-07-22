@@ -17,12 +17,12 @@ const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: numb
 };
 
 const DEFAULT_ITEMS: StatItem[] = [
-  { id: "s1", label: "24/7 Assistance", icon: "Clock" },
-  { id: "s2", label: "Airport Delivery", icon: "Car" },
-  { id: "s3", label: "Unlimited Mileage", icon: "Target" },
-  { id: "s4", label: "Insurance Included", icon: "Shield" },
-  { id: "s5", label: "Transparent Pricing", icon: "CreditCard" },
-  { id: "s6", label: "Fast Booking", icon: "Zap" },
+  { id: "s1", label: "24/7 Assistance", value: "", icon: "Clock" },
+  { id: "s2", label: "Airport Delivery", value: "", icon: "Car" },
+  { id: "s3", label: "Unlimited Mileage", value: "", icon: "Target" },
+  { id: "s4", label: "Insurance Included", value: "", icon: "Shield" },
+  { id: "s5", label: "Transparent Pricing", value: "", icon: "CreditCard" },
+  { id: "s6", label: "Fast Booking", value: "", icon: "Zap" },
 ];
 
 export default function TrustBar({ content }: { content?: Partial<StatsConfig> }) {
