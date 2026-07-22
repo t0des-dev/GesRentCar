@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Mail, ArrowRight, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Send, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
 import { useState } from "react";
@@ -103,26 +103,36 @@ export default function Footer() {
   // Build active social links list
   const activeSocials = Object.entries(social).filter(([, url]) => Boolean(url && typeof url === "string"));
 
+  const newsletterTitle = t("newsletter_title");
+  const displayNewsletterTitle = (!newsletterTitle || newsletterTitle === "newsletter_title")
+    ? "Restez connecté avec l'excellence"
+    : newsletterTitle;
+
+  const newsletterDesc = t("newsletter_desc");
+  const displayNewsletterDesc = (!newsletterDesc || newsletterDesc === "newsletter_desc")
+    ? "Recevez nos meilleures offres de location et nouveautés en avant-première."
+    : newsletterDesc;
+
   return (
-    <footer className="bg-[var(--charcoal,#121927)] text-white/75 pt-20 pb-8 relative overflow-hidden border-t border-white/10">
+    <footer className="bg-slate-950 text-slate-300 pt-20 pb-8 relative overflow-hidden border-t border-slate-800/80">
       
       {/* Background Subtle Radial Lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[radial-gradient(ellipse_at_top,rgba(195,154,77,0.08)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[radial-gradient(ellipse_at_top,rgba(195,154,77,0.12)_0%,transparent_70%)] pointer-events-none" />
 
       <div className="max-w-[var(--container)] mx-auto px-8 relative z-10">
 
         {/* 📬 Newsletter Subscription Bar */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-16 backdrop-blur-md flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 mb-16 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="max-w-lg">
-            <h4 className="font-[var(--font-sora)] text-lg md:text-xl font-bold text-white mb-1">
-              {t("newsletter_title") || "Restez connecté avec l'excellence"}
+            <h4 className="font-[var(--font-sora)] text-lg md:text-xl font-extrabold text-white mb-1 tracking-tight">
+              {displayNewsletterTitle}
             </h4>
-            <p className="text-xs md:text-sm text-white/60 font-medium">
-              {t("newsletter_desc") || "Recevez nos meilleures offres de location et nouveautés en avant-première."}
+            <p className="text-xs md:text-sm text-slate-400 font-medium">
+              {displayNewsletterDesc}
             </p>
           </div>
 
-          <form onSubmit={handleSubscribe} className="w-full lg:w-auto flex flex-col sm:flex-row gap-3 min-w-[320px] md:min-w-[400px]">
+          <form onSubmit={handleSubscribe} className="w-full lg:w-auto flex flex-col sm:flex-row gap-3 min-w-[320px] md:min-w-[420px]">
             <div className="relative flex-1">
               <input
                 type="email"
@@ -130,19 +140,19 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="votre.email@exemple.com"
-                className="w-full bg-white/10 border border-white/15 rounded-full px-5 py-3 text-xs md:text-sm text-white placeholder:text-white/40 outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] transition-all font-medium"
+                className="w-full bg-slate-800 border border-slate-700 rounded-full px-5 py-3 text-xs md:text-sm text-white placeholder:text-slate-500 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 transition-all font-medium"
               />
             </div>
             <button
               type="submit"
               disabled={subscribeStatus === "loading"}
-              className="px-6 py-3 rounded-full bg-[#182232] hover:bg-slate-800 text-white font-bold text-xs md:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 border border-white/20 hover:scale-[1.02]"
+              className="px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs md:text-sm shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] active:scale-95"
             >
               {subscribeStatus === "loading" ? (
                 <span className="text-xs">Inscription…</span>
               ) : subscribeStatus === "success" ? (
                 <>
-                  <CheckCircle2 size={16} className="text-emerald-400" />
+                  <CheckCircle2 size={16} className="text-slate-950" />
                   <span>Inscrit !</span>
                 </>
               ) : (
@@ -163,7 +173,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-3 group w-fit">
               {logoUrl ? (
                 <div
-                  className="overflow-hidden flex items-center justify-center transition-all shrink-0"
+                  className="overflow-hidden flex items-center justify-center transition-all shrink-0 shadow-md"
                   style={{
                     width: agency.logo_config?.width || "38px",
                     height: agency.logo_config?.height || "38px",
@@ -181,17 +191,17 @@ export default function Footer() {
                   />
                 </div>
               ) : (
-                <div className="w-9 h-9 rounded-xl bg-[var(--gold)]/20 text-[var(--gold)] flex items-center justify-center font-black text-lg border border-[var(--gold)]/30">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-lg border border-amber-500/30">
                   {nameFirst[0]?.toUpperCase()}
                 </div>
               )}
 
               <span className="font-[var(--font-sora)] font-extrabold text-[21px] text-white tracking-tight">
-                {nameFirst} <span className="text-[var(--gold,#c39a4d)]">{nameRest}</span>
+                {nameFirst} <span className="text-amber-400">{nameRest}</span>
               </span>
             </Link>
 
-            <p className="text-[14px] text-white/55 max-w-[280px] leading-relaxed">
+            <p className="text-[14px] text-slate-400 max-w-[280px] leading-relaxed font-medium">
               {agency.agency_slogan || "L'excellence automobile au Maroc — flotte moderne, tarifs transparents et service conciergerie VIP."}
             </p>
 
@@ -215,7 +225,7 @@ export default function Footer() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/80 hover:border-[var(--gold,#c39a4d)] hover:bg-[var(--gold,#c39a4d)]/15 hover:text-white transition-all duration-300 shadow-sm"
+                    className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:border-amber-400 hover:bg-amber-500/10 hover:text-amber-400 transition-all duration-300 shadow-sm"
                     aria-label={platform}
                   >
                     {Icon ? <Icon size={15} /> : <span className="text-xs font-bold uppercase">{platform[0]}</span>}
@@ -227,7 +237,7 @@ export default function Footer() {
 
           {/* Column 2: Flotte */}
           <div className="flex flex-col gap-5">
-            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-bold">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-extrabold">
               Flotte
             </h5>
             <nav className="flex flex-col gap-3.5">
@@ -241,7 +251,7 @@ export default function Footer() {
                 <Link
                   key={href}
                   href={href}
-                  className="text-[14px] text-white/60 hover:text-[var(--gold,#c39a4d)] transition-colors duration-300 font-medium"
+                  className="text-[14px] text-slate-400 hover:text-amber-400 transition-colors duration-300 font-medium"
                 >
                   {label}
                 </Link>
@@ -251,7 +261,7 @@ export default function Footer() {
 
           {/* Column 3: Agence */}
           <div className="flex flex-col gap-5">
-            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-bold">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-extrabold">
               Agence
             </h5>
             <nav className="flex flex-col gap-3.5">
@@ -264,7 +274,7 @@ export default function Footer() {
                 <Link
                   key={href}
                   href={href}
-                  className="text-[14px] text-white/60 hover:text-[var(--gold,#c39a4d)] transition-colors duration-300 font-medium"
+                  className="text-[14px] text-slate-400 hover:text-amber-400 transition-colors duration-300 font-medium"
                 >
                   {label}
                 </Link>
@@ -274,7 +284,7 @@ export default function Footer() {
 
           {/* Column 4: Légal */}
           <div className="flex flex-col gap-5">
-            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-bold">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-extrabold">
               Informations
             </h5>
             <nav className="flex flex-col gap-3.5">
@@ -286,7 +296,7 @@ export default function Footer() {
                 <Link
                   key={href}
                   href={href}
-                  className="text-[14px] text-white/60 hover:text-[var(--gold,#c39a4d)] transition-colors duration-300 font-medium"
+                  className="text-[14px] text-slate-400 hover:text-amber-400 transition-colors duration-300 font-medium"
                 >
                   {label}
                 </Link>
@@ -296,52 +306,52 @@ export default function Footer() {
 
           {/* Column 5: Contact */}
           <div className="flex flex-col gap-5">
-            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-bold">
+            <h5 className="font-[var(--font-sora)] text-[13.5px] text-white uppercase tracking-[0.08em] font-extrabold">
               Contact VIP
             </h5>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 text-[14px] text-white/70">
-                <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                  <Phone size={14} className="text-[var(--gold,#c39a4d)]" />
+              <div className="flex items-center gap-3 text-[14px] text-slate-300">
+                <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+                  <Phone size={14} className="text-amber-400" />
                 </div>
-                <a href={`tel:${agencyPhone.replace(/\s+/g, '')}`} className="hover:text-[var(--gold,#c39a4d)] transition-colors font-semibold">
+                <a href={`tel:${agencyPhone.replace(/\s+/g, '')}`} className="hover:text-amber-400 transition-colors font-bold">
                   {agencyPhone}
                 </a>
               </div>
 
-              <div className="flex items-center gap-3 text-[14px] text-white/70">
-                <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                  <Mail size={14} className="text-[var(--gold,#c39a4d)]" />
+              <div className="flex items-center gap-3 text-[14px] text-slate-300">
+                <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+                  <Mail size={14} className="text-amber-400" />
                 </div>
-                <a href={`mailto:${agencyEmail}`} className="hover:text-[var(--gold,#c39a4d)] transition-colors truncate font-semibold">
+                <a href={`mailto:${agencyEmail}`} className="hover:text-amber-400 transition-colors truncate font-semibold">
                   {agencyEmail}
                 </a>
               </div>
 
-              <div className="flex items-start gap-3 text-[14px] text-white/70">
-                <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin size={14} className="text-[var(--gold,#c39a4d)]" />
+              <div className="flex items-start gap-3 text-[14px] text-slate-300">
+                <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPin size={14} className="text-amber-400" />
                 </div>
-                <span className="font-medium text-xs leading-relaxed">{agencyAddress}</span>
+                <span className="font-medium text-xs text-slate-400 leading-relaxed">{agencyAddress}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/10 text-[13px] text-white/40 font-medium">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-slate-800/80 text-[13px] text-slate-400 font-medium">
           <span>
             © {new Date().getFullYear()} {agency.agency_name || "Vectoria Rent Car"}. Tous droits réservés.
           </span>
 
           <div className="flex items-center gap-6">
-            <Link href="/terms" className="hover:text-[var(--gold,#c39a4d)] transition-colors">
+            <Link href="/terms" className="hover:text-amber-400 transition-colors">
               CGU
             </Link>
-            <Link href="/privacy" className="hover:text-[var(--gold,#c39a4d)] transition-colors">
+            <Link href="/privacy" className="hover:text-amber-400 transition-colors">
               Confidentialité
             </Link>
-            <Link href="/sitemap.xml" className="hover:text-[var(--gold,#c39a4d)] transition-colors">
+            <Link href="/sitemap.xml" className="hover:text-amber-400 transition-colors">
               Plan du site
             </Link>
           </div>
@@ -350,7 +360,7 @@ export default function Footer() {
             {["Visa", "Mastercard", "CMI", "Cash"].map((card) => (
               <span
                 key={card}
-                className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-[11px] font-bold text-white/60"
+                className="px-3 py-1 bg-slate-900 border border-slate-800 rounded-md text-[11px] font-bold text-slate-300"
               >
                 {card}
               </span>
