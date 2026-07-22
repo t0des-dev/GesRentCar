@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, MotionValue } from "framer-motion";
-import { Star } from "lucide-react";
+import { Star, ShieldCheck, Headphones, Car, Clock, Plane, Sparkles, CheckCircle2, Zap } from "lucide-react";
 import type { SectionsContent } from "@/types/storefront";
 
 interface HeroContentProps {
@@ -13,6 +13,25 @@ interface HeroContentProps {
   t: (key: string) => string;
 }
 
+const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  ShieldCheck,
+  Shield: ShieldCheck,
+  Headphones,
+  HeadphonesIcon: Headphones,
+  Car,
+  Clock,
+  Plane,
+  Sparkles,
+  CheckCircle2,
+  Zap,
+};
+
+const DEFAULT_BENEFITS = [
+  { icon: "Headphones", text: "Support VIP 24/7" },
+  { icon: "ShieldCheck", text: "Assurance Tous Risques" },
+  { icon: "Car", text: "Livraison Aéroport" },
+];
+
 export default function HeroContent({ content, aboutText, stats, y1, mounted, t }: HeroContentProps) {
   const heroSection = content?.hero ?? content;
   const title = (heroSection && "title" in heroSection ? heroSection.title : undefined) || "Drive Morocco with confidence, not compromise.";
@@ -21,6 +40,9 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
   const ctaText = (heroSection && "cta_text" in heroSection ? heroSection.cta_text : undefined) || "Browse the fleet";
   const ctaLink = (heroSection && "cta_link" in heroSection ? heroSection.cta_link : undefined) || "/fleet";
   const ratingText = (heroSection && "rating_text" in heroSection ? heroSection.rating_text : undefined) || "4.9 / 5 on Google · 2,300+ rentals";
+  
+  const rawBenefits = heroSection && "benefits" in heroSection && Array.isArray(heroSection.benefits) ? heroSection.benefits : [];
+  const benefits = rawBenefits.length > 0 ? rawBenefits : DEFAULT_BENEFITS;
 
   return (
     <motion.div
@@ -49,13 +71,36 @@ export default function HeroContent({ content, aboutText, stats, y1, mounted, t 
 
       {/* Subtitle */}
       <motion.p
-        className="text-slate-200 text-base md:text-[17px] leading-relaxed max-w-xl mb-8 font-normal"
+        className="text-slate-200 text-base md:text-[17px] leading-relaxed max-w-xl mb-6 font-normal"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
       >
         {subtitle}
       </motion.p>
+
+      {/* Benefits Badges Row */}
+      {benefits.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.6 }}
+          className="flex flex-wrap items-center gap-2.5 mb-8"
+        >
+          {benefits.map((b, idx) => {
+            const IconComp = (b.icon && ICON_MAP[b.icon]) ? ICON_MAP[b.icon] : CheckCircle2;
+            return (
+              <div
+                key={idx}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-slate-100 text-xs font-medium shadow-sm"
+              >
+                <IconComp size={14} className="text-[#d4b068]" />
+                <span>{b.text}</span>
+              </div>
+            );
+          })}
+        </motion.div>
+      )}
 
       {/* CTA + Trust Rating Row */}
       <motion.div

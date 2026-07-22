@@ -73,7 +73,19 @@ export const defaultStorefrontForm: StorefrontForm = {
   ],
   concierge_config: { title: "Conciergerie Digitale", text: "Besoin d'un itinéraire ou d'un conseil ? Notre IA vous accompagne." },
   sections_content: {
-    hero: { badge: "— PREMIUM CAR RENTAL • MOROCCO", title: "Drive Morocco with confidence, not compromise.", subtitle: "A modern fleet, transparent pricing, and airport-ready delivery — built for business travel, family trips, and everything in between.", cta_text: "Browse the fleet", cta_link: "/fleet", rating_text: "4.9 / 5 on Google · 2,300+ rentals" },
+    hero: {
+      badge: "— PREMIUM CAR RENTAL • MOROCCO",
+      title: "Drive Morocco with confidence, not compromise.",
+      subtitle: "A modern fleet, transparent pricing, and airport-ready delivery — built for business travel, family trips, and everything in between.",
+      cta_text: "Browse the fleet",
+      cta_link: "/fleet",
+      rating_text: "4.9 / 5 on Google · 2,300+ rentals",
+      benefits: [
+        { icon: "Headphones", text: "Support VIP 24/7" },
+        { icon: "ShieldCheck", text: "Assurance Tous Risques" },
+        { icon: "Car", text: "Livraison Aéroport" }
+      ]
+    },
     why_us: { 
       title: "Pourquoi choisir Vectoria ?", 
       subtitle: "Nous redéfinissons les standards de la location de luxe au Maroc.",
