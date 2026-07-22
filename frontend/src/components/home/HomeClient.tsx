@@ -186,6 +186,7 @@ export default function HomeClient() {
         <HeroSection
           agency={storefront}
           content={storefront.sections_content.hero}
+          searchFormContent={storefront.sections_content.search_form}
           location={location}
           setLocation={setLocation}
           startDate={startDate}
@@ -212,9 +213,9 @@ export default function HomeClient() {
           content={storefront.sections_content.featured_vehicles}
         />
       ),
-      luxury: () => <LuxuryCollection />,
-      services: () => <ServicesSection />,
-      process: () => <ProcessSteps />,
+      luxury: () => <LuxuryCollection content={storefront.sections_content.luxury} />,
+      services: () => <ServicesSection content={storefront.sections_content.services} />,
+      process: () => <ProcessSteps content={storefront.sections_content.how_it_works} />,
       testimonials_grid: () => <TestimonialsGrid />,
       testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
       map: () => <ExperienceMap content={storefront.sections_content.map} />,
@@ -223,7 +224,7 @@ export default function HomeClient() {
         <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />
       ),
       how_it_works: () => <HowItWorks content={storefront.sections_content.how_it_works} />,
-      final_cta: () => <FinalCta />,
+      final_cta: () => <FinalCta content={storefront.sections_content.cta_banner} phone={storefront.footer_config?.phone} />,
       dual_cta: () => (
         <DualCtaSection
           promotion={storefront.sections_content.promotion_banner}

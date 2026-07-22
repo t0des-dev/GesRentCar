@@ -10,7 +10,17 @@ const STEPS = [
   { num: "05", title: "Return", desc: "Drop off and go — we handle the rest." },
 ];
 
-export default function ProcessSteps() {
+interface ProcessStepsProps {
+  content?: {
+    badge?: string;
+    title?: string;
+    steps?: { num: string; title: string; desc: string }[];
+  };
+}
+
+export default function ProcessSteps({ content }: ProcessStepsProps) {
+  const stepsList = content?.steps?.length ? content.steps : STEPS;
+
   return (
     <section className="py-24 lg:py-32 bg-[var(--light-gray)]">
       <div className="max-w-[var(--container)] mx-auto px-8">
@@ -24,7 +34,7 @@ export default function ProcessSteps() {
             className="eyebrow-theme"
             style={{ justifyContent: "center" }}
           >
-            How It Works
+            {content?.badge || "How It Works"}
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 12 }}
@@ -32,16 +42,16 @@ export default function ProcessSteps() {
             viewport={{ once: true }}
             transition={{ delay: 0.08 }}
           >
-            Five steps from booking to the open road.
+            {content?.title || "Five steps from booking to the open road."}
           </motion.h2>
         </div>
 
-        {/* Process Track — 5 columns with connecting line */}
+        {/* Process Track — dynamic columns with connecting line */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative">
           {/* Connecting line (desktop only) */}
           <div className="hidden md:block absolute top-[27px] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[rgba(194,161,91,0.4)] to-transparent" />
 
-          {STEPS.map((step, idx) => (
+          {stepsList.map((step, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 16 }}

@@ -12,6 +12,7 @@ import HeroSearchForm from "./hero/HeroSearchForm";
 interface HeroSectionProps {
   agency: any;
   content: any;
+  searchFormContent?: any;
   location: string;
   setLocation: (v: string) => void;
   startDate: string;
@@ -28,7 +29,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({
-  agency, content, location, setLocation, startDate, setStartDate, endDate, setEndDate,
+  agency, content, searchFormContent, location, setLocation, startDate, setStartDate, endDate, setEndDate,
   startTime, setStartTime, onSearch, aboutText, stats, heroImage: heroImageProp, heroVideo: heroVideoProp,
 }: HeroSectionProps) {
   const { t } = useTranslation();
@@ -41,10 +42,10 @@ export default function HeroSection({
 
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, reduceMotion ? 0 : 150]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || null;
-  const heroVideo = heroVideoProp || agency.hero_video_url || "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4";
+  const rawVideo = heroVideoProp !== undefined ? heroVideoProp : agency.hero_video_url;
+  const heroVideo = rawVideo || (heroImage ? null : "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4");
 
   const scrollText = content?.experience?.cta_text || "Découvrir";
 
@@ -68,7 +69,7 @@ export default function HeroSection({
           />
 
           <HeroSearchForm
-            content={content}
+            content={searchFormContent || content}
             location={location} setLocation={setLocation}
             startDate={startDate} setStartDate={setStartDate}
             endDate={endDate} setEndDate={setEndDate}

@@ -20,6 +20,8 @@ export interface StorefrontData {
   stats_config: { columns?: string; theme?: string; height?: string; text_size?: string; text_color?: string; items: StatItem[] };
   sections_config: Record<string, boolean | undefined>;
   sections_order?: SectionOrder[];
+  header_config?: import("./useAgency").AgencyConfig["header_config"];
+  footer_config?: import("./useAgency").AgencyConfig["footer_config"];
 }
 
 // Ensure DEFAULT_SECTIONS_CONTENT has all required fields with proper defaults
@@ -45,12 +47,38 @@ export function useStorefront(): StorefrontData {
   const content: SectionsContent = {
     ...FULL_DEFAULT_SECTIONS_CONTENT,
     ...agency.sections_content,
-  };
-
-  // Recover why_us fields correctly
-  content.why_us = {
-    ...(FULL_DEFAULT_SECTIONS_CONTENT.why_us || {}),
-    ...(agency.sections_content?.why_us || {}),
+    hero: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.hero || {}),
+      ...(agency.sections_content?.hero || {}),
+    },
+    search_form: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.search_form || {}),
+      ...(agency.sections_content?.search_form || {}),
+    },
+    featured_vehicles: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.featured_vehicles || {}),
+      ...(agency.sections_content?.featured_vehicles || {}),
+    },
+    why_us: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.why_us || {}),
+      ...(agency.sections_content?.why_us || {}),
+    },
+    experience: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.experience || {}),
+      ...(agency.sections_content?.experience || {}),
+    },
+    faq: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.faq || {}),
+      ...(agency.sections_content?.faq || {}),
+    },
+    cta_banner: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.cta_banner || {}),
+      ...(agency.sections_content?.cta_banner || {}),
+    },
+    promotion_banner: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.promotion_banner || {}),
+      ...(agency.sections_content?.promotion_banner || {}),
+    },
   };
 
   // Recover custom features from old features_config if they exist
@@ -116,5 +144,7 @@ export function useStorefront(): StorefrontData {
     },
     sections_config: agency.sections_config || {},
     sections_order: agency.sections_order || [],
+    header_config: agency.header_config,
+    footer_config: agency.footer_config,
   };
 }

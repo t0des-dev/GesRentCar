@@ -176,6 +176,8 @@ export interface SectionsContent {
     empty_heading: string;
     empty_description: string;
   };
+  luxury?: { eyebrow?: string; title?: string; subtitle?: string };
+  services?: { eyebrow?: string; title?: string; description?: string };
   search_form: {
     form_title?: string;
     form_subtitle?: string;

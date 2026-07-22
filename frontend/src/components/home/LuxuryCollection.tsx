@@ -13,7 +13,15 @@ const FALLBACK_LUXURY = [
   { id: 4, brand: "AUDI", model: "A8", image_url: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=800" },
 ];
 
-export default function LuxuryCollection() {
+interface LuxuryCollectionProps {
+  content?: {
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+  };
+}
+
+export default function LuxuryCollection({ content }: LuxuryCollectionProps) {
   const { data } = useVehicles({ per_page: 24 });
   const allVehicles = data?.data ?? [];
   const apiLuxury = allVehicles.filter((v: any) =>
@@ -36,7 +44,7 @@ export default function LuxuryCollection() {
             viewport={{ once: true }}
             className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#c39a4d] mb-3 block"
           >
-            — LUXURY COLLECTION —
+            {content?.eyebrow || "— LUXURY COLLECTION —"}
           </motion.div>
 
           <motion.h2
@@ -46,7 +54,7 @@ export default function LuxuryCollection() {
             transition={{ delay: 0.08 }}
             className="text-3xl md:text-4xl lg:text-[42px] font-extrabold text-white leading-tight mb-4 tracking-tight font-[var(--font-sora)]"
           >
-            For the moments that call for more.
+            {content?.title || "For the moments that call for more."}
           </motion.h2>
 
           <motion.p
@@ -56,7 +64,7 @@ export default function LuxuryCollection() {
             transition={{ delay: 0.16 }}
             className="text-slate-400 text-xs md:text-sm max-w-lg mx-auto font-medium"
           >
-            Flagship sedans and SUVs, reserved for clients who expect the best.
+            {content?.subtitle || "Flagship sedans and SUVs, reserved for clients who expect the best."}
           </motion.p>
         </div>
 

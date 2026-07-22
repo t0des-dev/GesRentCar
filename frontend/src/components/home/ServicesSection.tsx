@@ -13,12 +13,20 @@ const SERVICES = [
   { icon: User, title: "Luxury Chauffeur", desc: "Professional, discreet drivers for airport transfers, meetings, and city touring." },
 ];
 
-export default function ServicesSection() {
+interface ServicesSectionProps {
+  content?: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+  };
+}
+
+export default function ServicesSection({ content }: ServicesSectionProps) {
   return (
     <ThemeSection
-      eyebrow="Professional Services"
-      title="Built for business, not just vacations."
-      description="Fleet solutions for companies, hotels, and frequent travelers who need reliability at scale."
+      eyebrow={content?.eyebrow || "Professional Services"}
+      title={content?.title || "Built for business, not just vacations."}
+      description={content?.description || "Fleet solutions for companies, hotels, and frequent travelers who need reliability at scale."}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
         {SERVICES.map((service, idx) => {

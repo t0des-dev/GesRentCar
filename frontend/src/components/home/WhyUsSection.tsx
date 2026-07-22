@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Crown, HeadphonesIcon, ShieldCheck, Star, Car, LayoutDashboard, Settings, Users } from "lucide-react";
+import { Crown } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { getImageUrl } from "@/shared/utils/image";
+import { ALL_ICONS } from "@/modules/storefront/components/cms/IconPicker";
 
 interface WhyUsSectionProps {
   content?: {
@@ -14,23 +15,19 @@ interface WhyUsSectionProps {
   };
 }
 
-const ICON_MAP: Record<string, any> = {
-  Crown, HeadphonesIcon, ShieldCheck, Star, Car, LayoutDashboard, Settings, Users
-};
-
 export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
   const { t } = useTranslation();
 
   const defaultFeatures: { icon: string; image?: string; title: string; desc: string }[] = [
     { icon: "Crown", title: t("feat_fleet_title"), desc: t("feat_fleet_desc") },
-    { icon: "HeadphonesIcon", title: t("feat_support_title"), desc: t("feat_support_desc") },
+    { icon: "Headphones", title: t("feat_support_title"), desc: t("feat_support_desc") },
     { icon: "ShieldCheck", title: t("feat_chauffeur_title"), desc: t("feat_chauffeur_desc") },
   ];
 
   const features = content?.features?.length ? content.features : defaultFeatures;
 
   const getIcon = (iconName: string) => {
-    const Icon = ICON_MAP[iconName];
+    const Icon = ALL_ICONS[iconName];
     return Icon || Crown;
   };
 
