@@ -234,10 +234,14 @@ export default function HomeClient() {
     [storefront, location, startDate, endDate, handleSearch, aboutText, STATS, featuredVehicles, isLoading]
   );
 
-  const activeSections = useMemo(
-    () => currentOrder.filter((s) => s.active !== false),
-    [currentOrder]
-  );
+  const activeSections = useMemo(() => {
+    const hasTrustBar = currentOrder.some((s) => s.id === "trust_bar" && s.active !== false);
+    return currentOrder.filter((s) => {
+      if (s.active === false) return false;
+      if (s.id === "stats" && hasTrustBar) return false;
+      return true;
+    });
+  }, [currentOrder]);
 
   return (
     <main className="min-h-screen overflow-x-hidden">

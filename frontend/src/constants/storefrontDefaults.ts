@@ -30,7 +30,6 @@ export const defaultStorefrontForm: StorefrontForm = {
   sections_order: [
     { id: "hero", label: "Bannière Hero", active: true },
     { id: "trust_bar", label: "Avantages & Support VIP", active: true },
-    { id: "stats", label: "Statistiques Clés", active: true },
     { id: "featured", label: "Véhicules Vedettes", active: true },
     { id: "why_us", label: "Nos Avantages", active: true },
     { id: "testimonials", label: "Témoignages", active: true },

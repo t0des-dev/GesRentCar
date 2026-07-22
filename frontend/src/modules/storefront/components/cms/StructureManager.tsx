@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { Layers, Settings, Bot, ChevronRight, Edit3, ArrowLeft, Search } from "lucide-react";
@@ -33,14 +33,22 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
     onSelectSection?.(id);
   };
 
-  const selected = form.sections_order.find((s) => s.id === selectedSection);
+  const displaySections = useMemo(() => {
+    const hasTrustBar = (form.sections_order ?? []).some((s) => s.id === "trust_bar");
+    return (form.sections_order ?? []).filter((s) => {
+      if (s.id === "stats" && hasTrustBar) return false;
+      return true;
+    });
+  }, [form.sections_order]);
+
+  const selected = displaySections.find((s) => s.id === selectedSection);
   const key = selectedSection ? contentKey(selectedSection) : null;
 
   const isFormLevel = (id: string) => id === "stats" || id === "trust_bar" || id === "concierge_banner" || id === "dual_cta";
 
   const specialEditors: Record<string, { label: string; editor: ReactNode }> = {
     stats: {
-      label: "Statistiques Clés",
+      label: "Avantages & Support VIP / Statistiques",
       editor: (
         <SectionContentEditor
           sectionId="stats"
@@ -193,7 +201,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
                   </p>
                 </div>
                 <SectionReorder
-                  sections={form.sections_order}
+                  sections={displaySections}
                   form={form}
                   onChange={(s) => setForm({ ...form, sections_order: s })}
                   selectedSection={selectedSection}
