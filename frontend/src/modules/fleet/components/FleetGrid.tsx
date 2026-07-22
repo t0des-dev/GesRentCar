@@ -31,7 +31,7 @@ export default function FleetGrid({
   onLoadMore,
   onQuickView,
   layoutView = "grid",
-  columns = 4,
+  columns = 3,
 }: FleetGridProps) {
   const { t } = useTranslation();
 
