@@ -47,7 +47,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
   const gridClass = 
     columnsStr === "2" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-2" :
     columnsStr === "4" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" :
-    "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+    "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   // Calculate unique categories
   const categories = useMemo(() => {
@@ -89,6 +89,18 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
       {/* Default subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-gold/5 pointer-events-none z-0" />
       
+      {/* Dynamic background hover effect */}
+      {dynamicBg && hoveredImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.15 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0 z-0 bg-cover bg-center blur-xl scale-110 pointer-events-none"
+          style={{ backgroundImage: `url(${hoveredImage})` }}
+        />
+      )}
+      
       <div className="max-w-[var(--container)] mx-auto px-8 relative z-10">
         
         {/* Header & Category Pills */}
@@ -128,13 +140,17 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
                   cat.toLowerCase() === "utility" ? "Utility" :
                   cat.charAt(0).toUpperCase() + cat.slice(1);
 
+                const isActive = activeTab === cat;
+                const activeStyle = isActive && filterColor ? { backgroundColor: filterColor, borderColor: filterColor } : undefined;
+
                 return (
                   <button
                     key={cat}
                     onClick={() => setActiveTab(cat)}
+                    style={activeStyle}
                     className={cn(
                       "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-sm",
-                      activeTab === cat
+                      isActive
                         ? "bg-[#182232] text-white shadow-md scale-[1.02]"
                         : "bg-white text-slate-600 border border-gray-200/90 hover:text-slate-900 hover:border-gray-300"
                     )}

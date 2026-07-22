@@ -3,16 +3,23 @@
 import { useState } from "react";
 import { motion, Reorder } from "framer-motion";
 import Image from "next/image";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, GripVertical, LayoutGrid, Sliders, Grid2x2, Grid3x3, Check, X, Sparkles } from "lucide-react";
 import AssetUpload from "@/components/AssetUpload";
 import { getImageUrl } from "@/shared/utils/image";
 import IconPicker from "./IconPicker";
 
+interface OptionItem {
+  value: string;
+  label: string;
+  icon?: string;
+}
+
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "color" | "icon";
+  type: "text" | "textarea" | "image" | "color" | "icon" | "segmented" | "toggle";
   placeholder?: string;
+  options?: OptionItem[];
 }
 
 interface ArrayFieldDef {
@@ -24,6 +31,21 @@ interface ArrayFieldDef {
 }
 
 type SectionFieldDef = FieldDef | ArrayFieldDef;
+
+const FIELD_ICONS: Record<string, any> = {
+  LayoutGrid, Sliders, Grid2x2, Grid3x3, Check, X, Sparkles
+};
+
+const COLOR_PRESETS = [
+  { name: "Navy Sombre", hex: "#182232" },
+  { name: "Indigo", hex: "#6366f1" },
+  { name: "Émeraude", hex: "#059669" },
+  { name: "Rouge", hex: "#dc2626" },
+  { name: "Or Prestige", hex: "#c39a4d" },
+  { name: "Bleu Royal", hex: "#2563eb" },
+  { name: "Slate", hex: "#0f172a" },
+  { name: "Violet", hex: "#8b5cf6" },
+];
 
 const sectionFields: Record<string, SectionFieldDef[]> = {
   hero: [
@@ -106,15 +128,48 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "title", label: "Titre", type: "text" },
     { key: "cta_text", label: "Texte du bouton", type: "text" },
     { key: "cta_link", label: "Lien du bouton", type: "text" },
-    { key: "layout", label: "Mise en page (grid ou carousel)", type: "text", placeholder: "grid" },
-    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text", placeholder: "3" },
+    {
+      key: "layout",
+      label: "Mise en page d'affichage",
+      type: "segmented",
+      options: [
+        { value: "grid", label: "Grille", icon: "LayoutGrid" },
+        { value: "carousel", label: "Carrousel", icon: "Sliders" },
+      ],
+    },
+    {
+      key: "columns",
+      label: "Nombre de colonnes",
+      type: "segmented",
+      options: [
+        { value: "2", label: "2 Colonnes", icon: "Grid2x2" },
+        { value: "3", label: "3 Colonnes", icon: "LayoutGrid" },
+        { value: "4", label: "4 Colonnes", icon: "Grid3x3" },
+      ],
+    },
     { key: "limit", label: "Nombre max de véhicules", type: "text", placeholder: "6" },
-    { key: "show_filters", label: "Afficher les filtres par catégorie (true/false)", type: "text", placeholder: "true" },
-    { key: "filter_color", label: "Couleur des filtres actifs (optionnel)", type: "color" },
-    { key: "dynamic_bg", label: "Fond dynamique au survol (true/false)", type: "text", placeholder: "true" },
-    { key: "loading_text", label: "Texte chargement", type: "text" },
-    { key: "empty_heading", label: "Titre vide", type: "text" },
-    { key: "empty_description", label: "Description vide", type: "textarea" },
+    {
+      key: "show_filters",
+      label: "Afficher les filtres par catégorie",
+      type: "toggle",
+      options: [
+        { value: "true", label: "Oui (Affichés)", icon: "Check" },
+        { value: "false", label: "Non (Masqués)", icon: "X" },
+      ],
+    },
+    { key: "filter_color", label: "Couleur des filtres actifs", type: "color" },
+    {
+      key: "dynamic_bg",
+      label: "Fond dynamique au survol",
+      type: "toggle",
+      options: [
+        { value: "true", label: "Activé", icon: "Check" },
+        { value: "false", label: "Désactivé", icon: "X" },
+      ],
+    },
+    { key: "loading_text", label: "Texte de chargement", type: "text" },
+    { key: "empty_heading", label: "Titre si aucun véhicule", type: "text" },
+    { key: "empty_description", label: "Description si aucun véhicule", type: "textarea" },
   ],
   search_form: [
     { key: "form_title", label: "Titre du formulaire", type: "text" },
@@ -151,23 +206,111 @@ interface SectionContentEditorProps {
 }
 
 function StringField({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: FieldDef }) {
+  if (field.type === "segmented") {
+    const options = field.options || [];
+    const currentValue = value || options[0]?.value || "";
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
+        {options.map((opt) => {
+          const isSelected = currentValue === opt.value;
+          const IconComp = opt.icon ? FIELD_ICONS[opt.icon] : null;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                isSelected
+                  ? "bg-slate-900 text-white shadow-md shadow-slate-950/20 scale-[1.02]"
+                  : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+              }`}
+            >
+              {IconComp && <IconComp size={15} strokeWidth={2} />}
+              <span>{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (field.type === "toggle") {
+    const options = field.options || [
+      { value: "true", label: "Oui", icon: "Check" },
+      { value: "false", label: "Non", icon: "X" },
+    ];
+    const currentValue = value === "false" ? "false" : "true";
+    return (
+      <div className="flex gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
+        {options.map((opt) => {
+          const isSelected = currentValue === opt.value;
+          const IconComp = opt.icon ? FIELD_ICONS[opt.icon] : null;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all ${
+                isSelected
+                  ? opt.value === "true"
+                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                    : "bg-slate-800 text-white shadow-md shadow-slate-800/20"
+                  : "bg-white text-slate-500 border border-slate-200/80 hover:bg-slate-100"
+              }`}
+            >
+              {IconComp && <IconComp size={15} strokeWidth={2.2} />}
+              <span>{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   if (field.type === "color") {
     return (
-      <div className="flex gap-3">
-        <div className="w-10 h-10 rounded-xl border-2 border-white shadow-sm shrink-0 overflow-hidden relative">
+      <div className="space-y-3">
+        <div className="flex gap-3">
+          <div className="w-11 h-11 rounded-2xl border-2 border-white shadow-md shrink-0 overflow-hidden relative">
+            <input
+              type="color"
+              value={value || "#182232"}
+              onChange={(e) => onChange(e.target.value)}
+              className="absolute inset-[-5px] w-[150%] h-[150%] cursor-pointer"
+            />
+          </div>
           <input
-            type="color"
-            value={value || "#000000"}
+            type="text"
+            value={value ?? ""}
             onChange={(e) => onChange(e.target.value)}
-            className="absolute inset-[-5px] w-[150%] h-[150%] cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all uppercase"
+            placeholder="#182232"
           />
         </div>
-        <input
-          type="text"
-          value={value ?? ""}
-          onChange={(e) => onChange(e.target.value)}
-          className="flex-1 px-4 py-3 rounded-2xl border border-slate-200 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all uppercase"
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mr-1">Palette :</span>
+          {COLOR_PRESETS.map((preset) => (
+            <button
+              key={preset.hex}
+              type="button"
+              title={preset.name}
+              onClick={() => onChange(preset.hex)}
+              className={`w-6 h-6 rounded-full border-2 transition-all ${
+                value === preset.hex ? "border-primary scale-125 shadow-md ring-2 ring-primary/20" : "border-white shadow-sm hover:scale-110"
+              }`}
+              style={{ backgroundColor: preset.hex }}
+            />
+          ))}
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="text-[10px] text-slate-400 hover:text-slate-600 underline ml-auto font-medium"
+            >
+              Par défaut
+            </button>
+          )}
+        </div>
       </div>
     );
   }
