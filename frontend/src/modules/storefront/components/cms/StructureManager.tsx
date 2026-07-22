@@ -36,11 +36,21 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
   const selected = form.sections_order.find((s) => s.id === selectedSection);
   const key = selectedSection ? contentKey(selectedSection) : null;
 
-  const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner" || id === "dual_cta";
+  const isFormLevel = (id: string) => id === "stats" || id === "trust_bar" || id === "concierge_banner" || id === "dual_cta";
 
   const specialEditors: Record<string, { label: string; editor: ReactNode }> = {
     stats: {
       label: "Statistiques Clés",
+      editor: (
+        <SectionContentEditor
+          sectionId="stats"
+          content={form.stats_config ?? {}}
+          onChange={(v) => setForm({ ...form, stats_config: v as StatsConfig })}
+        />
+      ),
+    },
+    trust_bar: {
+      label: "Avantages & Support VIP",
       editor: (
         <SectionContentEditor
           sectionId="stats"

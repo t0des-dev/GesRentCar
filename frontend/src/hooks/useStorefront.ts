@@ -72,16 +72,19 @@ export function useStorefront(): StorefrontData {
     if (agency.stats_config && ('label_1' in agency.stats_config || 'value_1' in agency.stats_config)) {
       const legacy = agency.stats_config as Record<string, string | undefined>;
       statsItems = [];
-      if (legacy.label_1 || legacy.value_1) statsItems.push({ id: "s1", label: legacy.label_1 || "Clients", value: legacy.value_1 || "-", icon: "Users", color: "primary" });
-      if (legacy.label_2 || legacy.value_2) statsItems.push({ id: "s2", label: legacy.label_2 || "Véhicules", value: legacy.value_2 || "-", icon: "Car", color: "indigo" });
-      if (legacy.label_3 || legacy.value_3) statsItems.push({ id: "s3", label: legacy.label_3 || "Expérience", value: legacy.value_3 || "-", icon: "Clock", color: "emerald" });
-      if (legacy.label_4 || legacy.value_4) statsItems.push({ id: "s4", label: legacy.label_4 || "Support", value: legacy.value_4 || "-", icon: "Phone", color: "rose" });
+      if (legacy.label_1 || legacy.value_1) statsItems.push({ id: "s1", label: legacy.label_1 || "Clients", value: legacy.value_1 || "", icon: "Users", color: "primary" });
+      if (legacy.label_2 || legacy.value_2) statsItems.push({ id: "s2", label: legacy.label_2 || "Véhicules", value: legacy.value_2 || "", icon: "Car", color: "indigo" });
+      if (legacy.label_3 || legacy.value_3) statsItems.push({ id: "s3", label: legacy.label_3 || "Expérience", value: legacy.value_3 || "", icon: "Clock", color: "emerald" });
+      if (legacy.label_4 || legacy.value_4) statsItems.push({ id: "s4", label: legacy.label_4 || "Support", value: legacy.value_4 || "", icon: "Phone", color: "rose" });
     } else {
+      // Default items matching TrustBar service advantages
       statsItems = [
-        { id: "s1", label: "Clients satisfaits", value: "2,400+", icon: "Users", color: "primary" },
-        { id: "s2", label: "Véhicules premium", value: "80+", icon: "Car", color: "indigo" },
-        { id: "s3", label: "Années d'expérience", value: "15", icon: "Clock", color: "emerald" },
-        { id: "s4", label: "Support disponible", value: "24/7", icon: "Phone", color: "rose" }
+        { id: "s1", label: "24/7 Assistance", value: "", icon: "Clock", color: "primary" },
+        { id: "s2", label: "Airport Delivery", value: "", icon: "Car", color: "primary" },
+        { id: "s3", label: "Unlimited Mileage", value: "", icon: "Target", color: "primary" },
+        { id: "s4", label: "Insurance Included", value: "", icon: "Shield", color: "primary" },
+        { id: "s5", label: "Transparent Pricing", value: "", icon: "CreditCard", color: "primary" },
+        { id: "s6", label: "Fast Booking", value: "", icon: "Zap", color: "primary" },
       ];
     }
   }

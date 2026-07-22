@@ -29,6 +29,7 @@ export const defaultStorefrontForm: StorefrontForm = {
   },
   sections_order: [
     { id: "hero", label: "Bannière Hero", active: true },
+    { id: "trust_bar", label: "Avantages & Support VIP", active: true },
     { id: "stats", label: "Statistiques Clés", active: true },
     { id: "featured", label: "Véhicules Vedettes", active: true },
     { id: "why_us", label: "Nos Avantages", active: true },
@@ -50,16 +51,18 @@ export const defaultStorefrontForm: StorefrontForm = {
   footer_config: { address: "", phone: "", email: "", social_links: { facebook: "", instagram: "", whatsapp: "" } },
   theme_config: { border_radius: "24px", button_style: "pill", glassmorphism: true, font_family: "Inter" },
   stats_config: {
-    columns: "4",
-    theme: "dark",
+    columns: "6",
+    theme: "light",
     height: "normal",
     text_size: "normal",
     text_color: "",
     items: [
-      { id: "s1", label: "Clients satisfaits", value: "2,400+", icon: "Users", color: "primary" },
-      { id: "s2", label: "Véhicules premium", value: "80+", icon: "Car", color: "indigo" },
-      { id: "s3", label: "Années d'expérience", value: "15", icon: "Clock", color: "emerald" },
-      { id: "s4", label: "Support disponible", value: "24/7", icon: "Phone", color: "rose" }
+      { id: "s1", label: "24/7 Assistance", value: "", icon: "Clock" },
+      { id: "s2", label: "Airport Delivery", value: "", icon: "Car" },
+      { id: "s3", label: "Unlimited Mileage", value: "", icon: "Target" },
+      { id: "s4", label: "Insurance Included", value: "", icon: "Shield" },
+      { id: "s5", label: "Transparent Pricing", value: "", icon: "CreditCard" },
+      { id: "s6", label: "Fast Booking", value: "", icon: "Zap" }
     ]
   },
   faq_config: [

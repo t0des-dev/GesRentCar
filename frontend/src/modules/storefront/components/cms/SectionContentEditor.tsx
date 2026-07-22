@@ -557,16 +557,19 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
       {/* Stats — items array */}
       {sectionId === "stats" && (
         <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Statistiques</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Éléments de la barre</label>
+          <p className="text-[11px] text-slate-400 mb-3">
+            Icônes disponibles : Clock, Car, Target, Shield, CreditCard, Zap, Users, Phone, Star, Award, MapPin, TrendingUp, Heart, Globe, Crown, CheckCircle, Headphones, Sparkles, ShieldCheck
+          </p>
           <ReorderableArrayEditor
             items={content?.items ?? []}
             onChange={(items) => onChange({ ...content, items })}
             fields={[
-              { key: "id", label: "ID (unique)", type: "text" },
-              { key: "value", label: "Valeur (ex: 2400+)", type: "text" },
-              { key: "label", label: "Étiquette (ex: Clients satisfaits)", type: "text" },
-              { key: "icon", label: "Icône (optionnel)", type: "text" },
-              { key: "color", label: "Couleur (ex: primary)", type: "text" },
+              { key: "id", label: "ID (unique)", type: "text", placeholder: "s1" },
+              { key: "value", label: "Valeur (optionnel, ex : 2400+)", type: "text", placeholder: "" },
+              { key: "label", label: "Étiquette (ex : Clients satisfaits)", type: "text" },
+              { key: "icon", label: "Icône (ex : Clock, Shield, Star...)", type: "text", placeholder: "Clock" },
+              { key: "color", label: "Couleur accent (ex : primary)", type: "text", placeholder: "primary" },
             ]}
             defaultItem={{ id: "", label: "", value: "", icon: "Star", color: "primary" }}
           />

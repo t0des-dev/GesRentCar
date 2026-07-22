@@ -199,7 +199,7 @@ export default function HomeClient() {
           stats={STATS}
         />
       ),
-      trust_bar: () => <TrustBar />,
+      trust_bar: () => <TrustBar content={storefront.stats_config} />,
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
       stats: () => <StatsSection content={storefront.stats_config} />,
       vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
