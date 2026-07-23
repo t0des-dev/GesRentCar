@@ -1,8 +1,9 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Star } from "lucide-react";
+import { ChevronDown, Car } from "lucide-react";
 import VehicleCard from "@/modules/fleet/components/VehicleCard";
+import VehicleCardSkeleton from "@/modules/fleet/components/VehicleCardSkeleton";
 import { cn } from "@/shared/utils";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import type { Vehicle } from "@/lib/api/vehicles";
@@ -45,12 +46,9 @@ export default function FleetGrid({
       {loading && vehicles.length === 0 ? (
         <div className={cn("grid gap-6", gridClass)}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
+            <VehicleCardSkeleton
               key={i}
-              className={cn(
-                "bg-slate-50/50 backdrop-blur-sm rounded-[1.5rem] animate-pulse border border-slate-100",
-                layoutView === "grid" ? "aspect-[3/4]" : "h-48 w-full"
-              )}
+              className={layoutView === "list" ? "h-48 w-full" : ""}
             />
           ))}
         </div>
@@ -114,17 +112,17 @@ export default function FleetGrid({
                 whileTap={{ scale: 0.98 }}
                 onClick={onLoadMore}
                 disabled={loading}
-                className="group relative flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:bg-slate-800 transition-all overflow-hidden"
+                className="group relative flex items-center gap-3 bg-[var(--navy)] text-white px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] transition-all overflow-hidden cursor-pointer"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]" />
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    Chargement...
+                    {t("fleet_sync")}
                   </span>
                 ) : (
                   <>
-                    Afficher plus de véhicules
+                    {t("load_more")}
                     <ChevronDown
                       size={18}
                       className="group-hover:translate-y-1 transition-transform"
@@ -142,7 +140,7 @@ export default function FleetGrid({
             animate={{ opacity: 1, scale: 1 }}
             className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-slate-100 shadow-sm"
           >
-            <Star size={40} className="text-slate-300" strokeWidth={1} />
+            <Car size={40} className="text-slate-300" strokeWidth={1} />
           </motion.div>
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -155,9 +153,9 @@ export default function FleetGrid({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => window.location.reload()}
-              className="mt-6 text-xs font-semibold uppercase tracking-wider text-primary border-b border-primary/30 pb-1 hover:border-primary transition-all"
+              className="mt-6 text-xs font-semibold uppercase tracking-wider text-[var(--gold)] border-b border-[var(--gold)]/30 pb-1 hover:border-[var(--gold)] transition-all cursor-pointer bg-transparent"
             >
-              {t("filter_clear")}
+              {t("fleet_clear_filters")}
             </motion.button>
           </div>
         </div>

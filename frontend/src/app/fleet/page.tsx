@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, Suspense, useCallback, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, Suspense, useCallback, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 import {
   Loader2, Search, LayoutGrid, List,
-  Car, Gauge, Users, MapPin, Star,
-  ChevronDown, SlidersHorizontal, X,
+  SlidersHorizontal, X,
 } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
@@ -15,6 +14,8 @@ import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
 import RecentBookingPopup from "@/components/RecentBookingPopup";
 import FleetHeader from "@/modules/fleet/components/FleetHeader";
 import FleetGrid from "@/modules/fleet/components/FleetGrid";
+import FleetSidebar from "@/modules/fleet/components/FleetSidebar";
+import FleetFilters from "@/modules/fleet/components/FleetFilters";
 import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
 import type { Vehicle } from "@/lib/api/vehicles";
 
@@ -32,53 +33,57 @@ function getFleetSettings() {
         columns: parsed.columns || DEFAULT_COLUMNS,
       };
     }
-  } catch {}
+  } catch { /* ignore */ }
   return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
 }
 
-const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
-const TRANSMISSIONS = ["All", "Automatic", "Manual"];
-const SEATS = ["All", "2", "4", "5", "7+"];
-const LIFESTYLES = [
-  { id: "all", label: "Tous", icon: Car },
-  { id: "business", label: "Business", icon: Gauge },
-  { id: "romance", label: "Romance", icon: Star },
-  { id: "adventure", label: "Aventure", icon: MapPin },
-  { id: "family", label: "Famille", icon: Users },
-];
-
 function FleetContent() {
   const { t } = useTranslation();
+  const router = useRouter();
   const searchParams = useSearchParams();
+
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
   const lifestyleParam = searchParams.get("lifestyle") || "all";
+  const typeParam = searchParams.get("type") || "All";
+  const transmissionParam = searchParams.get("transmission") || "All";
+  const seatsParam = searchParams.get("seats") || "All";
+  const maxPriceParam = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : 3000;
+  const sortParam = searchParams.get("sort") || "price_asc";
 
   const fleetSettings = useMemo(() => getFleetSettings(), []);
 
   const [textSearch, setTextSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">(
+    sortParam as "price_asc" | "price_desc" | "year_desc" | "brand_asc"
+  );
   const [layoutView, setLayoutView] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FleetFilterState>({
-    type: "All",
-    transmission: "All",
-    maxPrice: 3000,
-    seats: "All",
+    type: typeParam,
+    transmission: transmissionParam,
+    maxPrice: maxPriceParam,
+    seats: seatsParam,
     lifestyle: lifestyleParam,
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<Vehicle | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    lifestyle: true,
-    type: true,
-    transmission: false,
-    seats: false,
-    price: true,
-  });
 
-  const toggleSection = (section: string) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
+  const updateURLParams = useCallback((newFilters: FleetFilterState, newSort: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newFilters.type !== "All") params.set("type", newFilters.type);
+    else params.delete("type");
+    if (newFilters.transmission !== "All") params.set("transmission", newFilters.transmission);
+    else params.delete("transmission");
+    if (newFilters.seats !== "All") params.set("seats", newFilters.seats);
+    else params.delete("seats");
+    if (newFilters.lifestyle !== "all") params.set("lifestyle", newFilters.lifestyle);
+    else params.delete("lifestyle");
+    if (newFilters.maxPrice < 3000) params.set("max_price", String(newFilters.maxPrice));
+    else params.delete("max_price");
+    if (newSort !== "price_asc") params.set("sort", newSort);
+    else params.delete("sort");
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [searchParams, router]);
 
   const { sorted, isLoading, loadMore, hasMore } = useFleetData({
     pageSize: fleetSettings.pageSize,
@@ -89,253 +94,55 @@ function FleetContent() {
     endDate: endDateParam,
   });
 
-  const filteredByText = useMemo(() => {
-    if (!textSearch) return sorted;
-    const q = textSearch.toLowerCase();
-    return sorted.filter(
-      (v) => v.brand?.toLowerCase().includes(q) || v.model?.toLowerCase().includes(q),
-    );
-  }, [sorted, textSearch]);
-
   const handleFilterChange = useCallback((key: keyof FleetFilterState, value: string | number) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => {
+      const next = { ...prev, [key]: value };
+      return next;
+    });
   }, []);
 
-  const resetFilters = () => {
+  useEffect(() => {
+    updateURLParams(filters, sortBy);
+  }, [filters, sortBy, updateURLParams]);
+
+  const resetFilters = useCallback(() => {
     const def = { type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all" };
     setFilters(def);
-  };
+    setSortBy("price_asc");
+  }, []);
 
   const hasActiveFilters =
     filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.lifestyle !== "all" || filters.maxPrice < 3000;
 
   const sortOptions = [
-    { value: "price_asc", label: "Prix: Croissant" },
-    { value: "price_desc", label: "Prix: Décroissant" },
-    { value: "year_desc", label: "Plus Récents" },
-    { value: "brand_asc", label: "Marque (A-Z)" },
+    { value: "price_asc", label: t("sort_price_asc") },
+    { value: "price_desc", label: t("sort_price_desc") },
+    { value: "year_desc", label: t("sort_year_desc") },
+    { value: "brand_asc", label: t("sort_brand_asc") },
   ];
-
-  const sidebarContent = (
-    <div className="flex flex-col gap-0">
-      {/* Lifestyle */}
-      <div className="filter-group border-b border-[var(--line)] py-5">
-        <button
-          onClick={() => toggleSection("lifestyle")}
-          className="w-full flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="text-[14.5px] font-bold text-[var(--navy)]">Votre Vibe</span>
-          <ChevronDown
-            size={16}
-            className={cn("text-[#9297a1] transition-transform duration-300", openSections.lifestyle && "rotate-180")}
-          />
-        </button>
-        {openSections.lifestyle && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 flex flex-col gap-3"
-          >
-            {LIFESTYLES.map((ls) => {
-              const Icon = ls.icon;
-              const active = filters.lifestyle === ls.id;
-              return (
-                <button
-                  key={ls.id}
-                  onClick={() => handleFilterChange("lifestyle", ls.id)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-semibold transition-all border cursor-pointer",
-                    active
-                      ? "bg-[var(--gold)] text-white border-[var(--gold)]"
-                      : "bg-transparent text-[#3d4249] border-[var(--line)] hover:border-[var(--gold)]/40",
-                  )}
-                >
-                  <Icon size={16} />
-                  {ls.label}
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </div>
-
-      {/* Category */}
-      <div className="filter-group border-b border-[var(--line)] py-5">
-        <button
-          onClick={() => toggleSection("type")}
-          className="w-full flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="text-[14.5px] font-bold text-[var(--navy)]">{t("filter_category")}</span>
-          <ChevronDown
-            size={16}
-            className={cn("text-[#9297a1] transition-transform duration-300", openSections.type && "rotate-180")}
-          />
-        </button>
-        {openSections.type && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 flex flex-col gap-3"
-          >
-            {TYPES.map((type) => (
-              <label key={type} className="check cursor-pointer">
-                <input
-                  type="radio"
-                  name="type"
-                  checked={filters.type === type}
-                  onChange={() => handleFilterChange("type", type)}
-                  className="accent-[var(--navy)]"
-                />
-                <span>{type === "All" ? "Tous" : t(`cat_${type.toLowerCase()}`)}</span>
-              </label>
-            ))}
-          </motion.div>
-        )}
-      </div>
-
-      {/* Transmission */}
-      <div className="filter-group border-b border-[var(--line)] py-5">
-        <button
-          onClick={() => toggleSection("transmission")}
-          className="w-full flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="text-[14.5px] font-bold text-[var(--navy)]">{t("filter_transmission")}</span>
-          <ChevronDown
-            size={16}
-            className={cn("text-[#9297a1] transition-transform duration-300", openSections.transmission && "rotate-180")}
-          />
-        </button>
-        {openSections.transmission && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 flex flex-col gap-3"
-          >
-            {TRANSMISSIONS.map((tr) => (
-              <label key={tr} className="check cursor-pointer">
-                <input
-                  type="radio"
-                  name="transmission"
-                  checked={filters.transmission === tr}
-                  onChange={() => handleFilterChange("transmission", tr)}
-                  className="accent-[var(--navy)]"
-                />
-                <span>{tr === "All" ? "Toutes" : t(`trans_${tr.toLowerCase()}`)}</span>
-              </label>
-            ))}
-          </motion.div>
-        )}
-      </div>
-
-      {/* Seats */}
-      <div className="filter-group border-b border-[var(--line)] py-5">
-        <button
-          onClick={() => toggleSection("seats")}
-          className="w-full flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="text-[14.5px] font-bold text-[var(--navy)]">{t("filter_capacity")}</span>
-          <ChevronDown
-            size={16}
-            className={cn("text-[#9297a1] transition-transform duration-300", openSections.seats && "rotate-180")}
-          />
-        </button>
-        {openSections.seats && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 flex flex-col gap-3"
-          >
-            {SEATS.map((s) => (
-              <label key={s} className="check cursor-pointer">
-                <input
-                  type="radio"
-                  name="seats"
-                  checked={filters.seats === s}
-                  onChange={() => handleFilterChange("seats", s)}
-                  className="accent-[var(--navy)]"
-                />
-                <span>{s === "All" ? "Toutes" : `${s} place${s !== "2" ? "s" : ""}`}</span>
-              </label>
-            ))}
-          </motion.div>
-        )}
-      </div>
-
-      {/* Price Range */}
-      <div className="filter-group py-5">
-        <button
-          onClick={() => toggleSection("price")}
-          className="w-full flex items-center justify-between cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="text-[14.5px] font-bold text-[var(--navy)]">{t("filter_price_max")}</span>
-          <ChevronDown
-            size={16}
-            className={cn("text-[#9297a1] transition-transform duration-300", openSections.price && "rotate-180")}
-          />
-        </button>
-        {openSections.price && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="mt-4"
-          >
-            <div className="price-range">
-              <input
-                type="range"
-                min="200"
-                max={5000}
-                step="50"
-                value={filters.maxPrice}
-                onChange={(e) => handleFilterChange("maxPrice", Number(e.target.value))}
-                className="w-full accent-[var(--gold)]"
-              />
-              <div className="price-labels flex justify-between mt-2">
-                <span className="text-[12.5px] text-[#5b6472] font-semibold">200 DH</span>
-                <span className="text-[12.5px] text-[#5b6472] font-semibold">{filters.maxPrice} DH</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </div>
-
-      {hasActiveFilters && (
-        <button
-          onClick={resetFilters}
-          className="clear-filters mt-4 text-[13px] font-semibold text-[var(--gold)] hover:underline cursor-pointer bg-transparent border-none p-0"
-        >
-          Réinitialiser les filtres
-        </button>
-      )}
-    </div>
-  );
 
   return (
     <main className="min-h-screen bg-[var(--warm-white)]">
-      <FleetHeader search={textSearch} setSearch={setTextSearch} />
+      <FleetHeader
+        search={textSearch}
+        setSearch={setTextSearch}
+        startDate={startDateParam}
+        endDate={endDateParam}
+      />
 
       <div className="fleet-page-main max-w-[var(--container)] mx-auto px-8">
         {/* ── Controls Bar ── */}
         <div className="results-top flex items-center justify-between mb-7 flex-wrap gap-4 pt-8">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a8f98] pointer-events-none" />
-              <input
-                type="text"
-                value={textSearch}
-                onChange={(e) => setTextSearch(e.target.value)}
-                placeholder="Rechercher marque/modèle..."
-                className="pl-9 pr-4 py-3 bg-white border border-[var(--line)] rounded-xl text-[13.5px] font-medium text-[var(--charcoal)] focus:outline-none focus:border-[var(--gold)] transition-all w-56"
-              />
-            </div>
             <p className="text-[15px] text-[var(--charcoal)]">
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={14} className="animate-spin" />
-                  Synchronisation...
+                  {t("fleet_sync")}
                 </span>
               ) : (
                 <>
-                  <b className="text-[var(--navy)]">{filteredByText.length}</b> {t("fleet_count")}
+                  <b className="text-[var(--navy)]">{sorted.length}</b> {t("fleet_count")}
                 </>
               )}
             </p>
@@ -366,11 +173,11 @@ function FleetContent() {
 
             {/* Sorting */}
             <div className="flex items-center gap-2">
-              <label className="text-[13px] text-[#8a8f98] hidden sm:inline">Trier:</label>
+              <label className="text-[13px] text-[#8a8f98] hidden sm:inline">{t("fleet_sort")}</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as "price_asc" | "price_desc" | "year_desc" | "brand_asc")}
-                className="px-4 py-3 rounded-full border border-[var(--line)] bg-white font-[var(--Sora)] text-[13.5px] font-semibold text-[var(--navy)] appearance-none cursor-pointer pr-10"
+                className="px-4 py-3 rounded-full border border-[var(--line)] bg-white font-[var(--font-sora)] text-[13.5px] font-semibold text-[var(--navy)] appearance-none cursor-pointer pr-10"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -385,11 +192,16 @@ function FleetContent() {
         {/* ── Sidebar + Grid Layout ── */}
         <div className="fleet-layout grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-11 items-start">
           {/* Sidebar (desktop) */}
-          <aside className="sidebar hidden lg:block sticky top-24">{sidebarContent}</aside>
+          <FleetSidebar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={resetFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
 
           {/* Vehicle Grid */}
           <FleetGrid
-            vehicles={filteredByText}
+            vehicles={sorted}
             loading={isLoading}
             hasMore={hasMore}
             onLoadMore={loadMore}
@@ -403,10 +215,10 @@ function FleetContent() {
       {/* Mobile Filter Button */}
       <button
         onClick={() => setMobileFilterOpen(true)}
-        className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--navy)] text-white px-7 py-4 rounded-full font-[var(--Sora)] font-semibold text-[14.5px] shadow-[0_14px_30px_-10px_rgba(22,33,62,0.5)] flex items-center gap-2 cursor-pointer border-none"
+        className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--navy)] text-white px-7 py-4 rounded-full font-[var(--font-sora)] font-semibold text-[14.5px] shadow-[0_14px_30px_-10px_rgba(22,33,62,0.5)] flex items-center gap-2 cursor-pointer border-none"
       >
         <SlidersHorizontal size={18} />
-        Filtres
+        {t("fleet_filters")}
       </button>
 
       {/* Mobile Filter Drawer */}
@@ -428,7 +240,7 @@ function FleetContent() {
               className="lg:hidden fixed left-0 right-0 bottom-0 z-[100] bg-white rounded-t-[20px] p-6 max-h-[80vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-[17px] font-bold text-[var(--navy)]">Filtres</h3>
+                <h3 className="text-[17px] font-bold text-[var(--navy)]">{t("fleet_filters")}</h3>
                 <button
                   onClick={() => setMobileFilterOpen(false)}
                   className="bg-transparent border-none text-[22px] text-[#8a8f98] cursor-pointer p-1"
@@ -436,12 +248,17 @@ function FleetContent() {
                   <X size={22} />
                 </button>
               </div>
-              {sidebarContent}
+              <FleetFilters
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onReset={resetFilters}
+                hasActiveFilters={hasActiveFilters}
+              />
               <button
                 onClick={() => setMobileFilterOpen(false)}
                 className="w-full mt-6 py-4 rounded-full bg-[var(--gold)] text-[var(--navy)] font-semibold text-[15px] border-none cursor-pointer"
               >
-                Appliquer les filtres
+                {t("fleet_apply_filters")}
               </button>
             </motion.div>
           </>

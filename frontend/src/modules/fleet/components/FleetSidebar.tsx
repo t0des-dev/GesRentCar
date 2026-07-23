@@ -2,65 +2,28 @@
 
 import { motion } from "framer-motion";
 import FleetFilters, { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
-import { useTranslation } from "@/shared/hooks/useTranslation";
-import { Star, Gift } from "lucide-react";
 
 interface FleetSidebarProps {
-  onFilter: (filters: FleetFilterState) => void;
+  filters: FleetFilterState;
+  onFilterChange: (key: keyof FleetFilterState, value: string | number) => void;
+  onReset: () => void;
+  hasActiveFilters: boolean;
 }
 
-export default function FleetSidebar({ onFilter }: FleetSidebarProps) {
-  const { t } = useTranslation();
-
+export default function FleetSidebar({ filters, onFilterChange, onReset, hasActiveFilters }: FleetSidebarProps) {
   return (
-    <aside className="w-full lg:w-80 shrink-0">
-      <motion.div 
+    <aside className="hidden lg:block sticky top-24">
+      <motion.div
         initial={{ opacity: 0, x: -24 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3, duration: 0.6 }}
-        className="sticky top-40 space-y-6"
       >
-        {/* Filters Card */}
-        <div className="bg-white rounded-xl border-2 border-border shadow-md p-8 card-premium">
-          <FleetFilters onFilter={onFilter} />
-        </div>
-
-        {/* Premium Banner */}
-        <motion.div
-          whileHover={{ y: -4 }}
-          className="relative overflow-hidden rounded-xl p-8 bg-gradient-to-br from-primary to-primary/90 border-2 border-primary/40 shadow-lg shadow-primary/20"
-        >
-          {/* Background Elements */}
-          <motion.div 
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} 
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-20 -right-20 w-40 h-40 bg-gold/30 rounded-full blur-3xl" 
-          />
-          <motion.div 
-            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.5, 0.2] }} 
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute -bottom-10 -left-10 w-32 h-32 bg-gold/20 rounded-full blur-2xl" 
-          />
-          
-          {/* Content */}
-          <div className="relative z-10 space-y-4">
-            <div className="flex items-center gap-2">
-              <Star size={18} className="text-gold" />
-              <h4 className="text-white font-bold text-base uppercase tracking-wider">{t("member_title")}</h4>
-            </div>
-            <p className="text-white/85 text-sm leading-relaxed font-light">
-              {t("member_desc")}
-            </p>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full bg-white text-primary px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-widest hover:shadow-lg hover:shadow-white/20 transition-all flex items-center justify-center gap-2 mt-2"
-            >
-              <Gift size={14} />
-              {t("member_btn")}
-            </motion.button>
-          </div>
-        </motion.div>
+        <FleetFilters
+          filters={filters}
+          onFilterChange={onFilterChange}
+          onReset={onReset}
+          hasActiveFilters={hasActiveFilters}
+        />
       </motion.div>
     </aside>
   );

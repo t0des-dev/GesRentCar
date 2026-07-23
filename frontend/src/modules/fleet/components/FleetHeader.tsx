@@ -9,9 +9,21 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 interface FleetHeaderProps {
   search: string;
   setSearch: (val: string) => void;
+  startDate?: string;
+  endDate?: string;
 }
 
-export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
+function formatDate(dateStr?: string): string {
+  if (!dateStr) return "—";
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("fr-MA", { day: "numeric", month: "long", year: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
+
+export default function FleetHeader({ search, setSearch, startDate, endDate }: FleetHeaderProps) {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -23,6 +35,8 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
     "BMW M4",
     "Jeep Wrangler"
   ];
+
+  const filteredSuggestions = suggestions.filter(s => s.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="relative bg-[var(--navy)] overflow-hidden">
@@ -60,7 +74,7 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             <div className="flex-1 relative group min-w-0">
               <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10" />
               <div className="pl-11 pr-4 py-3.5">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">Destination</label>
+                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">{t("fleet_destination")}</label>
                 <div className="text-[13px] font-semibold text-white flex items-center gap-1">
                   Marrakech, Maroc <ChevronDown size={14} className="text-white/40" />
                 </div>
@@ -71,9 +85,9 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             <div className="flex-1 relative group min-w-0">
               <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10" />
               <div className="pl-11 pr-4 py-3.5">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">Date de début</label>
+                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">{t("start_date")}</label>
                 <div className="text-[13px] font-semibold text-white">
-                  Aujourd&apos;hui, 21 Juillet 2026
+                  {formatDate(startDate)}
                 </div>
               </div>
               <div className="absolute left-[52px] top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
@@ -82,9 +96,9 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             <div className="flex-1 relative group min-w-0">
               <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10" />
               <div className="pl-11 pr-4 py-3.5">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">Date de fin</label>
+                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">{t("end_date")}</label>
                 <div className="text-[13px] font-semibold text-white">
-                  23 Juillet 2026
+                  {formatDate(endDate)}
                 </div>
               </div>
               <div className="absolute left-[52px] top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
@@ -93,14 +107,14 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             <div className="flex-1 relative group min-w-0">
               <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10" />
               <div className="pl-11 pr-4 py-3.5">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">Heure</label>
+                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">{t("fleet_hour")}</label>
                 <div className="text-[13px] font-semibold text-white">10:00</div>
               </div>
             </div>
 
             <button className="bg-[var(--gold)] hover:brightness-110 text-[var(--navy)] font-bold rounded-xl px-8 py-4 text-[12px] tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 whitespace-nowrap cursor-pointer">
               <Search size={16} />
-              Chercher
+              {t("fleet_search_btn")}
             </button>
           </div>
         </div>
@@ -110,7 +124,7 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[var(--gold)] transition-colors z-10" />
             <input
               type="text"
-              placeholder={t("search_placeholder")}
+              placeholder={t("fleet_search_brand")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onFocus={() => setIsFocused(true)}
@@ -119,7 +133,7 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
             />
 
             <AnimatePresence>
-              {isFocused && search.length > 0 && (
+              {isFocused && search.length > 0 && filteredSuggestions.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -127,7 +141,7 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
                   className="absolute top-full left-0 right-0 mt-2 bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-2"
                 >
                   <p className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white/40">Suggestions</p>
-                  {suggestions.filter(s => s.toLowerCase().includes(search.toLowerCase())).map((suggestion, i) => (
+                  {filteredSuggestions.map((suggestion, i) => (
                     <button
                       key={i}
                       onClick={() => setSearch(suggestion)}
@@ -137,9 +151,6 @@ export default function FleetHeader({ search, setSearch }: FleetHeaderProps) {
                       {suggestion}
                     </button>
                   ))}
-                  {suggestions.filter(s => s.toLowerCase().includes(search.toLowerCase())).length === 0 && (
-                    <div className="px-5 py-3 text-[13px] text-white/40">Aucune suggestion trouvée.</div>
-                  )}
                 </motion.div>
               )}
             </AnimatePresence>
