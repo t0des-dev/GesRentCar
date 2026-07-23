@@ -62,6 +62,9 @@
     --radius-2xl:   2rem;
 
     /* ── Theme tokens ────────────────────────────────────────────────────── */
+    --navy:         #16213E;            /* Deep Navy — primary dark color */
+    --warm-white:   #FAF8F5;            /* Warm off-white — section backgrounds */
+    --line:         #e0e0e0;            /* Subtle border line */
     --charcoal:     240 3% 12%;       /* #1D1D1F — dark text/charcoal */
     --gold-soft:    41 46% 56% / 0.14; /* gold tint */
     --line-color:   220 15% 11% / 0.09; /* border line */

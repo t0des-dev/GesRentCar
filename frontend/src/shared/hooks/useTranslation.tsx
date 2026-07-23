@@ -6,6 +6,7 @@ type Language = "fr" | "en";
 
 const translations = {
   fr: {
+    nav_home: "Accueil",
     nav_fleet: "Notre Flotte",
     nav_locations: "Agences",
     nav_offers: "Offres",
@@ -199,6 +200,7 @@ const translations = {
     errors_retry: "Réessayer",
   },
   en: {
+    nav_home: "Home",
     nav_fleet: "Our Fleet",
     nav_locations: "Locations",
     nav_offers: "Special Offers",

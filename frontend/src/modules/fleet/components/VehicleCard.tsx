@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
