@@ -36,7 +36,7 @@ function GoogleLogo() {
 
 export default function TestimonialsGrid() {
   return (
-    <section className="py-24 lg:py-32 bg-white">
+    <section className="py-24 lg:py-32 bg-[#FAF8F5]">
       <div className="max-w-[var(--container)] mx-auto px-8">
         {/* Section Head — centered */}
         <div className="section-head section-head-center">
@@ -45,16 +45,20 @@ export default function TestimonialsGrid() {
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="eyebrow-theme"
+            className="inline-flex items-center gap-3 text-[12.5px] font-semibold tracking-[0.14em] uppercase text-[#8a8f98] mb-5"
             style={{ justifyContent: "center" }}
           >
+            <span className="w-8 h-[1px] bg-[#C2A15B]" />
             Testimonials
+            <span className="w-8 h-[1px] bg-[#C2A15B]" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.08 }}
+            className="font-bold leading-[1.1] tracking-[-0.02em]"
+            style={{ fontSize: "clamp(38px, 5vw, 62px)" }}
           >
             Trusted by thousands of travelers.
           </motion.h2>
@@ -94,7 +98,7 @@ export default function TestimonialsGrid() {
 
               {/* Text */}
               <p className="text-[15px] text-[#3d4249] mb-7 leading-[1.7]">
-                &ldquo;{t.text}&rdquo;
+                {t.text}
               </p>
 
               {/* Person */}
