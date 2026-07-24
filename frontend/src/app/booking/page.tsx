@@ -5,6 +5,7 @@ import { useVehicles } from "@/shared/hooks/useApi";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 
 // Components
 import StepIndicator from "@/modules/booking/components/StepIndicator";
@@ -21,8 +22,8 @@ import { VehicleShowroom } from "@/modules/booking/components/VehicleShowroom";
 // Hooks
 import { useBooking } from "@/modules/booking/hooks/useBooking";
 import { useDirection } from "@/shared/hooks/useDirection";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
-// Error boundary
 class StepErrorBoundary extends Component<
   { children: React.ReactNode; step: number },
   { hasError: boolean }
@@ -37,13 +38,11 @@ class StepErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center py-24 text-ink-4">
-          <p className="text-xs font-semibold uppercase tracking-wider">
-            Une erreur est survenue à l&apos;étape {this.props.step + 1}
-          </p>
+        <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+          <p className="text-sm font-medium">Une erreur est survenue à l&apos;étape {this.props.step + 1}</p>
           <button
             onClick={() => this.setState({ hasError: false })}
-            className="mt-4 text-primary underline text-sm"
+            className="mt-3 text-[var(--navy)] underline text-sm"
           >
             Réessayer
           </button>
@@ -57,6 +56,7 @@ class StepErrorBoundary extends Component<
 export default function BookingPage() {
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
   const dir = useDirection();
+  const { t } = useTranslation();
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
 
   const displayVehicles = useMemo(() => {
@@ -91,7 +91,6 @@ export default function BookingPage() {
     getFieldError, handleBlur, clientFieldChange,
   } = useBooking(displayVehicles);
 
-  // Auto-scroll to top on step change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
@@ -110,113 +109,130 @@ export default function BookingPage() {
   }
 
   return (
-    <main className="min-h-screen py-24 bg-background">
-      <div className="container mx-auto px-6 max-w-6xl">
-        <div className="section-header text-center">
-          <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.2em] mb-4">Votre Réservation</p>
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">Réservez l&apos;Exception</h1>
-          <p className="text-ink-2 text-base max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
+    <main className="min-h-screen bg-[var(--warm-white)]">
+      {/* ── Breadcrumb ── */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 py-3">
+          <nav className="flex items-center gap-2 text-[13px] text-gray-400 font-medium">
+            <Link href="/" className="hover:text-gray-700 transition-colors">{t("nav_home")}</Link>
+            <span className="text-gray-300">/</span>
+            <Link href="/fleet" className="hover:text-gray-700 transition-colors">{t("nav_fleet")}</Link>
+            <span className="text-gray-300">/</span>
+            <span className="text-gray-700">Reservation</span>
+          </nav>
         </div>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
-          <div className="w-full lg:w-2/3">
-            <StepIndicator currentStep={step} onStepClick={(s) => { if (s <= step) setStep(s); }} />
+      {/* ── Step Indicator ── */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 py-5">
+          <StepIndicator currentStep={step} onStepClick={(s) => { if (s <= step) setStep(s); }} />
+        </div>
+      </div>
 
-            <div className="mb-8 min-h-[500px] relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={step}
-                  initial={{ opacity: 0, x: dir === "rtl" ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <StepErrorBoundary step={step}>
-                    {step === 0 && (
-                      <VehicleStep
-                        booking={booking} update={update} isLoading={isLoadingVehicles}
-                        vehicles={displayVehicles} setStep={setStep}
-                      />
-                    )}
-                    {step === 1 && (
-                      <PeriodStep
-                        booking={booking} update={update}
-                        getFieldError={getFieldError} handleBlur={handleBlur}
-                        availability={availabilityStatus}
-                        vehiclePricePerDay={vehicle?.price ?? 0}
-                      />
-                    )}
-                    {step === 2 && <OptionsStep booking={booking} update={update} />}
-                    {step === 3 && (
-                      <IdentityStep
-                        booking={booking} update={update} setBooking={setBooking}
-                        isScanning={isScanning} setIsScanning={setIsScanning}
-                        getFieldError={getFieldError} handleBlur={handleBlur}
-                        clientFieldChange={clientFieldChange}
-                      />
-                    )}
-                    {step === 4 && (
-                      <SignatureStep
-                        onComplete={(sig) => { setSignature(sig); nextStep(); }}
-                        onBack={prevStep}
-                      />
-                    )}
-                    {step === 5 && (
-                      <PaymentStep
-                        booking={booking} deposit={deposit} total={total} days={days}
-                        signature={signature}
-                        onSuccess={(resId, status) => { if (resId) setReservationId(resId); if (status) setReservationStatus(status); setConfirmed(true); }}
-                        onPrev={prevStep}
-                      />
-                    )}
-                  </StepErrorBoundary>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+      {/* ── Main Content ── */}
+      <div className="max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
 
+          {/* Left: Step Content */}
+          <div className="min-h-[500px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: dir === "rtl" ? -20 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <StepErrorBoundary step={step}>
+                  {step === 0 && (
+                    <VehicleStep
+                      booking={booking} update={update} isLoading={isLoadingVehicles}
+                      vehicles={displayVehicles} setStep={setStep}
+                    />
+                  )}
+                  {step === 1 && (
+                    <PeriodStep
+                      booking={booking} update={update}
+                      getFieldError={getFieldError} handleBlur={handleBlur}
+                      availability={availabilityStatus}
+                      vehiclePricePerDay={vehicle?.price ?? 0}
+                    />
+                  )}
+                  {step === 2 && <OptionsStep booking={booking} update={update} />}
+                  {step === 3 && (
+                    <IdentityStep
+                      booking={booking} update={update} setBooking={setBooking}
+                      isScanning={isScanning} setIsScanning={setIsScanning}
+                      getFieldError={getFieldError} handleBlur={handleBlur}
+                      clientFieldChange={clientFieldChange}
+                    />
+                  )}
+                  {step === 4 && (
+                    <SignatureStep
+                      onComplete={(sig) => { setSignature(sig); nextStep(); }}
+                      onBack={prevStep}
+                    />
+                  )}
+                  {step === 5 && (
+                    <PaymentStep
+                      booking={booking} deposit={deposit} total={total} days={days}
+                      signature={signature}
+                      onSuccess={(resId, status) => { if (resId) setReservationId(resId); if (status) setReservationStatus(status); setConfirmed(true); }}
+                      onPrev={prevStep}
+                    />
+                  )}
+                </StepErrorBoundary>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Buttons */}
             {step > 0 && step < 5 && (
-              <div className="flex justify-between items-center pt-8 border-t border-border">
+              <div className="flex justify-between items-center pt-8 mt-8 border-t border-gray-200">
                 <button
                   onClick={prevStep}
-                  disabled={step === 0}
-                  className="btn-ghost disabled:opacity-0"
+                  className="px-6 py-3 text-gray-500 text-[13px] font-semibold hover:bg-gray-100 rounded-xl transition-colors"
                 >
-                  Précédent
+                  ← Précédent
                 </button>
                 <button
                   onClick={nextStep}
                   disabled={!canNext()}
-                  className="btn-primary disabled:opacity-30"
+                  className="px-8 py-3 bg-[var(--navy)] hover:bg-[#1a2747] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-[13px] font-semibold rounded-xl transition-all flex items-center gap-2"
                 >
                   Continuer
-                  <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}
           </div>
 
-          {/* Mobile summary toggle */}
-          <button
-            onClick={() => setShowSummaryMobile(!showSummaryMobile)}
-            className="lg:hidden flex items-center gap-2 w-full py-3 px-5 bg-surface-0 rounded-2xl border border-border text-sm font-semibold text-ink-2"
-          >
-            {showSummaryMobile ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            {showSummaryMobile ? "Masquer le récapitulatif" : "Voir le récapitulatif"}
-          </button>
+          {/* Right: Summary Sidebar */}
+          <div className="lg:sticky lg:top-32 h-fit">
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setShowSummaryMobile(!showSummaryMobile)}
+              className="lg:hidden flex items-center justify-between w-full py-3 px-5 bg-white rounded-xl border border-gray-200 text-[13px] font-semibold text-gray-700 mb-3"
+            >
+              <span>Récapitulatif</span>
+              {showSummaryMobile ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
 
-          <div className={`w-full lg:w-1/3 ${showSummaryMobile ? "block" : "hidden"} lg:block`}>
-            <BookingSummary
-              booking={booking} days={days} total={total}
-              deposit={deposit} vehicle={vehicle}
-              vehicleLoading={isLoadingVehicles}
-              currentStep={step}
-              onEditVehicle={() => { setStep(0); setShowSummaryMobile(false); }}
-              onEditPeriod={() => { setStep(1); setShowSummaryMobile(false); }}
-            />
+            <div className={`${showSummaryMobile ? "block" : "hidden"} lg:block`}>
+              <BookingSummary
+                booking={booking} days={days} total={total}
+                deposit={deposit} vehicle={vehicle}
+                vehicleLoading={isLoadingVehicles}
+                currentStep={step}
+                onEditVehicle={() => { setStep(0); setShowSummaryMobile(false); }}
+                onEditPeriod={() => { setStep(1); setShowSummaryMobile(false); }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Vehicle Showroom Modal */}
       <AnimatePresence>
         {previewVehicle && (
           <VehicleShowroom
