@@ -182,6 +182,39 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "fleet_link_text", label: "Texte lien flotte", type: "text" },
     { key: "fleet_link_href", label: "Lien flotte", type: "text" },
   ],
+  fleet: [
+    { key: "hero_image", label: "Image de fond du Hero", type: "image" },
+    { key: "hero_badge", label: "Badge (sur-titre)", type: "text" },
+    { key: "hero_title", label: "Titre du Hero", type: "text" },
+    { key: "hero_subtitle", label: "Sous-titre du Hero", type: "textarea" },
+    { key: "search_button_text", label: "Texte bouton Recherche", type: "text" },
+    { key: "default_location", label: "Lieu par défaut", type: "text" },
+    { key: "results_text", label: "Texte résultats (ex: Vehicles Found)", type: "text" },
+    { key: "sort_label", label: "Label tri", type: "text" },
+    {
+      key: "default_sort",
+      label: "Tri par défaut",
+      type: "segmented",
+      options: [
+        { value: "recommended", label: "Recommended" },
+        { value: "price_asc", label: "Prix Croissant" },
+        { value: "price_desc", label: "Prix Décroissant" },
+        { value: "year_desc", label: "Plus Récents" },
+      ],
+    },
+    {
+      key: "filters_layout",
+      label: "Position des filtres",
+      type: "segmented",
+      options: [
+        { value: "vertical", label: "Vertical (sidebar)" },
+        { value: "horizontal", label: "Horizontal (barre)" },
+      ],
+    },
+    { key: "empty_title", label: "Titre état vide", type: "text" },
+    { key: "empty_description", label: "Description état vide", type: "textarea" },
+    { key: "load_more_text", label: "Texte bouton charger plus", type: "text" },
+  ],
   concierge: [
     { key: "title", label: "Titre", type: "text" },
     { key: "text", label: "Texte", type: "textarea" },
@@ -424,6 +457,7 @@ const sectionLabels: Record<string, string> = {
   sticky_booking: "Réservation rapide",
   featured_vehicles: "Véhicules Vedettes",
   search_form: "Formulaire de recherche",
+  fleet: "Page Flotte (Fleet)",
   concierge: "Bannière Concierge IA",
   stats: "Statistiques Clés",
 };

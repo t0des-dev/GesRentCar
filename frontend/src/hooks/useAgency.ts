@@ -250,6 +250,21 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
     fleet_link_text: "Voir toute la flotte",
     fleet_link_href: "/fleet",
   },
+  fleet: {
+    hero_image: "",
+    hero_badge: "Premium Fleet",
+    hero_title: "Explore Our Vehicle Fleet",
+    hero_subtitle: "Find the perfect vehicle for business trips, family vacations and luxury experiences across Morocco.",
+    search_button_text: "Search",
+    default_location: "Casablanca — Mohammed V Airport",
+    results_text: "Vehicles Found",
+    sort_label: "Sort by:",
+    default_sort: "recommended",
+    filters_layout: "vertical",
+    empty_title: "No vehicles found",
+    empty_description: "Try adjusting your filters to see more results.",
+    load_more_text: "Load More",
+  },
 };
 
 const DEFAULT_CONFIG: AgencyConfig = {

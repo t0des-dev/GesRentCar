@@ -16,6 +16,7 @@ import FleetGrid from "@/modules/fleet/components/FleetGrid";
 import FleetSidebar from "@/modules/fleet/components/FleetSidebar";
 import FleetFilters from "@/modules/fleet/components/FleetFilters";
 import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
+import { useStorefront } from "@/hooks/useStorefront";
 import type { Vehicle } from "@/lib/api/vehicles";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -40,6 +41,8 @@ function FleetContent() {
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { sections_content } = useStorefront();
+  const fleetConfig = sections_content?.fleet;
 
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
@@ -139,6 +142,7 @@ function FleetContent() {
         endDate={endDateParam}
         startTime={startTimeParam}
         location={locationParam}
+        config={fleetConfig}
         onSearch={handleHeaderSearch}
       />
 
@@ -153,13 +157,13 @@ function FleetContent() {
               </span>
             ) : (
               <>
-                <span className="text-gray-900 font-bold">{sorted.length}</span> Vehicles Found
+                <span className="text-gray-900 font-bold">{sorted.length}</span> {fleetConfig?.results_text || "Vehicles Found"}
               </>
             )}
           </p>
 
           <div className="flex items-center gap-2">
-            <span className="text-[13px] text-gray-500 font-medium">Sort by:</span>
+            <span className="text-[13px] text-gray-500 font-medium">{fleetConfig?.sort_label || "Sort by:"}</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}

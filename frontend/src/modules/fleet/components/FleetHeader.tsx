@@ -25,6 +25,15 @@ const TIME_SLOTS = [
   "18:00", "19:00", "20:00",
 ];
 
+interface FleetHeaderConfig {
+  hero_image?: string;
+  hero_badge?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  search_button_text?: string;
+  default_location?: string;
+}
+
 interface FleetHeaderProps {
   search: string;
   setSearch: (val: string) => void;
@@ -32,11 +41,12 @@ interface FleetHeaderProps {
   endDate?: string;
   startTime?: string;
   location?: string;
+  config?: FleetHeaderConfig;
   onSearch?: (params: { startDate: string; endDate: string; startTime: string; location: string }) => void;
 }
 
 export default function FleetHeader({
-  search, setSearch, startDate, endDate, startTime, location, onSearch,
+  search, setSearch, startDate, endDate, startTime, location, config, onSearch,
 }: FleetHeaderProps) {
   const { t } = useTranslation();
 
@@ -44,7 +54,7 @@ export default function FleetHeader({
   const [localEndDate, setLocalEndDate] = useState(endDate || "");
   const [localStartTime, setLocalStartTime] = useState(startTime || "10:00");
   const [localEndTime, setLocalEndTime] = useState("10:00");
-  const [localLocation, setLocalLocation] = useState(location || DESTINATIONS[0]);
+  const [localLocation, setLocalLocation] = useState(location || config?.default_location || DESTINATIONS[0]);
 
   const [isDestFocused, setIsDestFocused] = useState(false);
   const destRef = useRef<HTMLDivElement>(null);
@@ -52,7 +62,7 @@ export default function FleetHeader({
   useEffect(() => { setLocalStartDate(startDate || ""); }, [startDate]);
   useEffect(() => { setLocalEndDate(endDate || ""); }, [endDate]);
   useEffect(() => { setLocalStartTime(startTime || "10:00"); }, [startTime]);
-  useEffect(() => { setLocalLocation(location || DESTINATIONS[0]); }, [location]);
+  useEffect(() => { setLocalLocation(location || config?.default_location || DESTINATIONS[0]); }, [location, config?.default_location]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -83,10 +93,17 @@ export default function FleetHeader({
     <div className="relative">
       {/* Hero Background */}
       <div className="relative h-[340px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/fleet-hero.jpg')" }}
-        />
+        {config?.hero_image ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url('${config.hero_image}')` }}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/images/fleet-hero.jpg')" }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a]/80 via-[#0a0f1a]/50 to-transparent" />
 
         <div className="relative z-10 max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center pt-8">
@@ -99,15 +116,15 @@ export default function FleetHeader({
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-px bg-[var(--gold)]" />
             <span className="text-[var(--gold)] text-[11px] font-bold uppercase tracking-[0.2em]">
-              Premium Fleet
+              {config?.hero_badge || "Premium Fleet"}
             </span>
           </div>
 
           <h1 className="font-[var(--font-instrument-serif)] text-[clamp(32px,4.5vw,52px)] font-medium text-white leading-[1.15] mb-4 max-w-[520px]">
-            Explore Our Vehicle Fleet
+            {config?.hero_title || "Explore Our Vehicle Fleet"}
           </h1>
           <p className="text-white/60 text-[15px] leading-relaxed max-w-[480px]">
-            Find the perfect vehicle for business trips, family vacations and luxury experiences across Morocco.
+            {config?.hero_subtitle || "Find the perfect vehicle for business trips, family vacations and luxury experiences across Morocco."}
           </p>
         </div>
       </div>
@@ -231,7 +248,7 @@ export default function FleetHeader({
                 className="w-full lg:w-auto bg-[var(--navy)] hover:bg-[#1a2747] text-white font-semibold rounded-xl px-8 py-4 text-[13px] tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <Search size={16} />
-                Search
+                {config?.search_button_text || "Search"}
               </button>
             </div>
           </div>

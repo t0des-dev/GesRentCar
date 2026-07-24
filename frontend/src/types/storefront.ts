@@ -189,6 +189,21 @@ export interface SectionsContent {
     fleet_link_text: string;
     fleet_link_href: string;
   };
+  fleet?: {
+    hero_image?: string;
+    hero_badge?: string;
+    hero_title?: string;
+    hero_subtitle?: string;
+    search_button_text?: string;
+    default_location?: string;
+    results_text?: string;
+    sort_label?: string;
+    default_sort?: string;
+    filters_layout?: "vertical" | "horizontal";
+    empty_title?: string;
+    empty_description?: string;
+    load_more_text?: string;
+  };
 }
 
 export interface Testimonial {

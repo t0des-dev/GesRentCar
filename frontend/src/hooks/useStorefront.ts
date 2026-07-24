@@ -79,6 +79,10 @@ export function useStorefront(): StorefrontData {
       ...(FULL_DEFAULT_SECTIONS_CONTENT.promotion_banner || {}),
       ...(agency.sections_content?.promotion_banner || {}),
     },
+    fleet: {
+      ...(FULL_DEFAULT_SECTIONS_CONTENT.fleet || {}),
+      ...(agency.sections_content?.fleet || {}),
+    },
   };
 
   // Recover custom features from old features_config if they exist
