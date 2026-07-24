@@ -4,7 +4,7 @@ import { Reorder } from "framer-motion";
 import { 
   GripVertical, Eye, EyeOff, Edit3, Image as ImageIcon, Activity, Star, 
   ShieldCheck, MessageSquareQuote, Sparkles, Camera, MapPin, Bot, 
-  HelpCircle, ListOrdered, Megaphone, PanelTop, PanelBottom, ArrowLeftRight, Crown
+  HelpCircle, ListOrdered, Megaphone, PanelTop, PanelBottom, ArrowLeftRight, Crown, Car
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import type { StorefrontForm } from "@/types/storefront";
@@ -40,6 +40,7 @@ const getSectionIcon = (id: string) => {
     case "promotion_banner": return <Crown size={18} />;
     case "dual_cta": return <Megaphone size={18} />;
     case "comparator": return <ArrowLeftRight size={18} />;
+    case "fleet": return <Car size={18} />;
     default: return <GripVertical size={18} />;
   }
 };
