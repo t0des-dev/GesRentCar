@@ -208,7 +208,7 @@ function FleetContent() {
         </div>
 
         {/* ── Sidebar + Grid Layout ── */}
-        <div className="fleet-layout grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-11 items-start">
+        <div className="fleet-layout grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-11 items-start">
           {/* Sidebar (desktop) */}
           <FleetSidebar
             filters={filters}
