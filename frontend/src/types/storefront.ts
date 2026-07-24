@@ -200,6 +200,8 @@ export interface SectionsContent {
     sort_label?: string;
     default_sort?: string;
     filters_layout?: "vertical" | "horizontal";
+    page_size?: number;
+    columns?: number;
     empty_title?: string;
     empty_description?: string;
     load_more_text?: string;

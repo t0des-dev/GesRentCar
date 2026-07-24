@@ -211,6 +211,28 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
         { value: "horizontal", label: "Horizontal (barre)" },
       ],
     },
+    {
+      key: "page_size",
+      label: "Véhicules par page",
+      type: "segmented",
+      options: [
+        { value: "6", label: "6" },
+        { value: "9", label: "9" },
+        { value: "12", label: "12" },
+        { value: "18", label: "18" },
+        { value: "24", label: "24" },
+      ],
+    },
+    {
+      key: "columns",
+      label: "Colonnes affichage",
+      type: "segmented",
+      options: [
+        { value: "2", label: "2 Colonnes" },
+        { value: "3", label: "3 Colonnes" },
+        { value: "4", label: "4 Colonnes" },
+      ],
+    },
     { key: "empty_title", label: "Titre état vide", type: "text" },
     { key: "empty_description", label: "Description état vide", type: "textarea" },
     { key: "load_more_text", label: "Texte bouton charger plus", type: "text" },

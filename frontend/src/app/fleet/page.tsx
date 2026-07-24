@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useCallback, useMemo, useEffect } from "react";
+import { useState, Suspense, useCallback, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
@@ -22,27 +22,15 @@ import type { Vehicle } from "@/lib/api/vehicles";
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_COLUMNS = 3;
 
-function getFleetSettings() {
-  if (typeof window === "undefined") return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
-  try {
-    const raw = localStorage.getItem("vrc_fleet_settings");
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return {
-        pageSize: parsed.pageSize || DEFAULT_PAGE_SIZE,
-        columns: parsed.columns || DEFAULT_COLUMNS,
-      };
-    }
-  } catch { /* ignore */ }
-  return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
-}
-
 function FleetContent() {
   const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { sections_content } = useStorefront();
   const fleetConfig = sections_content?.fleet;
+
+  const pageSize = fleetConfig?.page_size || DEFAULT_PAGE_SIZE;
+  const columns = fleetConfig?.columns || DEFAULT_COLUMNS;
 
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
@@ -54,8 +42,6 @@ function FleetContent() {
   const seatsParam = searchParams.get("seats") || "All";
   const maxPriceParam = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : 3000;
   const sortParam = searchParams.get("sort") || "recommended";
-
-  const fleetSettings = useMemo(() => getFleetSettings(), []);
 
   const [textSearch, setTextSearch] = useState("");
   const [sortBy, setSortBy] = useState<string>(sortParam);
@@ -101,7 +87,7 @@ function FleetContent() {
   }, [searchParams, router]);
 
   const { sorted, isLoading, loadMore, hasMore } = useFleetData({
-    pageSize: fleetSettings.pageSize,
+    pageSize: pageSize,
     search: textSearch,
     filters,
     sortBy,
@@ -194,7 +180,7 @@ function FleetContent() {
             onLoadMore={loadMore}
             onQuickView={setQuickViewVehicle}
             layoutView={layoutView}
-            columns={fleetSettings.columns}
+            columns={columns}
           />
         </div>
       </div>

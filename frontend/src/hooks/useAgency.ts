@@ -261,6 +261,8 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
     sort_label: "Sort by:",
     default_sort: "recommended",
     filters_layout: "vertical",
+    page_size: 10,
+    columns: 3,
     empty_title: "No vehicles found",
     empty_description: "Try adjusting your filters to see more results.",
     load_more_text: "Load More",
