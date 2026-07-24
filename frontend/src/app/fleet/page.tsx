@@ -44,6 +44,8 @@ function FleetContent() {
 
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
+  const startTimeParam = searchParams.get("start_time") || undefined;
+  const locationParam = searchParams.get("location") || undefined;
   const lifestyleParam = searchParams.get("lifestyle") || "all";
   const typeParam = searchParams.get("type") || "All";
   const transmissionParam = searchParams.get("transmission") || "All";
@@ -67,6 +69,19 @@ function FleetContent() {
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<Vehicle | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  const handleHeaderSearch = useCallback((params: { startDate: string; endDate: string; startTime: string; location: string }) => {
+    const p = new URLSearchParams(searchParams.toString());
+    if (params.startDate) p.set("start_date", params.startDate);
+    else p.delete("start_date");
+    if (params.endDate) p.set("end_date", params.endDate);
+    else p.delete("end_date");
+    if (params.startTime && params.startTime !== "10:00") p.set("start_time", params.startTime);
+    else p.delete("start_time");
+    if (params.location && params.location !== "Marrakech, Maroc") p.set("location", params.location);
+    else p.delete("location");
+    router.push(`?${p.toString()}`, { scroll: false });
+  }, [searchParams, router]);
 
   const updateURLParams = useCallback((newFilters: FleetFilterState, newSort: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -128,6 +143,9 @@ function FleetContent() {
         setSearch={setTextSearch}
         startDate={startDateParam}
         endDate={endDateParam}
+        startTime={startTimeParam}
+        location={locationParam}
+        onSearch={handleHeaderSearch}
       />
 
       <div className="fleet-page-main max-w-[var(--container)] mx-auto px-8">
