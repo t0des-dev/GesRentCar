@@ -2,21 +2,21 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, CalendarDays, Clock, ChevronDown, Car, X } from "lucide-react";
+import { Search, MapPin, CalendarDays, Clock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const DESTINATIONS = [
+  "Casablanca — Mohammed V Airport",
+  "Marrakech — Menara Airport",
+  "Rabat — Salé Airport",
+  "Tanger — Ibn Battouta Airport",
+  "Agadir — Al Massira Airport",
+  "Fès — Saïss Airport",
   "Marrakech, Maroc",
   "Casablanca, Maroc",
   "Rabat, Maroc",
   "Tanger, Maroc",
-  "Fès, Maroc",
-  "Agadir, Maroc",
-  "Meknès, Maroc",
-  "Ouarzazate, Maroc",
-  "Essaouira, Maroc",
-  "Médina de Marrakech",
 ];
 
 const TIME_SLOTS = [
@@ -42,25 +42,17 @@ export default function FleetHeader({
 
   const [localStartDate, setLocalStartDate] = useState(startDate || "");
   const [localEndDate, setLocalEndDate] = useState(endDate || "");
-  const [localTime, setLocalTime] = useState(startTime || "10:00");
-  const [localLocation, setLocalLocation] = useState(location || "Marrakech, Maroc");
+  const [localStartTime, setLocalStartTime] = useState(startTime || "10:00");
+  const [localEndTime, setLocalEndTime] = useState("10:00");
+  const [localLocation, setLocalLocation] = useState(location || DESTINATIONS[0]);
 
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isDestFocused, setIsDestFocused] = useState(false);
   const destRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setLocalStartDate(startDate || "");
-  }, [startDate]);
-  useEffect(() => {
-    setLocalEndDate(endDate || "");
-  }, [endDate]);
-  useEffect(() => {
-    setLocalTime(startTime || "10:00");
-  }, [startTime]);
-  useEffect(() => {
-    setLocalLocation(location || "Marrakech, Maroc");
-  }, [location]);
+  useEffect(() => { setLocalStartDate(startDate || ""); }, [startDate]);
+  useEffect(() => { setLocalEndDate(endDate || ""); }, [endDate]);
+  useEffect(() => { setLocalStartTime(startTime || "10:00"); }, [startTime]);
+  useEffect(() => { setLocalLocation(location || DESTINATIONS[0]); }, [location]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -76,85 +68,66 @@ export default function FleetHeader({
     d.toLowerCase().includes(localLocation.toLowerCase()) && d !== localLocation
   );
 
-  const formatDateDisplay = (dateStr?: string) => {
-    if (!dateStr) return "";
-    try {
-      const d = new Date(dateStr + "T00:00:00");
-      return d.toLocaleDateString("fr-MA", { day: "numeric", month: "short", year: "numeric" });
-    } catch {
-      return dateStr;
-    }
-  };
-
   const handleSearch = () => {
     if (onSearch) {
       onSearch({
         startDate: localStartDate,
         endDate: localEndDate,
-        startTime: localTime,
+        startTime: localStartTime,
         location: localLocation,
       });
     }
   };
 
-  const brandSuggestions = [
-    "Mercedes-Benz Classe G",
-    "Porsche 911",
-    "Range Rover Sport",
-    "Audi RS Q8",
-    "BMW M4",
-    "Jeep Wrangler",
-  ];
-  const filteredBrandSuggestions = brandSuggestions.filter(s =>
-    s.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
-    <div className="relative bg-[var(--navy)] overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--navy)] via-[#1a2747] to-[var(--navy)]" />
-      <div className="absolute top-0 right-0 w-[45%] h-full opacity-[0.04]">
-        <svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <path d="M50 450 Q250 300 400 350 T750 200" stroke="white" strokeWidth="2" fill="none"/>
-          <circle cx="600" cy="150" r="120" stroke="white" strokeWidth="1.5" fill="none"/>
-          <path d="M100 500 L700 500" stroke="white" strokeWidth="1" opacity="0.5"/>
-        </svg>
-      </div>
+    <div className="relative">
+      {/* Hero Background */}
+      <div className="relative h-[340px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/fleet-hero.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a]/80 via-[#0a0f1a]/50 to-transparent" />
 
-      <div className="relative max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
-          <div>
-            <nav className="flex items-center gap-2 text-white/40 text-[13px] mb-4 font-medium">
-              <Link href="/" className="hover:text-white transition-colors">{t("nav_home")}</Link>
-              <ChevronDown size={12} className="rotate-[-90deg]" />
-              <span className="text-white">{t("nav_fleet")}</span>
-            </nav>
-            <h1 className="font-[var(--font-sora)] text-3xl sm:text-4xl font-bold text-white tracking-[-0.02em]">
-              {t("fleet_title_1")} <span className="text-[var(--gold)]">{t("fleet_title_2")}</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-3 text-white/50 text-[13px] font-medium">
-            <span className="flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10">
-              <Car size={16} className="text-[var(--gold)]" />
-              <span className="text-white">{t("fleet_subtitle")}</span>
+        <div className="relative z-10 max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 h-full flex flex-col justify-center pt-8">
+          <nav className="flex items-center gap-2 text-white/50 text-[13px] mb-5 font-medium">
+            <Link href="/" className="hover:text-white transition-colors">{t("nav_home")}</Link>
+            <span className="text-white/30">/</span>
+            <span className="text-white">{t("nav_fleet")}</span>
+          </nav>
+
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-px bg-[var(--gold)]" />
+            <span className="text-[var(--gold)] text-[11px] font-bold uppercase tracking-[0.2em]">
+              Premium Fleet
             </span>
           </div>
-        </div>
 
-        <div className="bg-white/[0.07] backdrop-blur-xl border border-white/10 rounded-2xl p-2">
-          <div className="flex flex-col lg:flex-row items-stretch gap-2">
-            {/* Destination */}
-            <div className="flex-1 relative group min-w-0" ref={destRef}>
-              <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10 pointer-events-none" />
-              <div className="pl-11 pr-4 py-3.5 relative">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">
-                  {t("fleet_destination")}
+          <h1 className="font-[var(--font-instrument-serif)] text-[clamp(32px,4.5vw,52px)] font-medium text-white leading-[1.15] mb-4 max-w-[520px]">
+            Explore Our Vehicle Fleet
+          </h1>
+          <p className="text-white/60 text-[15px] leading-relaxed max-w-[480px]">
+            Find the perfect vehicle for business trips, family vacations and luxury experiences across Morocco.
+          </p>
+        </div>
+      </div>
+
+      {/* Search Booking Bar */}
+      <div className="relative z-20 max-w-[var(--container)] mx-auto px-4 sm:px-6 lg:px-10 -mt-8">
+        <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-gray-100 p-2">
+          <div className="flex flex-col lg:flex-row items-stretch gap-0">
+            {/* Pickup Location */}
+            <div className="flex-1 relative min-w-0 border-b lg:border-b-0 lg:border-r border-gray-100" ref={destRef}>
+              <div className="px-5 py-4">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-1">
+                  Pickup Location
                 </label>
                 <input
                   type="text"
                   value={localLocation}
                   onChange={(e) => setLocalLocation(e.target.value)}
                   onFocus={() => setIsDestFocused(true)}
-                  className="w-full bg-transparent border-none outline-none text-[13px] font-semibold text-white placeholder:text-white/30 p-0"
+                  className="w-full bg-transparent border-none outline-none text-[13.5px] font-semibold text-gray-900 p-0 placeholder:text-gray-400"
                 />
               </div>
               <AnimatePresence>
@@ -163,33 +136,28 @@ export default function FleetHeader({
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    className="absolute top-full left-0 right-0 mt-1 bg-[#1e2d4a] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-1 max-h-48 overflow-y-auto"
+                    className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50 py-1 max-h-52 overflow-y-auto"
                   >
                     {filteredDests.map((dest) => (
                       <button
                         key={dest}
-                        onClick={() => {
-                          setLocalLocation(dest);
-                          setIsDestFocused(false);
-                        }}
-                        className="w-full text-left px-5 py-2.5 hover:bg-white/10 transition-colors flex items-center gap-3 text-[13px] font-medium text-white"
+                        onClick={() => { setLocalLocation(dest); setIsDestFocused(false); }}
+                        className="w-full text-left px-5 py-2.5 hover:bg-gray-50 transition-colors flex items-center gap-3 text-[13px] font-medium text-gray-700"
                       >
-                        <MapPin size={13} className="text-[var(--gold)]" />
+                        <MapPin size={13} className="text-gray-400" />
                         {dest}
                       </button>
                     ))}
                   </motion.div>
                 )}
               </AnimatePresence>
-              <div className="absolute left-[52px] top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
             </div>
 
-            {/* Start Date */}
-            <div className="flex-1 relative group min-w-0">
-              <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10 pointer-events-none" />
-              <div className="pl-11 pr-4 py-3.5 relative">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">
-                  {t("start_date")}
+            {/* Pickup Date */}
+            <div className="flex-1 min-w-0 border-b lg:border-b-0 lg:border-r border-gray-100">
+              <div className="px-5 py-4">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-1">
+                  Pickup Date
                 </label>
                 <input
                   type="date"
@@ -197,112 +165,75 @@ export default function FleetHeader({
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => {
                     setLocalStartDate(e.target.value);
-                    if (e.target.value && localEndDate && e.target.value > localEndDate) {
-                      setLocalEndDate("");
-                    }
+                    if (e.target.value && localEndDate && e.target.value > localEndDate) setLocalEndDate("");
                   }}
-                  className="w-full bg-transparent border-none outline-none text-[13px] font-semibold text-white p-0 cursor-pointer premium-date-input"
+                  className="w-full bg-transparent border-none outline-none text-[13.5px] font-semibold text-gray-900 p-0 cursor-pointer"
                 />
-                {!localStartDate && (
-                  <span className="absolute left-11 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-white/30 pointer-events-none">
-                    {formatDateDisplay(startDate) || t("start_date")}
-                  </span>
-                )}
               </div>
-              <div className="absolute left-[52px] top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
             </div>
 
-            {/* End Date */}
-            <div className="flex-1 relative group min-w-0">
-              <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10 pointer-events-none" />
-              <div className="pl-11 pr-4 py-3.5 relative">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">
-                  {t("end_date")}
+            {/* Pickup Time */}
+            <div className="flex-shrink-0 w-[130px] border-b lg:border-b-0 lg:border-r border-gray-100">
+              <div className="px-5 py-4">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-1">
+                  Pickup Time
+                </label>
+                <select
+                  value={localStartTime}
+                  onChange={(e) => setLocalStartTime(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-[13.5px] font-semibold text-gray-900 p-0 cursor-pointer appearance-none"
+                >
+                  {TIME_SLOTS.map((slot) => (
+                    <option key={slot} value={slot}>{slot}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Return Date */}
+            <div className="flex-1 min-w-0 border-b lg:border-b-0 lg:border-r border-gray-100">
+              <div className="px-5 py-4">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-1">
+                  Return Date
                 </label>
                 <input
                   type="date"
                   value={localEndDate}
                   min={localStartDate || new Date().toISOString().split("T")[0]}
                   onChange={(e) => setLocalEndDate(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none text-[13px] font-semibold text-white p-0 cursor-pointer premium-date-input"
+                  className="w-full bg-transparent border-none outline-none text-[13.5px] font-semibold text-gray-900 p-0 cursor-pointer"
                 />
-                {!localEndDate && (
-                  <span className="absolute left-11 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-white/30 pointer-events-none">
-                    {formatDateDisplay(endDate) || t("end_date")}
-                  </span>
-                )}
               </div>
-              <div className="absolute left-[52px] top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
             </div>
 
-            {/* Time */}
-            <div className="flex-1 relative group min-w-0">
-              <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold)] z-10 pointer-events-none" />
-              <div className="pl-11 pr-4 py-3.5">
-                <label className="block text-[10.5px] font-bold uppercase tracking-widest text-white/40 mb-0.5">
-                  {t("fleet_hour")}
+            {/* Return Time */}
+            <div className="flex-shrink-0 w-[130px] border-b lg:border-b-0 lg:border-r border-gray-100">
+              <div className="px-5 py-4">
+                <label className="block text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-1">
+                  Return Time
                 </label>
                 <select
-                  value={localTime}
-                  onChange={(e) => setLocalTime(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none text-[13px] font-semibold text-white p-0 cursor-pointer appearance-none"
+                  value={localEndTime}
+                  onChange={(e) => setLocalEndTime(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-[13.5px] font-semibold text-gray-900 p-0 cursor-pointer appearance-none"
                 >
                   {TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot} className="bg-[#1e2d4a] text-white">
-                      {slot}
-                    </option>
+                    <option key={slot} value={slot}>{slot}</option>
                   ))}
                 </select>
               </div>
             </div>
 
             {/* Search Button */}
-            <button
-              onClick={handleSearch}
-              className="bg-[var(--gold)] hover:brightness-110 text-[var(--navy)] font-bold rounded-xl px-8 py-4 text-[12px] tracking-widest uppercase transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 whitespace-nowrap cursor-pointer"
-            >
-              <Search size={16} />
-              {t("fleet_search_btn")}
-            </button>
-          </div>
-        </div>
-
-        {/* Brand/Model Text Search */}
-        <div className="relative mt-8">
-          <div className="relative group max-w-xl mx-auto lg:mx-0">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[var(--gold)] transition-colors z-10" />
-            <input
-              type="text"
-              placeholder={t("fleet_search_brand")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-              className="w-full pl-12 pr-5 py-3.5 bg-white/[0.06] backdrop-blur-sm border border-white/10 rounded-xl text-white text-[13px] font-medium focus:outline-none focus:bg-white/[0.1] focus:border-[var(--gold)]/40 focus:ring-2 focus:ring-[var(--gold)]/10 transition-all placeholder:text-white/30 placeholder:font-medium"
-            />
-
-            <AnimatePresence>
-              {isSearchFocused && search.length > 0 && filteredBrandSuggestions.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 py-2"
-                >
-                  <p className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white/40">Suggestions</p>
-                  {filteredBrandSuggestions.map((suggestion, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSearch(suggestion)}
-                      className="w-full text-left px-5 py-3 hover:bg-white/10 transition-colors flex items-center gap-3 text-[13px] font-medium text-white"
-                    >
-                      <Search size={14} className="text-white/30" />
-                      {suggestion}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="flex items-center px-2">
+              <button
+                onClick={handleSearch}
+                className="w-full lg:w-auto bg-[var(--navy)] hover:bg-[#1a2747] text-white font-semibold rounded-xl px-8 py-4 text-[13px] tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Search size={16} />
+                Search
+              </button>
+            </div>
           </div>
         </div>
       </div>

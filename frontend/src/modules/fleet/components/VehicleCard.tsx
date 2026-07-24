@@ -4,8 +4,7 @@ import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
 import Link from "next/link";
-import { Fuel, Users, Clock, Briefcase, Eye, Heart } from "lucide-react";
-import { useTranslation } from "@/shared/hooks/useTranslation";
+import { Fuel, Users, Clock, Briefcase, Heart } from "lucide-react";
 import { useCurrency } from "@/shared/hooks/useCurrency";
 
 interface VehicleCardProps {
@@ -20,8 +19,6 @@ interface VehicleCardProps {
   transmission: string;
   year?: number;
   horsepower?: string | number;
-  mileage?: number;
-  rating?: number;
   imageUrl?: string;
   className?: string;
   dynamicPrice?: number;
@@ -37,25 +34,22 @@ interface VehicleCardProps {
 
 export default function VehicleCard({
   id, brand, model, type, category, price, seats, fuel, transmission,
-  year, rating = 4.8, imageUrl, className, dynamicPrice,
-  dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
-  gps = false, airConditioning = false, equipements = [],
+  year, imageUrl, className, dynamicPrice, onReserve,
+  isPopular = false, layoutView = "grid",
 }: VehicleCardProps) {
-  const { t } = useTranslation();
   const { convert } = useCurrency();
 
   const displayPrice = dynamicPrice || price;
-  const isPriceChanged = dynamicPrice && dynamicPrice !== price;
-  const discountPercent = isPriceChanged && price > 0 ? Math.round((1 - displayPrice / price) * 100) : 0;
-
   const catLabel = (category || type || "Economy").toUpperCase();
-  
+
   const badgeLabel = isPopular
     ? "POPULAR"
     : year && year >= 2024
     ? "NEW"
     : catLabel.includes("LUXURY")
     ? "LUXURY"
+    : catLabel.includes("SUV")
+    ? "4X4"
     : null;
 
   const getBagsCount = () => {
@@ -72,13 +66,13 @@ export default function VehicleCard({
   return (
     <div
       className={cn(
-        "group flex flex-col justify-between bg-white rounded-[24px] overflow-hidden border border-gray-100/90 shadow-[0_2px_14px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.09)] transition-all duration-300 h-full",
+        "group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 h-full",
         layoutView === "list" ? "md:flex-row md:h-[280px]" : "",
         className
       )}
     >
-      {/* Top Image Box */}
-      <div className={cn("relative bg-[#f6f5f2] overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
+      {/* Image */}
+      <div className={cn("relative bg-[#f8f7f4] overflow-hidden shrink-0", layoutView === "list" ? "h-48 md:h-full md:w-[40%]" : "aspect-[4/3] w-full")}>
         {imageUrl ? (
           <Image
             src={getImageUrl(imageUrl) || "/placeholder-car.jpg"}
@@ -86,94 +80,79 @@ export default function VehicleCard({
             fill
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover transition-all duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-amber-50">
-            <span className="text-4xl font-bold tracking-tighter text-slate-300">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-50">
+            <span className="text-4xl font-bold tracking-tighter text-gray-200">
               {brand?.[0]}{model?.[0]}
             </span>
           </div>
         )}
 
-        {/* Top-Left Badge */}
+        {/* Badge */}
         {badgeLabel && (
-          <div className="absolute top-3.5 left-3.5 z-10 bg-[#d7b268] text-[#111827] text-[10px] font-extrabold tracking-wider uppercase px-3 py-1.5 rounded-md shadow-sm">
+          <div className="absolute top-3 left-3 z-10 bg-[#d4a843] text-white text-[9px] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md">
             {badgeLabel}
           </div>
         )}
 
-        {/* Top-Right Favorite / Wishlist Button */}
-        <div 
+        {/* Wishlist */}
+        <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-          className="absolute top-3.5 right-3.5 z-10 w-8 h-8 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform cursor-pointer border-none"
         >
-          <Heart size={15} strokeWidth={1.8} className="text-slate-700" />
-        </div>
-
-        {/* Quick View Overlay */}
-        {onQuickView && (
-          <div
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView(); }}
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/30 backdrop-blur-[2px] cursor-pointer"
-          >
-            <div className="px-5 py-2 rounded-full bg-white/90 text-slate-900 text-xs font-bold flex items-center gap-1.5 shadow-lg hover:scale-105 transition-transform">
-              <Eye size={14} />
-              <span>Aperçu rapide</span>
-            </div>
-          </div>
-        )}
+          <Heart size={14} strokeWidth={2} className="text-gray-500" />
+        </button>
       </div>
 
-      {/* Card Content Body */}
-      <div className="flex flex-col flex-1 p-6 justify-between">
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-5 justify-between">
         <div>
-          {/* Category Eyebrow */}
-          <p className="text-[11px] font-extrabold tracking-widest uppercase text-[#c39a4d] mb-1">
+          {/* Category */}
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[var(--gold)] mb-1.5">
             {catLabel}
           </p>
 
-          {/* Vehicle Title */}
+          {/* Title */}
           <Link href={`/fleet/${id}`}>
-            <h3 className="text-[18px] font-bold text-slate-900 leading-snug group-hover:text-[#c39a4d] transition-colors duration-300 mb-5">
+            <h3 className="text-[16px] font-bold text-gray-900 leading-snug mb-4 font-[var(--font-instrument-serif)]">
               {displayName}
             </h3>
           </Link>
 
-          {/* Specification Icons Grid */}
-          <div className="grid grid-cols-4 gap-1 py-3 text-center border-t border-gray-100/90">
-            <div className="flex flex-col items-center">
-              <Users size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
-              <span className="text-[11px] font-medium text-gray-500">{seats} seats</span>
+          {/* Specs Row */}
+          <div className="flex items-center gap-4 pb-4 border-t border-gray-100 pt-3">
+            <div className="flex items-center gap-1.5">
+              <Users size={13} strokeWidth={1.8} className="text-gray-400" />
+              <span className="text-[11px] text-gray-500 font-medium">{seats} seats</span>
             </div>
-            <div className="flex flex-col items-center">
-              <Clock size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
-              <span className="text-[11px] font-medium text-gray-500 capitalize">
+            <div className="flex items-center gap-1.5">
+              <Clock size={13} strokeWidth={1.8} className="text-gray-400" />
+              <span className="text-[11px] text-gray-500 font-medium">
                 {transmission.toLowerCase().includes("auto") ? "Automatic" : "Manual"}
               </span>
             </div>
-            <div className="flex flex-col items-center">
-              <Fuel size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
-              <span className="text-[11px] font-medium text-gray-500 capitalize">
+            <div className="flex items-center gap-1.5">
+              <Fuel size={13} strokeWidth={1.8} className="text-gray-400" />
+              <span className="text-[11px] text-gray-500 font-medium capitalize">
                 {fuel.toLowerCase().includes("ess") || fuel.toLowerCase().includes("petrol") ? "Petrol" : "Diesel"}
               </span>
             </div>
-            <div className="flex flex-col items-center">
-              <Briefcase size={16} strokeWidth={1.5} className="text-gray-400 mb-1" />
-              <span className="text-[11px] font-medium text-gray-500">{getBagsCount()}</span>
+            <div className="flex items-center gap-1.5">
+              <Briefcase size={13} strokeWidth={1.8} className="text-gray-400" />
+              <span className="text-[11px] text-gray-500 font-medium">{getBagsCount()}</span>
             </div>
           </div>
         </div>
 
-        {/* Card Footer: Price & Action */}
-        <div className="flex items-center justify-between pt-4 mt-3 border-t border-gray-100/90">
+        {/* Price & Reserve */}
+        <div className="flex items-center justify-between pt-2">
           <div className="flex items-baseline gap-1">
-            <span className="text-[22px] font-extrabold text-slate-900">
+            <span className="text-[20px] font-extrabold text-gray-900">
               {convert(displayPrice)}
             </span>
-            <span className="text-xs text-gray-400 font-normal">
-              / day
-            </span>
+            <span className="text-[11px] text-gray-400 font-normal">/ day</span>
           </div>
 
           <button
@@ -183,7 +162,7 @@ export default function VehicleCard({
               if (onReserve) { onReserve(id); return; }
               window.location.href = `/booking?vehicle=${id}`;
             }}
-            className="rounded-full bg-[#182232] hover:bg-slate-800 text-white text-xs font-semibold px-6 py-2.5 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-[1.02]"
+            className="bg-[var(--navy)] hover:bg-[#1a2747] text-white text-[12px] font-semibold px-6 py-2.5 rounded-full transition-all cursor-pointer"
           >
             Reserve
           </button>
@@ -192,4 +171,3 @@ export default function VehicleCard({
     </div>
   );
 }
-
