@@ -5,6 +5,7 @@ import { Check, FileText, Clock, AlertTriangle } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import confetti from "canvas-confetti";
 import { fmt } from "@/shared/utils/format";
+import { reservationService } from "@/lib/api/reservations";
 
 interface ConfirmationVehicle {
   brand?: string;
@@ -22,6 +23,7 @@ interface ConfirmationViewProps {
 
 export default function ConfirmationView({ booking, reservationId, reservationStatus, deposit, total, vehicle }: ConfirmationViewProps) {
   const isPartnerPending = reservationStatus === "pending_partner";
+  const [contractUrl, setContractUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (isPartnerPending) return;
@@ -39,10 +41,15 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
     return () => clearInterval(interval);
   }, [isPartnerPending]);
 
-  const { API_URL: API } = require('@/lib/api/config');
-  const contractUrl = reservationId
-    ? `${API}/public/reservations/${reservationId}/contract`
-    : null;
+  // Fetch reservation to get the signed contract URL
+  useEffect(() => {
+    if (!reservationId) return;
+    reservationService.getReservation(reservationId).then((res: any) => {
+      if (res.contract_url) {
+        setContractUrl(res.contract_url);
+      }
+    }).catch(() => {});
+  }, [reservationId]);
 
   const startFormatted = booking.startDate
     ? new Date(booking.startDate).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })

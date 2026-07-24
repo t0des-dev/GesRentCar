@@ -308,7 +308,7 @@ export default function ReservationsTable({
                           <CheckCircle size={12} strokeWidth={2} /> Généré
                         </span>
                         <a
-                          href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`}
+                          href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${r.id}/contract/file?lang=fr`}
                           target="_blank"
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs font-bold text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
@@ -428,7 +428,7 @@ export default function ReservationsTable({
                   <p className="text-xl font-bold text-gold">{fmt(r.total_price)} DH</p>
                   {r.contract ? (
                     <a
-                      href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`}
+                      href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${r.id}/contract/file?lang=fr`}
                       target="_blank"
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs font-bold text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1"

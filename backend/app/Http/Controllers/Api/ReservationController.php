@@ -203,6 +203,10 @@ class ReservationController extends Controller
         // Notifications post-transaction
         $reservation->load(['client', 'vehicle', 'contract']);
 
+        // Generate signed contract URL
+        $contractToken = hash_hmac('sha256', (string) $reservation->id, config('app.key'));
+        $reservation->contract_url = url('/api/v1/public/reservations/' . $reservation->id . '/contract?token=' . $contractToken);
+
         if ($reservation->status === 'confirmed') {
             if ($validated['payment_method'] === 'on_site') {
                 $this->notificationService->notifyOnSiteReservation($reservation);
@@ -222,9 +226,11 @@ class ReservationController extends Controller
     // ─── Détail d'une réservation ──────────────────────────────────────────────
     public function show(Reservation $reservation)
     {
-        return response()->json(
-            $reservation->load(['client', 'vehicle', 'payment', 'contract'])
-        );
+        $reservation->load(['client', 'vehicle', 'payment', 'contract']);
+        $contractToken = hash_hmac('sha256', (string) $reservation->id, config('app.key'));
+        $reservation->contract_url = url('/api/v1/public/reservations/' . $reservation->id . '/contract?token=' . $contractToken);
+
+        return response()->json($reservation);
     }
 
     // ─── Mise à jour ───────────────────────────────────────────────────────────

@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Monitor, Plus, Trash2, Smartphone, Share2 } from "lucide-react";
-import type { StorefrontForm } from "@/types/storefront";
+import { motion, Reorder } from "framer-motion";
+import { Monitor, Plus, Trash2, Smartphone, Share2, GripVertical } from "lucide-react";
+import type { MenuLink, StorefrontForm } from "@/types/storefront";
 
 interface MenuFooterSettingsProps {
   form: StorefrontForm;
@@ -23,6 +23,16 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
     const links = [...(form.header_config?.menu_links || [])];
     links.splice(i, 1);
     setForm({ ...form, header_config: { ...form.header_config, menu_links: links } });
+  };
+
+  const reorderMenuLinks = (newOrder: MenuLink[]) => {
+    setForm({ ...form, header_config: { ...form.header_config, menu_links: newOrder } });
+  };
+
+  const updateMenuLink = (i: number, field: "label" | "url", value: string) => {
+    const l = [...(form.header_config?.menu_links || [])];
+    l[i] = { ...l[i], [field]: value };
+    setForm({ ...form, header_config: { ...form.header_config, menu_links: l } });
   };
 
   const social = form.footer_config?.social_links || {};
@@ -63,19 +73,28 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
           </button>
         </div>
 
-        <div className="space-y-3">
+        <Reorder.Group
+          axis="y"
+          values={form.header_config?.menu_links || []}
+          onReorder={reorderMenuLinks}
+          className="space-y-3"
+        >
           {(form.header_config?.menu_links || []).map((link: any, i: number) => (
-            <div key={i} className="flex items-center gap-4 bg-slate-50 border border-slate-200/80 p-4 rounded-2xl">
+            <Reorder.Item
+              key={i}
+              value={link}
+              className="flex items-center gap-4 bg-slate-50 border border-slate-200/80 p-4 rounded-2xl cursor-grab active:cursor-grabbing"
+            >
+              <div className="flex items-center gap-2 cursor-grab text-slate-400 hover:text-slate-600">
+                <GripVertical size={16} />
+              </div>
+
               <div className="flex-1 space-y-1">
                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Libellé</label>
                 <input
                   type="text"
                   value={link.label ?? ""}
-                  onChange={(e) => {
-                    const l = [...form.header_config.menu_links];
-                    l[i].label = e.target.value;
-                    setForm({ ...form, header_config: { ...form.header_config, menu_links: l } });
-                  }}
+                  onChange={(e) => updateMenuLink(i, "label", e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold outline-none focus:border-primary transition-all text-slate-900"
                 />
               </div>
@@ -85,11 +104,7 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
                 <input
                   type="text"
                   value={link.url ?? ""}
-                  onChange={(e) => {
-                    const l = [...form.header_config.menu_links];
-                    l[i].url = e.target.value;
-                    setForm({ ...form, header_config: { ...form.header_config, menu_links: l } });
-                  }}
+                  onChange={(e) => updateMenuLink(i, "url", e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono font-bold text-slate-700 outline-none focus:border-primary transition-all"
                 />
               </div>
@@ -101,9 +116,9 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
               >
                 <Trash2 size={16} />
               </button>
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
       </div>
 
       {/* Footer Contact Info */}

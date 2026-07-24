@@ -147,7 +147,7 @@ export default function ReservationHistory() {
 
                 {(res as any).has_contract && (
                   <a
-                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=fr`}
+                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/reservations/${res.id}/contract/file?lang=fr`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500/15 border border-emerald-400/30 rounded-xl text-[10px] font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/25 transition-all"

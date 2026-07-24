@@ -37,10 +37,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            // Database down — only catch genuine connection failures
-            if ($e instanceof PDOException && str_contains($e->getMessage(), 'SQLSTATE')) {
+            // Database down — catch connection failures, lock timeouts, and file-based DB errors
+            if ($e instanceof PDOException || str_contains($e->getMessage(), 'SQLSTATE')
+                || str_contains($e->getMessage(), 'database is locked')
+                || str_contains($e->getMessage(), 'no such table')
+                || str_contains($e->getMessage(), 'unable to open')
+            ) {
+                \Log::error('Database unavailable: ' . $e->getMessage());
                 return response()->json([
-                    'message' => 'Service temporairement indisponible.',
+                    'message' => 'Service temporairement indisponible. Veuillez réessayer dans quelques instants.',
                     'error' => 'database_unavailable',
                 ], 503);
             }
