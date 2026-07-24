@@ -13,9 +13,8 @@ import { stripeService } from "@/lib/api/stripe";
 import { fmt } from "@/shared/utils/format";
 
 // ─── Stripe instance (singleton) ─────────────────────────────────────────────
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ""
-);
+const STRIPE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 // ─── Stripe Appearance for Arctic Luxury theme ────────────────────────────────
 const appearance = {
@@ -229,6 +228,18 @@ export function StripeCheckout({ deposit, bookingPayload, onSuccess }: StripeChe
   }
 
   if (!clientSecret || !reservationId) return null;
+
+  if (!stripePromise) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-4">
+        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+          <AlertCircle className="text-red-500" size={28} />
+        </div>
+        <p className="text-red-600 font-bold text-center max-w-sm">Stripe non configuré. Clé publique manquante.</p>
+        <p className="text-slate-400 text-sm text-center">Veuillez contacter l&apos;administrateur.</p>
+      </div>
+    );
+  }
 
   return (
     <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret, appearance }}>

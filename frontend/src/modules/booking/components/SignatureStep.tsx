@@ -20,7 +20,12 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
 
   const save = () => {
     if (sigCanvas.current?.isEmpty()) return;
-    const dataUrl = sigCanvas.current?.getTrimmedCanvas().toDataURL("image/png");
+    let dataUrl: string | undefined;
+    try {
+      dataUrl = sigCanvas.current?.getTrimmedCanvas().toDataURL("image/png");
+    } catch {
+      dataUrl = sigCanvas.current?.toDataURL("image/png");
+    }
     if (dataUrl) {
         if (typeof onComplete === 'function') {
             onComplete(dataUrl);
