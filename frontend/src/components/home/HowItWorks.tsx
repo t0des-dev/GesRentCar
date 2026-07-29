@@ -28,23 +28,30 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
       ];
 
   return (
-    <section className="py-24 bg-surface-0" aria-labelledby="how-it-works-heading">
+    <section className="py-24 bg-surface-2" aria-labelledby="how-it-works-heading">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
+          {/* AR7 vertical gold mark — centered */}
+          <div className="section-mark center" />
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-primary font-semibold text-xs uppercase tracking-[0.3em] mb-4"
+            className="section-eyebrow justify-center"
           >
             {content?.badge || "Simple & Rapide"}
           </motion.p>
-          <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-bold tracking-tight">
+          <h2 id="how-it-works-heading" className="text-3xl md:text-[40px] font-bold tracking-tight text-ink-1 mt-2">
             {content?.title || t("how_it_works")}
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 justify-center max-w-4xl mx-auto">
+        <div className="relative flex flex-col md:flex-row gap-8 justify-center max-w-4xl mx-auto">
+          {/* Gold connector line (desktop) */}
+          <div className="hidden md:block absolute top-[27px] left-[10%] right-[10%] h-px"
+            style={{ background: "linear-gradient(90deg,transparent,rgba(194,161,91,0.4) 12%,rgba(194,161,91,0.4) 88%,transparent)" }}
+          />
+
           {steps.map(({ num, title, desc }, idx) => (
             <motion.div
               key={num}
@@ -52,14 +59,15 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="flex md:flex-col items-start md:items-center gap-4 md:gap-6 md:text-center flex-1"
+              className="flex md:flex-col items-start md:items-center gap-4 md:gap-0 md:text-center flex-1"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+              {/* Step number circle — AR7 style */}
+              <div className="step-num-ar7 shrink-0">
                 {num}
               </div>
-              <div>
-                <h3 className="font-bold text-ink-1 mb-1.5">{title}</h3>
-                <p className="text-sm text-ink-2 leading-relaxed max-w-xs">{desc}</p>
+              <div className="md:mt-0">
+                <h3 className="font-bold text-[15.5px] text-ink-1 mb-2">{title}</h3>
+                <p className="text-[13px] text-ink-3 leading-[1.6] max-w-xs">{desc}</p>
               </div>
             </motion.div>
           ))}

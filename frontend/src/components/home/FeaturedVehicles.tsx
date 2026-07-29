@@ -84,7 +84,7 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
   };
 
   return (
-    <section className="py-32 bg-surface-0 relative overflow-hidden transition-colors duration-1000">
+    <section className="py-32 bg-surface-1 relative overflow-hidden transition-colors duration-1000">
       
       {/* Dynamic Background Effect */}
       {dynamicBg && (
@@ -110,7 +110,9 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
         
         {/* Header & Filters */}
         <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-16 gap-8">
-          <div className="max-w-2xl space-y-4">
+          <div className="max-w-2xl">
+            {/* AR7 section mark */}
+            <div className="section-mark" />
             <motion.p
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -125,34 +127,26 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.08, duration: 0.6 }}
-              className="display-lg text-ink-1"
+              className="text-[clamp(30px,3.6vw,44px)] font-bold tracking-tight leading-[1.15] text-ink-1"
             >
               {content.title || t("featured_vehicles")}
             </motion.h2>
           </div>
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 shrink-0">
-            {/* Tabs */}
+            {/* Tabs — AR7 pill style */}
             {showFilters && categories.length > 1 && (
-              <div className="flex flex-wrap gap-2 bg-surface-1 p-1.5 rounded-2xl border border-border">
+              <div className="flex flex-wrap gap-2.5">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveTab(cat)}
                     className={cn(
-                      "relative px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors",
-                      activeTab === cat ? "text-white" : "text-ink-3 hover:text-ink-1"
+                      "tab-pill-ar7",
+                      activeTab === cat ? "active" : ""
                     )}
                   >
-                    {activeTab === cat && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className={cn("absolute inset-0 rounded-xl", !filterColor && "bg-ink-1")}
-                        style={filterColor ? { backgroundColor: filterColor } : {}}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{cat === "Tous" ? t("all") || "Tous" : cat}</span>
+                    {cat === "Tous" ? t("all") || "Tous" : cat}
                   </button>
                 ))}
               </div>

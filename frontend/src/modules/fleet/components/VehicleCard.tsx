@@ -52,7 +52,7 @@ export default function VehicleCard({
     <Link
       href={`/fleet/${id}`}
       className={cn(
-        "group flex overflow-hidden relative card-premium",
+        "group flex overflow-hidden relative card-ar7",
         layoutView === "list" ? "flex-col md:flex-row md:h-[280px]" : "flex-col",
         className
       )}

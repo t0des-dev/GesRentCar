@@ -57,7 +57,8 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
           {/* Left Content */}
           <div className="space-y-10">
             
-            {/* Eyebrow */}
+            {/* AR7 Section mark */}
+            <div className="section-mark" />
             <motion.div
               initial={{ opacity: 0, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -74,7 +75,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1, duration: 0.6 }}
-              className="display-lg leading-[1.1] text-ink-1"
+              className="text-[clamp(30px,3.6vw,44px)] font-bold tracking-tight leading-[1.15] text-ink-1"
             >
               {content?.title_line1 || "Bien plus qu'un"}
               <br />
@@ -137,7 +138,10 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
                 >
                   <Link
                     href={`/fleet?lifestyle=${ls.id || ls.lifestyle}`}
-                    className="group flex items-center gap-5 p-6 bg-white rounded-xl border border-border hover:border-gold/40 hover:shadow-xl hover:shadow-gold/10 transition-all duration-500 card-premium"
+                    className="group flex items-center gap-5 p-6 bg-white rounded-xl border border-border/60 hover:border-gold/50 hover:shadow-xl hover:shadow-gold/8 transition-all duration-500"
+                    style={{ borderTop: "2px solid transparent" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderTopColor = "hsl(var(--gold-dark))")}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderTopColor = "transparent")}
                   >
                     {/* Icon Container */}
                     <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${ls.color} flex items-center justify-center text-gold group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold/20 transition-all duration-500 shrink-0`}>

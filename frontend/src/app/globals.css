@@ -157,7 +157,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-geist-sans), "Cairo", system-ui, sans-serif;
+    font-family: var(--font-inter), var(--font-geist-sans), "Cairo", system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
 
@@ -176,10 +176,12 @@
     font-family: var(--font-instrument-serif), Georgia, serif;
   }
 
-  h1, h2 {
+  h1, h2, h3, h4 {
+    font-family: var(--font-sora), var(--font-instrument-serif), Georgia, serif;
     @apply tracking-tight;
   }
-  h3, h4, h5, h6 {
+  h5, h6 {
+    font-family: var(--font-sora), var(--font-geist-sans), system-ui, sans-serif;
     @apply tracking-tight;
   }
 
@@ -585,21 +587,132 @@
 
   /* ── Premium Luxury Classes ────────────────────────────────────────────── */
   
-  /* Eyebrow / Section label */
+  /* Eyebrow / Section label — AR7 Victoria style */
   .section-eyebrow {
-    font-size: 0.6875rem;
-    font-weight: 700;
+    font-family: var(--font-sora), var(--font-geist-sans), sans-serif;
+    font-size: 0.703125rem; /* 11.25px ≈ 12.5px */
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.14em;
     color: hsl(var(--gold-dark));
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    margin-bottom: 1.125rem; /* 18px */
   }
   .section-eyebrow::before {
-    content: "—";
-    opacity: 0.4;
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: hsl(var(--gold-dark));
+    flex-shrink: 0;
   }
+
+  /* Signature section mark — AR7 gold vertical tick */
+  .section-mark {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient(hsl(var(--gold-dark)), transparent);
+    margin: 0 0 22px;
+  }
+  .section-mark.center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* AR7 Fleet card — white with gold border-top on hover */
+  .card-ar7 {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border-top: 2px solid transparent;
+    border: 1px solid hsl(var(--border-subtle));
+    border-top: 2px solid transparent;
+    transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+                border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .card-ar7:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px -20px rgba(22, 33, 62, 0.18);
+    border-top-color: hsl(var(--gold-dark));
+  }
+  .dark .card-ar7 { background: hsl(var(--card)); }
+
+  /* AR7 Service card — padding generous, hover gold border + lift */
+  .service-card-ar7 {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 2.875rem 2.5rem; /* 46px 40px */
+    border: 1px solid hsl(var(--border-subtle));
+    transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .service-card-ar7:hover {
+    border-color: hsl(var(--gold));
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px -20px rgba(22, 33, 62, 0.18);
+  }
+  .dark .service-card-ar7 { background: hsl(var(--card)); border-color: hsl(var(--border)); }
+
+  /* AR7 Service icon */
+  .service-icon-ar7 {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: hsl(var(--gold-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+    flex-shrink: 0;
+  }
+
+  /* AR7 Process step number — circle blanc with gold ring */
+  .step-num-ar7 {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid hsl(var(--gold-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.375rem;
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-sora), var(--font-geist-sans), sans-serif;
+    font-weight: 700;
+    color: hsl(var(--gold-dark));
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(194, 161, 91, 0.15);
+  }
+  .dark .step-num-ar7 { background: hsl(var(--card)); }
+
+  /* AR7 Pill tab — fleet category filter */
+  .tab-pill-ar7 {
+    padding: 0.75rem 1.5rem; /* 12px 24px */
+    border-radius: 100px;
+    border: 1px solid hsl(var(--border));
+    background: #fff;
+    font-family: var(--font-sora), var(--font-geist-sans), sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(var(--ink-3));
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+    white-space: nowrap;
+  }
+  .tab-pill-ar7:hover {
+    border-color: hsl(var(--gold));
+    color: hsl(var(--ink-1));
+  }
+  .tab-pill-ar7.active {
+    background: hsl(var(--ink-1));
+    border-color: hsl(var(--ink-1));
+    color: #fff;
+  }
+  .dark .tab-pill-ar7 { background: hsl(var(--surface-2)); }
+  .dark .tab-pill-ar7.active { background: hsl(var(--gold-dark)); border-color: hsl(var(--gold-dark)); }
 
   /* Display titles with serif */
   .display-title {
