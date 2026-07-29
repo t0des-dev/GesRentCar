@@ -38,7 +38,13 @@ export default function HeroBackground({ heroImage, heroVideo, scale }: HeroBack
         )}
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-ink-1 via-ink-1/40 to-ink-1/60" />
+      {/* AR7 exact background overlay gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(100deg, rgba(15,20,38,0.85) 0%, rgba(15,20,38,0.55) 40%, rgba(15,20,38,0.2) 70%, rgba(15,20,38,0.4) 100%)"
+        }}
+      />
 
       {heroVideo && (
         <button
