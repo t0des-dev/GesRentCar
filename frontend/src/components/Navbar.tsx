@@ -64,7 +64,10 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-xl border-b border-border/20 shadow-sm"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        isScrolled
+          ? "bg-background/90 backdrop-blur-xl border-b border-border/40 shadow-sm text-ink-1 py-1"
+          : "bg-gradient-to-b from-black/50 via-black/20 to-transparent border-transparent text-white py-2"
       )}
     >
       <div className="container mx-auto px-6 lg:px-8">
