@@ -158,7 +158,9 @@ function CurrencySwitcher({
         onClick={() => setCurrencyOpen(!currencyOpen)}
         className={cn(
           "px-3 py-1.5 rounded-lg transition-all duration-300 text-xs font-semibold tracking-wide",
-          "text-ink-2 hover:text-ink-1 hover:bg-surface-2 font-semibold"
+          isScrolled
+            ? "text-slate-300 hover:text-white hover:bg-white/10"
+            : "text-white/80 hover:text-white hover:bg-white/10"
         )}
       >
         {currency}
