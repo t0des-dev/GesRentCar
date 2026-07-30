@@ -107,43 +107,121 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
 
               case "stats":
                 const items = form.stats_config?.items || [];
+                const STATS_ICON_MAP: Record<string, React.ReactNode> = {
+                  HeadphonesIcon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
+                  Car: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17H5a2 2 0 0 1-2-2V9l2.5-5h13L21 9v6a2 2 0 0 1-2 2z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>,
+                  Shield: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+                  CreditCard: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>,
+                  Zap: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+                  Star: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+                };
+                const fallbackIcon = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+                const defaultStatItems = [
+                  { icon: "HeadphonesIcon", label: "24/7 Assistance" },
+                  { icon: "Car", label: "Airport Delivery" },
+                  { icon: "Star", label: "Unlimited Mileage" },
+                  { icon: "Shield", label: "Insurance Included" },
+                  { icon: "CreditCard", label: "Transparent Pricing" },
+                  { icon: "Zap", label: "Fast Booking" },
+                ];
+                const displayItems = items.length > 0 ? items : defaultStatItems;
                 return (
-                  <section id="preview-section-stats" key="stats" className="py-10 px-5 bg-white grid grid-cols-2 gap-4">
-                    {items.slice(0, 4).map((s: any, idx: number) => (
-                      <div key={idx} className="text-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <p className="text-xl font-bold text-slate-900">{s.value}</p>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{s.label}</p>
-                      </div>
-                    ))}
+                  <section id="preview-section-stats" key="stats" className="py-5 px-4 bg-white border-t border-b border-slate-100">
+                    <div className="flex items-center justify-around">
+                      {displayItems.slice(0, 6).map((s: any, idx: number) => (
+                        <div key={idx} className="flex flex-col items-center gap-1.5 px-1">
+                          <div className="text-slate-400">
+                            {STATS_ICON_MAP[s.icon] || fallbackIcon}
+                          </div>
+                          <span className="text-[9px] font-medium text-slate-500 text-center leading-tight whitespace-nowrap">
+                            {s.label || s.value || "—"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </section>
                 );
 
-              case "featured":
+              case "featured": {
+                const fleetEyebrow = form.sections_content?.featured_vehicles?.eyebrow || "THE FLEET";
+                const fleetTitle = (form.sections_content?.featured_vehicles as any)?.title || "A modern fleet, built for every kind of journey.";
+                const fleetSubtitle = (form.sections_content?.featured_vehicles as any)?.subtitle || "Compare specifications at a glance and reserve the right vehicle in seconds — every car is inspected, insured, and ready.";
+                const fleetCategories = ["All Vehicles", "Economy", "Compact", "SUV", "Luxury", "Utility"];
+                const fleetVehicles = [
+                  { badge: "POPULAR", badgeColor: "bg-amber-500", category: "ECONOMY", name: "Clio Class or similar", seats: 5, trans: "Manual", fuel: "Petrol", bags: 2, price: form.category_prices?.economy || 350, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=400" },
+                  { badge: null, badgeColor: "", category: "COMPACT", name: "Elantra Class or similar", seats: 5, trans: "Automatic", fuel: "Petrol", bags: 3, price: form.category_prices?.compact || 420, img: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=400" },
+                  { badge: "NEW", badgeColor: "bg-emerald-500", category: "SUV", name: "Tucson Class or similar", seats: 5, trans: "Automatic", fuel: "Diesel", bags: 3, price: form.category_prices?.suv || 680, img: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=400" },
+                  { badge: "LUXURY", badgeColor: "bg-slate-800", category: "LUXURY", name: "7-Series Class or similar", seats: 5, trans: "Automatic", fuel: "Petrol", bags: 3, price: form.category_prices?.luxury || 1450, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" },
+                ];
                 return (
-                  <section id="preview-section-featured" key="featured" className="py-10 px-5 bg-slate-50">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold text-slate-900 tracking-tight">{form.sections_content?.featured_vehicles?.eyebrow || "Notre Sélection"}</h3>
-                        <span className="text-xs font-semibold uppercase tracking-wider text-primary flex items-center gap-1">Voir tout <ChevronRight size={12} /></span>
+                  <section id="preview-section-featured" key="featured" className="py-8 px-4 bg-[#f7f6f3]">
+                    {/* Header */}
+                    <div className="mb-5">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <span className="block w-4 h-[1.5px] bg-amber-500"></span>
+                        <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-amber-600">{fleetEyebrow}</span>
+                      </div>
+                      <h3 className="text-[15px] font-extrabold text-slate-900 leading-tight mb-1.5">{fleetTitle}</h3>
+                      <p className="text-[9px] text-slate-500 leading-relaxed">{fleetSubtitle}</p>
                     </div>
-                    <div className="space-y-3">
-                        <div className="bg-white rounded-2xl p-4 border border-slate-200/60 shadow-sm">
-                          <div className="h-28 bg-slate-100 rounded-xl mb-3 overflow-hidden">
-                              <Image src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" width={400} height={300} className="w-full h-full object-cover" alt="Featured vehicle" />
+                    {/* Category pills */}
+                    <div className="flex gap-1.5 flex-wrap mb-4 overflow-x-auto pb-1">
+                      {fleetCategories.map((cat, i) => (
+                        <span key={cat} className={`px-2.5 py-1 rounded-full text-[8px] font-semibold whitespace-nowrap cursor-pointer transition-all ${i === 0 ? "bg-slate-900 text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-400"}`}>{cat}</span>
+                      ))}
+                    </div>
+                    {/* Vehicle grid */}
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {fleetVehicles.map((v, idx) => (
+                        <div key={idx} className="bg-white rounded-xl border border-slate-200/70 shadow-sm overflow-hidden">
+                          {/* Image + badge */}
+                          <div className="relative h-20 bg-slate-100 overflow-hidden">
+                            <Image src={v.img} alt={v.name} width={300} height={160} className="w-full h-full object-cover" />
+                            {v.badge && (
+                              <span className={`absolute top-1.5 left-1.5 ${v.badgeColor} text-white text-[7px] font-bold px-1.5 py-0.5 rounded`}>{v.badge}</span>
+                            )}
+                            <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-white/80 rounded-full flex items-center justify-center shadow">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </div>
                           </div>
-                          <div className="flex justify-between items-center">
+                          {/* Card body */}
+                          <div className="p-2">
+                            <span className="text-[7px] font-bold uppercase tracking-wider text-amber-600">{v.category}</span>
+                            <p className="text-[9px] font-bold text-slate-900 leading-tight mb-1.5">{v.name}</p>
+                            {/* Specs row */}
+                            <div className="flex items-center gap-1.5 mb-2">
+                              {[
+                                { icon: <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, val: `${v.seats}` },
+                                { icon: <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>, val: v.trans.slice(0,4) },
+                                { icon: <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 22V8l9-6 9 6v14"/></svg>, val: v.fuel.slice(0,3) },
+                                { icon: <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="16 3 12 7 8 3"/></svg>, val: `${v.bags}` },
+                              ].map((spec, si) => (
+                                <div key={si} className="flex flex-col items-center gap-0.5">
+                                  <span className="text-slate-400">{spec.icon}</span>
+                                  <span className="text-[6px] text-slate-400">{spec.val}</span>
+                                </div>
+                              ))}
+                            </div>
+                            {/* Price + Reserve */}
+                            <div className="flex items-center justify-between">
                               <div>
-                                <p className="font-semibold text-slate-900 text-sm">BMW M4 Competition</p>
-                                <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Sport • Automatique</p>
+                                <span className="text-[11px] font-extrabold text-slate-900">{v.price}</span>
+                                <span className="text-[7px] text-slate-400 font-medium"> MAD</span>
+                                <span className="text-[6px] text-slate-400"> /day</span>
                               </div>
-                              <div className="text-right">
-                                <p className="font-bold text-primary text-sm">{form.category_prices.sport} DH</p>
-                                <p className="text-xs text-slate-300 font-medium uppercase">Par jour</p>
-                              </div>
+                              <button className="bg-slate-900 text-white text-[7px] font-bold px-2 py-1 rounded-md hover:bg-slate-700 transition-colors">Reserve</button>
+                            </div>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                    {/* View full fleet CTA */}
+                    <div className="flex justify-center mt-4">
+                      <button className="px-5 py-2 rounded-full border border-slate-300 text-[9px] font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-sm">View full fleet</button>
                     </div>
                   </section>
                 );
+              }
 
               case "why_us":
                 const features = form.sections_content?.why_us?.features?.length ? form.sections_content.why_us.features : [
