@@ -14,8 +14,9 @@ import NavLinks from "./navbar/NavLinks";
 import LanguageSwitcher from "./navbar/LanguageSwitcher";
 import UserActions from "./navbar/UserActions";
 import MobileMenu from "./navbar/MobileMenu";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import GlobalSearch from "@/components/GlobalSearch";
+import GlobalSearch from "./GlobalSearch";
+import Link from "next/link";
+import { Crown } from "lucide-react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -33,7 +34,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const unsubscribe = scrollY.on("change", (latest) => {
-      setIsScrolled(latest > 60);
+      setIsScrolled(latest > 50);
     });
     return () => unsubscribe();
   }, [scrollY]);
@@ -65,13 +66,18 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        isScrolled
-          ? "bg-background/90 backdrop-blur-xl border-b border-border/40 shadow-sm text-ink-1 py-1"
-          : "bg-gradient-to-b from-black/50 via-black/20 to-transparent border-transparent text-white py-2"
+        isScrolled ? "py-2 px-3 sm:px-6" : "py-3 px-6 bg-gradient-to-b from-black/60 via-black/20 to-transparent text-white"
       )}
     >
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16" style={{ height: 'var(--navbar-height)' }}>
+      <div
+        className={cn(
+          "transition-all duration-500 mx-auto",
+          isScrolled
+            ? "max-w-6xl rounded-full bg-slate-950/85 backdrop-blur-xl border border-white/10 shadow-2xl px-5 py-1.5 text-white"
+            : "container"
+        )}
+      >
+        <div className="flex items-center justify-between h-14">
           {/* Logo — Premium Typography */}
           <div className="flex items-center gap-3">
             <Logo />
@@ -80,8 +86,8 @@ export default function Navbar() {
           {/* Nav Links — Center with animated underlines */}
           <NavLinks links={menuLinks} isScrolled={isScrolled} />
 
-          {/* Right Actions — Premium Dropdowns */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Right Actions — Premium Dropdowns & VIP CTA */}
+          <div className="hidden md:flex items-center gap-2">
             {/* Global Search */}
             <GlobalSearch />
 
@@ -100,25 +106,31 @@ export default function Navbar() {
               isScrolled={isScrolled} currencyRef={currencyRef}
             />
 
-            {/* Dark Mode Toggle */}
-            <div className="transition-all duration-300 text-ink-2">
-              <ThemeToggle />
-            </div>
-
-            {/* User Actions — Premium */}
+            {/* User Actions — Account / Profile */}
             <UserActions session={session} signOut={() => logout()} t={t} isScrolled={isScrolled} />
+
+            {/* Quick VIP Reserve CTA Button */}
+            <Link
+              href="/fleet"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all duration-300 ml-1"
+            >
+              <Crown size={14} className="shrink-0" />
+              <span>{t("nav_book") || "Réserver"}</span>
+            </Link>
           </div>
 
-          {/* Mobile Menu Toggle — Sophisticated Icon */}
+          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(true)}
             className={cn(
-              "md:hidden w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
-              "bg-surface-2 text-ink-1 hover:bg-surface-3"
+              "md:hidden w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border",
+              isScrolled
+                ? "bg-white/10 text-white border-white/15 hover:bg-white/20"
+                : "bg-black/30 text-white border-white/20 hover:bg-black/50"
             )}
             aria-label="Toggle menu"
           >
-            <Menu size={20} strokeWidth={1.5} />
+            <Menu size={18} strokeWidth={1.75} />
           </button>
         </div>
       </div>
