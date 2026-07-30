@@ -15,7 +15,7 @@ import { getImageUrl } from "@/shared/utils/image";
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "color" | "icon" | "color-palette";
+  type: "text" | "textarea" | "image" | "color" | "icon" | "color-palette" | "columns-picker" | "theme-picker" | "height-picker" | "text-size-picker" | "layout-style-picker" | "custom-color";
   placeholder?: string;
 }
 
@@ -112,6 +112,328 @@ function ColorPalettePicker({ value, onChange }: { value: string; onChange: (v: 
   );
 }
 
+// ─── Visual Pickers ───────────────────────────────────────────────────────────
+
+function ColumnsPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    {
+      val: "2",
+      label: "2 Col.",
+      preview: (
+        <div className="flex gap-1 w-full">
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+        </div>
+      ),
+    },
+    {
+      val: "3",
+      label: "3 Col.",
+      preview: (
+        <div className="flex gap-1 w-full">
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+        </div>
+      ),
+    },
+    {
+      val: "4",
+      label: "4 Col.",
+      preview: (
+        <div className="flex gap-0.5 w-full">
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+          <div className="flex-1 h-5 rounded bg-current opacity-40" />
+        </div>
+      ),
+    },
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {options.map((opt) => {
+        const isSelected = value === opt.val;
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => onChange(opt.val)}
+            className={cn(
+              "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50"
+            )}
+          >
+            {opt.preview}
+            <span className="text-[10px] font-black uppercase tracking-wider">{opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ThemePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {/* Dark */}
+      <button
+        type="button"
+        onClick={() => onChange("dark")}
+        className={cn(
+          "relative overflow-hidden rounded-2xl border-2 transition-all duration-200 group",
+          value === "dark"
+            ? "border-slate-900 ring-2 ring-slate-900/20 scale-[1.02]"
+            : "border-slate-200 hover:border-slate-400"
+        )}
+      >
+        <div className="bg-slate-950 p-4 flex flex-col gap-1.5">
+          <div className="flex gap-1">
+            <div className="flex-1 h-1.5 rounded bg-white/20" />
+            <div className="flex-1 h-1.5 rounded bg-white/10" />
+          </div>
+          <div className="h-px bg-white/10" />
+          <div className="flex justify-around pt-1">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <div className="w-4 h-4 rounded bg-amber-400/70" />
+                <div className="w-6 h-1 rounded bg-white/30" />
+                <div className="w-4 h-0.5 rounded bg-white/20" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="px-3 py-2 bg-slate-100 flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">🌑 Dark</span>
+          {value === "dark" && <span className="w-2 h-2 rounded-full bg-slate-900" />}
+        </div>
+      </button>
+
+      {/* Light */}
+      <button
+        type="button"
+        onClick={() => onChange("light")}
+        className={cn(
+          "relative overflow-hidden rounded-2xl border-2 transition-all duration-200 group",
+          value === "light"
+            ? "border-slate-900 ring-2 ring-slate-900/20 scale-[1.02]"
+            : "border-slate-200 hover:border-slate-400"
+        )}
+      >
+        <div className="bg-white p-4 flex flex-col gap-1.5">
+          <div className="flex gap-1">
+            <div className="flex-1 h-1.5 rounded bg-slate-200" />
+            <div className="flex-1 h-1.5 rounded bg-slate-100" />
+          </div>
+          <div className="h-px bg-slate-100" />
+          <div className="flex justify-around pt-1">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <div className="w-4 h-4 rounded bg-slate-400" />
+                <div className="w-6 h-1 rounded bg-slate-800" />
+                <div className="w-4 h-0.5 rounded bg-slate-300" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="px-3 py-2 bg-slate-100 flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">☀️ Light</span>
+          {value === "light" && <span className="w-2 h-2 rounded-full bg-slate-900" />}
+        </div>
+      </button>
+    </div>
+  );
+}
+
+function HeightPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    { val: "small", label: "Compact", emoji: "▁", height: "h-3" },
+    { val: "normal", label: "Normal", emoji: "▃", height: "h-5" },
+    { val: "large", label: "Grand", emoji: "▇", height: "h-8" },
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {options.map((opt) => {
+        const isSelected = value === opt.val;
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => onChange(opt.val)}
+            className={cn(
+              "flex flex-col items-center justify-end gap-2 p-3 rounded-2xl border-2 transition-all duration-200 min-h-[70px]",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-lg"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+            )}
+          >
+            <div className={cn(
+              "w-full rounded",
+              opt.height,
+              isSelected ? "bg-white/30" : "bg-slate-300"
+            )} />
+            <span className="text-[10px] font-black uppercase tracking-wider">{opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function TextSizePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    { val: "small", label: "S", size: "text-sm", desc: "Petit" },
+    { val: "normal", label: "M", size: "text-base", desc: "Normal" },
+    { val: "large", label: "L", size: "text-xl", desc: "Grand" },
+    { val: "xl", label: "XL", size: "text-2xl", desc: "Très Grand" },
+  ];
+  return (
+    <div className="grid grid-cols-4 gap-2">
+      {options.map((opt) => {
+        const isSelected = value === opt.val;
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => onChange(opt.val)}
+            className={cn(
+              "flex flex-col items-center justify-center gap-1 p-3 rounded-2xl border-2 transition-all duration-200 min-h-[60px]",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+            )}
+          >
+            <span className={cn("font-black leading-none", opt.size)}>{opt.label}</span>
+            <span className="text-[8px] font-bold uppercase tracking-widest opacity-70">{opt.desc}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function LayoutStylePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    {
+      val: "banner",
+      label: "Bannière",
+      emoji: "🌃",
+      preview: (
+        <div className="w-full h-10 rounded-lg bg-slate-900 flex items-center justify-around px-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-0.5">
+              <div className="w-3 h-3 rounded bg-amber-400/70" />
+              <div className="w-5 h-0.5 rounded bg-white/30" />
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      val: "cards",
+      label: "Cartes",
+      emoji: "🃏",
+      preview: (
+        <div className="w-full h-10 rounded-lg bg-slate-800 flex items-center justify-around px-2 gap-1">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex-1 h-7 rounded-lg bg-white/10 border border-white/20 flex flex-col items-center justify-center gap-0.5 p-1">
+              <div className="w-3 h-1.5 rounded bg-amber-400/60" />
+              <div className="w-4 h-0.5 rounded bg-white/30" />
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      val: "minimal",
+      label: "Minimal",
+      emoji: "⬜",
+      preview: (
+        <div className="w-full h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-around px-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-0.5">
+              <div className="w-3 h-3 rounded bg-slate-300" />
+              <div className="w-5 h-0.5 rounded bg-slate-200" />
+            </div>
+          ))}
+        </div>
+      ),
+    },
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {options.map((opt) => {
+        const isSelected = value === opt.val;
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => onChange(opt.val)}
+            className={cn(
+              "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+            )}
+          >
+            {opt.preview}
+            <span className="text-[10px] font-black uppercase tracking-wider">{opt.emoji} {opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function CustomColorPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const PRESETS = [
+    "#f59e0b", "#10b981", "#6366f1", "#ef4444", "#3b82f6",
+    "#a855f7", "#ec4899", "#0ea5e9", "#f97316", "#0f172a",
+  ];
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
+        {PRESETS.map((c) => (
+          <button
+            key={c}
+            type="button"
+            onClick={() => onChange(c)}
+            className={cn(
+              "w-8 h-8 rounded-xl border-2 transition-all duration-150 hover:scale-110",
+              value === c ? "border-slate-900 ring-2 ring-slate-900/30 scale-110" : "border-white/50"
+            )}
+            style={{ backgroundColor: c }}
+            title={c}
+          />
+        ))}
+        <div
+          className={cn(
+            "w-8 h-8 rounded-xl border-2 overflow-hidden relative",
+            !PRESETS.includes(value) && value ? "border-slate-900 ring-2 ring-slate-900/30" : "border-slate-200"
+          )}
+        >
+          <input
+            type="color"
+            value={value || "#f59e0b"}
+            onChange={(e) => onChange(e.target.value)}
+            className="absolute inset-[-4px] w-[150%] h-[150%] cursor-pointer"
+            title="Couleur personnalisée"
+          />
+        </div>
+      </div>
+      {value && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+          <div className="w-5 h-5 rounded-lg shrink-0 border border-black/10" style={{ backgroundColor: value }} />
+          <span className="text-[11px] font-mono font-bold text-slate-700 uppercase">{value}</span>
+          <button onClick={() => onChange("")} className="ml-auto text-[9px] text-slate-400 hover:text-red-500 font-bold">✕ Retirer</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const sectionFields: Record<string, SectionFieldDef[]> = {
   hero: [
     { key: "badge", label: "Badge", type: "text" },
@@ -200,11 +522,12 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "badge", label: "Badge", type: "text" },
   ],
   stats: [
-    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text" },
-    { key: "theme", label: "Thème (dark ou light)", type: "text" },
-    { key: "height", label: "Hauteur (small, normal, large)", type: "text" },
-    { key: "text_size", label: "Taille texte (small, normal, large, xl)", type: "text" },
-    { key: "text_color", label: "Couleur personnalisée (optionnel)", type: "color" },
+    { key: "layout_style", label: "Style de mise en page", type: "layout-style-picker" },
+    { key: "columns", label: "Nombre de colonnes", type: "columns-picker" },
+    { key: "theme", label: "Thème", type: "theme-picker" },
+    { key: "height", label: "Hauteur de la section", type: "height-picker" },
+    { key: "text_size", label: "Taille du texte", type: "text-size-picker" },
+    { key: "text_color", label: "Couleur d'accentuation", type: "custom-color" },
   ],
 };
 
@@ -223,6 +546,24 @@ function StringField({ value, onChange, field }: { value: string; onChange: (v: 
   }
   if (field.type === "color-palette") {
     return <ColorPalettePicker value={value ?? "amber"} onChange={onChange} />;
+  }
+  if (field.type === "columns-picker") {
+    return <ColumnsPicker value={value ?? "4"} onChange={onChange} />;
+  }
+  if (field.type === "theme-picker") {
+    return <ThemePicker value={value ?? "dark"} onChange={onChange} />;
+  }
+  if (field.type === "height-picker") {
+    return <HeightPicker value={value ?? "normal"} onChange={onChange} />;
+  }
+  if (field.type === "text-size-picker") {
+    return <TextSizePicker value={value ?? "normal"} onChange={onChange} />;
+  }
+  if (field.type === "layout-style-picker") {
+    return <LayoutStylePicker value={value ?? "banner"} onChange={onChange} />;
+  }
+  if (field.type === "custom-color") {
+    return <CustomColorPicker value={value ?? ""} onChange={onChange} />;
   }
   if (field.type === "color") {
     return (
