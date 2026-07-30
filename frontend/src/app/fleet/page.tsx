@@ -2,24 +2,22 @@
 
 import { useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2, ArrowUpDown } from "lucide-react";
+import { Loader2, ArrowUpDown, ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
 import RecentBookingPopup from "@/components/RecentBookingPopup";
-import { LayoutGrid, List, Car, Gauge, Users, Wallet, MapPin, Star, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 
 import FleetHeader from "@/modules/fleet/components/FleetHeader";
 import FleetGrid from "@/modules/fleet/components/FleetGrid";
-import { Filter } from "lucide-react";
 
-// Hooks
 import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_COLUMNS = 4;
+const DEFAULT_COLUMNS = 3;
 
 function getFleetSettings() {
   if (typeof window === "undefined") return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
@@ -36,25 +34,202 @@ function getFleetSettings() {
   return { pageSize: DEFAULT_PAGE_SIZE, columns: DEFAULT_COLUMNS };
 }
 
-const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
-const TRANSMISSIONS = ["All", "Automatic", "Manual"];
-const SEATS = ["All", "2", "4", "5", "7+"];
-const FUEL_TYPES = ["All", "Essence", "Diesel", "Hybride", "Électrique"];
-const YEAR_RANGES = ["All", "2024+", "2022+", "2020+", "2018+"];
-const LIFESTYLES = [
-  { id: "all", label: "Tous", icon: Car },
-  { id: "business", label: "Business", icon: Gauge },
-  { id: "romance", label: "Romance", icon: Star },
-  { id: "adventure", label: "Aventure", icon: MapPin },
-  { id: "family", label: "Famille", icon: Users },
+const CATEGORIES = [
+  { id: "All", label: "All" },
+  { id: "Economy", label: "Economy" },
+  { id: "Compact", label: "Compact" },
+  { id: "SUV", label: "SUV" },
+  { id: "Luxury", label: "Luxury" },
+  { id: "Sport", label: "Sport" },
+  { id: "Sedan", label: "Sedan" },
 ];
+const TRANSMISSIONS = [
+  { id: "All", label: "All" },
+  { id: "Automatic", label: "Automatic" },
+  { id: "Manual", label: "Manual" },
+];
+const FUEL_TYPES = [
+  { id: "All", label: "All" },
+  { id: "Essence", label: "Essence" },
+  { id: "Diesel", label: "Diesel" },
+  { id: "Hybride", label: "Hybrid" },
+  { id: "Électrique", label: "Electric" },
+];
+const SEATS = [
+  { id: "All", label: "All" },
+  { id: "2", label: "2" },
+  { id: "4", label: "4" },
+  { id: "5", label: "5" },
+  { id: "7+", label: "7+" },
+];
+
+function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-slate-100 last:border-b-0">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-4 text-left cursor-pointer group"
+      >
+        <span className="text-sm font-bold text-slate-800 tracking-tight">{title}</span>
+        <ChevronDown
+          size={16}
+          className={cn(
+            "text-slate-400 transition-transform duration-200",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="pb-4 space-y-1">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function CheckboxItem({ label, count, checked, onChange }: { label: string; count?: number; checked: boolean; onChange: () => void }) {
+  return (
+    <label
+      className="flex items-center justify-between py-1.5 px-2 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors group"
+      onClick={onChange}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={cn(
+            "w-[18px] h-[18px] rounded-md border-2 flex items-center justify-center transition-all duration-200",
+            checked
+              ? "bg-[#16213E] border-[#16213E]"
+              : "border-slate-300 group-hover:border-slate-400"
+          )}
+        >
+          {checked && (
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+        <span className={cn("text-[13px] font-medium transition-colors", checked ? "text-slate-900" : "text-slate-600")}>
+          {label}
+        </span>
+      </div>
+      {count !== undefined && (
+        <span className="text-[12px] text-slate-400 font-medium">{count}</span>
+      )}
+    </label>
+  );
+}
+
+function FleetSidebar({
+  filters,
+  onFilterChange,
+  onReset,
+  vehicleCounts,
+}: {
+  filters: FleetFilterState;
+  onFilterChange: (key: keyof FleetFilterState, value: any) => void;
+  onReset: () => void;
+  vehicleCounts: Record<string, number>;
+}) {
+  return (
+    <aside className="w-full lg:w-[280px] shrink-0">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sticky top-28">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-base font-bold text-slate-900">Filters</h3>
+          {(filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.fuelType !== "All" || filters.maxPrice < 3000) && (
+            <button
+              onClick={onReset}
+              className="text-[11px] font-semibold text-red-500 hover:text-red-600 transition-colors"
+            >
+              Reset all filters
+            </button>
+          )}
+        </div>
+
+        <FilterSection title="Category" defaultOpen={true}>
+          {CATEGORIES.map((cat) => (
+            <CheckboxItem
+              key={cat.id}
+              label={cat.label}
+              count={vehicleCounts[`cat_${cat.id}`]}
+              checked={filters.type === cat.id}
+              onChange={() => onFilterChange("type", cat.id)}
+            />
+          ))}
+        </FilterSection>
+
+        <FilterSection title="Transmission" defaultOpen={false}>
+          {TRANSMISSIONS.map((tr) => (
+            <CheckboxItem
+              key={tr.id}
+              label={tr.label}
+              count={vehicleCounts[`tr_${tr.id}`]}
+              checked={filters.transmission === tr.id}
+              onChange={() => onFilterChange("transmission", tr.id)}
+            />
+          ))}
+        </FilterSection>
+
+        <FilterSection title="Fuel" defaultOpen={false}>
+          {FUEL_TYPES.map((f) => (
+            <CheckboxItem
+              key={f.id}
+              label={f.label}
+              count={vehicleCounts[`fuel_${f.id}`]}
+              checked={filters.fuelType === f.id}
+              onChange={() => onFilterChange("fuelType", f.id)}
+            />
+          ))}
+        </FilterSection>
+
+        <FilterSection title="Seats" defaultOpen={false}>
+          {SEATS.map((s) => (
+            <CheckboxItem
+              key={s.id}
+              label={s.id === "All" ? "All" : `${s.id} seats`}
+              count={vehicleCounts[`seats_${s.id}`]}
+              checked={filters.seats === s.id}
+              onChange={() => onFilterChange("seats", s.id)}
+            />
+          ))}
+        </FilterSection>
+
+        <FilterSection title="Price / Day" defaultOpen={true}>
+          <div className="px-2 pt-2">
+            <input
+              type="range"
+              min={200}
+              max={5000}
+              step={50}
+              value={filters.maxPrice}
+              onChange={(e) => onFilterChange("maxPrice", Number(e.target.value))}
+              className="w-full h-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#16213E]"
+            />
+            <div className="flex justify-between mt-3">
+              <span className="text-[12px] font-semibold text-slate-500">300 MAD</span>
+              <span className="text-[12px] font-semibold text-slate-500">{filters.maxPrice.toLocaleString()} MAD</span>
+            </div>
+          </div>
+        </FilterSection>
+      </div>
+    </aside>
+  );
+}
 
 function FleetContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
-  const lifestyleParam = searchParams.get("lifestyle") || "all";
 
   const fleetSettings = useMemo(() => getFleetSettings(), []);
 
@@ -66,12 +241,11 @@ function FleetContent() {
     transmission: "All",
     maxPrice: 3000,
     seats: "All",
-    lifestyle: lifestyleParam,
+    lifestyle: "all",
     fuelType: "All",
     yearRange: "All",
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const {
     sorted, isLoading, loadMore, hasMore
@@ -84,16 +258,19 @@ function FleetContent() {
     endDate: endDateParam
   });
 
-  const handleFilterChange = useCallback((key: keyof FleetFilterState, value: string | number) => {
+  const handleFilterChange = useCallback((key: keyof FleetFilterState, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   }, []);
 
   const resetFilters = () => {
-    const def = { type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all", fuelType: "All", yearRange: "All" };
-    setFilters(def);
+    setFilters({ type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all", fuelType: "All", yearRange: "All" });
   };
 
-  const hasActiveFilters = filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.lifestyle !== "all" || filters.maxPrice < 3000 || filters.fuelType !== "All" || filters.yearRange !== "All";
+  const vehicleCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const data = [];
+    return counts;
+  }, []);
 
   const sortOptions = [
     { value: "price_asc", label: "Prix: Croissant" },
@@ -104,300 +281,89 @@ function FleetContent() {
 
   return (
     <main className="min-h-screen pb-24 bg-surface-0 relative overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
 
-      {/* Hero + Booking Bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <FleetHeader
-          search={search}
-          setSearch={setSearch}
-          onBookingSearch={({ location, startDate, startTime, endDate, endTime }) => {
-            setFilters(prev => ({ ...prev }));
-          }}
-        />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+        <FleetHeader search={search} setSearch={setSearch} />
       </motion.div>
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 mt-8">
-
-        {/* ── Horizontal Filter Bar ── */}
+        {/* Controls Bar */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mb-10"
+          className="flex items-center justify-between mb-6 flex-wrap gap-4"
         >
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+          <p className="text-sm font-semibold text-slate-500">
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 size={14} className="animate-spin" />
+                Chargement...
+              </span>
+            ) : (
+              <span><span className="text-slate-900 font-bold">{sorted.length}</span> Véhicules trouvés</span>
+            )}
+          </p>
 
-            {/* Row 1: Lifestyle chips */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {LIFESTYLES.map((ls) => {
-                const Icon = ls.icon;
-                const active = filters.lifestyle === ls.id;
-                return (
-                  <button
-                    key={ls.id}
-                    onClick={() => handleFilterChange("lifestyle", ls.id)}
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border",
-                      active
-                        ? "bg-gold text-white border-gold shadow-sm shadow-gold/20"
-                        : "bg-slate-50 text-slate-400 border-slate-100 hover:border-gold/40 hover:text-gold"
-                    )}
-                  >
-                    <Icon size={14} />
-                    {ls.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Row 2: Category + Transmission + Seats */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Category */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
-                {TYPES.map((type) => {
-                  const active = filters.type === type;
-                  return (
-                    <button
-                      key={type}
-                      onClick={() => handleFilterChange("type", type)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
-                      )}
-                    >
-                      {type === "All" ? t("all") : (t(`cat_${type.toLowerCase()}`) || type)}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-6 bg-slate-200" />
-
-              {/* Transmission */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
-                {TRANSMISSIONS.map((tr) => {
-                  const active = filters.transmission === tr;
-                  return (
-                    <button
-                      key={tr}
-                      onClick={() => handleFilterChange("transmission", tr)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
-                      )}
-                    >
-                      {tr === "All" ? t("all") : (t(`trans_${tr.toLowerCase()}`) || tr)}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-6 bg-slate-200" />
-
-              {/* Seats */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
-                {SEATS.map((s) => {
-                  const active = filters.seats === s;
-                  return (
-                    <button
-                      key={s}
-                      onClick={() => handleFilterChange("seats", s)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
-                      )}
-                    >
-                      {s === "All" ? t("all") : `${s} place${s !== "2" ? "s" : ""}`}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-6 bg-slate-200" />
-
-              {/* Fuel Type */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
-                {FUEL_TYPES.map((f) => {
-                  const active = filters.fuelType === f;
-                  return (
-                    <button
-                      key={f}
-                      onClick={() => handleFilterChange("fuelType", f)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
-                      )}
-                    >
-                      {f === "All" ? "Carburant" : f}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-6 bg-slate-200" />
-
-              {/* Year Range */}
-              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
-                {YEAR_RANGES.map((y) => {
-                  const active = filters.yearRange === y;
-                  return (
-                    <button
-                      key={y}
-                      onClick={() => handleFilterChange("yearRange", y)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
-                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
-                      )}
-                    >
-                      {y === "All" ? "Année" : y}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-6 bg-slate-200" />
-
-              {/* Advanced toggle */}
-              <button
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all border",
-                  showAdvanced ? "bg-primary/5 text-primary border-primary/20" : "text-slate-400 border-slate-100 hover:border-slate-200"
-                )}
-              >
-                <Wallet size={12} />
-                Prix
-                {showAdvanced ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
-              </button>
-
-              {/* Reset */}
-              {hasActiveFilters && (
-                <button
-                  onClick={resetFilters}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-50 border border-red-100 hover:bg-red-100 transition-all"
-                >
-                  <RotateCcw size={10} />
-                  Réinitialiser
-                </button>
-              )}
-            </div>
-
-            {/* Advanced: Price Range (collapsible) */}
-            <AnimatePresence>
-              {showAdvanced && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden"
-                >
-                  <div className="flex items-center gap-4 pt-2 border-t border-slate-100">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Prix max</span>
-                    <input
-                      type="range"
-                      min="200"
-                      max={5000}
-                      step="50"
-                      value={filters.maxPrice}
-                      onChange={(e) => handleFilterChange("maxPrice", Number(e.target.value))}
-                      className="flex-1 h-2 bg-gradient-to-r from-primary to-gold rounded-full appearance-none cursor-pointer accent-gold"
-                    />
-                    <span className="text-xs font-bold text-gold min-w-[80px] text-right">{filters.maxPrice} DH</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        {/* ── Controls Bar ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="sticky top-24 z-30 flex items-center justify-between mb-8 pb-4 pt-4 border-b border-border flex-wrap gap-4 bg-white/70 backdrop-blur-xl rounded-t-2xl px-4 -mx-4 sm:mx-0 shadow-[0_4px_30px_rgba(0,0,0,0.02)]"
-        >
-          <div className="flex items-center gap-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-ink-3">
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 size={14} className="animate-spin" />
-                  Synchronisation...
-                </span>
-              ) : (
-                `${sorted.length} ${t("fleet_count")}`
-              )}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-6">
-            {/* View Toggle */}
-            <div className="hidden md:flex items-center gap-1 bg-surface-1 p-1 rounded-lg border border-border">
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-100">
               <button
                 onClick={() => setLayoutView("grid")}
-                className={cn("p-1.5 rounded-md transition-all", layoutView === "grid" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
-                aria-label="Vue Grille"
+                className={cn("p-1.5 rounded-md transition-all", layoutView === "grid" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600")}
               >
                 <LayoutGrid size={16} />
               </button>
               <button
                 onClick={() => setLayoutView("list")}
-                className={cn("p-1.5 rounded-md transition-all", layoutView === "list" ? "bg-white text-primary shadow-sm" : "text-ink-3 hover:text-ink-1")}
-                aria-label="Vue Liste"
+                className={cn("p-1.5 rounded-md transition-all", layoutView === "list" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600")}
               >
                 <List size={16} />
               </button>
             </div>
 
-            {/* Sorting Dropdown */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-widest text-ink-3 hidden sm:inline">Trier:</span>
-              <div className="relative group">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="appearance-none bg-white border-2 border-border rounded-lg px-4 py-2.5 text-xs font-bold text-ink-1 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all cursor-pointer pr-9"
-                >
-                  {sortOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-white text-ink-1">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ArrowUpDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gold pointer-events-none" />
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:border-slate-400 transition-all cursor-pointer pr-8"
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
           </div>
         </motion.div>
 
-        {/* Fleet Grid — full width */}
-        <FleetGrid
-          vehicles={sorted}
-          loading={isLoading}
-          hasMore={hasMore}
-          onLoadMore={loadMore}
-          onQuickView={setQuickViewVehicle}
-          layoutView={layoutView}
-          columns={fleetSettings.columns}
-        />
+        {/* Sidebar + Grid Layout */}
+        <div className="flex gap-8">
+          <FleetSidebar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={resetFilters}
+            vehicleCounts={vehicleCounts}
+          />
+
+          <div className="flex-1 min-w-0">
+            <FleetGrid
+              vehicles={sorted}
+              loading={isLoading}
+              hasMore={hasMore}
+              onLoadMore={loadMore}
+              onQuickView={setQuickViewVehicle}
+              layoutView={layoutView}
+              columns={fleetSettings.columns}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Quick View Modal */}
       {quickViewVehicle && (
-        <QuickViewModal
-          vehicle={quickViewVehicle}
-          onClose={() => setQuickViewVehicle(null)}
-        />
+        <QuickViewModal vehicle={quickViewVehicle} onClose={() => setQuickViewVehicle(null)} />
       )}
 
-      {/* Social Proof */}
       <RecentBookingPopup />
     </main>
   );
@@ -409,7 +375,7 @@ export default function FleetPage() {
       <div className="min-h-screen pt-28 flex justify-center items-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-gold" size={36} />
-          <p className="text-ink-3 text-sm font-medium">Chargement de la flotte...</p>
+          <p className="text-slate-400 text-sm font-medium">Chargement de la flotte...</p>
         </div>
       </div>
     }>
