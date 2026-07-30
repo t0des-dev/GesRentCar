@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { User, Crown, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/shared/ui/button";
 
 interface UserActionsProps {
   session: any;
@@ -76,30 +75,18 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
           </AnimatePresence>
         </div>
       ) : (
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
+        <Link
+          href="/login"
           className={cn(
-            "rounded-lg",
-            "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300",
+            isScrolled
+              ? "text-slate-300 hover:text-white hover:bg-white/10"
+              : "text-white/80 hover:text-white hover:bg-white/10"
           )}
         >
-          <Link href="/login">
-            {t("nav_login")}
-          </Link>
-        </Button>
-      )}
-
-      <Button
-        asChild
-        variant="default"
-        className="rounded-xl"
-      >
-        <Link href="/booking">
-          {t("nav_book")}
+          {t("nav_login")}
         </Link>
-      </Button>
+      )}
     </div>
   );
 }
