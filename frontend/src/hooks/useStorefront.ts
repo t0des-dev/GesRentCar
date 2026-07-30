@@ -2,7 +2,6 @@
 
 import { useAgency, DEFAULT_SECTIONS_CONTENT } from "@/hooks/useAgency";
 import type { SectionsContent, Testimonial, StatItem, SectionOrder } from "@/types/storefront";
-import { DEFAULT_GALLERY_IMAGES, DEFAULT_GALLERY_STATS } from "@/components/LifestyleGallery";
 
 export interface StorefrontData {
   agency_name: string;
@@ -25,12 +24,6 @@ export interface StorefrontData {
 // Ensure DEFAULT_SECTIONS_CONTENT has all required fields with proper defaults
 const FULL_DEFAULT_SECTIONS_CONTENT: SectionsContent = {
   ...DEFAULT_SECTIONS_CONTENT,
-  lifestyle: {
-    subtitle: "L'Expérience",
-    title: "Bien plus qu'un simple trajet",
-    text: "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception",
-    images: DEFAULT_GALLERY_IMAGES,
-  },
   testimonials: {
     badge: "Avis Clients",
     heading: "Ce que disent nos clients",

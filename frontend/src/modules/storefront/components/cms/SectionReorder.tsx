@@ -31,15 +31,12 @@ const getSectionIcon = (id: string) => {
     case "why_us": return <ShieldCheck size={18} />;
     case "testimonials": return <MessageSquareQuote size={18} />;
     case "vibe_selector": return <Sparkles size={18} />;
-    case "lifestyle_gallery": return <Camera size={18} />;
-    case "map": return <MapPin size={18} />;
     case "concierge_banner": return <Bot size={18} />;
     case "faq": return <HelpCircle size={18} />;
     case "how_it_works": return <ListOrdered size={18} />;
     case "cta_banner": return <Megaphone size={18} />;
     case "promotion_banner": return <Crown size={18} />;
     case "dual_cta": return <Megaphone size={18} />;
-    case "comparator": return <ArrowLeftRight size={18} />;
     default: return <GripVertical size={18} />;
   }
 };
@@ -50,7 +47,6 @@ const getSectionMeta = (id: string, form?: StorefrontForm) => {
     case "testimonials": return `${form.testimonials?.length || 0} avis`;
     case "faq": return `${form.faq_config?.length || 0} questions`;
     case "why_us": return `${form.features_config?.length || 0} atouts`;
-    case "map": return `${form.sections_content?.map?.locations?.length || 0} villes`;
     case "featured": return `Catalogue`;
     case "how_it_works": return `${form.sections_content?.how_it_works?.steps?.length || 0} étapes`;
     default: return null;

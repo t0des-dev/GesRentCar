@@ -35,9 +35,9 @@ export interface SectionsConfig {
   stats: boolean;
   why_us: boolean;
   testimonials: boolean;
-  map: boolean;
+  map?: boolean;
   vibe_selector: boolean;
-  lifestyle_gallery: boolean;
+  lifestyle_gallery?: boolean;
   faq: boolean;
   concierge_banner: boolean;
   experience: boolean;
@@ -45,7 +45,7 @@ export interface SectionsConfig {
   cta_banner: boolean;
   promotion_banner: boolean;
   dual_cta: boolean;
-  comparator: boolean;
+  comparator?: boolean;
 }
 
 export interface SectionOrder {
@@ -152,12 +152,12 @@ export interface SectionsContent {
     description: string;
     items?: { name: string; role: string; content: string; image?: string }[];
   };
-  map: {
+  map?: {
     badge: string;
     slogan: string;
     locations: MapLocation[];
   };
-  comparator: {
+  comparator?: {
     badge: string;
     title: string;
     subtitle: string;

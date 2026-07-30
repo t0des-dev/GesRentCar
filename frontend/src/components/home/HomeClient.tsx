@@ -14,12 +14,10 @@ import StickyBookingBar from "@/components/home/StickyBookingBar";
 
 const DualCtaSection = dynamic(() => import("@/components/home/DualCtaSection"), { ssr: false });
 const VibeSelector = dynamic(() => import("@/components/VibeSelector"), { ssr: false });
-const LifestyleGallery = dynamic(() => import("@/components/LifestyleGallery"), { ssr: false });
 const StatsSection = dynamic(() => import("@/components/home/StatsSection"));
 const WhyUsSection = dynamic(() => import("@/components/home/WhyUsSection"));
 const FeaturedVehicles = dynamic(() => import("@/components/home/FeaturedVehicles"));
 const LifestyleSlider = dynamic(() => import("@/components/LifestyleSlider"), { ssr: false });
-const ExperienceMap = dynamic(() => import("@/components/ExperienceMap"), { ssr: false });
 const ConciergeBanner = dynamic(() => import("@/modules/ai/components/ConciergeBanner"), { ssr: false });
 const FAQSection = dynamic(() => import("@/components/FAQSection"), { ssr: false });
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
@@ -147,9 +145,7 @@ export default function HomeClient() {
       { id: "stats",             active: !!sections.stats },
       { id: "testimonials",      active: !!sections.testimonials },
       { id: "concierge_banner",  active: !!sections.concierge_banner },
-      { id: "lifestyle_gallery", active: false },
       { id: "vibe_selector",     active: false },
-      { id: "map",               active: false },
       { id: "faq",               active: !!sections.faq },
       { id: "cta_banner",        active: true },
     ];
@@ -203,7 +199,6 @@ export default function HomeClient() {
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
       stats: () => <StatsSection content={storefront.stats_config} />,
       vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
-      lifestyle_gallery: () => <LifestyleGallery content={storefront.sections_content.lifestyle} />,
       why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,
       featured: () => (
         <FeaturedVehicles
@@ -213,7 +208,6 @@ export default function HomeClient() {
         />
       ),
       testimonials: () => <LifestyleSlider content={storefront.sections_content.testimonials as any} />,
-      map: () => <ExperienceMap content={storefront.sections_content.map} />,
       concierge_banner: () => <ConciergeBanner content={storefront.concierge_config} />,
       faq: () => (
         <FAQSection content={{ ...storefront.sections_content.faq, items: storefront.faq_config }} />

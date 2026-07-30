@@ -17,7 +17,6 @@ interface StructureManagerProps {
 
 const SECTION_CONTENT_KEY: Record<string, string> = {
   vibe_selector: "vibe",
-  lifestyle_gallery: "lifestyle",
   featured: "featured_vehicles",
 };
 

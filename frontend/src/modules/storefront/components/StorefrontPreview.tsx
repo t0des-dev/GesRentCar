@@ -281,32 +281,7 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                   </section>
                 );
 
-              case "map":
-                return (
-                  <section id="preview-section-map" key="map" className="py-10 px-5 bg-white">
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-6">{form.sections_content?.map?.badge || "Nous trouver"}</h3>
-                    <div className="aspect-square bg-slate-100 rounded-2xl flex items-center justify-center border border-slate-200 overflow-hidden">
-                       <MapPin size={28} className="text-primary" />
-                    </div>
-                    <div className="mt-4 flex items-center gap-2">
-                       <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-primary"><MapPin size={14} /></div>
-                       <p className="text-xs font-medium text-slate-600">{form.footer_config.address || "Adresse de l'agence non renseignée"}</p>
-                    </div>
-                  </section>
-                );
 
-              case "comparator":
-                return (
-                  <section id="preview-section-comparator" key="comparator" className="py-10 px-5 bg-white">
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight text-center mb-1">{form.sections_content?.comparator?.title || "Le Garage Comparateur"}</h3>
-                    <p className="text-xs text-slate-500 text-center mb-6">{form.sections_content?.comparator?.subtitle || "Confrontez nos véhicules"}</p>
-                    <div className="flex gap-2 justify-center items-center">
-                       <div className="w-24 h-16 bg-slate-100 rounded-lg border border-slate-200"></div>
-                       <span className="text-xs font-black text-slate-300">VS</span>
-                       <div className="w-24 h-16 bg-slate-100 rounded-lg border border-slate-200"></div>
-                    </div>
-                  </section>
-                );
 
               case "vibe_selector": {
                 const vibeData = form.sections_content?.vibe;

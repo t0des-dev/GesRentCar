@@ -34,16 +34,13 @@ export interface AgencyConfig {
     stats?: boolean;
     why_us?: boolean;
     testimonials?: boolean;
-    map?: boolean;
     vibe_selector?: boolean;
-    lifestyle_gallery?: boolean;
     faq?: boolean;
     concierge_banner?: boolean;
     experience?: boolean;
     how_it_works?: boolean;
     cta_banner?: boolean;
     promotion_banner?: boolean;
-    comparator?: boolean;
   };
   sections_content?: Partial<SectionsContent>;
   header_config?: {
@@ -129,37 +126,6 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
       { id: "family", title: "Family First", subtitle: "Confort & Partage", icon: "Zap", image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800", color_from: "gold", color_via: "gold", lifestyle: "family" }
     ]
   },
-  lifestyle: { 
-    title: "Bien plus qu'un simple trajet", 
-    subtitle: "L'Expérience", 
-    text: "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception",
-    stats: [
-      { value: "98%", label: "Recommandation" },
-      { value: "24h", label: "Service VIP" }
-    ],
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
-        speed: 0.1,
-        className: "col-span-6 h-[450px] mt-20"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800",
-        speed: 0.2,
-        className: "col-span-6 h-[550px]"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800",
-        speed: 0.15,
-        className: "col-span-4 h-[400px] -mt-10"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1525609002752-ad9d9b9b4125?auto=format&fit=crop&q=80&w=800",
-        speed: 0.25,
-        className: "col-span-8 h-[500px]"
-      }
-    ]
-  },
   faq: { title: "Questions fréquentes", subtitle: "Tout ce que vous devez savoir", badge: "Support Client", contact_text: "Vous avez encore des questions ?", contact_link: "/contact" },
   experience: {
     eyebrow: "L'Expérience Premium",
@@ -207,27 +173,6 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
     heading: "Ce que disent nos clients",
     description: "Découvrez les expériences de ceux qui nous ont fait confiance.",
   },
-  map: {
-    badge: "Présence Nationale",
-    slogan: "Une sélection de prestige pour ceux qui ne font aucun compromis sur l'excellence.",
-    locations: [
-      { city: "Casablanca", car: "Premium Fleet", user: "Client VIP", top: "60%", left: "40%" },
-      { city: "Marrakech", car: "Luxury SUV", user: "Client VIP", top: "72%", left: "38%" },
-      { city: "Tanger", car: "Elite Sedan", user: "Client VIP", top: "40%", left: "48%" },
-      { city: "Agadir", car: "Prestige Car", user: "Client VIP", top: "85%", left: "30%" },
-    ],
-  },
-  comparator: {
-    badge: "Le Garage Comparateur",
-    title: "Confrontez l'Excellence.",
-    subtitle: "Choisissez deux modèles pour comparer leur ADN",
-    vs_label: "VS",
-    vehicles: [
-      { id: "1", brand: "Rolls-Royce", model: "Ghost", image: "https://images.unsplash.com/photo-1631214524020-5e1839762691?q=80&w=800&auto=format&fit=crop", specs: [{ name: "prestige", value: 100, label: "Luxe Absolu" }, { name: "comfort", value: 95, label: "Confort Royal" }, { name: "speed", value: 70, label: "Puissance" }] },
-      { id: "2", brand: "Range Rover", model: "Autobiography", image: "https://images.unsplash.com/photo-1606611013016-969c19ba27bb?q=80&w=800&auto=format&fit=crop", specs: [{ name: "prestige", value: 90, label: "Status Icon" }, { name: "comfort", value: 92, label: "Luxembourg" }, { name: "speed", value: 75, label: "Performances" }] },
-      { id: "3", brand: "Porsche", model: "911 Carrera", image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop", specs: [{ name: "prestige", value: 88, label: "Icône Sport" }, { name: "comfort", value: 78, label: "Sport Confort" }, { name: "speed", value: 98, label: "Vitesse Pure" }] },
-    ],
-  },
   sticky_booking: {
     placeholder: "Destination",
     search_label: "Rechercher",
@@ -266,16 +211,13 @@ const DEFAULT_CONFIG: AgencyConfig = {
     stats: true,
     why_us: true,
     testimonials: true,
-    map: true,
     vibe_selector: true,
-    lifestyle_gallery: true,
     faq: true,
     concierge_banner: true,
     experience: true,
     how_it_works: true,
     cta_banner: true,
     promotion_banner: true,
-    comparator: true,
   },
   sections_content: DEFAULT_SECTIONS_CONTENT,
   header_config: {

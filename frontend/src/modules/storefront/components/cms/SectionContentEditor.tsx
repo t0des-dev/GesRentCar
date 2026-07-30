@@ -40,11 +40,6 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "title", label: "Titre", type: "text" },
     { key: "subtitle", label: "Sous-titre", type: "textarea" },
   ],
-  lifestyle: [
-    { key: "title", label: "Titre", type: "text" },
-    { key: "subtitle", label: "Sous-titre", type: "text" },
-    { key: "text", label: "Texte", type: "textarea" },
-  ],
   faq: [
     { key: "badge", label: "Badge", type: "text" },
     { key: "title", label: "Titre", type: "text" },
@@ -82,16 +77,6 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "badge", label: "Badge", type: "text" },
     { key: "heading", label: "Titre", type: "text" },
     { key: "description", label: "Description", type: "textarea" },
-  ],
-  map: [
-    { key: "badge", label: "Badge", type: "text" },
-    { key: "slogan", label: "Slogan", type: "textarea" },
-  ],
-  comparator: [
-    { key: "badge", label: "Badge", type: "text" },
-    { key: "title", label: "Titre", type: "text" },
-    { key: "subtitle", label: "Sous-titre", type: "textarea" },
-    { key: "vs_label", label: "Étiquette VS", type: "text" },
   ],
   sticky_booking: [
     { key: "placeholder", label: "Placeholder", type: "text" },
@@ -260,15 +245,12 @@ const sectionLabels: Record<string, string> = {
   hero: "Bannière Hero",
   why_us: "Nos Avantages",
   vibe: "Sélecteur d'Expérience",
-  lifestyle: "Galerie Lifestyle",
   faq: "FAQ",
   experience: "Expérience Premium",
   how_it_works: "Comment ça marche",
   cta_banner: "Bannière CTA",
   promotion_banner: "Bannière Promotion",
   testimonials: "Témoignages",
-  map: "Localisation",
-  comparator: "Comparateur",
   sticky_booking: "Réservation rapide",
   featured_vehicles: "Véhicules Vedettes",
   search_form: "Formulaire de recherche",
@@ -470,23 +452,6 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
         </div>
       )}
 
-      {/* Map — locations array */}
-      {sectionId === "map" && (
-        <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Localisations</label>
-          <ReorderableArrayEditor
-            items={content?.locations ?? []}
-            onChange={(items) => onChange({ ...content, locations: items })}
-            fields={[
-              { key: "city", label: "Ville", type: "text" },
-              { key: "car", label: "Véhicule", type: "text" },
-              { key: "user", label: "Utilisateur", type: "text" },
-            ]}
-            defaultItem={{ city: "", car: "", user: "" }}
-          />
-        </div>
-      )}
-
       {/* Promotion banner — footer_items array */}
       {sectionId === "promotion_banner" && (
         <div>
@@ -500,35 +465,7 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
         </div>
       )}
 
-      {/* Lifestyle gallery — images array with reorder + thumbnails */}
-      {sectionId === "lifestyle" && (
-        <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Images</label>
-          <ReorderableArrayEditor
-            items={content?.images ?? []}
-            onChange={(items) => onChange({ ...content, images: items })}
-            fields={[
-              { key: "url", label: "URL image", type: "image" },
-              { key: "speed", label: "Vitesse défilement (ex: 0.15)", type: "text" },
-              { key: "className", label: "Classe CSS (taille et grille)", type: "text" },
-            ]}
-            defaultItem={{ url: "", speed: "0.1", className: "col-span-6 h-[400px]" }}
-            thumbnailKey="url"
-          />
-          <div className="mt-6">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Statistiques du bloc</label>
-            <ReorderableArrayEditor
-              items={content?.stats ?? []}
-              onChange={(items) => onChange({ ...content, stats: items })}
-              fields={[
-                { key: "value", label: "Valeur (ex: 98%)", type: "text" },
-                { key: "label", label: "Libellé (ex: Recommandation)", type: "text" },
-              ]}
-              defaultItem={{ value: "", label: "" }}
-            />
-          </div>
-        </div>
-      )}
+
 
       {/* Testimonials — items array */}
       {sectionId === "testimonials" && (
