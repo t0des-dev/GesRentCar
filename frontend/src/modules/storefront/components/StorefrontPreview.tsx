@@ -308,6 +308,55 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                   </section>
                 );
 
+              case "vibe_selector": {
+                const vibeData = form.sections_content?.vibe;
+                const vibeEyebrow = (vibeData as any)?.eyebrow || "LUXURY COLLECTION";
+                const vibeTitle = (vibeData as any)?.title || "For the moments that call for more.";
+                const vibeSubtitle = (vibeData as any)?.subtitle || "Flagship sedans and SUVs, reserved for clients who expect the best.";
+                const vibeItems = (vibeData as any)?.items?.length ? (vibeData as any).items : [
+                  { brand: "BMW", title: "7 Series", img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=400" },
+                  { brand: "MERCEDES", title: "S-Class", img: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=400" },
+                  { brand: "RANGE ROVER", title: "Vogue", img: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=400" },
+                  { brand: "AUDI", title: "A8", img: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&q=80&w=400" },
+                ];
+                return (
+                  <section id="preview-section-vibe_selector" key="vibe_selector" className="py-10 px-5 bg-[#0f1e3c]">
+                    {/* Header */}
+                    <div className="flex flex-col items-center text-center mb-6">
+                      <span className="block w-px h-5 bg-white/20 mb-3"></span>
+                      <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/40 mb-2">{vibeEyebrow}</span>
+                      <h3 className="text-[16px] font-extrabold text-white leading-snug max-w-[220px] mb-2">{vibeTitle}</h3>
+                      <p className="text-[8.5px] text-white/40 leading-relaxed max-w-[200px]">{vibeSubtitle}</p>
+                    </div>
+                    {/* Cards row */}
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {vibeItems.slice(0, 4).map((v: any, idx: number) => (
+                        <div key={idx} className="relative flex-shrink-0 w-[80px] h-[90px] rounded-xl overflow-hidden bg-[#1a2a4a] border border-white/5 cursor-pointer group">
+                          <Image
+                            src={v.img || v.image}
+                            alt={v.title}
+                            width={160}
+                            height={180}
+                            className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                          />
+                          {/* Dark gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1e3c]/90 via-transparent to-transparent"></div>
+                          {/* Labels */}
+                          <div className="absolute bottom-2 left-2 right-2">
+                            <p className="text-[5.5px] font-bold uppercase tracking-widest text-white/50 leading-none mb-0.5">
+                              {v.brand || v.subtitle || ""}
+                            </p>
+                            <p className="text-[8px] font-bold text-white leading-tight flex items-center gap-0.5">
+                              {v.title} <span className="text-white/50 text-[7px]">›</span>
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                );
+              }
+
               default:
                 return null;
             }
