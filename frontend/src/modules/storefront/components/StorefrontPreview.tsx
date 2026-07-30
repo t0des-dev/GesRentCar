@@ -122,14 +122,10 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                   { icon: "Car", label: "Airport Delivery" },
                   { icon: "Star", label: "Unlimited Mileage" },
                   { icon: "Shield", label: "Insurance Included" },
-                  { icon: "CreditCard", label: "Transparent Pricing" },
-                  { icon: "Zap", label: "Fast Booking" },
-                ];
-                const displayItems = items.length > 0 ? items : defaultStatItems;
               case "stats":
                 return (
                   <section id="preview-section-stats" key="stats">
-                    <StatsSection content={form.sections_content?.stats || {}} />
+                    <StatsSection content={(form.sections_content as any)?.stats || {}} />
                   </section>
                 );
 

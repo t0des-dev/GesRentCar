@@ -187,6 +187,7 @@ export interface SectionsContent {
     fleet_link_text: string;
     fleet_link_href: string;
   };
+  stats?: StatsConfig;
 }
 
 export interface Testimonial {
