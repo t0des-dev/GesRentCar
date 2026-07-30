@@ -15,7 +15,7 @@ import { getImageUrl } from "@/shared/utils/image";
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "color" | "icon" | "color-palette" | "columns-picker" | "theme-picker" | "height-picker" | "text-size-picker" | "layout-style-picker" | "custom-color";
+  type: "text" | "textarea" | "image" | "color" | "icon" | "color-palette" | "columns-picker" | "theme-picker" | "height-picker" | "text-size-picker" | "layout-style-picker" | "custom-color" | "fleet-layout-picker" | "toggle-picker" | "limit-picker";
   placeholder?: string;
 }
 
@@ -434,6 +434,118 @@ function CustomColorPicker({ value, onChange }: { value: string; onChange: (v: s
   );
 }
 
+function FleetLayoutPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    {
+      val: "grid",
+      label: "Grille Responsive",
+      emoji: "▦",
+      preview: (
+        <div className="grid grid-cols-3 gap-1 w-full p-1 bg-slate-100 rounded-lg">
+          <div className="h-6 rounded bg-slate-400/60" />
+          <div className="h-6 rounded bg-slate-400/60" />
+          <div className="h-6 rounded bg-slate-400/60" />
+        </div>
+      ),
+    },
+    {
+      val: "carousel",
+      label: "Carrousel Défilant",
+      emoji: "🎠",
+      preview: (
+        <div className="flex gap-1 w-full p-1 bg-slate-100 rounded-lg overflow-hidden">
+          <div className="w-1/2 shrink-0 h-6 rounded bg-amber-500/80" />
+          <div className="w-1/2 shrink-0 h-6 rounded bg-slate-300" />
+          <div className="w-1/2 shrink-0 h-6 rounded bg-slate-200" />
+        </div>
+      ),
+    },
+  ];
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {options.map((opt) => {
+        const isSelected = (value || "grid") === opt.val;
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => onChange(opt.val)}
+            className={cn(
+              "flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all duration-200",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-lg scale-[1.02]"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+            )}
+          >
+            {opt.preview}
+            <span className="text-[10px] font-black uppercase tracking-wider">{opt.emoji} {opt.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function TogglePicker({ value, onChange, labelOn = "Activé", labelOff = "Masqué" }: { value: string; onChange: (v: string) => void; labelOn?: string; labelOff?: string }) {
+  const isTrue = value !== "false";
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <button
+        type="button"
+        onClick={() => onChange("true")}
+        className={cn(
+          "flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl border-2 font-black text-[11px] uppercase tracking-wider transition-all",
+          isTrue
+            ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-500/20 scale-[1.02]"
+            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+        )}
+      >
+        <span className={cn("w-2 h-2 rounded-full", isTrue ? "bg-white animate-pulse" : "bg-slate-300")} />
+        {labelOn}
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("false")}
+        className={cn(
+          "flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl border-2 font-black text-[11px] uppercase tracking-wider transition-all",
+          !isTrue
+            ? "border-slate-900 bg-slate-900 text-white shadow-md scale-[1.02]"
+            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+        )}
+      >
+        <span className={cn("w-2 h-2 rounded-full", !isTrue ? "bg-white" : "bg-slate-300")} />
+        {labelOff}
+      </button>
+    </div>
+  );
+}
+
+function LimitPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = ["3", "6", "9", "12", "18"];
+  return (
+    <div className="flex items-center gap-2">
+      {options.map((num) => {
+        const isSelected = (value || "6") === num;
+        return (
+          <button
+            key={num}
+            type="button"
+            onClick={() => onChange(num)}
+            className={cn(
+              "flex-1 py-2.5 rounded-xl border-2 font-black text-xs transition-all",
+              isSelected
+                ? "border-slate-900 bg-slate-900 text-white shadow-md scale-105"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+            )}
+          >
+            {num}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const sectionFields: Record<string, SectionFieldDef[]> = {
   hero: [
     { key: "badge", label: "Badge", type: "text" },
@@ -446,8 +558,8 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
   ],
   vibe: [
     { key: "eyebrow", label: "Sur-titre", type: "text" },
-    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text" },
-    { key: "title", label: "Titre", type: "text" },
+    { key: "columns", label: "Nombre de colonnes de cartes", type: "columns-picker" },
+    { key: "title", label: "Titre principal", type: "text" },
     { key: "subtitle", label: "Sous-titre", type: "textarea" },
   ],
   faq: [
@@ -494,18 +606,17 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
   ],
   featured_vehicles: [
     { key: "eyebrow", label: "Sur-titre", type: "text" },
-    { key: "title", label: "Titre", type: "text" },
-    { key: "cta_text", label: "Texte du bouton", type: "text" },
-    { key: "cta_link", label: "Lien du bouton", type: "text" },
-    { key: "layout", label: "Mise en page (grid ou carousel)", type: "text", placeholder: "grid" },
-    { key: "columns", label: "Colonnes (2, 3 ou 4)", type: "text", placeholder: "3" },
-    { key: "limit", label: "Nombre max de véhicules", type: "text", placeholder: "6" },
-    { key: "show_filters", label: "Afficher les filtres par catégorie (true/false)", type: "text", placeholder: "true" },
-    { key: "filter_color", label: "Couleur des filtres actifs (optionnel)", type: "color" },
-    { key: "dynamic_bg", label: "Fond dynamique au survol (true/false)", type: "text", placeholder: "true" },
-    { key: "loading_text", label: "Texte chargement", type: "text" },
-    { key: "empty_heading", label: "Titre vide", type: "text" },
-    { key: "empty_description", label: "Description vide", type: "textarea" },
+    { key: "title", label: "Titre principal", type: "text" },
+    { key: "cta_text", label: "Texte du bouton catalogue", type: "text" },
+    { key: "cta_link", label: "Lien du bouton catalogue", type: "text" },
+    { key: "layout", label: "Mode d'affichage de la flotte", type: "fleet-layout-picker" },
+    { key: "columns", label: "Nombre de colonnes en mode grille", type: "columns-picker" },
+    { key: "limit", label: "Nombre max de véhicules affichés", type: "limit-picker" },
+    { key: "show_filters", label: "Filtres par catégorie (Tous, SUV, Luxe...)", type: "toggle-picker" },
+    { key: "filter_color", label: "Couleur d'accentuation des filtres", type: "custom-color" },
+    { key: "dynamic_bg", label: "Ambiance / Fond dynamique au survol", type: "toggle-picker" },
+    { key: "empty_heading", label: "Titre si aucun véhicule", type: "text" },
+    { key: "empty_description", label: "Description si aucun véhicule", type: "textarea" },
   ],
   search_form: [
     { key: "location_label", label: "Étiquette destination", type: "text" },
@@ -564,6 +675,15 @@ function StringField({ value, onChange, field }: { value: string; onChange: (v: 
   }
   if (field.type === "custom-color") {
     return <CustomColorPicker value={value ?? ""} onChange={onChange} />;
+  }
+  if (field.type === "fleet-layout-picker") {
+    return <FleetLayoutPicker value={value ?? "grid"} onChange={onChange} />;
+  }
+  if (field.type === "toggle-picker") {
+    return <TogglePicker value={value ?? "true"} onChange={onChange} />;
+  }
+  if (field.type === "limit-picker") {
+    return <LimitPicker value={value ?? "6"} onChange={onChange} />;
   }
   if (field.type === "color") {
     return (
@@ -779,14 +899,13 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "id", label: "ID (unique)", type: "text" },
               { key: "title", label: "Titre", type: "text" },
               { key: "subtitle", label: "Sous-titre", type: "text" },
-              { key: "icon", label: "Icône", type: "text" },
-              { key: "image", label: "Image", type: "image" },
-              { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
-              { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
-              { key: "lifestyle", label: "Lifestyle (ex: business)", type: "text" },
+              { key: "icon", label: "Icône Visuelle", type: "icon" },
+              { key: "image", label: "Image (URL)", type: "image" },
+              { key: "color_from", label: "Couleur d'accentuation", type: "custom-color" },
+              { key: "lifestyle", label: "Type / Catégorie", type: "text" },
               { key: "link", label: "Lien personnalisé", type: "text" },
             ]}
-            defaultItem={{ id: "", title: "", subtitle: "", icon: "ShieldCheck", image: "", color_from: "primary", color_via: "primary", lifestyle: "", link: "" }}
+            defaultItem={{ id: "", title: "", subtitle: "", icon: "Shield", image: "", color_from: "amber", color_via: "amber", lifestyle: "", link: "" }}
             thumbnailKey="image"
           />
         </div>
@@ -795,15 +914,15 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
       {/* Hero — benefits array */}
       {sectionId === "hero" && (
         <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Avantages</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Avantages Hero</label>
           <ReorderableArrayEditor
             items={(content?.benefits ?? []).map((b: any, i: number) => ({ ...b, _idx: String(i) }))}
             onChange={(items) => onChange({ ...content, benefits: items })}
             fields={[
-              { key: "icon", label: "Icône", type: "text" },
+              { key: "icon", label: "Icône Visuelle", type: "icon" },
               { key: "text", label: "Texte", type: "text" },
             ]}
-            defaultItem={{ icon: "", text: "" }}
+            defaultItem={{ icon: "CheckCircle", text: "" }}
           />
         </div>
       )}
@@ -816,8 +935,8 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
             items={content?.features ?? []}
             onChange={(items) => onChange({ ...content, features: items })}
             fields={[
-              { key: "icon", label: "Icône (ex: Crown, Star, Shield...)", type: "text" },
-              { key: "image", label: "Ou Image (URL de l'image)", type: "image" },
+              { key: "icon", label: "Icône Visuelle", type: "icon" },
+              { key: "image", label: "Ou Image (URL)", type: "image" },
               { key: "title", label: "Titre", type: "text" },
               { key: "desc", label: "Description", type: "textarea" },
             ]}
@@ -852,10 +971,9 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
                 { key: "id", label: "ID", type: "text" },
                 { key: "title", label: "Titre", type: "text" },
                 { key: "subtitle", label: "Sous-titre", type: "text" },
-                { key: "icon", label: "Icône", type: "text" },
-                { key: "image", label: "URL image", type: "text" },
-                { key: "color_from", label: "Couleur début (ex: blue-400)", type: "text" },
-                { key: "color_via", label: "Couleur milieu (ex: blue-600)", type: "text" },
+                { key: "icon", label: "Icône Visuelle", type: "icon" },
+                { key: "image", label: "Image (URL)", type: "image" },
+                { key: "color_from", label: "Couleur de départ", type: "custom-color" },
                 { key: "lifestyle", label: "Type lifestyle", type: "text" },
                 { key: "cta_text", label: "Texte CTA", type: "text" },
               ]}
