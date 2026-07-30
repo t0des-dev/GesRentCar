@@ -10,6 +10,7 @@ import Link from "next/link";
 interface FleetHeaderProps {
   search: string;
   setSearch: (val: string) => void;
+  fleetConfig?: Record<string, any>;
   onBookingSearch?: (params: {
     location: string;
     startDate: string;
@@ -33,13 +34,18 @@ function getTodayString(): string {
   return new Date().toISOString().split("T")[0];
 }
 
-export default function FleetHeader({ search, setSearch, onBookingSearch }: FleetHeaderProps) {
+export default function FleetHeader({ search, setSearch, fleetConfig, onBookingSearch }: FleetHeaderProps) {
   const { t } = useTranslation();
   const agency = useAgency();
 
-  const heroImage = agency.hero_image_url || "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1920";
+  const heroImage = fleetConfig?.hero_image_url || agency.hero_image_url || "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1920";
+  const heroEyebrow = fleetConfig?.hero_eyebrow || "Premium Fleet";
+  const heroTitle = fleetConfig?.hero_title || "Explorez Notre Flotte Premium";
+  const heroSubtitle = fleetConfig?.hero_subtitle || "Trouvez le véhicule parfait pour vos voyages d'affaires, vacances familiales et expériences de luxe à travers le Maroc.";
+  const defaultLocation = fleetConfig?.default_location || "Casablanca — Aéroport Mohammed V (CMN)";
+  const locations = fleetConfig?.locations || PREDEFINED_LOCATIONS;
 
-  const [location, setLocation] = useState("Casablanca — Aéroport Mohammed V (CMN)");
+  const [location, setLocation] = useState(defaultLocation);
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("10:00");
   const [endDate, setEndDate] = useState("");
@@ -88,7 +94,7 @@ export default function FleetHeader({ search, setSearch, onBookingSearch }: Flee
           >
             <div className="w-8 h-[2px] bg-amber-400" />
             <span className="text-amber-400 text-[11px] font-black tracking-[0.2em] uppercase">
-              {t("fleet_tag") || "Premium Fleet"}
+              {heroEyebrow}
             </span>
           </motion.div>
 
@@ -100,10 +106,7 @@ export default function FleetHeader({ search, setSearch, onBookingSearch }: Flee
             className="text-4xl md:text-5xl lg:text-[56px] font-black text-white leading-[1.1] tracking-tight mb-4 max-w-2xl"
             style={{ fontFamily: "var(--font-sora), sans-serif" }}
           >
-            {t("fleet_title_1") || "Explorez Notre"} <br />
-            <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
-              {t("fleet_title_2") || "Flotte Premium"}
-            </span>
+            {heroTitle}
           </motion.h1>
 
           {/* Subtitle */}
@@ -113,7 +116,7 @@ export default function FleetHeader({ search, setSearch, onBookingSearch }: Flee
             transition={{ delay: 0.25, duration: 0.6 }}
             className="text-white/60 text-sm md:text-base leading-relaxed max-w-xl font-medium"
           >
-            {t("fleet_subtitle") || "Trouvez le véhicule parfait pour vos voyages d'affaires, vacances familiales et expériences de luxe à travers le Maroc."}
+            {heroSubtitle}
           </motion.p>
         </div>
       </div>
@@ -155,7 +158,7 @@ export default function FleetHeader({ search, setSearch, onBookingSearch }: Flee
                     className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-slate-100 rounded-xl overflow-hidden z-50 shadow-2xl"
                   >
                     <div className="p-2 space-y-0.5 max-h-64 overflow-y-auto">
-                      {PREDEFINED_LOCATIONS.map((loc) => (
+                      {locations.map((loc: any) => (
                         <button
                           key={loc.id}
                           onMouseDown={(e) => {
@@ -166,7 +169,7 @@ export default function FleetHeader({ search, setSearch, onBookingSearch }: Flee
                           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
                         >
                           <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-amber-500 group-hover:bg-amber-50 transition-colors">
-                            <loc.icon size={13} />
+                            <MapPin size={13} />
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-slate-700 group-hover:text-amber-600 transition-colors">{loc.city}</p>

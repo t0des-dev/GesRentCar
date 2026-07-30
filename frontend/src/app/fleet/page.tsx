@@ -8,6 +8,7 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
 import RecentBookingPopup from "@/components/RecentBookingPopup";
 import { LayoutGrid, List } from "lucide-react";
+import { useAgency } from "@/hooks/useAgency";
 
 import FleetHeader from "@/modules/fleet/components/FleetHeader";
 import FleetGrid from "@/modules/fleet/components/FleetGrid";
@@ -230,11 +231,15 @@ function FleetContent() {
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
+  const agency = useAgency();
+  const fleetConfig = agency?.sections_content?.fleet || {};
 
   const fleetSettings = useMemo(() => getFleetSettings(), []);
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">("price_asc");
+  const [sortBy, setSortBy] = useState<"price_asc" | "price_desc" | "year_desc" | "brand_asc">(
+    (fleetConfig.default_sort as any) || "price_asc"
+  );
   const [layoutView, setLayoutView] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState<FleetFilterState>({
     type: "All",
@@ -284,7 +289,7 @@ function FleetContent() {
       <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-        <FleetHeader search={search} setSearch={setSearch} />
+        <FleetHeader search={search} setSearch={setSearch} fleetConfig={fleetConfig} />
       </motion.div>
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 mt-8">

@@ -6,7 +6,7 @@ import {
   GripVertical, Eye, EyeOff, Edit3, Image as ImageIcon, Activity, Star, 
   ShieldCheck, MessageSquareQuote, Sparkles, Bot, 
   HelpCircle, ListOrdered, Megaphone, PanelTop, PanelBottom, Crown,
-  ArrowUp, ArrowDown, RotateCcw, Zap, SlidersHorizontal, Award
+  ArrowUp, ArrowDown, RotateCcw, Zap, SlidersHorizontal, Award, Car
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import type { StorefrontForm } from "@/types/storefront";
@@ -50,6 +50,7 @@ const getSectionIcon = (id: string) => {
     case "stats": return <Activity size={18} />;
     case "featured": return <Star size={18} />;
     case "services": return <Award size={18} />;
+    case "fleet": return <Car size={18} />;
     case "why_us": return <ShieldCheck size={18} />;
     case "testimonials": return <MessageSquareQuote size={18} />;
     case "vibe_selector": return <Sparkles size={18} />;

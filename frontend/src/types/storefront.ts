@@ -53,6 +53,7 @@ export interface ServicesConfig {
 export interface SectionsConfig {
   featured: boolean;
   services?: boolean;
+  fleet?: boolean;
   stats: boolean;
   why_us: boolean;
   testimonials: boolean;
@@ -133,6 +134,25 @@ export interface ConciergeConfig {
   badge?: string;
 }
 
+export interface FleetConfig {
+  hero_image_url?: string;
+  hero_eyebrow?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  default_location?: string;
+  locations?: { id: string; city: string; name: string }[];
+  default_columns?: string;
+  default_sort?: string;
+  page_size?: string;
+  show_lifestyle_filter?: boolean;
+  show_category_filter?: boolean;
+  show_transmission_filter?: boolean;
+  show_fuel_filter?: boolean;
+  show_seats_filter?: boolean;
+  show_price_filter?: boolean;
+  theme?: string;
+}
+
 export interface SectionsContent {
   hero: { badge: string; title: string; subtitle: string; benefits?: { icon: string; text: string }[] };
   why_us: { title: string; subtitle: string; features?: { icon: string; image?: string; title: string; desc: string }[] };
@@ -210,6 +230,7 @@ export interface SectionsContent {
   };
   stats?: StatsConfig;
   services?: ServicesConfig;
+  fleet?: FleetConfig;
 }
 
 export interface Testimonial {

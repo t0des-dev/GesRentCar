@@ -13,6 +13,7 @@ export const defaultStorefrontForm: StorefrontForm = {
   sections_config: {
     featured: true,
     services: true,
+    fleet: true,
     stats: true,
     why_us: true,
     testimonials: true,
@@ -85,6 +86,30 @@ export const defaultStorefrontForm: StorefrontForm = {
         { id: "srv-5", title: "Siège Bébés & GPS Inclus", description: "Équipements complémentaires haut de gamme préparés selon vos besoins.", icon: "Award", badge: "Option", color: "purple" },
         { id: "srv-6", title: "Assistance Route 24h/7d", description: "Dépannage d'urgence immédiat et véhicule de remplacement équivalent ou supérieur.", icon: "Headphones", badge: "24/7", color: "blue" },
       ]
+    },
+    fleet: {
+      hero_eyebrow: "Premium Fleet",
+      hero_title: "Explorez Notre Flotte Premium",
+      hero_subtitle: "Trouvez le véhicule parfait pour vos voyages d'affaires, vacances familiales et expériences de luxe à travers le Maroc.",
+      default_location: "Casablanca — Aéroport Mohammed V (CMN)",
+      locations: [
+        { id: "cmn", city: "Casablanca", name: "Aéroport Mohammed V (CMN)" },
+        { id: "casa", city: "Casablanca", name: "Centre Ville" },
+        { id: "rak", city: "Marrakech", name: "Aéroport Menara (RAK)" },
+        { id: "tng", city: "Tanger", name: "Aéroport Ibn Battouta (TNG)" },
+        { id: "rabat", city: "Rabat", name: "Centre Ville" },
+        { id: "fes", city: "Fès", name: "Aéroport Saïss (FEZ)" },
+      ],
+      default_columns: "3",
+      default_sort: "price_asc",
+      page_size: "12",
+      show_lifestyle_filter: true,
+      show_category_filter: true,
+      show_transmission_filter: true,
+      show_fuel_filter: true,
+      show_seats_filter: true,
+      show_price_filter: true,
+      theme: "light",
     },
     why_us: { 
       title: "Pourquoi choisir Vectoria ?", 

@@ -648,6 +648,23 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "columns", label: "Nombre de colonnes", type: "columns-picker" },
     { key: "theme", label: "Thème", type: "theme-picker" },
   ],
+  fleet: [
+    { key: "hero_image_url", label: "Image de fond Hero", type: "image" },
+    { key: "hero_eyebrow", label: "Sur-titre Hero", type: "text" },
+    { key: "hero_title", label: "Titre Hero", type: "text" },
+    { key: "hero_subtitle", label: "Sous-titre Hero", type: "textarea" },
+    { key: "default_location", label: "Lieu par défaut", type: "text" },
+    { key: "default_columns", label: "Colonnes par défaut", type: "columns-picker" },
+    { key: "default_sort", label: "Tri par défaut", type: "text" },
+    { key: "page_size", label: "Véhicules par page", type: "text" },
+    { key: "theme", label: "Thème", type: "theme-picker" },
+    { key: "show_lifestyle_filter", label: "Filtre Lifestyle", type: "toggle-picker" },
+    { key: "show_category_filter", label: "Filtre Catégorie", type: "toggle-picker" },
+    { key: "show_transmission_filter", label: "Filtre Transmission", type: "toggle-picker" },
+    { key: "show_fuel_filter", label: "Filtre Carburant", type: "toggle-picker" },
+    { key: "show_seats_filter", label: "Filtre Places", type: "toggle-picker" },
+    { key: "show_price_filter", label: "Filtre Prix", type: "toggle-picker" },
+  ],
 };
 
 interface SectionContentEditorProps {
@@ -820,6 +837,7 @@ const sectionLabels: Record<string, string> = {
   concierge: "Bannière Concierge IA",
   stats: "Statistiques Clés",
   services: "Services VIP",
+  fleet: "Page Fleet",
 };
 
 export default function SectionContentEditor({ sectionId, content, onChange, extraFields, faqItems, onFaqItemsChange }: SectionContentEditorProps) {
