@@ -4,10 +4,11 @@ import { useState } from "react";
 import { motion, Reorder } from "framer-motion";
 import Image from "next/image";
 import { 
-  Plus, Trash2, GripVertical, cn,
+  Plus, Trash2, GripVertical,
   Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
   TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones
 } from "lucide-react";
+import { cn } from "@/shared/utils";
 import AssetUpload from "@/components/AssetUpload";
 import { getImageUrl } from "@/shared/utils/image";
 
