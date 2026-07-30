@@ -70,6 +70,16 @@ function AnimatedStatValue({ value, isDark }: { value: string; isDark: boolean }
   );
 }
 
+const COLOR_STYLES: Record<string, { text: string; bg: string; border: string }> = {
+  amber: { text: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+  emerald: { text: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+  indigo: { text: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
+  rose: { text: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20" },
+  blue: { text: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+  purple: { text: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+  primary: { text: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+};
+
 export default function StatsSection({ content }: { content: Partial<StatsConfig> }) {
   const items = content?.items || [];
   const columns = parseInt(content?.columns || "4");
@@ -114,6 +124,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
         >
           {items.map((s: StatItem, idx: number) => {
             const IconComponent = s.icon ? ICON_MAP[s.icon] ?? null : null;
+            const colorScheme = COLOR_STYLES[s.color || "amber"] || COLOR_STYLES.amber;
 
             if (layoutStyle === "cards") {
               return (
@@ -128,7 +139,10 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   
                   {IconComponent && (
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <div className={cn(
+                      "w-10 h-10 rounded-xl flex items-center justify-center border group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
+                      colorScheme.bg, colorScheme.border, colorScheme.text
+                    )}>
                       <IconComponent size={20} strokeWidth={1.75} />
                     </div>
                   )}
@@ -167,7 +181,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                 {IconComponent && (
                   <div className={cn(
                     "w-[28px] h-[28px] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3",
-                    isDark ? "text-amber-400" : "text-primary"
+                    colorScheme.text
                   )}>
                     <IconComponent size={26} strokeWidth={1.5} />
                   </div>

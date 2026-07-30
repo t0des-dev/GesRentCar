@@ -3,14 +3,18 @@
 import { useState } from "react";
 import { motion, Reorder } from "framer-motion";
 import Image from "next/image";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { 
+  Plus, Trash2, GripVertical, cn,
+  Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
+  TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones
+} from "lucide-react";
 import AssetUpload from "@/components/AssetUpload";
 import { getImageUrl } from "@/shared/utils/image";
 
 interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "image" | "color";
+  type: "text" | "textarea" | "image" | "color" | "icon" | "color-palette";
   placeholder?: string;
 }
 
@@ -23,6 +27,89 @@ interface ArrayFieldDef {
 }
 
 type SectionFieldDef = FieldDef | ArrayFieldDef;
+
+const STAT_ICONS = [
+  { name: "Star", icon: Star, label: "Étoile" },
+  { name: "Users", icon: Users, label: "Clients" },
+  { name: "Car", icon: Car, label: "Véhicule" },
+  { name: "Clock", icon: Clock, label: "Temps" },
+  { name: "Phone", icon: Phone, label: "Support" },
+  { name: "Shield", icon: Shield, label: "Assurance" },
+  { name: "Award", icon: Award, label: "Excellence" },
+  { name: "MapPin", icon: MapPin, label: "Agences" },
+  { name: "TrendingUp", icon: TrendingUp, label: "Croissance" },
+  { name: "Heart", icon: Heart, label: "Satisfaction" },
+  { name: "Zap", icon: Zap, label: "Vitesse" },
+  { name: "Globe", icon: Globe, label: "Monde" },
+  { name: "Crown", icon: Crown, label: "Prestige" },
+  { name: "CheckCircle", icon: CheckCircle, label: "Validé" },
+  { name: "Headphones", icon: Headphones, label: "Concierge" },
+];
+
+const COLOR_PALETTE = [
+  { id: "amber", name: "Doré", bg: "bg-amber-500" },
+  { id: "emerald", name: "Émeraude", bg: "bg-emerald-500" },
+  { id: "indigo", name: "Indigo", bg: "bg-indigo-500" },
+  { id: "rose", name: "Rose", bg: "bg-rose-500" },
+  { id: "blue", name: "Bleu Luxe", bg: "bg-blue-500" },
+  { id: "purple", name: "Violet", bg: "bg-purple-500" },
+  { id: "primary", name: "Marque", bg: "bg-slate-900" },
+];
+
+function IconPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="grid grid-cols-5 sm:grid-cols-8 gap-1.5 p-2 bg-slate-100/90 rounded-2xl border border-slate-200">
+      {STAT_ICONS.map((item) => {
+        const Icon = item.icon;
+        const isSelected = value === item.name;
+        return (
+          <button
+            key={item.name}
+            type="button"
+            onClick={() => onChange(item.name)}
+            title={item.label}
+            className={cn(
+              "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 border",
+              isSelected
+                ? "bg-slate-900 text-white border-slate-900 shadow-md scale-105"
+                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+            )}
+          >
+            <Icon size={18} />
+            <span className="text-[8px] font-bold mt-1 truncate max-w-full">{item.name}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ColorPalettePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-center gap-1.5 p-2 bg-slate-100/90 rounded-2xl border border-slate-200 flex-wrap">
+      {COLOR_PALETTE.map((c) => {
+        const isSelected = value === c.id;
+        return (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => onChange(c.id)}
+            title={c.name}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[10px] font-bold transition-all",
+              isSelected
+                ? "bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20 scale-105"
+                : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+            )}
+          >
+            <span className={`w-3 h-3 rounded-full ${c.bg} shrink-0 border border-black/10`} />
+            <span>{c.name}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 const sectionFields: Record<string, SectionFieldDef[]> = {
   hero: [
@@ -130,6 +217,12 @@ interface SectionContentEditorProps {
 }
 
 function StringField({ value, onChange, field }: { value: string; onChange: (v: string) => void; field: FieldDef }) {
+  if (field.type === "icon") {
+    return <IconPicker value={value ?? "Star"} onChange={onChange} />;
+  }
+  if (field.type === "color-palette") {
+    return <ColorPalettePicker value={value ?? "amber"} onChange={onChange} />;
+  }
   if (field.type === "color") {
     return (
       <div className="flex gap-3">
@@ -498,9 +591,10 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "value", label: "Valeur (ex: 2400+)", type: "text" },
               { key: "label", label: "Étiquette (ex: Clients satisfaits)", type: "text" },
               { key: "description", label: "Sous-texte / Note (ex: Note 4.9/5)", type: "text" },
-              { key: "icon", label: "Icône (ex: Star, Users, Car, Phone, Shield)", type: "text" },
+              { key: "icon", label: "Icône Visuelle", type: "icon" },
+              { key: "color", label: "Palette de Couleur / Accentuation", type: "color-palette" },
             ]}
-            defaultItem={{ id: "", label: "", value: "", description: "", icon: "Star", color: "primary" }}
+            defaultItem={{ id: "", label: "", value: "", description: "", icon: "Star", color: "amber" }}
           />
         </div>
       )}
