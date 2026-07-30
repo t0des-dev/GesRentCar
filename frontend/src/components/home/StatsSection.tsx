@@ -16,7 +16,17 @@ const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: numb
   TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones,
 };
 
-function AnimatedStatValue({ value, isDark }: { value: string; isDark: boolean }) {
+function AnimatedStatValue({
+  value,
+  isDark,
+  textSizeClass,
+  textColorStyle,
+}: {
+  value: string;
+  isDark: boolean;
+  textSizeClass?: string;
+  textColorStyle?: string;
+}) {
   const [displayValue, setDisplayValue] = useState(value);
   const ref = useRef<HTMLParagraphElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
@@ -60,10 +70,14 @@ function AnimatedStatValue({ value, isDark }: { value: string; isDark: boolean }
     <p
       ref={ref}
       className={cn(
-        "text-2xl md:text-3xl font-black tracking-tight leading-none transition-colors duration-300",
-        isDark ? "text-white group-hover:text-amber-400" : "text-slate-900 group-hover:text-amber-600"
+        textSizeClass || "text-2xl md:text-3xl",
+        "font-black tracking-tight leading-none transition-colors duration-300",
+        !textColorStyle && (isDark ? "text-white group-hover:text-amber-400" : "text-slate-900 group-hover:text-amber-600")
       )}
-      style={{ fontFamily: "var(--font-sora), sans-serif" }}
+      style={{
+        fontFamily: "var(--font-sora), sans-serif",
+        ...(textColorStyle ? { color: textColorStyle } : {}),
+      }}
     >
       {displayValue}
     </p>
@@ -85,20 +99,35 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
   const columns = parseInt(content?.columns || "4");
   const theme = content?.theme || "dark";
   const layoutStyle = content?.layout_style || "banner";
+  const height = content?.height || "normal";
+  const textSize = content?.text_size || "normal";
+  const customTextColor = content?.text_color || "";
 
   const isDark = theme === "dark";
+
+  const heightClass =
+    height === "small" ? "py-6 md:py-8" :
+    height === "large" ? "py-16 md:py-24" :
+    "py-10 md:py-14";
+
+  const textSizeClass =
+    textSize === "small" ? "text-xl md:text-2xl" :
+    textSize === "large" ? "text-3xl md:text-4xl" :
+    textSize === "xl" ? "text-4xl md:text-5xl" :
+    "text-2xl md:text-3xl";
 
   return (
     <section
       className={cn(
         "relative overflow-hidden transition-all duration-300",
+        heightClass,
         layoutStyle === "minimal"
-          ? "py-8 bg-white border-y border-slate-100"
+          ? (isDark ? "bg-slate-900 border-y border-slate-800" : "bg-white border-y border-slate-100")
           : layoutStyle === "cards"
-          ? "py-14 bg-slate-950 border-y border-slate-900"
+          ? (isDark ? "bg-slate-950 border-y border-slate-900" : "bg-slate-50 border-y border-slate-200")
           : isDark
-          ? "py-14 bg-slate-950 border-y border-white/10"
-          : "py-14 bg-surface-0 border-y border-surface-2"
+          ? "bg-slate-950 border-y border-white/10"
+          : "bg-surface-0 border-y border-surface-2"
       )}
     >
       {/* Background Texture Overlay */}
@@ -148,12 +177,23 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                   )}
 
                   <div>
-                    <AnimatedStatValue value={s.value} isDark={true} />
-                    <p className="text-[12px] font-bold uppercase tracking-wider text-white/70 mt-1.5 group-hover:text-white transition-colors">
+                    <AnimatedStatValue
+                      value={s.value}
+                      isDark={isDark}
+                      textSizeClass={textSizeClass}
+                      textColorStyle={customTextColor}
+                    />
+                    <p className={cn(
+                      "text-[12px] font-bold uppercase tracking-wider mt-1.5 transition-colors",
+                      isDark ? "text-white/70 group-hover:text-white" : "text-slate-600 group-hover:text-slate-900"
+                    )}>
                       {s.label}
                     </p>
                     {s.description && (
-                      <p className="text-[10px] text-white/40 mt-1 leading-normal">
+                      <p className={cn(
+                        "text-[10px] mt-1 leading-normal",
+                        isDark ? "text-white/40" : "text-slate-400"
+                      )}>
                         {s.description}
                       </p>
                     )}
@@ -182,12 +222,19 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                   <div className={cn(
                     "w-[28px] h-[28px] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3",
                     colorScheme.text
-                  )}>
+                  )}
+                    style={customTextColor ? { color: customTextColor } : {}}
+                  >
                     <IconComponent size={26} strokeWidth={1.5} />
                   </div>
                 )}
                 <div>
-                  <AnimatedStatValue value={s.value} isDark={isDark} />
+                  <AnimatedStatValue
+                    value={s.value}
+                    isDark={isDark}
+                    textSizeClass={textSizeClass}
+                    textColorStyle={customTextColor}
+                  />
                   <p className={cn(
                     "text-[12px] font-semibold uppercase tracking-[0.02em] mt-1.5 transition-colors",
                     isDark ? "text-white/60 group-hover:text-white/90" : "text-slate-600 group-hover:text-slate-900"

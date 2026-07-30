@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import type { StorefrontForm } from "@/types/storefront";
+import StatsSection from "@/components/home/StatsSection";
 
 interface StorefrontPreviewProps {
   form: StorefrontForm;
@@ -125,20 +126,10 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                   { icon: "Zap", label: "Fast Booking" },
                 ];
                 const displayItems = items.length > 0 ? items : defaultStatItems;
+              case "stats":
                 return (
-                  <section id="preview-section-stats" key="stats" className="py-5 px-4 bg-white border-t border-b border-slate-100">
-                    <div className="flex items-center justify-around">
-                      {displayItems.slice(0, 6).map((s: any, idx: number) => (
-                        <div key={idx} className="flex flex-col items-center gap-1.5 px-1">
-                          <div className="text-slate-400">
-                            {STATS_ICON_MAP[s.icon] || fallbackIcon}
-                          </div>
-                          <span className="text-[9px] font-medium text-slate-500 text-center leading-tight whitespace-nowrap">
-                            {s.label || s.value || "—"}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                  <section id="preview-section-stats" key="stats">
+                    <StatsSection content={form.sections_content?.stats || {}} />
                   </section>
                 );
 
