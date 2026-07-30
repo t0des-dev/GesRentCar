@@ -8,6 +8,22 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const MAX_PRICE_VAL = 5000;
 
+const FUEL_TYPES = [
+  { id: "All", label: "Tous" },
+  { id: "Essence", label: "Essence" },
+  { id: "Diesel", label: "Diesel" },
+  { id: "Hybride", label: "Hybride" },
+  { id: "Électrique", label: "Électrique" },
+];
+
+const YEAR_RANGES = [
+  { id: "All", label: "Toutes" },
+  { id: "2024+", label: "2024+" },
+  { id: "2022+", label: "2022+" },
+  { id: "2020+", label: "2020+" },
+  { id: "2018+", label: "2018+" },
+];
+
 interface FleetFiltersProps {
   onFilter: (filters: FleetFilterState) => void;
   className?: string;
@@ -19,6 +35,8 @@ export interface FleetFilterState {
   maxPrice: number;
   seats: string;
   lifestyle: string;
+  fuelType: string;
+  yearRange: string;
 }
 
 export default function FleetFilters({ onFilter, className }: FleetFiltersProps) {
@@ -58,6 +76,8 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
     maxPrice: MAX_PRICE_VAL,
     seats: "All",
     lifestyle: "all",
+    fuelType: "All",
+    yearRange: "All",
   });
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -66,6 +86,8 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
     transmission: false,
     seats: false,
     price: true,
+    fuel: false,
+    year: false,
   });
 
   const toggleSection = (section: string) => {
@@ -79,7 +101,7 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
   };
 
   const reset = () => {
-    const def = { type: "All", transmission: "All", maxPrice: MAX_PRICE_VAL, seats: "All", lifestyle: "all" };
+    const def = { type: "All", transmission: "All", maxPrice: MAX_PRICE_VAL, seats: "All", lifestyle: "all", fuelType: "All", yearRange: "All" };
     setFilters(def);
     onFilter(def);
   };
@@ -292,6 +314,80 @@ export default function FleetFilters({ onFilter, className }: FleetFiltersProps)
                     {s.count}
                   </span>
                 )}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Category: Fuel Type */}
+      <div className="space-y-4 border-b border-border/40 pb-6">
+        <button 
+          onClick={() => toggleSection("fuel")}
+          className="w-full flex items-center justify-between text-xs font-black uppercase text-ink-3 tracking-widest hover:text-gold transition-colors text-left cursor-pointer"
+        >
+          <span className="flex items-center gap-2">
+            <Gauge size={14} className="text-gold" /> Carburant
+          </span>
+          {openSections.fuel ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
+        {openSections.fuel && (
+          <motion.div 
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap gap-2 pt-2"
+          >
+            {FUEL_TYPES.map((f) => (
+              <motion.button
+                key={f.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => update("fuelType", f.id)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider border-2 transition-all cursor-pointer",
+                  filters.fuelType === f.id
+                    ? "bg-gold text-white border-gold shadow-lg shadow-gold/25"
+                    : "bg-surface-1 border-border text-ink-3 hover:border-gold/40 hover:bg-surface-2"
+                )}
+              >
+                {f.label}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Category: Year */}
+      <div className="space-y-4 border-b border-border/40 pb-6">
+        <button 
+          onClick={() => toggleSection("year")}
+          className="w-full flex items-center justify-between text-xs font-black uppercase text-ink-3 tracking-widest hover:text-gold transition-colors text-left cursor-pointer"
+        >
+          <span className="flex items-center gap-2">
+            <Car size={14} className="text-gold" /> Année
+          </span>
+          {openSections.year ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
+        {openSections.year && (
+          <motion.div 
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap gap-2 pt-2"
+          >
+            {YEAR_RANGES.map((y) => (
+              <motion.button
+                key={y.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => update("yearRange", y.id)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider border-2 transition-all cursor-pointer",
+                  filters.yearRange === y.id
+                    ? "bg-gold text-white border-gold shadow-lg shadow-gold/25"
+                    : "bg-surface-1 border-border text-ink-3 hover:border-gold/40 hover:bg-surface-2"
+                )}
+              >
+                {y.label}
               </motion.button>
             ))}
           </motion.div>

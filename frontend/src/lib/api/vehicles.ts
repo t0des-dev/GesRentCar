@@ -31,12 +31,21 @@ export interface Vehicle {
 }
 
 export interface VehicleFilters {
+  search?: string;
   type?: string;
   status?: string;
+  category?: string;
   min_price?: number;
   max_price?: number;
   start_date?: string;
   end_date?: string;
+  transmission?: string;
+  fuel_type?: string;
+  min_year?: number;
+  max_year?: number;
+  gps?: boolean;
+  air_conditioning?: boolean;
+  seats?: number;
   page?: number;
   per_page?: number;
   ids?: number[];

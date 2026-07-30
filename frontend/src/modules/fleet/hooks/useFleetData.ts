@@ -16,27 +16,24 @@ interface UseFleetDataProps {
 export function useFleetData({ pageSize, search, filters, sortBy, startDate, endDate }: UseFleetDataProps) {
   const [limit, setLimit] = useState(pageSize);
 
+  const minYear = filters.yearRange !== "All" ? parseInt(filters.yearRange.replace("+", "")) : undefined;
+
   const { data: apiData, isLoading } = useVehicles({
     page: 1,
     per_page: limit,
+    search: search || undefined,
     max_price: filters.maxPrice < 3000 ? filters.maxPrice : undefined,
     type: filters.type !== "All" ? filters.type.toLowerCase() : undefined,
+    transmission: filters.transmission !== "All" ? filters.transmission.toLowerCase() : undefined,
+    seats: filters.seats !== "All" ? (filters.seats === "7+" ? 7 : Number(filters.seats)) : undefined,
+    fuel_type: filters.fuelType !== "All" ? filters.fuelType : undefined,
+    min_year: minYear,
     start_date: startDate,
     end_date: endDate,
   });
 
   const filtered = useMemo(() => {
     return (apiData?.data ?? []).filter((v) => {
-      const matchSearch =
-        v.brand.toLowerCase().includes(search.toLowerCase()) ||
-        v.model.toLowerCase().includes(search.toLowerCase());
-      const matchTrans =
-        filters.transmission === "All" ||
-        v.transmission === filters.transmission;
-      const matchSeats =
-        filters.seats === "All" ||
-        ((filters.seats === "7+" ? (v.seats ?? 0) >= 7 : (v.seats ?? 0) === Number(filters.seats)));
-
       const matchLifestyle = filters.lifestyle === "all" || (function() {
         const m = v.model.toLowerCase();
         const b = v.brand.toLowerCase();
@@ -58,9 +55,9 @@ export function useFleetData({ pageSize, search, filters, sortBy, startDate, end
         return true;
       })();
 
-      return matchSearch && matchTrans && matchSeats && matchLifestyle;
+      return matchLifestyle;
     });
-  }, [apiData, search, filters]);
+  }, [apiData, filters.lifestyle]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {

@@ -29,6 +29,17 @@ class VehicleController extends Controller
                 $query->whereIn('id', $ids);
             }
 
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('brand', 'like', '%'.$search.'%')
+                      ->orWhere('model', 'like', '%'.$search.'%')
+                      ->orWhere('plate', 'like', '%'.$search.'%')
+                      ->orWhere('description_fr', 'like', '%'.$search.'%')
+                      ->orWhere('description_en', 'like', '%'.$search.'%');
+                });
+            }
+
             if ($request->has('brand')) {
                 $query->where('brand', 'like', '%'.$request->brand.'%');
             }
@@ -48,6 +59,43 @@ class VehicleController extends Controller
 
             if ($request->has('max_price')) {
                 $query->where('price_per_day', '<=', $request->max_price);
+            }
+
+            if ($request->has('min_price')) {
+                $query->where('price_per_day', '>=', $request->min_price);
+            }
+
+            if ($request->filled('transmission')) {
+                $query->where('transmission', strtolower($request->transmission));
+            }
+
+            if ($request->filled('fuel_type')) {
+                $query->where('fuel_type', $request->fuel_type);
+            }
+
+            if ($request->filled('min_year')) {
+                $query->where('year', '>=', $request->min_year);
+            }
+
+            if ($request->filled('max_year')) {
+                $query->where('year', '<=', $request->max_year);
+            }
+
+            if ($request->has('gps')) {
+                $query->where('gps', $request->boolean('gps'));
+            }
+
+            if ($request->has('air_conditioning')) {
+                $query->where('air_conditioning', $request->boolean('air_conditioning'));
+            }
+
+            if ($request->filled('seats')) {
+                $seats = (int) $request->seats;
+                if ($seats >= 7) {
+                    $query->where('seats', '>=', 7);
+                } else {
+                    $query->where('seats', $seats);
+                }
             }
 
             $perPage = $request->query('per_page', 6);

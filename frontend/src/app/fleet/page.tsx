@@ -39,6 +39,8 @@ function getFleetSettings() {
 const TYPES = ["All", "Sedan", "SUV", "Sport", "Compact", "Luxury"];
 const TRANSMISSIONS = ["All", "Automatic", "Manual"];
 const SEATS = ["All", "2", "4", "5", "7+"];
+const FUEL_TYPES = ["All", "Essence", "Diesel", "Hybride", "Électrique"];
+const YEAR_RANGES = ["All", "2024+", "2022+", "2020+", "2018+"];
 const LIFESTYLES = [
   { id: "all", label: "Tous", icon: Car },
   { id: "business", label: "Business", icon: Gauge },
@@ -65,6 +67,8 @@ function FleetContent() {
     maxPrice: 3000,
     seats: "All",
     lifestyle: lifestyleParam,
+    fuelType: "All",
+    yearRange: "All",
   });
   const [quickViewVehicle, setQuickViewVehicle] = useState<any>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -85,11 +89,11 @@ function FleetContent() {
   }, []);
 
   const resetFilters = () => {
-    const def = { type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all" };
+    const def = { type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all", fuelType: "All", yearRange: "All" };
     setFilters(def);
   };
 
-  const hasActiveFilters = filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.lifestyle !== "all" || filters.maxPrice < 3000;
+  const hasActiveFilters = filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.lifestyle !== "all" || filters.maxPrice < 3000 || filters.fuelType !== "All" || filters.yearRange !== "All";
 
   const sortOptions = [
     { value: "price_asc", label: "Prix: Croissant" },
@@ -204,6 +208,48 @@ function FleetContent() {
                       )}
                     >
                       {s === "All" ? t("all") : `${s} place${s !== "2" ? "s" : ""}`}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="w-px h-6 bg-slate-200" />
+
+              {/* Fuel Type */}
+              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
+                {FUEL_TYPES.map((f) => {
+                  const active = filters.fuelType === f;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => handleFilterChange("fuelType", f)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
+                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
+                      )}
+                    >
+                      {f === "All" ? "Carburant" : f}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="w-px h-6 bg-slate-200" />
+
+              {/* Year Range */}
+              <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-100">
+                {YEAR_RANGES.map((y) => {
+                  const active = filters.yearRange === y;
+                  return (
+                    <button
+                      key={y}
+                      onClick={() => handleFilterChange("yearRange", y)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all",
+                        active ? "bg-gold text-white shadow-sm" : "text-slate-400 hover:text-slate-700"
+                      )}
+                    >
+                      {y === "All" ? "Année" : y}
                     </button>
                   );
                 })}
