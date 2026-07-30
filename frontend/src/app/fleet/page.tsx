@@ -103,20 +103,26 @@ function FleetContent() {
   ];
 
   return (
-    <main className="min-h-screen pt-36 pb-24 bg-surface-0 relative overflow-hidden">
+    <main className="min-h-screen pb-24 bg-surface-0 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
 
-      <div className="container mx-auto px-6 lg:px-8 relative z-10">
+      {/* Hero + Booking Bar */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <FleetHeader
+          search={search}
+          setSearch={setSearch}
+          onBookingSearch={({ location, startDate, startTime, endDate, endTime }) => {
+            setFilters(prev => ({ ...prev }));
+          }}
+        />
+      </motion.div>
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <FleetHeader search={search} setSearch={(val) => { setSearch(val); }} />
-        </motion.div>
+      <div className="container mx-auto px-6 lg:px-8 relative z-10 mt-8">
 
         {/* ── Horizontal Filter Bar ── */}
         <motion.div
