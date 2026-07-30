@@ -49,6 +49,7 @@ const getSectionIcon = (id: string) => {
     case "hero": return <ImageIcon size={18} />;
     case "stats": return <Activity size={18} />;
     case "featured": return <Star size={18} />;
+    case "services": return <Award size={18} />;
     case "why_us": return <ShieldCheck size={18} />;
     case "testimonials": return <MessageSquareQuote size={18} />;
     case "vibe_selector": return <Sparkles size={18} />;

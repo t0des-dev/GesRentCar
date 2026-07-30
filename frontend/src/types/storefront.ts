@@ -30,8 +30,29 @@ export interface ThemeConfig {
   font_family: string;
 }
 
+export interface ServiceItem {
+  id: string;
+  title: string;
+  description: string;
+  icon?: string;
+  badge?: string;
+  color?: string;
+  link?: string;
+}
+
+export interface ServicesConfig {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  columns?: string;
+  theme?: string;
+  layout_style?: "cards" | "minimal" | "banner";
+  items?: ServiceItem[];
+}
+
 export interface SectionsConfig {
   featured: boolean;
+  services?: boolean;
   stats: boolean;
   why_us: boolean;
   testimonials: boolean;
@@ -188,6 +209,7 @@ export interface SectionsContent {
     fleet_link_href: string;
   };
   stats?: StatsConfig;
+  services?: ServicesConfig;
 }
 
 export interface Testimonial {

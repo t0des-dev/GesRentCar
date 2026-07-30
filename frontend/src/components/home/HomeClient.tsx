@@ -15,6 +15,7 @@ import StickyBookingBar from "@/components/home/StickyBookingBar";
 const DualCtaSection = dynamic(() => import("@/components/home/DualCtaSection"), { ssr: false });
 const VibeSelector = dynamic(() => import("@/components/VibeSelector"), { ssr: false });
 const StatsSection = dynamic(() => import("@/components/home/StatsSection"));
+const ServicesSection = dynamic(() => import("@/components/home/ServicesSection"));
 const WhyUsSection = dynamic(() => import("@/components/home/WhyUsSection"));
 const FeaturedVehicles = dynamic(() => import("@/components/home/FeaturedVehicles"));
 const LifestyleSlider = dynamic(() => import("@/components/LifestyleSlider"), { ssr: false });
@@ -199,6 +200,7 @@ export default function HomeClient() {
       experience: () => <ExperienceSection content={storefront.sections_content.experience} />,
       stats: () => <StatsSection content={storefront.stats_config} />,
       vibe_selector: () => <VibeSelector content={storefront.sections_content.vibe} />,
+      services: () => <ServicesSection content={storefront.sections_content.services || {}} />,
       why_us: () => <WhyUsSection content={storefront.sections_content.why_us} />,
       featured: () => (
         <FeaturedVehicles

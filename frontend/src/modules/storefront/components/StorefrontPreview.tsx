@@ -12,6 +12,7 @@ import {
 import { cn } from "@/shared/utils";
 import type { StorefrontForm } from "@/types/storefront";
 import StatsSection from "@/components/home/StatsSection";
+import ServicesSection from "@/components/home/ServicesSection";
 
 interface StorefrontPreviewProps {
   form: StorefrontForm;
@@ -110,6 +111,13 @@ export default function StorefrontPreview({ form, device, previewSectionId }: St
                 return (
                   <section id="preview-section-stats" key="stats">
                     <StatsSection content={(form.sections_content as any)?.stats || {}} />
+                  </section>
+                );
+
+              case "services":
+                return (
+                  <section id="preview-section-services" key="services">
+                    <ServicesSection content={(form.sections_content as any)?.services || {}} />
                   </section>
                 );
 

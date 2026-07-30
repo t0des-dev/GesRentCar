@@ -640,6 +640,14 @@ const sectionFields: Record<string, SectionFieldDef[]> = {
     { key: "text_size", label: "Taille du texte", type: "text-size-picker" },
     { key: "text_color", label: "Couleur d'accentuation", type: "custom-color" },
   ],
+  services: [
+    { key: "eyebrow", label: "Sur-titre", type: "text" },
+    { key: "title", label: "Titre principal", type: "text" },
+    { key: "subtitle", label: "Sous-titre", type: "textarea" },
+    { key: "layout_style", label: "Style de mise en page", type: "layout-style-picker" },
+    { key: "columns", label: "Nombre de colonnes", type: "columns-picker" },
+    { key: "theme", label: "Thème", type: "theme-picker" },
+  ],
 };
 
 interface SectionContentEditorProps {
@@ -811,6 +819,7 @@ const sectionLabels: Record<string, string> = {
   search_form: "Formulaire de recherche",
   concierge: "Bannière Concierge IA",
   stats: "Statistiques Clés",
+  services: "Services VIP",
 };
 
 export default function SectionContentEditor({ sectionId, content, onChange, extraFields, faqItems, onFaqItemsChange }: SectionContentEditorProps) {
@@ -1055,6 +1064,27 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "color", label: "Palette de Couleur / Accentuation", type: "color-palette" },
             ]}
             defaultItem={{ id: "", label: "", value: "", description: "", icon: "Star", color: "amber" }}
+          />
+        </div>
+      )}
+
+      {/* Services — items array */}
+      {sectionId === "services" && (
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Liste des Services VIP</label>
+          <ReorderableArrayEditor
+            items={content?.items ?? []}
+            onChange={(items) => onChange({ ...content, items })}
+            fields={[
+              { key: "id", label: "ID (unique)", type: "text" },
+              { key: "title", label: "Titre du service", type: "text" },
+              { key: "description", label: "Description du service", type: "textarea" },
+              { key: "icon", label: "Icône Visuelle", type: "icon" },
+              { key: "badge", label: "Badge (ex: 24/7, Inclus)", type: "text" },
+              { key: "color", label: "Palette de Couleur / Accentuation", type: "color-palette" },
+              { key: "link", label: "Lien personnalisé (optionnel)", type: "text" },
+            ]}
+            defaultItem={{ id: "", title: "", description: "", icon: "Star", badge: "VIP", color: "amber", link: "" }}
           />
         </div>
       )}
