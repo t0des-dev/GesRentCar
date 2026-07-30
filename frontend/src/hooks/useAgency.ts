@@ -105,6 +105,22 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
       { icon: "Clock", text: "Support VIP 24/7" },
     ],
   },
+  services: {
+    eyebrow: "Services VIP",
+    title: "Des services sur-mesure pour votre confort",
+    subtitle: "Que ce soit pour un transfert aéroport, une location avec chauffeur ou une prise en charge sur-mesure, nous répondons à toutes vos exigences.",
+    columns: "3",
+    theme: "dark",
+    layout_style: "cards",
+    items: [
+      { id: "srv-1", title: "Transfert Aéroport 24/7", description: "Accueil personnalisé dès votre descente d'avion avec gestion VIP des bagages.", icon: "Globe", badge: "24/7", color: "amber" },
+      { id: "srv-2", title: "Chauffeur Privé Dédié", description: "Des chauffeurs trilingues et expérimentés pour vos déplacements d'affaires ou personnels.", icon: "Users", badge: "Sur demande", color: "indigo" },
+      { id: "srv-3", title: "Livraison à Domicile", description: "Livraison de votre véhicule au lieu de votre choix : hôtel, résidence ou bureau.", icon: "MapPin", badge: "Inclus", color: "emerald" },
+      { id: "srv-4", title: "Assurance Tous Risques VIP", description: "Protection intégrale avec franchise réduite pour rouler l'esprit 100% serein.", icon: "Shield", badge: "Tranquillité", color: "rose" },
+      { id: "srv-5", title: "Siège Bébés & GPS Inclus", description: "Équipements complémentaires haut de gamme préparés selon vos besoins.", icon: "Award", badge: "Option", color: "purple" },
+      { id: "srv-6", title: "Assistance Route 24h/7d", description: "Dépannage d'urgence immédiat et véhicule de remplacement équivalent ou supérieur.", icon: "Headphones", badge: "24/7", color: "blue" },
+    ]
+  },
   why_us: { 
     title: "Pourquoi nous choisir ?", 
     subtitle: "L'excellence à chaque étape",
@@ -208,6 +224,7 @@ const DEFAULT_CONFIG: AgencyConfig = {
   special_offers: [],
   sections_config: {
     featured: true,
+    services: true,
     stats: true,
     why_us: true,
     testimonials: true,

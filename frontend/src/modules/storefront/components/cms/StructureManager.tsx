@@ -116,8 +116,8 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
       );
     }
 
-    const sectionContent = key ? (form.sections_content as unknown as Record<string, unknown>)[key] : null;
-    if (sectionContent === undefined) return null;
+    const sectionContent = key ? ((form.sections_content as unknown as Record<string, unknown>)[key] ?? {}) : {};
+
 
     const isHero = selectedSection === "hero" || key === "hero";
     const extraFields = isHero ? [

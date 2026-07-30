@@ -134,22 +134,33 @@ export default function HomeClient() {
   const STATS = storefront.stats_config.items || [];
 
   const currentOrder = useMemo(() => {
-    if (Array.isArray(storefront.sections_order) && storefront.sections_order.length > 0) {
-      return storefront.sections_order;
+    let order = Array.isArray(storefront.sections_order) && storefront.sections_order.length > 0
+      ? [...storefront.sections_order]
+      : [
+          { id: "hero",              active: true },
+          { id: "stats",             active: true },
+          { id: "featured",          active: true },
+          { id: "services",          active: true },
+          { id: "why_us",            active: true },
+          { id: "how_it_works",      active: true },
+          { id: "experience",        active: !!sections.experience },
+          { id: "testimonials",      active: !!sections.testimonials },
+          { id: "concierge_banner",  active: !!sections.concierge_banner },
+          { id: "vibe_selector",     active: true },
+          { id: "faq",               active: !!sections.faq },
+          { id: "cta_banner",        active: true },
+        ];
+
+    if (!order.some((s) => s.id === "services")) {
+      const featIdx = order.findIndex((s) => s.id === "featured");
+      if (featIdx !== -1) {
+        order.splice(featIdx + 1, 0, { id: "services", label: "Services VIP", active: true });
+      } else {
+        order.push({ id: "services", label: "Services VIP", active: true });
+      }
     }
-    return [
-      { id: "hero",              active: true },
-      { id: "featured",          active: true },
-      { id: "why_us",            active: true },
-      { id: "how_it_works",      active: true },
-      { id: "experience",        active: !!sections.experience },
-      { id: "stats",             active: !!sections.stats },
-      { id: "testimonials",      active: !!sections.testimonials },
-      { id: "concierge_banner",  active: !!sections.concierge_banner },
-      { id: "vibe_selector",     active: false },
-      { id: "faq",               active: !!sections.faq },
-      { id: "cta_banner",        active: true },
-    ];
+
+    return order;
   }, [storefront.sections_order, sections]);
 
   const featuredActive = useMemo(
