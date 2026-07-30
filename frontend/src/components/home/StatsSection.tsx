@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { cn } from "@/shared/utils";
 import {
   Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
@@ -10,36 +11,142 @@ import type { ComponentType } from "react";
 
 import type { StatsConfig, StatItem } from "@/types/storefront";
 
-const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
+const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {
   Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
   TrendingUp, Heart, Zap, Globe, Crown, CheckCircle, Headphones,
 };
+
+function AnimatedStatValue({ value, isDark }: { value: string; isDark: boolean }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const ref = useRef<HTMLParagraphElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    const match = value.match(/([0-9,.]+)/);
+    if (!match) return;
+
+    const rawNumStr = match[1].replace(/,/g, "");
+    const targetNum = parseFloat(rawNumStr);
+    if (isNaN(targetNum)) return;
+
+    const prefix = value.substring(0, match.index ?? 0);
+    const suffix = value.substring((match.index ?? 0) + match[0].length);
+
+    const duration = 1200;
+    const startTime = performance.now();
+
+    const animateCount = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const currentNum = Math.floor(easeProgress * targetNum);
+      const formattedNum = currentNum.toLocaleString("en-US");
+
+      setDisplayValue(`${prefix}${formattedNum}${suffix}`);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateCount);
+      } else {
+        setDisplayValue(value);
+      }
+    };
+
+    requestAnimationFrame(animateCount);
+  }, [isInView, value]);
+
+  return (
+    <p
+      ref={ref}
+      className={cn(
+        "text-2xl md:text-3xl font-black tracking-tight leading-none transition-colors duration-300",
+        isDark ? "text-white group-hover:text-amber-400" : "text-slate-900 group-hover:text-amber-600"
+      )}
+      style={{ fontFamily: "var(--font-sora), sans-serif" }}
+    >
+      {displayValue}
+    </p>
+  );
+}
 
 export default function StatsSection({ content }: { content: Partial<StatsConfig> }) {
   const items = content?.items || [];
   const columns = parseInt(content?.columns || "4");
   const theme = content?.theme || "dark";
+  const layoutStyle = content?.layout_style || "banner";
 
   const isDark = theme === "dark";
 
   return (
-    <section className={cn(
-      "py-14 border-y relative overflow-hidden",
-      isDark ? "bg-ink-1 border-ink-2/30" : "bg-surface-0 border-surface-2"
-    )}>
+    <section
+      className={cn(
+        "relative overflow-hidden transition-all duration-300",
+        layoutStyle === "minimal"
+          ? "py-8 bg-white border-y border-slate-100"
+          : layoutStyle === "cards"
+          ? "py-14 bg-slate-950 border-y border-slate-900"
+          : isDark
+          ? "py-14 bg-slate-950 border-y border-white/10"
+          : "py-14 bg-surface-0 border-y border-surface-2"
+      )}
+    >
+      {/* Background Texture Overlay */}
       {isDark && (
-        <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dcbp6v7p3/image/upload/v1714859000/grain_texture_w4f4q4.png')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+        <>
+          <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dcbp6v7p3/image/upload/v1714859000/grain_texture_w4f4q4.png')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[250px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+        </>
       )}
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className={cn(
-          "grid gap-0",
-          columns === 2 ? "grid-cols-2" :
-          columns === 3 ? "grid-cols-2 md:grid-cols-3" :
-          "grid-cols-2 md:grid-cols-4"
-        )}>
+        <div
+          className={cn(
+            "grid gap-4",
+            layoutStyle === "cards"
+              ? "grid-cols-2 md:grid-cols-4 gap-5"
+              : columns === 2
+              ? "grid-cols-2"
+              : columns === 3
+              ? "grid-cols-2 md:grid-cols-3"
+              : "grid-cols-2 md:grid-cols-4"
+          )}
+        >
           {items.map((s: StatItem, idx: number) => {
             const IconComponent = s.icon ? ICON_MAP[s.icon] ?? null : null;
+
+            if (layoutStyle === "cards") {
+              return (
+                <motion.div
+                  key={s.id || s.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08, duration: 0.4 }}
+                  className="group relative flex flex-col items-center text-center gap-3 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-xl hover:border-amber-500/40 hover:bg-white/[0.08] hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  
+                  {IconComponent && (
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                      <IconComponent size={20} strokeWidth={1.75} />
+                    </div>
+                  )}
+
+                  <div>
+                    <AnimatedStatValue value={s.value} isDark={true} />
+                    <p className="text-[12px] font-bold uppercase tracking-wider text-white/70 mt-1.5 group-hover:text-white transition-colors">
+                      {s.label}
+                    </p>
+                    {s.description && (
+                      <p className="text-[10px] text-white/40 mt-1 leading-normal">
+                        {s.description}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            }
 
             return (
               <motion.div
@@ -49,37 +156,38 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08, duration: 0.4 }}
                 className={cn(
-                  "flex flex-col items-center text-center gap-3.5 py-11 px-4",
-                  isDark
-                    ? "border-r border-white/[0.09] last:border-r-0"
-                    : "border-r border-border last:border-r-0"
+                  "group relative flex flex-col items-center text-center gap-3 py-8 px-4 transition-all duration-300",
+                  layoutStyle === "minimal"
+                    ? "border-r border-slate-100 last:border-r-0"
+                    : isDark
+                    ? "border-r border-white/[0.09] last:border-r-0 hover:bg-white/[0.02]"
+                    : "border-r border-border last:border-r-0 hover:bg-slate-50"
                 )}
               >
                 {IconComponent && (
                   <div className={cn(
-                    "w-[26px] h-[26px] flex items-center justify-center",
-                    isDark ? "text-ink-1" : "text-primary"
-                  )}
-                    style={isDark ? { color: "hsl(var(--ink-1))" } : {}}
-                  >
-                    <IconComponent size={26} strokeWidth={1.4} />
+                    "w-[28px] h-[28px] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3",
+                    isDark ? "text-amber-400" : "text-primary"
+                  )}>
+                    <IconComponent size={26} strokeWidth={1.5} />
                   </div>
                 )}
                 <div>
+                  <AnimatedStatValue value={s.value} isDark={isDark} />
                   <p className={cn(
-                    "text-2xl md:text-3xl font-black tracking-tight leading-none",
-                    isDark ? "text-white" : "text-ink-1"
-                  )}
-                    style={{ fontFamily: "var(--font-sora), sans-serif" }}
-                  >
-                    {s.value}
-                  </p>
-                  <p className={cn(
-                    "text-[12.5px] font-semibold uppercase tracking-[0.01em] mt-1.5",
-                    isDark ? "text-white/55" : "text-ink-3"
+                    "text-[12px] font-semibold uppercase tracking-[0.02em] mt-1.5 transition-colors",
+                    isDark ? "text-white/60 group-hover:text-white/90" : "text-slate-600 group-hover:text-slate-900"
                   )}>
                     {s.label}
                   </p>
+                  {s.description && (
+                    <p className={cn(
+                      "text-[10px] mt-1 leading-tight transition-colors",
+                      isDark ? "text-white/40" : "text-slate-400"
+                    )}>
+                      {s.description}
+                    </p>
+                  )}
                 </div>
               </motion.div>
             );
@@ -88,5 +196,4 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
       </div>
     </section>
   );
-
 }

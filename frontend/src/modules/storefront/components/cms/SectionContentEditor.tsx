@@ -497,10 +497,10 @@ export default function SectionContentEditor({ sectionId, content, onChange, ext
               { key: "id", label: "ID (unique)", type: "text" },
               { key: "value", label: "Valeur (ex: 2400+)", type: "text" },
               { key: "label", label: "Étiquette (ex: Clients satisfaits)", type: "text" },
-              { key: "icon", label: "Icône (optionnel)", type: "text" },
-              { key: "color", label: "Couleur (ex: primary)", type: "text" },
+              { key: "description", label: "Sous-texte / Note (ex: Note 4.9/5)", type: "text" },
+              { key: "icon", label: "Icône (ex: Star, Users, Car, Phone, Shield)", type: "text" },
             ]}
-            defaultItem={{ id: "", label: "", value: "", icon: "Star", color: "primary" }}
+            defaultItem={{ id: "", label: "", value: "", description: "", icon: "Star", color: "primary" }}
           />
         </div>
       )}

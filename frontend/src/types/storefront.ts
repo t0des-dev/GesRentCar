@@ -82,6 +82,7 @@ export interface StatItem {
   label: string;
   icon?: string;
   color?: string;
+  description?: string;
 }
 
 export interface StatsConfig {
@@ -90,6 +91,7 @@ export interface StatsConfig {
   height?: string;
   text_size?: string;
   text_color?: string;
+  layout_style?: "minimal" | "cards" | "banner";
   items: StatItem[];
 }
 
