@@ -31,6 +31,7 @@ export interface AgencyConfig {
   about_text_ar?: string;
   sections_config?: {
     featured?: boolean;
+    services?: boolean;
     stats?: boolean;
     why_us?: boolean;
     testimonials?: boolean;
