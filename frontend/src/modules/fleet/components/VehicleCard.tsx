@@ -1,8 +1,10 @@
+"use client";
+
 import { cn } from "@/shared/utils";
 import { getImageUrl } from "@/shared/utils/image";
 import Image from "next/image";
 import Link from "next/link";
-import { Fuel, Users, Gauge, Star, ArrowRight, Eye } from "lucide-react";
+import { Fuel, Users, Gauge, Star, ArrowRight, Eye, Crown, Zap, BadgeCheck, Sparkles } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useCurrency } from "@/shared/hooks/useCurrency";
 import { Button } from "@/shared/ui/button";
@@ -29,6 +31,9 @@ interface VehicleCardProps {
   onQuickView?: () => void;
   onReserve?: (id: number) => void;
   isPopular?: boolean;
+  isBestDeal?: boolean;
+  isNew?: boolean;
+  isVip?: boolean;
   layoutView?: "grid" | "list";
   gps?: boolean;
   airConditioning?: boolean;
@@ -37,8 +42,9 @@ interface VehicleCardProps {
 export default function VehicleCard({
   id, brand, model, type, category, price, seats, fuel, transmission,
   year, rating = 4.8, imageUrl, className, dynamicPrice,
-  dynamicReason, onQuickView, onReserve, isPopular = false, layoutView = "grid",
-  gps = false, airConditioning = false,
+  dynamicReason, onQuickView, onReserve, isPopular = false,
+  isBestDeal = false, isNew = false, isVip = false,
+  layoutView = "grid", gps = false, airConditioning = false,
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { convert } = useCurrency();
@@ -75,54 +81,98 @@ export default function VehicleCard({
           </div>
         )}
 
+        {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {isPopular && (
-          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 bg-red-500/90 backdrop-blur-md rounded-full shadow-lg border border-red-400/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            <span className="text-[9px] font-black tracking-widest uppercase text-white">Très demandé</span>
-          </div>
-        )}
+        {/* ─── LEFT BADGES (stacked) ─── */}
+        <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
+          {isPopular && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-500/90 backdrop-blur-md rounded-full shadow-lg border border-rose-400/40">
+              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-[9px] font-black tracking-widest uppercase text-white">🔥 Tendance</span>
+            </div>
+          )}
+          {isBestDeal && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/90 backdrop-blur-md rounded-full shadow-lg border border-emerald-400/40">
+              <Zap size={10} className="text-white" />
+              <span className="text-[9px] font-black tracking-widest uppercase text-white">Meilleure affaire</span>
+            </div>
+          )}
+          {isNew && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/90 backdrop-blur-md rounded-full shadow-lg border border-blue-400/40">
+              <Sparkles size={10} className="text-white" />
+              <span className="text-[9px] font-black tracking-widest uppercase text-white">Nouveau</span>
+            </div>
+          )}
+          {isVip && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/90 backdrop-blur-md rounded-full shadow-lg border border-amber-400/40">
+              <Crown size={10} className="text-white" />
+              <span className="text-[9px] font-black tracking-widest uppercase text-white">VIP</span>
+            </div>
+          )}
+        </div>
 
-        {isPromo && (
-          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-amber-600 text-[9px] font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 shadow-sm">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5Z"/>
-              <path d="M6 9.01V9"/>
-              <path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/>
-            </svg>
-            <span className="uppercase tracking-wider">Offre spéciale</span>
-            {isPriceChanged && price > 0 && (
-              <span className="text-[8px] font-black text-white bg-amber-500 px-1.5 py-0.5 rounded-sm">
-                −{discountPercent}%
-              </span>
-            )}
-          </div>
-        )}
+        {/* ─── RIGHT BADGES ─── */}
+        <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1.5">
+          {isPromo ? (
+            <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-amber-600 text-[9px] font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+              <BadgeCheck size={11} />
+              <span className="uppercase tracking-wider">Offre spéciale</span>
+              {isPriceChanged && price > 0 && (
+                <span className="text-[8px] font-black text-white bg-amber-500 px-1.5 py-0.5 rounded-sm">
+                  −{discountPercent}%
+                </span>
+              )}
+            </div>
+          ) : dynamicReason ? (
+            <div className="bg-primary/10 backdrop-blur-sm text-primary text-[9px] font-bold px-2.5 py-1 rounded-lg border border-primary/20">
+              {dynamicReason}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/95 backdrop-blur rounded-lg text-xs shadow-md border border-white/20">
+              <Star size={12} className="fill-gold text-gold" />
+              <span className="font-bold text-ink-1">{rating}</span>
+            </div>
+          )}
+        </div>
 
-        {dynamicReason && !isPromo && (
-          <div className="absolute top-3 right-3 z-10 bg-primary/10 backdrop-blur-sm text-primary text-[9px] font-bold px-2.5 py-1 rounded-lg border border-primary/20">
-            {dynamicReason}
-          </div>
-        )}
-
-        {!dynamicReason && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-white/95 backdrop-blur rounded-lg text-xs shadow-md border border-white/20">
-            <Star size={12} className="fill-gold text-gold" />
-            <span className="font-bold text-ink-1">{rating}</span>
-          </div>
-        )}
-
-        <div
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
-          className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer bg-gradient-to-t from-black/60 via-transparent to-transparent translate-y-4 group-hover:translate-y-0"
-        >
-          <div className="px-6 py-2.5 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-2 text-white border border-white/30 hover:bg-white/30 hover:scale-105 transition-all shadow-xl">
-            <Eye size={16} strokeWidth={2} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Aperçu rapide</span>
+        {/* ─── HOVER SPECS OVERLAY (slide-up) ─── */}
+        <div className="absolute inset-0 flex flex-col items-start justify-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 pointer-events-none bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+          <div className="w-full space-y-2 mb-10">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg px-2.5 py-1.5">
+                <Users size={13} className="text-white/80" />
+                <span className="text-[11px] font-bold text-white">{seats} places</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg px-2.5 py-1.5">
+                <Fuel size={13} className="text-white/80" />
+                <span className="text-[11px] font-bold text-white">{fuel}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg px-2.5 py-1.5">
+                <Gauge size={13} className="text-white/80" />
+                <span className="text-[11px] font-bold text-white">{transmission}</span>
+              </div>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-black text-white">{convert(displayPrice)}</span>
+              <span className="text-white/70 text-xs font-semibold">/ jour</span>
+            </div>
           </div>
         </div>
 
+        {/* ─── QUICK VIEW BUTTON ─── */}
+        <div
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView?.(); }}
+          className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer translate-y-4 group-hover:translate-y-0 pointer-events-auto z-10"
+        >
+          <div className="px-5 py-2 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-2 text-white border border-white/30 hover:bg-white/30 hover:scale-105 transition-all shadow-xl">
+            <Eye size={15} strokeWidth={2} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Aperçu rapide</span>
+            <ArrowRight size={13} strokeWidth={2.5} />
+          </div>
+        </div>
+
+        {/* Category badge (bottom left) */}
         <div className="absolute bottom-3 left-3 z-10">
           <span className="inline-block px-3 py-1 bg-gold/10 backdrop-blur-md text-gold text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm border border-gold/30">
             {category ? (t(`cat_${category.toLowerCase()}`) || category) : (t(`cat_${type.toLowerCase()}`) || type)}

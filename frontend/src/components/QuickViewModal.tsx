@@ -1,13 +1,15 @@
 "use client";
 
-import { X, Star, ShieldCheck, Gauge, Fuel, Users, ArrowRight } from "lucide-react";
+import { X, Star, ShieldCheck, Gauge, Fuel, Users, ArrowRight, CalendarDays, Crown } from "lucide-react";
 import { cn } from "@/shared/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import { useCurrency } from "@/shared/hooks/useCurrency";
 import Image from "next/image";
 import { getImageUrl } from "@/shared/utils/image";
 import { Button } from "@/shared/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface QuickViewModalProps {
   vehicle: {
@@ -15,90 +17,156 @@ interface QuickViewModalProps {
     brand: string;
     model: string;
     type: string;
+    category?: string;
+    price_per_day?: number;
     price: number;
     seats: number;
     fuel: string;
+    fuel_type?: string;
     transmission: string;
+    image_url?: string;
     imageUrl?: string;
     rating?: number;
+    gps?: boolean;
+    air_conditioning?: boolean;
+    year?: number;
   };
   onClose: () => void;
 }
 
+function DateInput({
+  label, value, onChange, min,
+}: { label: string; value: string; onChange: (v: string) => void; min?: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-[10px] font-black uppercase tracking-widest text-ink-3">{label}</label>
+      <div className="relative">
+        <CalendarDays size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none" />
+        <input
+          type="date"
+          value={value}
+          min={min}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-surface-2 text-sm font-semibold text-ink-1 bg-surface-1 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all cursor-pointer"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps) {
   const { t } = useTranslation();
-  const [activeImage, setActiveImage] = useState(0);
-  const images = vehicle.imageUrl ? [vehicle.imageUrl, vehicle.imageUrl, vehicle.imageUrl] : []; // Mocking gallery
+  const { convert } = useCurrency();
+
+  const today = new Date().toISOString().split("T")[0];
+  const defaultEnd = new Date(Date.now() + 3 * 86400000).toISOString().split("T")[0];
+
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(defaultEnd);
+
+  const pricePerDay = vehicle.price_per_day || vehicle.price || 0;
+
+  const { days, totalPrice } = useMemo(() => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffMs = end.getTime() - start.getTime();
+    const d = Math.max(1, Math.ceil(diffMs / 86400000));
+    return { days: d, totalPrice: d * pricePerDay };
+  }, [startDate, endDate, pricePerDay]);
+
+  const bookingUrl = `/booking?vehicle=${vehicle.id}&start=${startDate}&end=${endDate}`;
+  const imageUrl = vehicle.image_url || (vehicle as any).imageUrl;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300" role="dialog" aria-modal="true" aria-label={`${vehicle.brand} ${vehicle.model}`}>
-      <div className="absolute inset-0 bg-ink-1/80 backdrop-blur-md" onClick={onClose} />
-      
-      <div className="relative w-full max-w-6xl bg-surface-0 rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-500">
-        <button 
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${vehicle.brand} ${vehicle.model}`}
+      >
+        <motion.div
+          className="absolute inset-0 bg-ink-1/80 backdrop-blur-md"
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white md:text-ink-1 p-2 rounded-full transition-all"
-        >
-          <X size={24} />
-        </button>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        />
 
-        {/* Left: Gallery */}
-        <div className="flex-1 relative bg-surface-2 min-h-[400px] group">
-          <Image 
-            src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-            alt={vehicle.model}
-            width={1200}
-            height={800}
-          />
-          
-          {/* 360 View Dummy Button */}
-          <button className="absolute top-8 left-8 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold text-ink-1 flex items-center gap-2 shadow-lg hover:bg-white transition-all hover:scale-105 border border-white/20">
-            <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
-            Vue 360° Intérieur
+        <motion.div
+          className="relative w-full max-w-5xl bg-surface-0 rounded-[32px] shadow-2xl overflow-hidden flex flex-col md:flex-row"
+          initial={{ opacity: 0, scale: 0.94, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.94, y: 24 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 z-20 bg-black/10 backdrop-blur-md hover:bg-black/20 text-white md:text-ink-1 p-2 rounded-full transition-all"
+          >
+            <X size={22} />
           </button>
 
-          {/* Gallery Thumbnails (mock) */}
-          <div className="absolute bottom-6 left-6 right-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {[1, 2, 3].map((i) => (
-              <button 
-                key={i} 
-                className={cn(
-                  "w-16 h-12 rounded-lg overflow-hidden border-2 transition-all shrink-0", 
-                  i === 1 ? "border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]" : "border-white/20 opacity-60 hover:opacity-100"
-                )}
-              >
-                <Image src={getImageUrl(vehicle.imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"} width={64} height={48} className="w-full h-full object-cover" alt="" />
-              </button>
-            ))}
-          </div>
-        </div>
+          {/* ─── Left: Image ─── */}
+          <div className="flex-1 relative bg-surface-2 min-h-[280px] md:min-h-[500px] group overflow-hidden">
+            <Image
+              src={getImageUrl(imageUrl) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop"}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              alt={vehicle.model}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-        {/* Right: Info */}
-        <div className="w-full md:w-[450px] p-8 md:p-12 overflow-y-auto max-h-[90vh]">
-          <div className="space-y-8">
-            <div>
-              <p className="text-primary font-black text-xs uppercase tracking-[0.2em] mb-2">{vehicle.brand}</p>
-              <h2 className="text-4xl font-black text-ink-1 tracking-tight mb-4">{vehicle.model}</h2>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5 bg-yellow-400/10 text-yellow-600 px-3 py-1 rounded-full text-xs font-black">
-                  <Star size={14} fill="currentColor" /> {vehicle.rating || 4.9}
-                </div>
-                <span className="text-ink-3 text-xs font-bold uppercase tracking-widest">{t(`cat_${vehicle.type.toLowerCase()}`)}</span>
+            {/* Category badge */}
+            {vehicle.category && (
+              <div className="absolute top-5 left-5 flex items-center gap-1.5 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-full text-xs font-black text-ink-1 shadow-md border border-white/30">
+                {vehicle.category === "Luxe" ? <Crown size={12} className="text-amber-500" /> : null}
+                {vehicle.category}
               </div>
+            )}
+
+            {/* Price overlay on image */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-black text-white">{convert(pricePerDay)}</span>
+                <span className="text-white/70 text-sm font-semibold">/ jour</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <Star size={13} className="fill-gold text-gold" />
+                <span className="text-white/80 text-xs font-bold">{vehicle.rating || 4.9} · Excellent</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── Right: Info ─── */}
+          <div className="w-full md:w-[420px] p-7 md:p-10 overflow-y-auto max-h-[90vh] flex flex-col gap-6">
+
+            {/* Brand & Model */}
+            <div>
+              <p className="text-primary font-black text-xs uppercase tracking-[0.2em] mb-1">{vehicle.brand}</p>
+              <h2 className="text-3xl font-black text-ink-1 tracking-tight">{vehicle.model}</h2>
+              {vehicle.year && (
+                <span className="text-xs font-bold text-ink-3 bg-surface-1 px-2 py-1 rounded-lg border border-border inline-block mt-2">
+                  {vehicle.year}
+                </span>
+              )}
             </div>
 
             {/* Specs Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {[
-                { icon: Users, label: t("qv_seats"), value: `${vehicle.seats} ${t("spec_pers")}` },
-                { icon: Gauge, label: t("qv_transmission"), value: t(`trans_${vehicle.transmission.toLowerCase()}`) },
-                { icon: Fuel, label: t("qv_fuel"), value: vehicle.fuel },
-                { icon: ShieldCheck, label: t("qv_security"), value: "Premium" },
+                { icon: Users, label: "Places", value: `${vehicle.seats} personnes` },
+                { icon: Gauge, label: "Transmission", value: t(`trans_${vehicle.transmission?.toLowerCase()}`) || vehicle.transmission },
+                { icon: Fuel, label: "Carburant", value: vehicle.fuel_type || vehicle.fuel },
+                { icon: ShieldCheck, label: "Assurance", value: "Incluse" },
               ].map((s, i) => (
-                <div key={i} className="bg-surface-1 p-4 rounded-2xl border border-surface-2 flex flex-col gap-1">
-                  <s.icon size={16} className="text-primary mb-2" />
-                  <span className="text-[10px] font-black uppercase text-ink-3 tracking-widest">{s.label}</span>
+                <div key={i} className="bg-surface-1 p-3.5 rounded-2xl border border-surface-2 flex flex-col gap-1">
+                  <s.icon size={15} className="text-primary mb-1" />
+                  <span className="text-[9px] font-black uppercase text-ink-3 tracking-widest">{s.label}</span>
                   <span className="text-sm font-bold text-ink-1">{s.value}</span>
                 </div>
               ))}
@@ -106,29 +174,67 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
 
             <div className="h-px bg-surface-2" />
 
-            <div>
-              <div className="flex items-baseline gap-2 mb-8">
-                <span className="text-5xl font-black text-ink-1">{vehicle.price}</span>
-                <span className="text-ink-3 font-bold uppercase text-xs tracking-widest">{t("currency_day")}</span>
+            {/* ─── Inline Date Picker ─── */}
+            <div className="space-y-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">Choisir vos dates</p>
+              <div className="grid grid-cols-2 gap-3">
+                <DateInput
+                  label="Départ"
+                  value={startDate}
+                  min={today}
+                  onChange={(v) => {
+                    setStartDate(v);
+                    if (v >= endDate) {
+                      const next = new Date(new Date(v).getTime() + 86400000);
+                      setEndDate(next.toISOString().split("T")[0]);
+                    }
+                  }}
+                />
+                <DateInput
+                  label="Retour"
+                  value={endDate}
+                  min={startDate}
+                  onChange={setEndDate}
+                />
               </div>
 
-              <div className="grid grid-cols-1 gap-4">
-                <Button asChild variant="default" size="lg" className="w-full rounded-[24px] py-7 text-xs shadow-xl shadow-primary/20">
-                  <Link href={`/booking?vehicle=${vehicle.id}`}>
-                    {t("qv_rent")}
-                    <ArrowRight size={18} />
-                  </Link>
-                </Button>
-                <Button asChild variant="secondary" size="lg" className="w-full rounded-[24px] py-6 text-[10px]">
-                  <Link href={`/fleet/${vehicle.id}`}>
-                    Plus de détails
-                  </Link>
-                </Button>
-              </div>
+              {/* Real-time price summary */}
+              <motion.div
+                key={totalPrice}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-primary/5 border border-primary/15 rounded-2xl p-4 flex items-center justify-between"
+              >
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">
+                    {days} nuit{days > 1 ? "s" : ""} · Prix estimé
+                  </p>
+                  <p className="text-2xl font-black text-ink-1 mt-0.5">{convert(totalPrice)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold text-ink-3">{convert(pricePerDay)}</p>
+                  <p className="text-[9px] text-ink-4">× {days} jour{days > 1 ? "s" : ""}</p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="grid grid-cols-1 gap-3 mt-auto">
+              <Button asChild variant="default" size="lg" className="w-full rounded-[20px] py-6 text-xs shadow-xl shadow-primary/20">
+                <Link href={bookingUrl}>
+                  Réserver maintenant
+                  <ArrowRight size={16} />
+                </Link>
+              </Button>
+              <Button asChild variant="secondary" size="lg" className="w-full rounded-[20px] py-5 text-[10px]">
+                <Link href={`/fleet/${vehicle.id}`}>
+                  Voir tous les détails
+                </Link>
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
