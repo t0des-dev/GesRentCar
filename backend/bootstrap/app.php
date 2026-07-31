@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AuditMiddleware;
+use App\Http\Middleware\DisableServiceWorker;
 use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,14 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'audit' => AuditMiddleware::class,
         ]);
 
-        $middleware->append(function ($request, $next) {
-            $response = $next($request);
-            if ($request->is('filament-admin/*')) {
-                $response->headers->set('Clear-Site-Data', '"serviceWorkers"');
-                $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
-            }
-            return $response;
-        });
+        $middleware->append(DisableServiceWorker::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(function ($request, $e) {
