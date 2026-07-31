@@ -47,6 +47,7 @@ RUN rm -f bootstrap/cache/*.php \
     && rm -rf /tmp/* /root/.composer/cache \
     && find vendor -type d -name ".git" -exec rm -rf {} + 2>/dev/null || true \
     && php artisan vendor:publish --tag=laravel-assets --ansi --force 2>/dev/null || true \
+    && php artisan filament:assets --ansi 2>/dev/null || true \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
