@@ -17,6 +17,21 @@ backend/storage/framework/testing/*
 backend/storage/framework/views/*
 backend/public/storage
 backend/public/hot
+backend/public/_next
+backend/public/_not-found
+backend/public/__next*
+backend/public/sw.js
+backend/public/sitemap.xml
+backend/public/robots.txt
+backend/public/next.svg
+backend/public/vercel.svg
+backend/public/globe.svg
+backend/public/file.svg
+backend/public/window.svg
+backend/public/favicon.ico
+backend/public/index.html
+backend/public/index.txt
+backend/public/404.html
 
 # OS
 .DS_Store
