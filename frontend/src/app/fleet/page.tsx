@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense, useCallback, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Loader2, ArrowUpDown, ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
@@ -228,6 +228,7 @@ function FleetSidebar({
 
 function FleetContent() {
   const { t } = useTranslation();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
   const endDateParam = searchParams.get("end_date") || undefined;
@@ -271,6 +272,22 @@ function FleetContent() {
     setFilters({ type: "All", transmission: "All", maxPrice: 3000, seats: "All", lifestyle: "all", fuelType: "All", yearRange: "All" });
   };
 
+  const handleBookingSearch = useCallback((params: {
+    location: string;
+    startDate: string;
+    startTime: string;
+    endDate: string;
+    endTime: string;
+  }) => {
+    const query = new URLSearchParams();
+    if (params.location) query.set("location", params.location);
+    if (params.startDate) query.set("start_date", params.startDate);
+    if (params.endDate) query.set("end_date", params.endDate);
+    if (params.startTime) query.set("start_time", params.startTime);
+    if (params.endTime) query.set("end_time", params.endTime);
+    router.push(`/fleet?${query.toString()}`);
+  }, [router]);
+
   const vehicleCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     const data = [];
@@ -289,7 +306,7 @@ function FleetContent() {
       <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-        <FleetHeader search={search} setSearch={setSearch} fleetConfig={fleetConfig} />
+        <FleetHeader search={search} setSearch={setSearch} fleetConfig={fleetConfig} onBookingSearch={handleBookingSearch} />
       </motion.div>
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 mt-8">
