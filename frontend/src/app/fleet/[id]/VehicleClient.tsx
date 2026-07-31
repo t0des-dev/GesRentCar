@@ -214,29 +214,34 @@ export default function VehicleClient() {
                 ))}
               </div>
 
-              {/* GPS & Climatiseur Badges */}
-              {(vehicle.gps || vehicle.air_conditioning) && (
-                <div className="flex gap-3 mt-4">
-                  {vehicle.gps && (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-xl">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                      </svg>
-                      GPS
-                    </span>
-                  )}
-                  {vehicle.air_conditioning && (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 border-2 border-sky-200 text-sky-700 text-xs font-bold uppercase tracking-wider rounded-xl">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
-                        <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
-                        <line x1="12" x2="12" y1="18" y2="22"/>
-                      </svg>
-                      Climatiseur
-                    </span>
-                  )}
-                </div>
-              )}
+              {/* Equipment Badges */}
+              {(() => {
+                const equipmentList: { active?: boolean; label: string; className: string; path: React.ReactNode }[] = [
+                  { active: vehicle.gps, label: "GPS", className: "bg-emerald-50 border-emerald-200 text-emerald-700", path: <><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></> },
+                  { active: vehicle.air_conditioning, label: "Climatiseur", className: "bg-sky-50 border-sky-200 text-sky-700", path: <><path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M6 10v2a6 6 0 0 0 12 0v-2"/><line x1="12" x2="12" y1="18" y2="22"/></> },
+                  { active: vehicle.bluetooth, label: "Bluetooth", className: "bg-blue-50 border-blue-200 text-blue-700", path: <><path d="M6.5 6.5l11 11"/><path d="M21 3l-3.5 3.5"/><path d="M17 7l-1.5 1.5"/><path d="M3 21l3.5-3.5"/><path d="M7 17l1.5-1.5"/><path d="M14.5 6.5L8 13v4l6.5-6.5"/></> },
+                  { active: vehicle.rear_camera, label: "Caméra recul", className: "bg-violet-50 border-violet-200 text-violet-700", path: <><path d="M2 10s3-3 5-3 5 3 5 3-3 3-5 3-5-3-5-3Z"/><circle cx="7" cy="10" r="1"/><path d="M16 10h4v4h-4z"/></> },
+                  { active: vehicle.carplay, label: "CarPlay / Android", className: "bg-indigo-50 border-indigo-200 text-indigo-700", path: <><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></> },
+                  { active: vehicle.isofix, label: "ISOFIX", className: "bg-amber-50 border-amber-200 text-amber-700", path: <><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></> },
+                  { active: vehicle.cruise_control, label: "Régulateur", className: "bg-teal-50 border-teal-200 text-teal-700", path: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></> },
+                  { active: vehicle.sunroof, label: "Toit ouvrant", className: "bg-pink-50 border-pink-200 text-pink-700", path: <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></> },
+                  { active: vehicle.leather_seats, label: "Sièges cuir", className: "bg-purple-50 border-purple-200 text-purple-700", path: <><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/></> },
+                  { active: vehicle.electric_windows, label: "Vitres élec.", className: "bg-cyan-50 border-cyan-200 text-cyan-700", path: <><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" x2="12" y1="4" y2="20"/><line x1="2" x2="22" y1="12" y2="12"/></> },
+                ].filter(e => e.active);
+                if (equipmentList.length === 0) return null;
+                return (
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {equipmentList.map((eq, i) => (
+                      <span key={i} className={`inline-flex items-center gap-2 px-4 py-2 border-2 text-xs font-bold uppercase tracking-wider rounded-xl ${eq.className}`}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          {eq.path}
+                        </svg>
+                        {eq.label}
+                      </span>
+                    ))}
+                  </div>
+                );
+              })()}
             </motion.section>
 
             {/* Experience Description */}
@@ -275,6 +280,14 @@ export default function VehicleClient() {
                   "Conciergerie dédiée",
                   ...(vehicle.gps ? ["GPS intégré"] : []),
                   ...(vehicle.air_conditioning ? ["Climatisation automatique"] : []),
+                  ...(vehicle.bluetooth ? ["Bluetooth"] : []),
+                  ...(vehicle.rear_camera ? ["Caméra de recul"] : []),
+                  ...(vehicle.carplay ? ["Apple CarPlay / Android Auto"] : []),
+                  ...(vehicle.isofix ? ["Fixations ISOFIX"] : []),
+                  ...(vehicle.cruise_control ? ["Régulateur de vitesse"] : []),
+                  ...(vehicle.sunroof ? ["Toit ouvrant"] : []),
+                  ...(vehicle.leather_seats ? ["Sièges en cuir"] : []),
+                  ...(vehicle.electric_windows ? ["Vitres électriques"] : []),
                 ].map((feature, i) => (
                   <motion.div 
                     key={i}
