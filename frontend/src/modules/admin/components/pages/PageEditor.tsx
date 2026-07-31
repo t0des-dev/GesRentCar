@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Plus, Trash2, GripVertical, Type, Image, LayoutGrid, MessageSquare, HelpCircle, Minus, Rocket } from "lucide-react";
 import type { Page, ContentBlock } from "@/types/page";
 import { motion, AnimatePresence } from "framer-motion";
+import TiptapEditor from "@/components/TiptapEditor";
 
 const BLOCK_TYPES = [
   { type: "text", label: "Texte", icon: Type, color: "bg-blue-100 text-blue-600" },
@@ -42,22 +43,11 @@ function BlockEditor({ block, onChange, onRemove }: { block: ContentBlock; onCha
             placeholder="Titre du bloc"
             className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-primary"
           />
-          <textarea
-            value={block.data.body || ""}
-            onChange={(e) => update("body", e.target.value)}
-            placeholder="Contenu HTML..."
-            rows={5}
-            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono focus:outline-none focus:border-primary resize-y"
+          <TiptapEditor
+            content={block.data.body || ""}
+            onChange={(html) => update("body", html)}
+            placeholder="Écrivez votre contenu ici..."
           />
-          <select
-            value={block.data.alignment || "left"}
-            onChange={(e) => update("alignment", e.target.value)}
-            className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary"
-          >
-            <option value="left">Aligné à gauche</option>
-            <option value="center">Centré</option>
-            <option value="right">Aligné à droite</option>
-          </select>
         </>
       )}
 
