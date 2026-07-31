@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -23,7 +24,7 @@ class DocumentController extends Controller
             if ($token) {
                 $accessToken = PersonalAccessToken::findToken($token);
                 if ($accessToken) {
-                    $request->setUser($accessToken->tokenable);
+                    Auth::setUser($accessToken->tokenable);
                 }
             }
         }
