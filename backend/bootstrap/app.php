@@ -18,6 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureUserHasRole::class,
             'audit' => AuditMiddleware::class,
         ]);
+
+        $middleware->append(function ($request, $next) {
+            $response = $next($request);
+            if ($request->is('filament-admin/*')) {
+                $response->headers->set('Clear-Site-Data', '"serviceWorkers"');
+                $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            }
+            return $response;
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(function ($request, $e) {
