@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useEffect, useState, Component } from "react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useVehicles } from "@/shared/hooks/useApi";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,10 +25,10 @@ import { useDirection } from "@/shared/hooks/useDirection";
 
 // Error boundary
 class StepErrorBoundary extends Component<
-  { children: React.ReactNode; step: number },
+  { children: React.ReactNode; step: number; t: (key: string) => string },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode; step: number }) {
+  constructor(props: { children: React.ReactNode; step: number; t: (key: string) => string }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -39,13 +40,13 @@ class StepErrorBoundary extends Component<
       return (
         <div className="flex flex-col items-center justify-center py-24 text-ink-4">
           <p className="text-xs font-semibold uppercase tracking-wider">
-            Une erreur est survenue à l&apos;étape {this.props.step + 1}
+            {this.props.t("booking_step_error")} {this.props.step + 1}
           </p>
           <button
             onClick={() => this.setState({ hasError: false })}
             className="mt-4 text-primary underline text-sm"
           >
-            Réessayer
+            {this.props.t("booking_step_retry")}
           </button>
         </div>
       );
@@ -55,6 +56,7 @@ class StepErrorBoundary extends Component<
 }
 
 export default function BookingPage() {
+  const { t } = useTranslation();
   const { data: vehiclesData, isLoading: isLoadingVehicles } = useVehicles({ status: 'available' });
   const dir = useDirection();
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
@@ -112,9 +114,9 @@ export default function BookingPage() {
     <main className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="section-header text-center">
-          <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.2em] mb-4">Votre Réservation</p>
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">Réservez l&apos;Exception</h1>
-          <p className="text-ink-2 text-base max-w-xl mx-auto">Sécurisez votre véhicule de luxe en quelques étapes simples.</p>
+          <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.2em] mb-4">{t("booking_page_subtitle")}</p>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-4">{t("booking_page_title")}</h1>
+          <p className="text-ink-2 text-base max-w-xl mx-auto">{t("booking_page_description")}</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 items-start">
@@ -130,7 +132,7 @@ export default function BookingPage() {
                   exit={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <StepErrorBoundary step={step}>
+                    <StepErrorBoundary step={step} t={t}>
                     {step === 0 && (
                       <VehicleStep
                         booking={booking} update={update} isLoading={isLoadingVehicles}
@@ -180,14 +182,14 @@ export default function BookingPage() {
                   disabled={step === 0}
                   className="btn-ghost disabled:opacity-0"
                 >
-                  Précédent
+                  {t("booking_prev_button")}
                 </button>
                 <button
                   onClick={nextStep}
                   disabled={!canNext()}
                   className="btn-primary disabled:opacity-30"
                 >
-                  Continuer
+                  {t("booking_next_button")}
                   <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -200,7 +202,7 @@ export default function BookingPage() {
             className="lg:hidden flex items-center gap-2 w-full py-3 px-5 bg-surface-0 rounded-2xl border border-border text-sm font-semibold text-ink-2"
           >
             {showSummaryMobile ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            {showSummaryMobile ? "Masquer le récapitulatif" : "Voir le récapitulatif"}
+            {showSummaryMobile ? t("booking_hide_summary") : t("booking_show_summary")}
           </button>
 
           <div className={`w-full lg:w-1/3 ${showSummaryMobile ? "block" : "hidden"} lg:block`}>

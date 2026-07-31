@@ -3,21 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const LABELS: Record<string, string> = {
-  fleet: "Flotte",
-  booking: "Réservation",
-  admin: "Administration",
-  dashboard: "Mon Espace",
-  about: "À propos",
-  contact: "Contact",
-  faq: "FAQ",
-  login: "Connexion",
-  register: "Inscription",
+  fleet: "breadcrumbs_fleet",
+  booking: "breadcrumbs_booking",
+  admin: "breadcrumbs_admin",
+  dashboard: "breadcrumbs_dashboard",
+  about: "breadcrumbs_about",
+  contact: "breadcrumbs_contact",
+  faq: "breadcrumbs_faq",
+  login: "breadcrumbs_login",
+  register: "breadcrumbs_register",
 };
 
 export default function Breadcrumbs() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   if (!pathname || pathname === "/") return null;
   if (pathname.startsWith("/admin")) return null;
@@ -28,14 +30,15 @@ export default function Breadcrumbs() {
 
   const items = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
-    const label = LABELS[segment] || decodeURIComponent(segment);
+    const labelKey = LABELS[segment];
+    const label = labelKey ? t(labelKey) : decodeURIComponent(segment);
     const isLast = index === segments.length - 1;
     return { href, label, isLast };
   });
 
   return (
     <nav
-      aria-label="Fil d'Ariane"
+      aria-label={t("breadcrumbs_aria_label")}
       className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider"
     >
       <Link
@@ -43,7 +46,7 @@ export default function Breadcrumbs() {
         className="text-ink-3 hover:text-gold transition-colors flex items-center gap-1"
       >
         <Home className="h-3 w-3" />
-        <span className="sr-only">Accueil</span>
+        <span className="sr-only">{t("breadcrumbs_home")}</span>
       </Link>
 
       {items.map((item) => (

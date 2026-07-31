@@ -22,9 +22,9 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
         desc: s.desc || t(`step_${i + 1}_desc`),
       }))
     : [
-        { num: "01", title: "Choisissez", desc: "Parcourez notre collection et sélectionnez le véhicule parfait" },
-        { num: "02", title: "Réservez", desc: "Complétez votre réservation en quelques clics" },
-        { num: "03", title: "Profitez", desc: "Prenez le volant et vivez une expérience inoubliable" },
+        { num: "01", title: t("step_1_title"), desc: t("step_1_desc") },
+        { num: "02", title: t("step_2_title"), desc: t("step_2_desc") },
+        { num: "03", title: t("step_3_title"), desc: t("step_3_desc") },
       ];
 
   return (
@@ -39,7 +39,7 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
             viewport={{ once: true }}
             className="section-eyebrow justify-center"
           >
-            {content?.badge || "Simple & Rapide"}
+            {content?.badge || t("how_it_works_badge")}
           </motion.p>
           <h2 id="how-it-works-heading" className="text-3xl md:text-[40px] font-bold tracking-tight text-ink-1 mt-2">
             {content?.title || t("how_it_works")}

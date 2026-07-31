@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, CheckCircle, Info, X, Trash2, ShieldAlert } from "lucide-react";
 import { useEffect, useCallback } from "react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 /* ─────────────────────────────────────────────
    ConfirmDialog — replaces native confirm()
@@ -27,7 +28,10 @@ const VARIANT_CONFIG: Record<ConfirmVariant, { icon: typeof AlertTriangle; iconB
   info: { icon: Info, iconBg: "bg-blue-100", iconColor: "text-blue-500", btnBg: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500" },
 };
 
-export function ConfirmDialog({ open, title, message, confirmLabel = "Confirmer", cancelLabel = "Annuler", variant = "danger", onConfirm, onCancel }: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, message, confirmLabel, cancelLabel, variant = "danger", onConfirm, onCancel }: ConfirmDialogProps) {
+  const { t } = useTranslation();
+  const resolvedConfirmLabel = confirmLabel ?? t("confirm_default_label");
+  const resolvedCancelLabel = cancelLabel ?? t("cancel_default_label");
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onCancel();
     if (e.key === "Enter") onConfirm();
@@ -88,13 +92,13 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Confirmer"
                 onClick={onCancel}
                 className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink-2 bg-surface-2 hover:bg-surface-3 transition-colors"
               >
-                {cancelLabel}
+                {resolvedCancelLabel}
               </button>
               <button
                 onClick={onConfirm}
                 className={`px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors ${cfg.btnBg}`}
               >
-                {confirmLabel}
+                {resolvedConfirmLabel}
               </button>
             </div>
           </motion.div>

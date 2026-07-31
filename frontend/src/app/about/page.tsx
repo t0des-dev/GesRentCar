@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import {
   Award,
   Shield,
@@ -29,70 +30,68 @@ const fadeIn = {
   visible: { opacity: 1, transition: { duration: 0.8 } },
 };
 
-const values = [
-  {
-    icon: Award,
-    title: "Excellence",
-    description:
-      "Chaque véhicule de notre flotte est sélectionné avec un souci du détail absolu. Nous n'acceptons que l'excellence, de l'entretien à la présentation.",
-    color: "text-gold",
-    bg: "bg-gold-light",
-  },
-  {
-    icon: Shield,
-    title: "Confiance",
-    description:
-      "La transparence est au cœur de chaque interaction. Pas de frais cachés, pas de mauvaises surprises — juste un service fiable et honnête.",
-    color: "text-primary",
-    bg: "bg-primary/10",
-  },
-  {
-    icon: Lightbulb,
-    title: "Innovation",
-    description:
-      "De la réservation en ligne au suivi GPS en temps réel, nous intégrons la technologie pour rendre votre expérience fluide et moderne.",
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10",
-  },
-  {
-    icon: Handshake,
-    title: "Service",
-    description:
-      "Notre équipe est disponible 24h/24, 7j/7. Conciergerie personnelle, livraison à l'aéroport, assistance sur route — nous sommes toujours là.",
-    color: "text-amber-500",
-    bg: "bg-amber-500/10",
-  },
-];
-
-const team = [
-  {
-    name: "Youssef El Mansouri",
-    role: "Fondateur & CEO",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    name: "Karim Benali",
-    role: "Directeur des Opérations",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600",
-  },
-  {
-    name: "Sara Ait Brahim",
-    role: "Responsable Clientèle",
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=600",
-  },
-];
-
-const stats = [
-  { value: "15+", label: "Ans d'Expérience", icon: TrendingUp },
-  { value: "2400+", label: "Clients Satisfaits", icon: Users },
-  { value: "80+", label: "Véhicules Premium", icon: Car },
-  { value: "24/7", label: "Support Dédié", icon: Clock },
-];
-
 export default function AboutPage() {
+  const { t } = useTranslation();
+
+  const values = [
+    {
+      icon: Award,
+      title: t("about_value_excellence_title"),
+      description: t("about_value_excellence_desc"),
+      color: "text-gold",
+      bg: "bg-gold-light",
+    },
+    {
+      icon: Shield,
+      title: t("about_value_trust_title"),
+      description: t("about_value_trust_desc"),
+      color: "text-primary",
+      bg: "bg-primary/10",
+    },
+    {
+      icon: Lightbulb,
+      title: t("about_value_innovation_title"),
+      description: t("about_value_innovation_desc"),
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      icon: Handshake,
+      title: t("about_value_service_title"),
+      description: t("about_value_service_desc"),
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+    },
+  ];
+
+  const team = [
+    {
+      name: "Youssef El Mansouri",
+      role: t("about_team_role_ceo"),
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      name: "Karim Benali",
+      role: t("about_team_role_operations"),
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      name: "Sara Ait Brahim",
+      role: t("about_team_role_clientele"),
+      image:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=600",
+    },
+  ];
+
+  const stats = [
+    { value: "15+", label: t("about_stat_experience"), icon: TrendingUp },
+    { value: "2400+", label: t("about_stat_clients"), icon: Users },
+    { value: "80+", label: t("about_stat_vehicles"), icon: Car },
+    { value: "24/7", label: t("about_stat_support"), icon: Clock },
+  ];
+
   return (
     <main className="min-h-screen">
       {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
@@ -108,14 +107,13 @@ export default function AboutPage() {
             className="max-w-3xl"
           >
             <span className="overline-gold mb-6 inline-block">
-              Notre Histoire
+              {t("about_hero_eyebrow")}
             </span>
             <h1 className="font-display text-ink-1 mb-8 leading-[0.95] tracking-tight text-5xl md:text-7xl lg:text-8xl">
               Vectoria
             </h1>
             <p className="text-ink-2 text-xl md:text-2xl leading-relaxed max-w-2xl font-medium">
-              La reference de la location vehicule premium au Maroc, au service
-              de l&apos;excellence depuis 2010.
+              {t("about_hero_subtitle_2")}
             </p>
           </motion.div>
         </div>
@@ -150,7 +148,7 @@ export default function AboutPage() {
               >
                 <p className="font-display text-4xl mb-1">5.0</p>
                 <p className="text-xs font-bold uppercase tracking-wider opacity-80">
-                  Note Client
+                  {t("about_rating_label")}
                 </p>
               </motion.div>
             </motion.div>
@@ -165,26 +163,19 @@ export default function AboutPage() {
             >
               <div>
                 <span className="overline-gold mb-4 inline-block">
-                  Notre Parcours
+                  {t("about_story_eyebrow")}
                 </span>
                 <h2 className="font-display text-ink-1 mb-6 text-3xl md:text-5xl leading-tight tracking-tight">
-                  L&apos;Art du Mouvement
+                  {t("about_story_title_2")}
                 </h2>
               </div>
 
               <div className="space-y-5 text-ink-2 body-text leading-relaxed">
                 <p>
-                  Depuis 2010, Vectoria redéfinit la location de véhicules
-                  premium au Maroc. Fondée avec une vision claire — offrir une
-                  expérience de conduite qui dépasse les attentes — notre
-                  entreprise est devenue la référence pour ceux qui exigent
-                  l&apos;excellence.
+                  {t("about_story_para_1")}
                 </p>
                 <p>
-                  Nous croyons que chaque trajet mérite d&apos;être
-                  extraordinaire. C&apos;est pourquoi nous sélectionnons
-                  rigoureusement chaque véhicule de notre flotte pour garantir
-                  des performances optimales et un luxe sans compromis.
+                  {t("about_story_para_2")}
                 </p>
               </div>
 
@@ -192,13 +183,13 @@ export default function AboutPage() {
                 <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
                   <p className="font-display text-ink-1 text-3xl mb-1">24/7</p>
                   <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                    Disponible
+                    {t("about_stat_available_label")}
                   </p>
                 </div>
                 <div className="card-premium p-6 rounded-2xl border-2 border-border text-center">
                   <p className="font-display text-ink-1 text-3xl mb-1">100%</p>
                   <p className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                    Satisfaction
+                    {t("about_stat_satisfaction_label")}
                   </p>
                 </div>
               </div>
@@ -218,10 +209,10 @@ export default function AboutPage() {
             className="text-center mb-16"
           >
             <span className="overline-gold mb-4 inline-block">
-              Nos Principes
+              {t("about_values_eyebrow")}
             </span>
             <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
-              Ce Qui Nous Definit
+              {t("about_values_title_2")}
             </h2>
           </motion.div>
 
@@ -268,10 +259,10 @@ export default function AboutPage() {
             className="text-center mb-16"
           >
             <span className="overline-gold mb-4 inline-block">
-              L&apos;Equipe
+              {t("about_team_eyebrow")}
             </span>
             <h2 className="font-display text-ink-1 text-3xl md:text-5xl tracking-tight">
-              Les Visages de Vectoria
+              {t("about_team_title")}
             </h2>
           </motion.div>
 
@@ -345,22 +336,20 @@ export default function AboutPage() {
             className="text-center max-w-2xl mx-auto"
           >
             <span className="overline-gold mb-6 inline-block">
-              Rejoignez-nous
+              {t("about_cta_eyebrow")}
             </span>
             <h2 className="font-display text-ink-1 text-3xl md:text-5xl lg:text-6xl tracking-tight mb-8">
-              Rejoignez l&apos;aventure Vectoria
+              {t("about_cta_title")}
             </h2>
             <p className="text-ink-2 body-text mb-12">
-              Decouvrez une experience de location sans equal. Reservez votre
-              vehicule premium en quelques clics et laissez-vous porter par
-              l&apos;excellence.
+              {t("about_cta_description")}
             </p>
 
             <Link
               href="/register"
               className="btn-gold inline-flex items-center gap-2 rounded-2xl px-10 py-4"
             >
-              Creer Mon Compte
+              {t("about_cta_button")}
               <ArrowRight size={18} />
             </Link>
           </motion.div>

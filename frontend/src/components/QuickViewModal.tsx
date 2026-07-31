@@ -133,11 +133,11 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-black text-white">{convert(pricePerDay)}</span>
-                <span className="text-white/70 text-sm font-semibold">/ jour</span>
+                <span className="text-white/70 text-sm font-semibold">{t("quickview_per_day")}</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <Star size={13} className="fill-gold text-gold" />
-                <span className="text-white/80 text-xs font-bold">{vehicle.rating || 4.9} · Excellent</span>
+                <span className="text-white/80 text-xs font-bold">{vehicle.rating || 4.9} · {t("quickview_rating_text")}</span>
               </div>
             </div>
           </div>
@@ -176,10 +176,10 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
 
             {/* ─── Inline Date Picker ─── */}
             <div className="space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">Choisir vos dates</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">{t("quickview_dates_heading")}</p>
               <div className="grid grid-cols-2 gap-3">
                 <DateInput
-                  label="Départ"
+                  label={t("quickview_date_departure")}
                   value={startDate}
                   min={today}
                   onChange={(v) => {
@@ -191,7 +191,7 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
                   }}
                 />
                 <DateInput
-                  label="Retour"
+                  label={t("quickview_date_return")}
                   value={endDate}
                   min={startDate}
                   onChange={setEndDate}
@@ -207,13 +207,13 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
               >
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-ink-3">
-                    {days} nuit{days > 1 ? "s" : ""} · Prix estimé
+                    {days} {days > 1 ? t("quickview_nights") : t("quickview_night")} · {t("quickview_estimated_price")}
                   </p>
                   <p className="text-2xl font-black text-ink-1 mt-0.5">{convert(totalPrice)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold text-ink-3">{convert(pricePerDay)}</p>
-                  <p className="text-[9px] text-ink-4">× {days} jour{days > 1 ? "s" : ""}</p>
+                  <p className="text-[9px] text-ink-4">× {days} {days > 1 ? t("quickview_days") : t("quickview_day")}</p>
                 </div>
               </motion.div>
             </div>
@@ -222,13 +222,13 @@ export default function QuickViewModal({ vehicle, onClose }: QuickViewModalProps
             <div className="grid grid-cols-1 gap-3 mt-auto">
               <Button asChild variant="default" size="lg" className="w-full rounded-[20px] py-6 text-xs shadow-xl shadow-primary/20">
                 <Link href={bookingUrl}>
-                  Réserver maintenant
+                  {t("quickview_cta_book_now")}
                   <ArrowRight size={16} />
                 </Link>
               </Button>
               <Button asChild variant="secondary" size="lg" className="w-full rounded-[20px] py-5 text-[10px]">
                 <Link href={`/fleet/${vehicle.id}`}>
-                  Voir tous les détails
+                  {t("quickview_cta_view_details")}
                 </Link>
               </Button>
             </div>

@@ -95,7 +95,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm leading-relaxed text-ink-3 max-w-sm subtitle-serif">
-              {agency.agency_slogan || "L&apos;expérience ultime du voyage en véhicules de prestige."}
+              {agency.agency_slogan || t("footer_default_slogan")}
             </p>
 
             {/* Social Icons */}
@@ -145,15 +145,15 @@ export default function Footer() {
 
           {/* Column 3: Hours & Legal */}
           <div className="flex flex-col gap-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">Horaires</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_hours_heading")}</h3>
             <div className="flex flex-col gap-3 text-sm text-ink-3">
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-gold shrink-0" />
-                <span className="font-medium">Lun - Sam: 9h00 - 19h00</span>
+                <span className="font-medium">{t("footer_hours_weekdays")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-ink-4 shrink-0" />
-                <span className="font-medium text-ink-4">Dim: Fermé</span>
+                <span className="font-medium text-ink-4">{t("footer_hours_sunday_closed")}</span>
               </div>
             </div>
 
@@ -161,9 +161,9 @@ export default function Footer() {
 
             <nav className="flex flex-col gap-3">
               {[
-                { href: "/privacy", label: "Confidentialité" },
-                { href: "/terms", label: "Conditions générales" },
-                { href: "/cookies", label: "Politique cookies" },
+                { href: "/privacy", label: t("footer_privacy") },
+                { href: "/terms", label: t("footer_terms") },
+                { href: "/cookies", label: t("footer_cookies") },
               ].map(({ href, label }) => (
                 <Link
                   key={href}
@@ -179,7 +179,7 @@ export default function Footer() {
 
           {/* Column 4: Contact & Newsletter */}
           <div className="flex flex-col gap-5">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">Contact</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_contact_heading")}</h3>
             <div className="flex flex-col gap-3">
               {footer.address && (
                 <div className="flex items-start gap-3 text-sm text-ink-3">
@@ -207,14 +207,14 @@ export default function Footer() {
 
             {/* Newsletter */}
             <div className="flex flex-col gap-3 mt-2">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">Newsletter</h3>
-              <p className="text-xs text-ink-3 leading-relaxed">Offres exclusives et nouvelles arrivées.</p>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_newsletter_heading")}</h3>
+              <p className="text-xs text-ink-3 leading-relaxed">{t("footer_newsletter_description")}</p>
               <form onSubmit={handleSubscribe} className="flex gap-2">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
+                  placeholder={t("footer_newsletter_placeholder")}
                   className="flex-1 bg-surface-1 border border-border rounded-lg px-3 py-2.5 text-sm text-ink-1 placeholder:text-ink-4 focus:border-gold focus:shadow-lg focus:shadow-gold/10 focus:outline-none transition-all duration-300"
                 />
                 <Button
@@ -228,7 +228,7 @@ export default function Footer() {
                 </Button>
               </form>
               {subscribeStatus === "success" && (
-                <p className="text-xs text-emerald-600 font-medium">✓ Merci de votre inscription !</p>
+                <p className="text-xs text-emerald-600 font-medium">✓ {t("footer_subscribe_success")}</p>
               )}
             </div>
           </div>
@@ -241,10 +241,10 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-ink-3">
           <p className="font-medium">
             © {new Date().getFullYear()} {agency.agency_name || "Vectoria Rent Car"}.
-            <span className="text-ink-4"> Tous droits réservés.</span>
+            <span className="text-ink-4"> {t("footer_all_rights_reserved")}</span>
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-ink-4">Paiement sécurisé</span>
+            <span className="text-ink-4">{t("footer_secure_payment")}</span>
             <div className="flex items-center gap-2 opacity-50">
               {["Visa", "MC", "CMI"].map((card) => (
                 <div key={card} className="px-2 py-1 bg-surface-2 rounded text-[8px] font-bold text-ink-4 uppercase border border-border">

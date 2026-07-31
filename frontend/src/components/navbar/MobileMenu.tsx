@@ -61,7 +61,7 @@ export default function MobileMenu({
               <div className="flex items-center justify-between p-5 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                  <span className="font-extrabold text-sm uppercase tracking-widest text-white">Menu Navigation</span>
+                  <span className="font-extrabold text-sm uppercase tracking-widest text-white">{t("mobile_menu_title")}</span>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -88,7 +88,7 @@ export default function MobileMenu({
 
               {/* Language Switcher */}
               <div className="px-5 py-3 border-t border-white/5">
-                <p className="text-[9px] font-extrabold uppercase tracking-widest text-white/40 mb-2 px-1">Langue</p>
+                <p className="text-[9px] font-extrabold uppercase tracking-widest text-white/40 mb-2 px-1">{t("mobile_menu_language_label")}</p>
                 <div className="flex gap-2">
                   {languages.map((l) => (
                     <button
@@ -118,7 +118,7 @@ export default function MobileMenu({
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-600/30 transition-all"
                 >
                   <MessageSquare size={16} />
-                  <span>WhatsApp 24/7 VIP</span>
+                  <span>{t("mobile_menu_whatsapp")}</span>
                 </a>
               )}
 
@@ -130,13 +130,13 @@ export default function MobileMenu({
                     className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/10 text-white border border-white/15 text-xs font-bold hover:bg-white/20 transition-all"
                   >
                     <User size={15} />
-                    <span>Mon Espace VIP</span>
+                    <span>{t("mobile_menu_dashboard")}</span>
                   </Link>
                   <button
                     onClick={() => { signOut(); setIsOpen(false); }}
                     className="w-full text-center py-2 text-xs text-red-400 hover:text-red-300 font-semibold"
                   >
-                    Déconnexion
+                    {t("mobile_menu_signout")}
                   </button>
                 </div>
               ) : (

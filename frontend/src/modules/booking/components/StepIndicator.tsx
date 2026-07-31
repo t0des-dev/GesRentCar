@@ -1,18 +1,10 @@
 "use client";
 
 import { cn } from "@/shared/utils";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { Check, Car, Calendar, Shield, User, PenTool, CreditCard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-
-const STEPS = [
-  { label: "Véhicule", icon: Car },
-  { label: "Période", icon: Calendar },
-  { label: "Options", icon: Shield },
-  { label: "Identité", icon: User },
-  { label: "Signature", icon: PenTool },
-  { label: "Paiement", icon: CreditCard },
-];
+import { useState, useEffect, useRef, useMemo } from "react";
 
 interface StepIndicatorProps {
   currentStep: number;
@@ -20,7 +12,17 @@ interface StepIndicatorProps {
 }
 
 export default function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) {
+  const { t } = useTranslation();
   const [celebratingStep, setCelebratingStep] = useState<number | null>(null);
+
+  const STEPS = useMemo(() => [
+    { label: t("booking_step_vehicle"), icon: Car },
+    { label: t("booking_step_period"), icon: Calendar },
+    { label: t("booking_step_options"), icon: Shield },
+    { label: t("booking_step_identity"), icon: User },
+    { label: t("booking_step_signature"), icon: PenTool },
+    { label: t("booking_step_payment"), icon: CreditCard },
+  ], [t]);
   const prevStepRef = useRef(currentStep);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function StepIndicator({ currentStep, onStepClick }: StepIndicato
     <div className="relative mb-8">
       <div className="flex items-center justify-between mb-6">
         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ink-4">
-          Étape {currentStep + 1}/{STEPS.length}
+          {t("booking_step_indicator_label")} {currentStep + 1}/{STEPS.length}
         </span>
         <div className="flex items-center gap-1.5">
           {STEPS.map((_, i) => (

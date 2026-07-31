@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { X, Car, Users, Fuel, Settings, MapPin, Snowflake, Star } from "lucide-react";
 import { fmt } from "@/shared/utils/format";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface Vehicle {
   id: number;
@@ -25,26 +26,31 @@ interface VehicleCompareProps {
   onRemove: (id: number) => void;
 }
 
-const SPECS = [
-  { key: "brand",        label: "Marque",      icon: Car,        getValue: (v: Vehicle) => v.brand },
-  { key: "model",        label: "Modèle",      icon: Car,        getValue: (v: Vehicle) => v.model },
-  { key: "type",         label: "Type",         icon: Car,        getValue: (v: Vehicle) => v.type || "—" },
-  { key: "price",        label: "Prix/Jour",    icon: Star,       getValue: (v: Vehicle) => `${fmt(v.price_per_day)} DH` },
-  { key: "seats",        label: "Places",       icon: Users,      getValue: (v: Vehicle) => `${v.seats ?? 5} pers` },
-  { key: "fuel",         label: "Carburant",    icon: Fuel,       getValue: (v: Vehicle) => v.fuel_type || "Diesel" },
-  { key: "transmission", label: "Transmission", icon: Settings,   getValue: (v: Vehicle) => v.transmission || "Automatique" },
-  { key: "gps",          label: "GPS",          icon: MapPin,     getValue: (v: Vehicle) => v.gps ? "Oui" : "Non" },
-  { key: "ac",           label: "Climatisation", icon: Snowflake, getValue: (v: Vehicle) => v.air_conditioning ? "Oui" : "Non" },
-  { key: "rating",       label: "Note",         icon: Star,       getValue: (v: Vehicle) => v.rating ? `${v.rating}/5` : "—" },
-];
+function buildSpecs(t: (key: string) => string) {
+  return [
+    { key: "brand",        label: t("compare_spec_brand"),        icon: Car,        getValue: (v: Vehicle) => v.brand },
+    { key: "model",        label: t("compare_spec_model"),        icon: Car,        getValue: (v: Vehicle) => v.model },
+    { key: "type",         label: t("compare_spec_type"),         icon: Car,        getValue: (v: Vehicle) => v.type || "—" },
+    { key: "price",        label: t("compare_spec_price_per_day"), icon: Star,       getValue: (v: Vehicle) => `${fmt(v.price_per_day)} DH` },
+    { key: "seats",        label: t("compare_spec_seats"),        icon: Users,      getValue: (v: Vehicle) => `${v.seats ?? 5} pers` },
+    { key: "fuel",         label: t("compare_spec_fuel"),         icon: Fuel,       getValue: (v: Vehicle) => v.fuel_type || "Diesel" },
+    { key: "transmission", label: t("compare_spec_transmission"), icon: Settings,   getValue: (v: Vehicle) => v.transmission || "Automatique" },
+    { key: "gps",          label: t("compare_spec_gps"),          icon: MapPin,     getValue: (v: Vehicle) => v.gps ? t("compare_yes") : t("compare_no") },
+    { key: "ac",           label: t("compare_spec_ac"),           icon: Snowflake,  getValue: (v: Vehicle) => v.air_conditioning ? t("compare_yes") : t("compare_no") },
+    { key: "rating",       label: t("compare_spec_rating"),       icon: Star,       getValue: (v: Vehicle) => v.rating ? `${v.rating}/5` : "—" },
+  ];
+}
 
 export default function VehicleCompare({ vehicles, onRemove }: VehicleCompareProps) {
+  const { t } = useTranslation();
+  const SPECS = buildSpecs(t);
+
   if (vehicles.length === 0) {
     return (
       <div className="text-center py-20 bg-surface-1 rounded-2xl border-2 border-border">
         <Car size={48} className="mx-auto mb-5 text-gold/30" />
-        <h3 className="text-xl font-bold text-ink-1 mb-2 font-serif">Aucun véhicule à comparer</h3>
-        <p className="text-sm text-ink-3">Ajoutez des véhicules depuis la flotte pour les comparer.</p>
+        <h3 className="text-xl font-bold text-ink-1 mb-2 font-serif">{t("compare_empty_title")}</h3>
+        <p className="text-sm text-ink-3">{t("compare_empty_description")}</p>
       </div>
     );
   }

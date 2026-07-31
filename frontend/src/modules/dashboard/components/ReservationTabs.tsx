@@ -2,6 +2,7 @@
 
 import { cn } from "@/shared/utils";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 type ReservationStatus = "confirmed" | "active" | "completed" | "cancelled" | "pending_payment";
 
@@ -12,12 +13,13 @@ interface ReservationTabsProps {
 }
 
 export default function ReservationTabs({ activeTab, setActiveTab, reservations }: ReservationTabsProps) {
+  const { t } = useTranslation();
   const TABS: { key: "all" | ReservationStatus; label: string }[] = [
-    { key: "all",             label: "Vue d'ensemble" },
-    { key: "active",          label: "En mission" },
-    { key: "confirmed",       label: "Réservations" },
-    { key: "pending_payment", label: "Paiements" },
-    { key: "completed",       label: "Historique" },
+    { key: "all",             label: t("reservation_tab_all") },
+    { key: "active",          label: t("reservation_tab_active") },
+    { key: "confirmed",       label: t("reservation_tab_confirmed") },
+    { key: "pending_payment", label: t("reservation_tab_pending_payment") },
+    { key: "completed",       label: t("reservation_tab_completed") },
   ];
 
   return (

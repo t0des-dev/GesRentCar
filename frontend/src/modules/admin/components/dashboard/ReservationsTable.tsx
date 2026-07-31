@@ -7,6 +7,7 @@ import { Reservation } from "@/types/admin";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
 import { exportToCsv } from "@/shared/utils/exportCsv";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface ReservationsTableProps {
   reservations: Reservation[];
@@ -44,13 +45,15 @@ const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }
   cancelled:        { bg: "from-red-500/20 to-red-500/10",          border: "border-red-400/40",      text: "text-red-500" },
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  confirmed: "Confirmée", active: "Active", ongoing: "En cours", completed: "Terminée",
-  pending_payment: "Attente paiement", attente_paiement: "Attente paiement",
-  pending: "En attente", pending_partner: "Attente partenaire", rejected: "Rejetée", cancelled: "Annulée",
-};
+function getStatusLabels(t: (key: string) => string): Record<string, string> {
+  return {
+    confirmed: t("status_confirmed"), active: t("status_active"), ongoing: t("status_ongoing"), completed: t("status_completed"),
+    pending_payment: t("status_pending_payment"), attente_paiement: t("status_pending_payment"),
+    pending: t("status_pending"), pending_partner: t("status_pending_partner"), rejected: t("status_rejected"), cancelled: t("status_cancelled"),
+  };
+}
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, statusLabels }: { status: string; statusLabels: Record<string, string> }) {
   const s = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
   return (
     <span className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-br border-2", s.bg, s.border, s.text)}>
@@ -59,7 +62,7 @@ function StatusBadge({ status }: { status: string }) {
       {status === "ongoing" && <Car size={12} />}
       {status === "cancelled" && <XCircle size={12} />}
       {status === "pending_partner" && <Clock size={12} />}
-      {STATUS_LABELS[status] ?? status}
+      {statusLabels[status] ?? status}
     </span>
   );
 }
@@ -69,6 +72,8 @@ export default function ReservationsTable({
   onRowClick, onConfirm, onCancel, onBulkAction,
   currentPage = 1, lastPage = 1, total, onPageChange,
 }: ReservationsTableProps) {
+  const { t } = useTranslation();
+  const statusLabels = useMemo(() => getStatusLabels(t), [t]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
@@ -116,13 +121,13 @@ export default function ReservationsTable({
 
   const handleExportCsv = () => {
     const data = filteredReservations.map(r => ({
-      "Référence": `VC-${r.id.toString().padStart(4, "0")}`,
-      "Véhicule": r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : "—",
-      "Client": r.client?.name ?? "—",
-      "Début": r.start_date,
-      "Fin": r.end_date,
-      "Montant": r.total_price,
-      "État": STATUS_LABELS[r.status] ?? r.status,
+      [t("reservations_col_reference")]: `VC-${r.id.toString().padStart(4, "0")}`,
+      [t("reservations_col_vehicle")]: r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : "—",
+      [t("reservations_col_client")]: r.client?.name ?? "—",
+      [t("reservations_csv_start")]: r.start_date,
+      [t("reservations_csv_end")]: r.end_date,
+      [t("reservations_col_amount")]: r.total_price,
+      [t("reservations_col_state")]: statusLabels[r.status] ?? r.status,
     }));
     exportToCsv(data, "reservations");
   };
@@ -140,9 +145,9 @@ export default function ReservationsTable({
           <div className="w-10 h-10 rounded-lg bg-gold/20 border-2 border-gold/40 flex items-center justify-center">
             <Users size={20} className="text-gold" strokeWidth={2} />
           </div>
-          <h2 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">Flux des Réservations</h2>
+          <h2 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">{t("reservations_flow_heading")}</h2>
           <span className="px-3 py-1.5 rounded-lg bg-gold/20 border border-gold/40 text-xs font-bold text-gold uppercase tracking-wider">
-            {total ?? reservations.length} total
+            {total ?? reservations.length} {t("reservations_total_label")}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -184,7 +189,7 @@ export default function ReservationsTable({
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6 p-4 bg-primary/5 border-2 border-primary/20 rounded-xl"
         >
-          <span className="text-sm font-bold text-primary">{selectedIds.size} sélectionnée(s)</span>
+          <span className="text-sm font-bold text-primary">{selectedIds.size} {t("reservations_selected_count")}</span>
           <div className="flex gap-2 ml-auto">
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -192,7 +197,7 @@ export default function ReservationsTable({
               disabled={bulkLoading}
               className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-emerald-600 transition-all flex items-center gap-1"
             >
-              <CheckCircle size={14} /> Accepter
+              <CheckCircle size={14} /> {t("reservations_bulk_accept")}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -200,10 +205,10 @@ export default function ReservationsTable({
               disabled={bulkLoading}
               className="px-4 py-2 rounded-lg bg-red-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-red-600 transition-all flex items-center gap-1"
             >
-              <Trash2 size={14} /> Rejeter
+              <Trash2 size={14} /> {t("reservations_bulk_reject")}
             </motion.button>
             <button onClick={() => setSelectedIds(new Set())} className="px-3 py-2 text-xs font-bold text-ink-3 hover:text-ink-1 transition-colors">
-              Annuler
+              {t("reservations_bulk_cancel")}
             </button>
           </div>
         </motion.div>
@@ -214,7 +219,7 @@ export default function ReservationsTable({
         <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" strokeWidth={2} />
         <input
           type="text"
-          placeholder="Rechercher par client, véhicule ou référence..."
+          placeholder={t("reservations_search_placeholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="input-premium w-full pl-12 pr-5 py-3.5"
@@ -226,7 +231,7 @@ export default function ReservationsTable({
         {filteredReservations.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border">
             <Calendar size={64} className="mx-auto mb-6 text-gold/30" strokeWidth={1} />
-            <p className="text-xl font-bold text-ink-1 font-serif">Aucune réservation enregistrée.</p>
+            <p className="text-xl font-bold text-ink-1 font-serif">{t("reservations_empty_message")}</p>
           </motion.div>
         ) : (
           <table className="w-full">
@@ -239,7 +244,7 @@ export default function ReservationsTable({
                       : <Square size={16} />}
                   </button>
                 </th>
-                {["Référence", "Véhicule", "Client", "Période", "Montant", "État", "Contrat", "Gestion"].map((h, i) => (
+                {[t("reservations_col_reference"), t("reservations_col_vehicle"), t("reservations_col_client"), t("reservations_col_period"), t("reservations_col_amount"), t("reservations_col_state"), t("reservations_col_contract"), t("reservations_col_actions")].map((h, i) => (
                   <th key={h} className={cn("text-xs font-bold uppercase tracking-wider text-ink-3 pb-4", i === 7 && "text-right")}>
                     {h}
                   </th>
@@ -285,7 +290,7 @@ export default function ReservationsTable({
                   <td className="py-4 pr-4 text-sm font-bold text-gold">{fmt(r.total_price)} DH</td>
                   <td className="py-4 pr-4">
                     <div className="flex flex-col gap-2">
-                      <StatusBadge status={r.status} />
+                      <StatusBadge status={r.status} statusLabels={statusLabels} />
                       {r.client?.cin_image_url && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -295,7 +300,7 @@ export default function ReservationsTable({
                           }}
                           className="text-xs font-bold uppercase text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
                         >
-                          <Eye size={12} strokeWidth={2} /> Documents
+                          <Eye size={12} strokeWidth={2} /> {t("reservations_documents_link")}
                         </motion.button>
                       )}
                     </div>
@@ -304,7 +309,7 @@ export default function ReservationsTable({
                     {r.contract ? (
                       <div className="flex flex-col gap-1">
                         <span className="text-xs font-bold text-emerald-500 uppercase tracking-wider flex items-center gap-1">
-                          <CheckCircle size={12} strokeWidth={2} /> Généré
+                           <CheckCircle size={12} strokeWidth={2} /> {t("reservations_contract_generated")}
                         </span>
                         <a
                           href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${r.id}/contract?lang=fr`}
@@ -312,7 +317,7 @@ export default function ReservationsTable({
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs font-bold text-gold hover:text-gold/80 transition-colors flex items-center gap-1"
                         >
-                          <Download size={12} strokeWidth={2} /> Télécharger
+                           <Download size={12} strokeWidth={2} /> {t("reservations_contract_download")}
                         </a>
                       </div>
                     ) : (
@@ -322,8 +327,8 @@ export default function ReservationsTable({
                         disabled={actionLoading === r.id}
                         className="text-xs font-bold text-ink-2 hover:text-gold uppercase tracking-wider border-2 border-border hover:border-gold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 disabled:opacity-60"
                       >
-                        <RefreshCw size={12} className={actionLoading === r.id ? "animate-spin" : ""} strokeWidth={2} />
-                        Générer
+                         <RefreshCw size={12} className={actionLoading === r.id ? "animate-spin" : ""} strokeWidth={2} />
+                         {t("reservations_contract_generate")}
                       </motion.button>
                     )}
                   </td>
@@ -336,7 +341,7 @@ export default function ReservationsTable({
                           onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
                           disabled={actionLoading === r.id}
                         >
-                          Accepter
+                          {t("reservations_action_accept")}
                         </motion.button>
                         <motion.button
                           whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -344,11 +349,11 @@ export default function ReservationsTable({
                           onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
                           disabled={actionLoading === r.id}
                         >
-                          Rejeter
+                          {t("reservations_action_reject")}
                         </motion.button>
                       </div>
                     ) : (
-                      <span className="text-sm font-bold text-ink-3 uppercase tracking-wider">Traitée</span>
+                      <span className="text-sm font-bold text-ink-3 uppercase tracking-wider">{t("reservations_action_processed")}</span>
                     )}
                   </td>
                 </motion.tr>
@@ -363,7 +368,7 @@ export default function ReservationsTable({
         {filteredReservations.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-surface-1 rounded-2xl border-2 border-dashed border-border">
             <Calendar size={64} className="mx-auto mb-6 text-gold/30" strokeWidth={1} />
-            <p className="text-xl font-bold text-ink-1 font-serif">Aucune réservation enregistrée.</p>
+            <p className="text-xl font-bold text-ink-1 font-serif">{t("reservations_empty_message")}</p>
           </motion.div>
         ) : (
           filteredReservations.map((r, idx) => (
@@ -386,17 +391,17 @@ export default function ReservationsTable({
                   </button>
                   <span className="text-sm font-bold text-ink-1">VC-{r.id.toString().padStart(4, "0")}</span>
                 </div>
-                <StatusBadge status={r.status} />
+                <StatusBadge status={r.status} statusLabels={statusLabels} />
               </div>
 
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3">
                   <Car size={16} className="text-gold" />
                   <span className="text-sm font-semibold text-ink-1">
-                    {r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : "Véhicule non spécifié"}
+                    {r.vehicle ? `${r.vehicle.brand} ${r.vehicle.model}` : t("reservations_vehicle_unspecified")}
                   </span>
                 </div>
-                <p className="text-sm text-ink-2">Par <span className="font-semibold text-ink-1">{r.client?.name ?? "Client inconnu"}</span></p>
+                <p className="text-sm text-ink-2">{t("reservations_by_prefix")} <span className="font-semibold text-ink-1">{r.client?.name ?? t("reservations_client_unknown")}</span></p>
                 <p className="text-sm text-ink-2">{formatDate(r.start_date)} → {formatDate(r.end_date)}</p>
               </div>
 
@@ -410,7 +415,7 @@ export default function ReservationsTable({
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs font-bold text-emerald-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
                     >
-                      <Download size={14} strokeWidth={2} /> Contrat
+                       <Download size={14} strokeWidth={2} /> {t("reservations_contract_link")}
                     </a>
                   ) : (
                     <motion.button
@@ -419,32 +424,32 @@ export default function ReservationsTable({
                       disabled={actionLoading === r.id}
                       className="text-xs font-bold text-ink-2 hover:text-gold uppercase tracking-wider border-2 border-border hover:border-gold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 disabled:opacity-60"
                     >
-                      <RefreshCw size={14} className={actionLoading === r.id ? "animate-spin" : ""} strokeWidth={2} />
-                      Générer
+                       <RefreshCw size={14} className={actionLoading === r.id ? "animate-spin" : ""} strokeWidth={2} />
+                       {t("reservations_contract_generate")}
                     </motion.button>
                   )}
                 </div>
 
-                {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
-                  <div className="flex gap-2 justify-end">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
-                      onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
-                      disabled={actionLoading === r.id}
-                    >
-                      Accepter
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
-                      onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
-                      disabled={actionLoading === r.id}
-                    >
-                      Rejeter
-                    </motion.button>
-                  </div>
-                ) : null}
+                    {r.status === "pending" || r.status === "pending_payment" || r.status === "pending_partner" ? (
+                      <div className="flex gap-2 justify-end">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/40 transition-all"
+                          onClick={(e) => { e.stopPropagation(); onConfirm ? onConfirm(r) : onAction(r.id, "accept"); }}
+                          disabled={actionLoading === r.id}
+                        >
+                          {t("reservations_action_accept")}
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-500/90 text-white text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/40 transition-all"
+                          onClick={(e) => { e.stopPropagation(); onCancel ? onCancel(r) : onAction(r.id, "reject"); }}
+                          disabled={actionLoading === r.id}
+                        >
+                          {t("reservations_action_reject")}
+                        </motion.button>
+                      </div>
+                    ) : null}
               </div>
             </motion.div>
           ))

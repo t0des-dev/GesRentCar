@@ -42,7 +42,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
               <User size={14} className="text-white" />
             </div>
             <span className="text-xs font-semibold max-w-[80px] truncate">
-              {session.user?.name?.split(' ')[0] || "Membre"}
+              {session.user?.name?.split(' ')[0] || t("user_actions_default_name")}
             </span>
             <ChevronDown size={12} className={cn("transition-transform", isOpen ? "rotate-180" : "")} />
           </button>
@@ -57,7 +57,7 @@ export default function UserActions({ session, signOut, t, isScrolled }: UserAct
                 className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-[60]"
               >
                 <div className="p-4 border-b border-slate-100">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Connecté</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{t("user_actions_connected_label")}</p>
                   <p className="text-sm font-semibold text-slate-700 truncate">{session.user?.email}</p>
                 </div>
                 <div className="p-2">

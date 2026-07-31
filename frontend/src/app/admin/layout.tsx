@@ -7,50 +7,55 @@ import {
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
 import { useState, useMemo } from "react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 import AdminSidebar from "@/modules/admin/components/layout/AdminSidebar";
 import AdminTopbar from "@/modules/admin/components/layout/AdminTopbar";
 
-const MENU_GROUPS = [
-  {
-    id: "general", title: "Général", icon: LayoutDashboard, badge: 4,
-    items: [
-      { icon: LayoutDashboard, label: "Tableau de bord", href: "/admin" },
-      { icon: ClipboardList, label: "Réservations", href: "/admin/reservations" },
-      { icon: Calendar, label: "Planning", href: "/admin/calendar" },
-      { icon: Wallet, label: "Trésorerie", href: "/admin/expenses" },
-    ]
-  },
-  {
-    id: "fleet", title: "Flotte", icon: Car,
-    items: [
-      { icon: Car, label: "Véhicules", href: "/admin/fleet" },
-      { icon: FileUp, label: "Import CSV", href: "/admin/import" },
-      { icon: BarChart3, label: "Analytiques", href: "/admin/analytics" },
-    ]
-  },
-  {
-    id: "config", title: "Configuration", icon: Sliders,
-    items: [
-      { icon: Users, label: "Utilisateurs", href: "/admin/users" },
-      { icon: Ban, label: "Liste Noire", href: "/admin/blacklist" },
-      { icon: ScrollText, label: "Journal d'Audit", href: "/admin/audit" },
-      { icon: Palette, label: "Storefront", href: "/admin/storefront" },
-      { icon: Settings, label: "Paramètres", href: "/admin/settings" },
-      { icon: FlaskConical, label: "Données de Démo", href: "/admin/demo" },
-    ]
-  }
-];
+function buildMenuGroups(t: (key: string) => string) {
+  return [
+    {
+      id: "general", title: t("sidebar_group_general"), icon: LayoutDashboard, badge: 4,
+      items: [
+        { icon: LayoutDashboard, label: t("sidebar_item_dashboard"), href: "/admin" },
+        { icon: ClipboardList, label: t("sidebar_item_reservations"), href: "/admin/reservations" },
+        { icon: Calendar, label: t("sidebar_item_planning"), href: "/admin/calendar" },
+        { icon: Wallet, label: t("sidebar_item_treasury"), href: "/admin/expenses" },
+      ]
+    },
+    {
+      id: "fleet", title: t("sidebar_group_fleet"), icon: Car,
+      items: [
+        { icon: Car, label: t("sidebar_item_vehicles"), href: "/admin/fleet" },
+        { icon: FileUp, label: t("sidebar_item_import_csv"), href: "/admin/import" },
+        { icon: BarChart3, label: t("sidebar_item_analytics"), href: "/admin/analytics" },
+      ]
+    },
+    {
+      id: "config", title: t("sidebar_group_config"), icon: Sliders,
+      items: [
+        { icon: Users, label: t("sidebar_item_users"), href: "/admin/users" },
+        { icon: Ban, label: t("sidebar_item_blacklist"), href: "/admin/blacklist" },
+        { icon: ScrollText, label: t("sidebar_item_audit_log"), href: "/admin/audit" },
+        { icon: Palette, label: t("sidebar_item_storefront"), href: "/admin/storefront" },
+        { icon: Settings, label: t("sidebar_item_settings"), href: "/admin/settings" },
+        { icon: FlaskConical, label: t("sidebar_item_demo_data"), href: "/admin/demo" },
+      ]
+    }
+  ];
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuthGuard("admin");
   const { logout } = useAuth();
+  const { t } = useTranslation();
+  const MENU_GROUPS = useMemo(() => buildMenuGroups(t), [t]);
   const activeGroupId = useMemo(() => {
     const group = MENU_GROUPS.find(g => g.items.some(i => pathname === i.href || (pathname.startsWith(i.href) && i.href !== "/admin")));
     return group?.id || "general";
-  }, [pathname]);
+  }, [pathname, MENU_GROUPS]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
