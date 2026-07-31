@@ -10,7 +10,8 @@ import { Loader2 } from "lucide-react";
 const RESERVED_SLUGS = new Set([
   "about", "accessibility", "admin", "agent", "auth", "booking", "c",
   "contact", "contracts", "cookies", "dashboard", "dsa", "fleet",
-  "login", "locations", "offers", "privacy", "register", "scan", "terms",
+  "login", "locations", "offers", "pages", "pricing", "privacy",
+  "register", "scan", "services", "terms", "zones",
 ]);
 
 export default function DynamicPage() {

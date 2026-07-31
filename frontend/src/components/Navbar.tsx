@@ -50,6 +50,9 @@ export default function Navbar() {
 
   const menuLinks = agency.header_config?.menu_links || [
     { label: t("nav_fleet"), url: "/fleet" },
+    { label: t("nav_services"), url: "/services" },
+    { label: t("nav_pricing"), url: "/pricing" },
+    { label: t("nav_zones"), url: "/zones" },
     { label: t("nav_locations"), url: "/locations" },
     { label: t("nav_offers"), url: "/offers" },
     { label: t("nav_about"), url: "/about" },
