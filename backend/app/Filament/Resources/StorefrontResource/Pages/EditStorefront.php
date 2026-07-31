@@ -4,7 +4,6 @@ namespace App\Filament\Resources\StorefrontResource\Pages;
 
 use App\Filament\Resources\StorefrontResource;
 use App\Models\Setting;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditStorefront extends EditRecord
@@ -13,14 +12,20 @@ class EditStorefront extends EditRecord
 
     protected static ?string $title = 'Configuration Storefront';
 
-    protected static ?string $navigationLabel = 'Storefront';
-
     protected function getHeaderActions(): array
     {
         return [];
     }
 
-    public function getRecord(): mixed
+    public function getRecord(bool $cached = true): Setting
+    {
+        return Setting::firstOrCreate(
+            ['key' => 'agency_config'],
+            ['key' => 'agency_config']
+        );
+    }
+
+    protected function resolveRecordRouteBinding($id): Setting
     {
         return Setting::firstOrCreate(
             ['key' => 'agency_config'],
@@ -40,17 +45,15 @@ class EditStorefront extends EditRecord
         return $data;
     }
 
-    protected function handleRecordCreation(array $data): Setting
+    protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): Setting
     {
-        return Setting::updateOrCreate(
-            ['key' => 'agency_config'],
-            $data
-        );
+        $record->fill($data)->save();
+
+        return $record;
     }
 
     protected function afterSave(): void
     {
-        // Clear config cache after saving
         \Illuminate\Support\Facades\Artisan::call('config:clear');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
     }
