@@ -28,6 +28,7 @@ export const defaultStorefrontForm: StorefrontForm = {
   },
   sections_order: [
     { id: "hero", label: "Bannière Hero", active: true },
+    { id: "fleet", label: "Page Flotte", active: true },
     { id: "stats", label: "Statistiques Clés", active: true },
     { id: "featured", label: "Véhicules Vedettes", active: true },
     { id: "services", label: "Services VIP", active: true },
