@@ -1108,17 +1108,19 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>(() => {
-    if (typeof window === "undefined") return "fr";
-    const saved = localStorage.getItem("vectoria_lang") as Language;
-    if (saved && ["fr", "en"].includes(saved)) return saved;
-    const browserLang = navigator.language.split("-")[0];
-    if (["fr", "en"].includes(browserLang)) return browserLang as Language;
-    return "fr";
-  });
+  const [lang, setLang] = useState<Language>("fr");
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    const saved = localStorage.getItem("vectoria_lang") as Language;
+    if (saved && ["fr", "en"].includes(saved)) {
+      setLang(saved);
+    } else {
+      const browserLang = navigator.language.split("-")[0];
+      if (["fr", "en"].includes(browserLang)) {
+        setLang(browserLang as Language);
+      }
+    }
     document.documentElement.dir = "ltr";
     document.documentElement.lang = lang;
     setIsReady(true);

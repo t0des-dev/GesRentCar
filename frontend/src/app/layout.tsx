@@ -94,7 +94,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${sora.variable} ${inter.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${sora.variable} ${inter.variable}`} suppressHydrationWarning>
         <ThemeProvider>
           <AccessibilityProvider>
             <AnalyticsProvider>

@@ -28,11 +28,14 @@ const SYMBOLS: Record<Currency, string> = {
 };
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>(() => {
-    if (typeof window === "undefined") return "MAD";
+  const [currency, setCurrency] = useState<Currency>("MAD");
+
+  useEffect(() => {
     const saved = localStorage.getItem("vectoria_currency") as Currency;
-    return saved && ["MAD", "EUR", "USD"].includes(saved) ? saved : "MAD";
-  });
+    if (saved && ["MAD", "EUR", "USD"].includes(saved)) {
+      setCurrency(saved);
+    }
+  }, []);
 
   const handleSetCurrency = (c: Currency) => {
     setCurrency(c);
