@@ -59,12 +59,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->renderHook(
-                'panels::head',
-                fn () => new \Illuminate\Support\HtmlString(
-                    '<script>window.addEventListener("load",function(){if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(reg){reg.unregister()})})}});</script>'
-                ),
-            );
+            ]);
     }
 }
