@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { ArrowLeft, Star, ShieldCheck, Gauge, Fuel, Users, Calendar, ArrowRight, Check, Loader2, MapPin, Clock, Phone } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Star, ShieldCheck, Gauge, Fuel, Users, Calendar, ArrowRight, Check, Loader2, MapPin, Clock, Phone, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import api from "@/shared/services/client";
 import { getImageUrl } from "@/shared/utils/image";
@@ -19,6 +19,7 @@ export default function VehicleClient() {
   const { t } = useTranslation();
   const [vehicle, setVehicle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [similarVehicles, setSimilarVehicles] = useState<any[]>([]);
 
   const [pickupDate, setPickupDate] = useState(() => {
     if (typeof window === "undefined") return "";
@@ -45,6 +46,18 @@ export default function VehicleClient() {
     };
     if (params.id) fetchVehicle();
   }, [params.id]);
+
+  useEffect(() => {
+    if (!vehicle) return;
+    const fetchSimilar = async () => {
+      try {
+        const res = await api.get(`/vehicles?per_page=4&category=${vehicle.category || 'luxury'}`);
+        const data = res.data.data || res.data;
+        setSimilarVehicles((Array.isArray(data) ? data : []).filter((v: any) => v.id !== vehicle.id).slice(0, 3));
+      } catch {}
+    };
+    fetchSimilar();
+  }, [vehicle]);
 
   const calculateDays = () => {
     if (!pickupDate || !returnDate) return 0;
@@ -333,6 +346,57 @@ export default function VehicleClient() {
             >
               <ReviewSection vehicleId={vehicle.id!} />
             </motion.section>
+
+            {/* Similar Vehicles */}
+            {similarVehicles.length > 0 && (
+              <motion.section
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.45, duration: 0.6 }}
+                className="space-y-8"
+              >
+                <p className="section-eyebrow">Véhicules Similaires</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {similarVehicles.map((sv: any, i: number) => (
+                    <motion.div
+                      key={sv.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1, duration: 0.5 }}
+                    >
+                      <Link href={`/fleet/${sv.id}`} className="block bg-surface-1 rounded-2xl border-2 border-border hover:border-gold/40 overflow-hidden transition-all duration-300 group hover:shadow-lg hover:shadow-gold/10">
+                        <div className="aspect-[16/10] overflow-hidden">
+                          <img
+                            src={getImageUrl(sv.image_url) || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop"}
+                            alt={`${sv.brand} ${sv.model}`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="p-5 space-y-3">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-gold">{sv.brand}</p>
+                            <h3 className="text-lg font-black text-ink-1 group-hover:text-gold transition-colors">{sv.model}</h3>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-ink-3">
+                            <span className="flex items-center gap-1"><Users size={12} /> {sv.seats || 5}</span>
+                            <span className="flex items-center gap-1"><Fuel size={12} /> {sv.fuel_type || "Diesel"}</span>
+                            <span className="flex items-center gap-1"><Gauge size={12} /> {sv.transmission || "Auto"}</span>
+                          </div>
+                          <div className="pt-2 border-t border-border">
+                            <span className="text-xl font-black text-ink-1">{sv.price_per_day?.toLocaleString()} <span className="text-xs font-bold text-ink-3">MAD/jour</span></span>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
+            {/* FAQ */}
+            <FaqSection />
           </div>
 
           {/* Right Sidebar — Booking Widget (1/3) */}
@@ -512,5 +576,80 @@ export default function VehicleClient() {
         </div>
       </div>
     </main>
+  );
+}
+
+function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      q: "Quels documents sont nécessaires pour louer un véhicule ?",
+      a: "Une carte d'identité nationale ou passeport en cours de validité, ainsi qu'un permis de conduire valide. Pour les clients internationaux, un permis de conduire international est requis."
+    },
+    {
+      q: "Comment fonctionne l'assurance tous risques ?",
+      a: "Tous nos véhicules sont couverts par une assurance tous risques premium. En cas d'incident, vous bénéficiez d'une franchise réduite et d'une prise en charge complète des dommages matériels."
+    },
+    {
+      q: "Puis-je modifier ou annuler ma réservation ?",
+      a: "Oui, vous pouvez modifier ou annuler votre réservation gratuitement jusqu'à 24 heures avant la date de retrait prévue. Au-delà, des frais d'annulation peuvent s'appliquer."
+    },
+    {
+      q: "Le kilométrage est-il illimité ?",
+      a: "Oui, tous nos forfaits incluent un kilométrage illimité à travers le Maroc. Aucune restriction de distance ne s'applique."
+    },
+    {
+      q: "Livrez-vous le véhicule à l'aéroport ?",
+      a: "Oui, nous offrons un service de livraison et de retrait gratuit dans les principaux aéroports du Maroc (Mohammed V Casablanca, Menara Marrakech, Ibn Battouta Tanger)."
+    },
+    {
+      q: "Un dépôt de garantie est-il requis ?",
+      a: "Un blocage de caution est effectué sur votre carte bancaire lors de la prise en charge du véhicule. Le montant varie selon le type de véhicule et est entièrement remboursé à la restitution si aucun dommage n'est constaté."
+    }
+  ];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.5, duration: 0.6 }}
+      className="space-y-8"
+    >
+      <p className="section-eyebrow">Questions Fréquentes</p>
+      <div className="space-y-3">
+        {faqs.map((faq, i) => (
+          <div key={i} className="border-2 border-border rounded-xl overflow-hidden hover:border-gold/30 transition-colors">
+            <button
+              onClick={() => setOpenIndex(openIndex === i ? null : i)}
+              className="w-full flex items-center justify-between p-5 text-left bg-surface-0 hover:bg-surface-1 transition-colors"
+            >
+              <span className="text-sm font-bold text-ink-1 pr-4">{faq.q}</span>
+              {openIndex === i ? (
+                <ChevronUp size={18} className="text-gold shrink-0" />
+              ) : (
+                <ChevronDown size={18} className="text-ink-3 shrink-0" />
+              )}
+            </button>
+            <AnimatePresence>
+              {openIndex === i && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-5 pb-5 text-sm text-ink-2 leading-relaxed border-t border-border pt-4">
+                    {faq.a}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </div>
+    </motion.section>
   );
 }
