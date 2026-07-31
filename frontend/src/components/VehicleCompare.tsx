@@ -17,6 +17,14 @@ interface Vehicle {
   transmission?: string;
   gps?: boolean;
   air_conditioning?: boolean;
+  bluetooth?: boolean;
+  rear_camera?: boolean;
+  carplay?: boolean;
+  isofix?: boolean;
+  cruise_control?: boolean;
+  sunroof?: boolean;
+  leather_seats?: boolean;
+  electric_windows?: boolean;
   rating?: number;
   type?: string;
 }
@@ -37,6 +45,14 @@ function buildSpecs(t: (key: string) => string) {
     { key: "transmission", label: t("compare_spec_transmission"), icon: Settings,   getValue: (v: Vehicle) => v.transmission || "Automatique" },
     { key: "gps",          label: t("compare_spec_gps"),          icon: MapPin,     getValue: (v: Vehicle) => v.gps ? t("compare_yes") : t("compare_no") },
     { key: "ac",           label: t("compare_spec_ac"),           icon: Snowflake,  getValue: (v: Vehicle) => v.air_conditioning ? t("compare_yes") : t("compare_no") },
+    { key: "bluetooth",    label: t("compare_spec_bluetooth"),    icon: MapPin,     getValue: (v: Vehicle) => v.bluetooth ? t("compare_yes") : t("compare_no") },
+    { key: "rear_camera",  label: t("compare_spec_rear_camera"),  icon: MapPin,     getValue: (v: Vehicle) => v.rear_camera ? t("compare_yes") : t("compare_no") },
+    { key: "carplay",      label: t("compare_spec_carplay"),      icon: MapPin,     getValue: (v: Vehicle) => v.carplay ? t("compare_yes") : t("compare_no") },
+    { key: "isofix",       label: t("compare_spec_isofix"),       icon: MapPin,     getValue: (v: Vehicle) => v.isofix ? t("compare_yes") : t("compare_no") },
+    { key: "cruise",       label: t("compare_spec_cruise_control"),icon: MapPin,    getValue: (v: Vehicle) => v.cruise_control ? t("compare_yes") : t("compare_no") },
+    { key: "sunroof",      label: t("compare_spec_sunroof"),      icon: MapPin,     getValue: (v: Vehicle) => v.sunroof ? t("compare_yes") : t("compare_no") },
+    { key: "leather",      label: t("compare_spec_leather_seats"),icon: MapPin,     getValue: (v: Vehicle) => v.leather_seats ? t("compare_yes") : t("compare_no") },
+    { key: "elec_win",     label: t("compare_spec_electric_windows"),icon: MapPin,  getValue: (v: Vehicle) => v.electric_windows ? t("compare_yes") : t("compare_no") },
     { key: "rating",       label: t("compare_spec_rating"),       icon: Star,       getValue: (v: Vehicle) => v.rating ? `${v.rating}/5` : "—" },
   ];
 }

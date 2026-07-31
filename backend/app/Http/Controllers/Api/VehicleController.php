@@ -89,6 +89,12 @@ class VehicleController extends Controller
                 $query->where('air_conditioning', $request->boolean('air_conditioning'));
             }
 
+            foreach (['bluetooth', 'rear_camera', 'carplay', 'isofix', 'cruise_control', 'sunroof', 'leather_seats', 'electric_windows'] as $equipField) {
+                if ($request->has($equipField)) {
+                    $query->where($equipField, $request->boolean($equipField));
+                }
+            }
+
             if ($request->filled('seats')) {
                 $seats = (int) $request->seats;
                 if ($seats >= 7) {
@@ -192,6 +198,14 @@ class VehicleController extends Controller
             'mileage' => 'nullable|integer',
             'gps' => 'nullable|boolean',
             'air_conditioning' => 'nullable|boolean',
+            'bluetooth' => 'nullable|boolean',
+            'rear_camera' => 'nullable|boolean',
+            'carplay' => 'nullable|boolean',
+            'isofix' => 'nullable|boolean',
+            'cruise_control' => 'nullable|boolean',
+            'sunroof' => 'nullable|boolean',
+            'leather_seats' => 'nullable|boolean',
+            'electric_windows' => 'nullable|boolean',
             'insurance_date' => 'nullable|date',
             'tech_inspection_date' => 'nullable|date',
             'vignette_date' => 'nullable|date',
@@ -225,6 +239,14 @@ class VehicleController extends Controller
             'mileage' => 'nullable|integer',
             'gps' => 'nullable|boolean',
             'air_conditioning' => 'nullable|boolean',
+            'bluetooth' => 'nullable|boolean',
+            'rear_camera' => 'nullable|boolean',
+            'carplay' => 'nullable|boolean',
+            'isofix' => 'nullable|boolean',
+            'cruise_control' => 'nullable|boolean',
+            'sunroof' => 'nullable|boolean',
+            'leather_seats' => 'nullable|boolean',
+            'electric_windows' => 'nullable|boolean',
             'insurance_date' => 'nullable|date',
             'tech_inspection_date' => 'nullable|date',
             'vignette_date' => 'nullable|date',

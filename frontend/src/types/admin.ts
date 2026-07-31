@@ -35,6 +35,14 @@ export interface Vehicle {
   photos?: string[];
   gps?: boolean;
   air_conditioning?: boolean;
+  bluetooth?: boolean;
+  rear_camera?: boolean;
+  carplay?: boolean;
+  isofix?: boolean;
+  cruise_control?: boolean;
+  sunroof?: boolean;
+  leather_seats?: boolean;
+  electric_windows?: boolean;
   total_revenue?: number;
   total_maintenance_cost?: number;
   insurance_date?: string;

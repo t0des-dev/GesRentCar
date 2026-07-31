@@ -69,9 +69,12 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
   };
 
   const renderEquipmentTags = (v: DisplayVehicle) => {
-    const tags: { icon: typeof MapPin; label: string }[] = [];
-    if (v.gps) tags.push({ icon: MapPin, label: "GPS" });
-    if (v.airConditioning) tags.push({ icon: Snowflake, label: "Clim" });
+    const tags: { icon: typeof MapPin; label: string; color: string }[] = [];
+    if (v.gps) tags.push({ icon: MapPin, label: "GPS", color: "text-emerald-500" });
+    if (v.airConditioning) tags.push({ icon: Snowflake, label: "Clim", color: "text-sky-500" });
+    if (v.bluetooth) tags.push({ icon: MapPin, label: "BT", color: "text-blue-500" });
+    if (v.rearCamera) tags.push({ icon: MapPin, label: "Cam", color: "text-violet-500" });
+    if (v.carplay) tags.push({ icon: MapPin, label: "CarPlay", color: "text-indigo-500" });
     return tags;
   };
 

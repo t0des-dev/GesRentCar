@@ -148,48 +148,42 @@ export default function VehicleFormDrawer({
                   </div>
                 </div>
 
-                {/* GPS & Climatiseur */}
+                {/* Équipements */}
                 <div className="p-5 bg-surface-1 rounded-2xl border border-surface-2 space-y-4">
                   <h4 className="text-xs font-black uppercase tracking-widest text-ink-1 flex items-center gap-2 mb-2">
                      <Settings size={16} className="text-primary" /> Équipements
                   </h4>
                   <div className="grid grid-cols-2 gap-4">
-                    <label className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all hover:bg-surface-0" style={{ borderColor: vehicle.gps ? "var(--color-emerald-500)" : "var(--color-surface-3)" }}>
-                      <input
-                        type="checkbox"
-                        checked={vehicle.gps || false}
-                        onChange={e => setVehicle({...vehicle, gps: e.target.checked})}
-                        className="sr-only"
-                      />
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: vehicle.gps ? "rgb(16 185 129 / 0.1)" : "rgb(226 232 240 / 0.5)" }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vehicle.gps ? "#10B981" : "#94A3B8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-ink-1">GPS</p>
-                        <p className="text-[10px] text-ink-3 uppercase tracking-wider">{vehicle.gps ? "Installé" : "Non installé"}</p>
-                      </div>
-                    </label>
-                    <label className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all hover:bg-surface-0" style={{ borderColor: vehicle.air_conditioning ? "var(--color-emerald-500)" : "var(--color-surface-3)" }}>
-                      <input
-                        type="checkbox"
-                        checked={vehicle.air_conditioning || false}
-                        onChange={e => setVehicle({...vehicle, air_conditioning: e.target.checked})}
-                        className="sr-only"
-                      />
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: vehicle.air_conditioning ? "rgb(16 185 129 / 0.1)" : "rgb(226 232 240 / 0.5)" }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vehicle.air_conditioning ? "#10B981" : "#94A3B8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
-                          <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
-                          <line x1="12" x2="12" y1="18" y2="22"/>
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-ink-1">Climatiseur</p>
-                        <p className="text-[10px] text-ink-3 uppercase tracking-wider">{vehicle.air_conditioning ? "Climatisé" : "Sans clim"}</p>
-                      </div>
-                    </label>
+                    {[
+                      { key: "gps", label: "GPS", activeLabel: "Installé", inactiveLabel: "Non installé", color: "#10B981", path: <><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></> },
+                      { key: "air_conditioning", label: "Climatiseur", activeLabel: "Climatisé", inactiveLabel: "Sans clim", color: "#0EA5E9", path: <><path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M6 10v2a6 6 0 0 0 12 0v-2"/><line x1="12" x2="12" y1="18" y2="22"/></> },
+                      { key: "bluetooth", label: "Bluetooth", activeLabel: "Connecté", inactiveLabel: "Non disponible", color: "#3B82F6", path: <><path d="M6.5 6.5l11 11"/><path d="M21 3l-3.5 3.5"/><path d="M17 7l-1.5 1.5"/><path d="M3 21l3.5-3.5"/><path d="M7 17l1.5-1.5"/><path d="M14.5 6.5L8 13v4l6.5-6.5"/></> },
+                      { key: "rear_camera", label: "Caméra recul", activeLabel: "Installée", inactiveLabel: "Non installée", color: "#8B5CF6", path: <><path d="M2 10s3-3 5-3 5 3 5 3-3 3-5 3-5-3-5-3Z"/><circle cx="7" cy="10" r="1"/><path d="M16 10h4v4h-4z"/></> },
+                      { key: "carplay", label: "CarPlay / Android", activeLabel: "Disponible", inactiveLabel: "Non disponible", color: "#6366F1", path: <><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></> },
+                      { key: "isofix", label: "ISOFIX", activeLabel: "Installé", inactiveLabel: "Non installé", color: "#F59E0B", path: <><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></> },
+                      { key: "cruise_control", label: "Régulateur", activeLabel: "Activé", inactiveLabel: "Non équipé", color: "#14B8A6", path: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></> },
+                      { key: "sunroof", label: "Toit ouvrant", activeLabel: "Ouvrable", inactiveLabel: "Fermé", color: "#EC4899", path: <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></> },
+                      { key: "leather_seats", label: "Sièges cuir", activeLabel: "Cuir", inactiveLabel: "Tissu", color: "#A855F7", path: <><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/></> },
+                      { key: "electric_windows", label: "Vitres élec.", activeLabel: "Électriques", inactiveLabel: "Manuelles", color: "#06B6D4", path: <><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" x2="12" y1="4" y2="20"/><line x1="2" x2="22" y1="12" y2="12"/></> },
+                    ].map(eq => (
+                      <label key={eq.key} className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all hover:bg-surface-0" style={{ borderColor: vehicle[eq.key] ? `${eq.color}` : "var(--color-surface-3)" }}>
+                        <input
+                          type="checkbox"
+                          checked={vehicle[eq.key] || false}
+                          onChange={e => setVehicle({...vehicle, [eq.key]: e.target.checked})}
+                          className="sr-only"
+                        />
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: vehicle[eq.key] ? `${eq.color}15` : "rgb(226 232 240 / 0.5)" }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={vehicle[eq.key] ? eq.color : "#94A3B8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            {eq.path}
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-ink-1 truncate">{eq.label}</p>
+                          <p className="text-[10px] text-ink-3 uppercase tracking-wider">{vehicle[eq.key] ? eq.activeLabel : eq.inactiveLabel}</p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 </div>
 

@@ -16,6 +16,14 @@ export interface DisplayVehicle {
   desc?: string;
   gps?: boolean;
   airConditioning?: boolean;
+  bluetooth?: boolean;
+  rearCamera?: boolean;
+  carplay?: boolean;
+  isofix?: boolean;
+  cruiseControl?: boolean;
+  sunroof?: boolean;
+  leatherSeats?: boolean;
+  electricWindows?: boolean;
   specs?: {
     transmission?: string;
     fuel?: string;

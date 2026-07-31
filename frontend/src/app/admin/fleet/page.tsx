@@ -181,7 +181,9 @@ export default function FleetPage() {
         'brand', 'model', 'plate', 'price_per_day', 'status', 'category', 
         'type', 'mileage', 'fuel_type', 'horsepower', 'year', 'color',
         'insurance_date', 'tech_inspection_date', 'vignette_date', 'description_fr',
-        'seo_title', 'seo_description', 'og_image_url'
+        'seo_title', 'seo_description', 'og_image_url',
+        'gps', 'air_conditioning', 'bluetooth', 'rear_camera', 'carplay',
+        'isofix', 'cruise_control', 'sunroof', 'leather_seats', 'electric_windows'
       ];
 
       const cleanData: any = {};

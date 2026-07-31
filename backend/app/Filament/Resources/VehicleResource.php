@@ -119,6 +119,34 @@ class VehicleResource extends Resource
                                     ->directory('vehicles/gallery')
                                     ->columnSpanFull(),
                             ])->columns(2),
+
+                        Forms\Components\Tabs\Tab::make('Équipements')
+                            ->icon('heroicon-o-cog-6-tooth')
+                            ->schema([
+                                Forms\Components\Grid::make(3)
+                                    ->schema([
+                                        Forms\Components\Toggle::make('gps')
+                                            ->label('GPS'),
+                                        Forms\Components\Toggle::make('air_conditioning')
+                                            ->label('Climatiseur'),
+                                        Forms\Components\Toggle::make('bluetooth')
+                                            ->label('Bluetooth'),
+                                        Forms\Components\Toggle::make('rear_camera')
+                                            ->label('Caméra de recul'),
+                                        Forms\Components\Toggle::make('carplay')
+                                            ->label('Apple CarPlay / Android Auto'),
+                                        Forms\Components\Toggle::make('isofix')
+                                            ->label('Places enfants (ISOFIX)'),
+                                        Forms\Components\Toggle::make('cruise_control')
+                                            ->label('Régulateur de vitesse'),
+                                        Forms\Components\Toggle::make('sunroof')
+                                            ->label('Toit ouvrant'),
+                                        Forms\Components\Toggle::make('leather_seats')
+                                            ->label('Sièges cuir'),
+                                        Forms\Components\Toggle::make('electric_windows')
+                                            ->label('Vitres électriques'),
+                                    ]),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);

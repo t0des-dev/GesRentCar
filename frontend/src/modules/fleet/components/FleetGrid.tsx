@@ -89,6 +89,14 @@ export default function FleetGrid({
                     dynamicReason={v.dynamic_reason}
                     gps={v.gps || false}
                     airConditioning={v.air_conditioning || false}
+                    bluetooth={v.bluetooth || false}
+                    rearCamera={v.rear_camera || false}
+                    carplay={v.carplay || false}
+                    isofix={v.isofix || false}
+                    cruiseControl={v.cruise_control || false}
+                    sunroof={v.sunroof || false}
+                    leatherSeats={v.leather_seats || false}
+                    electricWindows={v.electric_windows || false}
                     layoutView={layoutView}
                     className="h-full"
                     onQuickView={() =>

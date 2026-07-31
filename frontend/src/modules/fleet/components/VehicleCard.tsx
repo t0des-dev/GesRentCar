@@ -37,6 +37,14 @@ interface VehicleCardProps {
   layoutView?: "grid" | "list";
   gps?: boolean;
   airConditioning?: boolean;
+  bluetooth?: boolean;
+  rearCamera?: boolean;
+  carplay?: boolean;
+  isofix?: boolean;
+  cruiseControl?: boolean;
+  sunroof?: boolean;
+  leatherSeats?: boolean;
+  electricWindows?: boolean;
 }
 
 export default function VehicleCard({
@@ -45,6 +53,8 @@ export default function VehicleCard({
   dynamicReason, onQuickView, onReserve, isPopular = false,
   isBestDeal = false, isNew = false, isVip = false,
   layoutView = "grid", gps = false, airConditioning = false,
+  bluetooth = false, rearCamera = false, carplay = false, isofix = false,
+  cruiseControl = false, sunroof = false, leatherSeats = false, electricWindows = false,
 }: VehicleCardProps) {
   const { t } = useTranslation();
   const { convert } = useCurrency();
@@ -230,6 +240,33 @@ export default function VehicleCard({
                   <path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/>
                   <path d="M6 10v2a6 6 0 0 0 12 0v-2"/>
                   <line x1="12" x2="12" y1="18" y2="22"/>
+                </svg>
+              </div>
+            </Tooltip>
+          )}
+          {bluetooth && (
+            <Tooltip content="Bluetooth">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-500">
+                  <path d="M6.5 6.5l11 11"/><path d="M21 3l-3.5 3.5"/><path d="M17 7l-1.5 1.5"/><path d="M3 21l3.5-3.5"/><path d="M7 17l1.5-1.5"/><path d="M14.5 6.5L8 13v4l6.5-6.5"/>
+                </svg>
+              </div>
+            </Tooltip>
+          )}
+          {rearCamera && (
+            <Tooltip content="Caméra de recul">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-violet-500">
+                  <path d="M2 10s3-3 5-3 5 3 5 3-3 3-5 3-5-3-5-3Z"/><circle cx="7" cy="10" r="1"/><path d="M16 10h4v4h-4z"/>
+                </svg>
+              </div>
+            </Tooltip>
+          )}
+          {carplay && (
+            <Tooltip content="CarPlay / Android Auto">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-indigo-500">
+                  <rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
                 </svg>
               </div>
             </Tooltip>
