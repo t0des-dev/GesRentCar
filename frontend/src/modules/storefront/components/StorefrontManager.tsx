@@ -73,12 +73,12 @@ export default function StorefrontManager() {
           concierge_config: { ...prev.concierge_config, ...currentAgency.concierge_config }
         } as StorefrontForm;
         // Inject any missing sections from the default order (e.g. newly added "services")
-        const knownIds = new Set(merged.sections_order.map((s: any) => s.id));
+        const knownIds = new Set((merged.sections_order ?? []).map((s: any) => s.id));
         const defaultOrder = defaultStorefrontForm.sections_order;
         const missing = defaultOrder.filter((s) => !knownIds.has(s.id));
         if (missing.length > 0) {
           // Insert each missing section right after its predecessor in the default order, or at end
-          const order = [...merged.sections_order];
+          const order = [...(merged.sections_order ?? [])];
           for (const sec of missing) {
             const defIdx = defaultOrder.findIndex((d) => d.id === sec.id);
             // find the section that comes before it in default order

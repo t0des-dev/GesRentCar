@@ -10,7 +10,7 @@ interface BusinessSettingsProps {
 }
 
 export default function BusinessSettings({ form, setForm }: BusinessSettingsProps) {
-  const addOffer = () => setForm({ ...form, special_offers: [...form.special_offers, { category: "standard", discount: 10, end_date: "", active: true }] });
+  const addOffer = () => setForm({ ...form, special_offers: [...(form.special_offers ?? []), { category: "standard", discount: 10, end_date: "", active: true }] });
   
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
@@ -31,12 +31,12 @@ export default function BusinessSettings({ form, setForm }: BusinessSettingsProp
           <h3 className="text-xl font-black text-slate-900">Offres Spéciales</h3>
           <button onClick={addOffer} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest"><Plus size={14} /> Nouvelle Offre</button>
         </div>
-        {form.special_offers.map((offer: any, i: number) => (
+        {(form.special_offers ?? []).map((offer: any, i: number) => (
           <div key={i} className="p-6 bg-slate-50 border border-slate-100 rounded-3xl grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Catégorie</label><select value={offer.category} onChange={e => { const o = [...form.special_offers]; o[i].category = e.target.value; setForm({...form, special_offers: o}); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 font-bold outline-none"><option value="eco">Eco</option><option value="standard">Standard</option><option value="suv">SUV</option><option value="luxury">Luxe</option></select></div>
-            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Remise (%)</label><input type="number" value={offer.discount} onChange={e => { const o = [...form.special_offers]; o[i].discount = Number(e.target.value); setForm({...form, special_offers: o}); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 font-bold outline-none" /></div>
-            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Date d&apos;expiration</label><div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-3"><Calendar size={14} className="text-slate-400" /><input type="date" value={offer.end_date ?? ""} onChange={e => { const o = [...form.special_offers]; o[i].end_date = e.target.value; setForm({...form, special_offers: o}); }} className="flex-1 font-bold text-sm outline-none" /></div></div>
-            <div className="flex justify-end"><button onClick={() => { const o = [...form.special_offers]; o.splice(i, 1); setForm({...form, special_offers: o}); }} className="text-red-400 hover:text-red-600"><Trash2 size={20} /></button></div>
+            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Catégorie</label><select value={offer.category} onChange={e => { const o = [...(form.special_offers ?? [])]; o[i].category = e.target.value; setForm({...form, special_offers: o}); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 font-bold outline-none"><option value="eco">Eco</option><option value="standard">Standard</option><option value="suv">SUV</option><option value="luxury">Luxe</option></select></div>
+            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Remise (%)</label><input type="number" value={offer.discount} onChange={e => { const o = [...(form.special_offers ?? [])]; o[i].discount = Number(e.target.value); setForm({...form, special_offers: o}); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 font-bold outline-none" /></div>
+            <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-400">Date d&apos;expiration</label><div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-3"><Calendar size={14} className="text-slate-400" /><input type="date" value={offer.end_date ?? ""} onChange={e => { const o = [...(form.special_offers ?? [])]; o[i].end_date = e.target.value; setForm({...form, special_offers: o}); }} className="flex-1 font-bold text-sm outline-none" /></div></div>
+            <div className="flex justify-end"><button onClick={() => { const o = [...(form.special_offers ?? [])]; o.splice(i, 1); setForm({...form, special_offers: o}); }} className="text-red-400 hover:text-red-600"><Trash2 size={20} /></button></div>
           </div>
         ))}
       </div>

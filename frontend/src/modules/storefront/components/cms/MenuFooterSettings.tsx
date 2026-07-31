@@ -10,9 +10,9 @@ interface MenuFooterSettingsProps {
 }
 
 export default function MenuFooterSettings({ form, setForm }: MenuFooterSettingsProps) {
-  const addMenuLink = () => setForm({ ...form, header_config: { ...form.header_config, menu_links: [...form.header_config.menu_links, { label: "Nouveau", url: "#" }] } });
+  const addMenuLink = () => setForm({ ...form, header_config: { ...form.header_config, menu_links: [...(form.header_config.menu_links ?? []), { label: "Nouveau", url: "#" }] } });
   const removeMenuLink = (i: number) => {
-    const links = [...form.header_config.menu_links];
+    const links = [...(form.header_config.menu_links ?? [])];
     links.splice(i, 1);
     setForm({ ...form, header_config: { ...form.header_config, menu_links: links } });
   };
@@ -25,10 +25,10 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
           <button onClick={addMenuLink} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2"><Plus size={14} /> Ajouter un lien</button>
         </div>
         <div className="space-y-3">
-          {form.header_config.menu_links.map((link: any, i: number) => (
+          {(form.header_config.menu_links ?? []).map((link: any, i: number) => (
             <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 p-4 rounded-2xl">
-              <input type="text" value={link.label ?? ""} onChange={e => { const l = [...form.header_config.menu_links]; l[i].label = e.target.value; setForm({...form, header_config: {...form.header_config, menu_links: l}}); }} className="flex-1 text-sm font-bold outline-none" />
-              <input type="text" value={link.url ?? ""} onChange={e => { const l = [...form.header_config.menu_links]; l[i].url = e.target.value; setForm({...form, header_config: {...form.header_config, menu_links: l}}); }} className="flex-1 text-sm font-bold text-slate-400 outline-none" />
+              <input type="text" value={link.label ?? ""} onChange={e => { const l = [...(form.header_config.menu_links ?? [])]; l[i].label = e.target.value; setForm({...form, header_config: {...form.header_config, menu_links: l}}); }} className="flex-1 text-sm font-bold outline-none" />
+              <input type="text" value={link.url ?? ""} onChange={e => { const l = [...(form.header_config.menu_links ?? [])]; l[i].url = e.target.value; setForm({...form, header_config: {...form.header_config, menu_links: l}}); }} className="flex-1 text-sm font-bold text-slate-400 outline-none" />
               <button onClick={() => removeMenuLink(i)} className="p-2 text-slate-300 hover:text-red-500"><Trash2 size={16} /></button>
             </div>
           ))}

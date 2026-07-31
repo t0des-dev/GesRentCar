@@ -41,7 +41,7 @@ export default function SEOManager({ config, onChange }: SEOManagerProps) {
             />
             <p className="text-[9px] text-slate-400 font-medium px-1 flex justify-between">
               <span>Recommandé: 50-60 caractères</span>
-              <span className={cn(config.title.length > 60 ? "text-rose-500" : "text-emerald-500")}>{config.title.length} caractères</span>
+              <span className={cn((config.title ?? "").length > 60 ? "text-rose-500" : "text-emerald-500")}>{(config.title ?? "").length} caractères</span>
             </p>
           </div>
 
@@ -56,7 +56,7 @@ export default function SEOManager({ config, onChange }: SEOManagerProps) {
             />
             <p className="text-[9px] text-slate-400 font-medium px-1 flex justify-between">
               <span>Recommandé: 150-160 caractères</span>
-              <span className={cn(config.description.length > 160 ? "text-rose-500" : "text-emerald-500")}>{config.description.length} caractères</span>
+              <span className={cn((config.description ?? "").length > 160 ? "text-rose-500" : "text-emerald-500")}>{(config.description ?? "").length} caractères</span>
             </p>
           </div>
 

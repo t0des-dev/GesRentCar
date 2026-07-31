@@ -32,7 +32,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
     onSelectSection?.(id);
   };
 
-  const selected = form.sections_order.find((s) => s.id === selectedSection);
+  const selected = (form.sections_order ?? []).find((s) => s.id === selectedSection);
   const key = selectedSection ? contentKey(selectedSection) : null;
 
   const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner" || id === "dual_cta";
