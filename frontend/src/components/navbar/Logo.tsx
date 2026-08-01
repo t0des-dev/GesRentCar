@@ -35,7 +35,7 @@ export default function Logo({ className }: { className?: string }) {
   const h = cfg.height || "36px";
   const bgRaw = cfg.background || "hsl(var(--primary))";
   const bgOpacity = cfg.background_opacity ?? 1;
-  const bg = parseColor(bgRaw, bgOpacity);
+  const bg = bgRaw === "transparent" ? "transparent" : parseColor(bgRaw, bgOpacity);
   const radius = cfg.radius || "8px";
   const showName = cfg.show_name !== false;
 
@@ -55,7 +55,7 @@ export default function Logo({ className }: { className?: string }) {
       ) : (
         <div
           className="relative overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-105 shrink-0"
-          style={{ width: w, height: h, borderRadius: radius, background: bg }}
+          style={{ width: w, height: h, borderRadius: radius, background: bg === "transparent" ? "hsl(var(--primary))" : bg }}
         >
           <span className="text-white text-sm font-black tracking-tight">V</span>
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />

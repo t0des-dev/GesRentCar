@@ -12,9 +12,10 @@ interface AssetUploadProps {
   label: string;
   currentUrl?: string;
   onUploadComplete: (url: string) => void;
+  onRemove?: () => void;
 }
 
-export default function AssetUpload({ type, label, currentUrl, onUploadComplete }: AssetUploadProps) {
+export default function AssetUpload({ type, label, currentUrl, onUploadComplete, onRemove }: AssetUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -83,11 +84,21 @@ export default function AssetUpload({ type, label, currentUrl, onUploadComplete 
             <img src={getImageUrl(currentUrl)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Asset" />
             <div className="absolute inset-0 bg-ink-1/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                <Upload className="text-white" size={24} />
-               <span className="text-white text-[10px] font-black uppercase tracking-widest">Changer l'image</span>
+               <span className="text-white text-[10px] font-black uppercase tracking-widest">Changer l&apos;image</span>
             </div>
             <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[8px] font-black uppercase tracking-widest text-white">
               Actuel
             </div>
+            {onRemove && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onRemove(); }}
+                className="absolute top-4 left-4 w-8 h-8 rounded-full bg-red-500/80 backdrop-blur-md flex items-center justify-center text-white hover:bg-red-600 transition-all opacity-0 group-hover:opacity-100"
+                title="Supprimer"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-ink-3 group-hover:text-primary transition-colors">

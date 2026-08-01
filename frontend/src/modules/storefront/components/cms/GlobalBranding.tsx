@@ -135,7 +135,7 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <AssetUpload type="logo" label="Logo de l&apos;Agence" currentUrl={form.logo_url} onUploadComplete={(url) => setForm({...form, logo_url: url})} />
+            <AssetUpload type="logo" label="Logo de l&apos;Agence" currentUrl={form.logo_url} onUploadComplete={(url) => setForm({...form, logo_url: url})} onRemove={() => setForm({...form, logo_url: ""})} />
             <AssetUpload type="hero" label="Image de repli (Poster)" currentUrl={form.hero_image_url} onUploadComplete={(url) => setForm({...form, hero_image_url: url})} />
           </div>
 
@@ -180,10 +180,16 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
                     <div className="w-9 h-9 rounded-lg border-2 border-white shadow shrink-0 overflow-hidden relative">
                       <input
                         type="color"
-                        value={form.logo_config?.background ?? "#6366f1"}
+                        value={form.logo_config?.background === "transparent" ? "#ffffff" : (form.logo_config?.background ?? "#6366f1")}
                         onChange={e => setForm({...form, logo_config: {...form.logo_config, background: e.target.value}})}
                         className="absolute inset-[-5px] w-[150%] h-[150%] cursor-pointer"
+                        disabled={form.logo_config?.background === "transparent"}
                       />
+                      {form.logo_config?.background === "transparent" && (
+                        <div className="absolute inset-0 bg-white flex items-center justify-center">
+                          <div className="w-full h-full bg-[linear-gradient(45deg,#ccc_25%,transparent_25%,transparent_75%,#ccc_75%,#ccc),linear-gradient(45deg,#ccc_25%,transparent_25%,transparent_75%,#ccc_75%,#ccc)] bg-[length:8px_8px] bg-[position:0_0,4px_4px]" />
+                        </div>
+                      )}
                     </div>
                     <input
                       type="text"
@@ -191,6 +197,48 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
                       onChange={e => setForm({...form, logo_config: {...form.logo_config, background: e.target.value}})}
                       placeholder="auto"
                       className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-mono font-bold outline-none focus:border-primary transition-all"
+                    />
+                  </div>
+                  <div className="flex gap-1.5 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setForm({...form, logo_config: {...form.logo_config, background: "transparent"}})}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
+                        form.logo_config?.background === "transparent"
+                          ? "bg-primary text-white"
+                          : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      Transparent
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm({...form, logo_config: {...form.logo_config, background: ""}})}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
+                        form.logo_config?.background === ""
+                          ? "bg-primary text-white"
+                          : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
+                    >
+                      Aucun fond
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setForm({...form, logo_config: {...form.logo_config, background: "#16213E"}})}
+                      className="w-7 h-7 rounded-lg bg-[#16213E] border-2 border-white shadow-sm hover:scale-110 transition-all"
+                      title="Navy"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setForm({...form, logo_config: {...form.logo_config, background: "#D4AF37"}})}
+                      className="w-7 h-7 rounded-lg bg-[#D4AF37] border-2 border-white shadow-sm hover:scale-110 transition-all"
+                      title="Gold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setForm({...form, logo_config: {...form.logo_config, background: "#ffffff"}})}
+                      className="w-7 h-7 rounded-lg bg-white border-2 border-slate-200 shadow-sm hover:scale-110 transition-all"
+                      title="Blanc"
                     />
                   </div>
                 </div>
