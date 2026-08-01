@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList, FlaskConical, Ban, FileUp, ScrollText, FileText
+  LayoutDashboard, Calendar, Car, Palette, Users, Settings, BarChart3, Sliders, Wallet, ClipboardList, FlaskConical, Ban, FileUp, ScrollText, FileText, MapPin
 } from "lucide-react";
 import { useAuthGuard } from "@/modules/auth/hooks/useAuthGuard";
 import { useAuth } from "@/modules/auth/context/context";
@@ -38,6 +38,7 @@ function buildMenuGroups(t: (key: string) => string) {
         { icon: Ban, label: t("sidebar_item_blacklist"), href: "/admin/blacklist" },
         { icon: ScrollText, label: t("sidebar_item_audit_log"), href: "/admin/audit" },
         { icon: FileText, label: t("sidebar_item_pages") || "Pages", href: "/admin/pages" },
+        { icon: Car, label: t("sidebar_item_fleet_cms") || "Page Fleet", href: "/admin/fleet-cms" },
         { icon: Palette, label: t("sidebar_item_storefront"), href: "/admin/storefront" },
         { icon: Settings, label: t("sidebar_item_settings"), href: "/admin/settings" },
         { icon: FlaskConical, label: t("sidebar_item_demo_data"), href: "/admin/demo" },
