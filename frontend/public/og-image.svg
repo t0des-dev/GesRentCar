@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16213E"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="60" width="1080" height="510" rx="24" fill="none" stroke="#D4AF37" stroke-width="2" opacity="0.3"/>
+  <text x="600" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="96" fill="#D4AF37">VECTORIA</text>
+  <text x="600" y="340" text-anchor="middle" font-family="Arial,sans-serif" font-weight="400" font-size="36" fill="#ffffff" opacity="0.8">RENT CAR — LUXURY MOBILITY</text>
+  <text x="600" y="420" text-anchor="middle" font-family="Arial,sans-serif" font-weight="300" font-size="24" fill="#ffffff" opacity="0.5">Casablanca, Morocco</text>
+  <circle cx="600" cy="500" r="4" fill="#D4AF37"/>
+</svg>

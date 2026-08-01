@@ -18,7 +18,7 @@ export default function JsonLd({ agency }: JsonLdProps) {
     "url": typeof window !== "undefined" ? window.location.origin : "https://vectoria-rent.com",
     "telephone": agency?.phone || "+212600000000",
     "email": agency?.email || "contact@vectoria-rent.com",
-    "image": typeof window !== "undefined" ? `${window.location.origin}/og-image.jpg` : "",
+    "image": typeof window !== "undefined" ? `${window.location.origin}/og-image.svg` : "",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Marrakech",

@@ -59,8 +59,21 @@ export default function MobileMenu({
             {/* Header */}
             <div>
               <div className="flex items-center justify-between p-5 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                <div className="flex items-center gap-3">
+                  {agency.logo_url ? (
+                    <img
+                      src={agency.logo_url}
+                      alt={agency.agency_name || "Vectoria"}
+                      className="object-contain"
+                      style={{
+                        width: agency.logo_config?.width || "28px",
+                        height: agency.logo_config?.height || "28px",
+                        borderRadius: agency.logo_config?.radius || "6px",
+                      }}
+                    />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                  )}
                   <span className="font-extrabold text-sm uppercase tracking-widest text-white">{t("mobile_menu_title")}</span>
                 </div>
                 <button

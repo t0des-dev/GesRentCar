@@ -52,6 +52,15 @@ export const metadata: Metadata = {
   title: "VectoriaRentCar - Premium Car Rental",
   description: "Location de véhicules premium au Maroc. Flotte d'exception, service conciergerie 24/7.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
+    ],
+    apple: [
+      { url: "/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -64,7 +73,7 @@ export const metadata: Metadata = {
     siteName: "VectoriaRentCar",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
       },
@@ -76,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VectoriaRentCar",
     description: "Premium car rental ecosystem.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.svg"],
   },
 };
 

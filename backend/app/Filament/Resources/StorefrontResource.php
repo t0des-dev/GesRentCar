@@ -85,6 +85,15 @@ class StorefrontResource extends Resource
                             ->placeholder('ex: 40px'),
                         Forms\Components\TextInput::make('logo_config.background')
                             ->label('Fond logo'),
+                        Forms\Components\TextInput::make('logo_config.background_opacity')
+                            ->label('Opacite fond (0-1)')
+                            ->placeholder('ex: 0.8')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(1),
+                        Forms\Components\TextInput::make('logo_config.radius')
+                            ->label('Rayon bordure')
+                            ->placeholder('ex: 8px'),
                         Forms\Components\Toggle::make('logo_config.show_name')
                             ->label('Afficher le nom a cote du logo')
                             ->default(true),

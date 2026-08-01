@@ -151,14 +151,15 @@ class ContractController extends Controller
         $addressRow = Setting::where('key', 'agency_address')->first();
         $phoneRow = Setting::where('key', 'agency_phone')->first();
         $emailRow = Setting::where('key', 'agency_email')->first();
-        $logoRow = Setting::where('key', 'agency_logo_url')->first();
+        $configRow = Setting::where('key', 'agency_config')->first();
+        $config = is_array($configRow?->value) ? $configRow->value : [];
 
         return [
-            'agencyName' => $nameRow?->value ?? 'Vectoria Rent Car',
+            'agencyName' => $nameRow?->value ?? $config['name'] ?? 'Vectoria Rent Car',
             'agencyAddress' => $addressRow?->value ?? 'Casablanca, Maroc',
             'agencyPhone' => $phoneRow?->value ?? '+212 5 22 XX XX XX',
             'agencyEmail' => $emailRow?->value ?? 'contact@vectoria.ma',
-            'agencyLogo' => $logoRow?->value ?? null,
+            'agencyLogo' => $config['logo_url'] ?? null,
             'agencyRC' => '160455',
         ];
     }

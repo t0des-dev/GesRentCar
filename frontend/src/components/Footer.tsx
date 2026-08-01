@@ -83,9 +83,22 @@ export default function Footer() {
           {/* Column 1: Brand & Tagline */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3 group w-fit">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center text-white font-bold text-lg tracking-wider">
-                V
-              </div>
+              {agency.logo_url ? (
+                <img
+                  src={agency.logo_url}
+                  alt={agency.agency_name || "Vectoria"}
+                  className="object-contain"
+                  style={{
+                    width: agency.logo_config?.width || "48px",
+                    height: agency.logo_config?.height || "48px",
+                    borderRadius: agency.logo_config?.radius || "8px",
+                  }}
+                />
+              ) : (
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center text-white font-bold text-lg tracking-wider">
+                  V
+                </div>
+              )}
               <div className="flex flex-col">
                 <span className="text-lg font-bold tracking-tight text-ink-1">
                   {agency.agency_name || "Vectoria Rent"}

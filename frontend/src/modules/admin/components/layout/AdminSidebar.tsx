@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { useState, useMemo } from "react";
+import { useAgency } from "@/hooks/useAgency";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -45,6 +46,7 @@ export default function AdminSidebar({
 }: AdminSidebarProps) {
   const [search, setSearch] = useState("");
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const agency = useAgency();
 
   const toggleMenu = (label: string) => {
     setOpenMenus(prev => prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]);
@@ -66,11 +68,24 @@ export default function AdminSidebar({
       {/* Header Logo */}
       <div className="h-16 flex items-center px-5 border-b border-border shrink-0">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-gold/80 flex items-center justify-center shadow-md">
-            <span className="text-sm font-bold text-ink-1 italic">V</span>
-          </div>
+          {agency.logo_url ? (
+            <img
+              src={agency.logo_url}
+              alt={agency.agency_name || "Vectoria"}
+              className="object-contain"
+              style={{
+                width: agency.logo_config?.width || "32px",
+                height: agency.logo_config?.height || "32px",
+                borderRadius: agency.logo_config?.radius || "8px",
+              }}
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-gold/80 flex items-center justify-center shadow-md">
+              <span className="text-sm font-bold text-ink-1 italic">V</span>
+            </div>
+          )}
           {(!isCollapsed || isMobileOpen) && (
-             <span className="font-bold text-ink-1 tracking-tight">Vectoria<span className="text-gold">Admin</span></span>
+             <span className="font-bold text-ink-1 tracking-tight">{agency.agency_name || "Vectoria"}<span className="text-gold">Admin</span></span>
           )}
         </Link>
         {isMobileOpen && (
