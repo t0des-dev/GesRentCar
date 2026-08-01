@@ -285,6 +285,7 @@ export interface ComparatorVehicle {
 export interface StorefrontForm {
   name: string;
   slogan: string;
+  show_slogan?: boolean;
   primary_color: string;
   logo_url: string;
   logo_config?: {

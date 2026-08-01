@@ -131,7 +131,21 @@ export default function GlobalBranding({ form, setForm }: GlobalBrandingProps) {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Slogan Principal</label>
-              <input type="text" value={form.slogan ?? ""} onChange={e => setForm({...form, slogan: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none focus:bg-white focus:border-primary transition-all" />
+              <div className="flex gap-3">
+                <input type="text" value={form.slogan ?? ""} onChange={e => setForm({...form, slogan: e.target.value})} className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 font-bold outline-none focus:bg-white focus:border-primary transition-all" />
+                <button
+                  type="button"
+                  onClick={() => setForm({...form, show_slogan: form.show_slogan === false ? true : false})}
+                  className={`shrink-0 px-4 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all ${
+                    form.show_slogan !== false
+                      ? "bg-primary text-white"
+                      : "bg-slate-200 text-slate-500 hover:bg-slate-300"
+                  }`}
+                  title={form.show_slogan !== false ? "Masquer le slogan" : "Afficher le slogan"}
+                >
+                  {form.show_slogan !== false ? "Visibile" : "Masqué"}
+                </button>
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

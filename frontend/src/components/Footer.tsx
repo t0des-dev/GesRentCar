@@ -107,9 +107,11 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="text-sm leading-relaxed text-ink-3 max-w-sm subtitle-serif">
-              {agency.agency_slogan || t("footer_default_slogan")}
-            </p>
+            {agency.show_slogan !== false && (
+              <p className="text-sm leading-relaxed text-ink-3 max-w-sm subtitle-serif">
+                {agency.agency_slogan || t("footer_default_slogan")}
+              </p>
+            )}
 
             {/* Social Icons */}
             <div className="flex gap-2 mt-2">

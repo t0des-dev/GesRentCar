@@ -14,6 +14,7 @@ export interface NavLink {
 export interface AgencyConfig {
   agency_name: string;
   agency_slogan: string;
+  show_slogan?: boolean;
   primary_color: string;
   logo_url?: string;
   logo_config?: {
@@ -216,6 +217,7 @@ const DEFAULT_SECTIONS_CONTENT: SectionsContent = {
 const DEFAULT_CONFIG: AgencyConfig = {
   agency_name: "Vectoria Rent Car",
   agency_slogan: "Premium Car Rental Experience",
+  show_slogan: true,
   primary_color: "#6366f1",
   logo_url: "",
   hero_video_url: "",

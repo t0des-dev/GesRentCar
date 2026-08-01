@@ -62,9 +62,9 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
   };
 
   return (
-    <div className="relative -mx-6 lg:-mx-8 -mt-36 mb-12">
+    <div className="relative -mx-6 lg:-mx-8 -mt-32 mb-12">
       {/* Hero Background */}
-      <div className="relative h-[420px] overflow-hidden">
+      <div className="relative h-[380px] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
@@ -80,9 +80,9 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-2 text-white/50 text-xs font-medium mb-6"
           >
-            <Link href="/" className="hover:text-white/80 transition-colors">Accueil</Link>
+            <Link href="/" className="hover:text-white/80 transition-colors">{t("nav_home") || "Accueil"}</Link>
             <ChevronRight size={12} />
-            <span className="text-white/90">Fleet</span>
+            <span className="text-white/90">{t("nav_fleet") || "Flotte"}</span>
           </motion.div>
 
           {/* Eyebrow */}
