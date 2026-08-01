@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTranslation } from "@/shared/hooks/useTranslation";
-import { Plane, Crown, Shield, Clock, MapPin, Phone, Headphones, Car, Sparkles, Briefcase, Baby, Camera } from "lucide-react";
+import { useStorefront } from "@/hooks/useStorefront";
+import { 
+  Plane, Crown, Shield, Clock, MapPin, Phone, Headphones, Car, 
+  Briefcase, Baby, Camera, Globe, Users, Award, Star, Zap 
+} from "lucide-react";
 import Link from "next/link";
 
 const fadeUp = {
@@ -13,14 +16,28 @@ const fadeUp = {
   }),
 };
 
-export default function ServicesPage() {
-  const { t } = useTranslation();
+const ICON_MAP: Record<string, any> = {
+  Plane, Crown, Shield, Clock, MapPin, Phone, Headphones, Car, Briefcase, Baby, Camera, Globe, Users, Award, Star, Zap
+};
 
-  const mainServices = [
-    { icon: Plane, title: "Livraison Aéroport", desc: "Accueil personnalisé à l'aéroport Mohammed V. Votre véhicule vous attend, clés en main.", color: "text-blue-600", bg: "bg-blue-50" },
-    { icon: Crown, title: "Service VIP", desc: "Conciergerie dédiée, véhicule haut de gamme, conducteur privé sur demande.", color: "text-gold", bg: "bg-amber-50" },
-    { icon: Clock, title: "Location Longue Durée", desc: "Tarifs dégressifs pour les séjours de 7 jours et plus. Flexibilité totale.", color: "text-emerald-600", bg: "bg-emerald-50" },
-    { icon: Shield, title: "Assurance Premium", desc: "Couverture complète zéro franchise. Conduisez l'esprit tranquille.", color: "text-violet-600", bg: "bg-violet-50" },
+function getIconComponent(iconName?: string, defaultIcon = Shield) {
+  if (!iconName) return defaultIcon;
+  return ICON_MAP[iconName] || defaultIcon;
+}
+
+export default function ServicesPage() {
+  const storefront = useStorefront();
+  const servicesContent = storefront.sections_content?.services || {};
+
+  const eyebrow = servicesContent.eyebrow || "Nos Services";
+  const title = servicesContent.title || "Un service d'exception à chaque étape";
+  const subtitle = servicesContent.subtitle || "De la réservation au retour du véhicule, Vectoria vous accompagne avec un service premium pensé pour les voyageurs exigeants.";
+
+  const dynamicItems = servicesContent.items || [
+    { id: "srv-1", title: "Livraison Aéroport 24/7", description: "Accueil personnalisé dès votre descente d'avion avec gestion VIP des bagages.", icon: "Plane", badge: "24/7", color: "blue" },
+    { id: "srv-2", title: "Service Conciergerie VIP", description: "Conciergerie dédiée, véhicule haut de gamme, conducteur privé sur demande.", icon: "Crown", badge: "VIP", color: "amber" },
+    { id: "srv-3", title: "Location Longue Durée", description: "Tarifs dégressifs pour les séjours de 7 jours et plus. Flexibilité totale.", icon: "Clock", badge: "Flex", color: "emerald" },
+    { id: "srv-4", title: "Assurance Premium", description: "Couverture complète zéro franchise. Conduisez l'esprit tranquille.", icon: "Shield", badge: "Tranquillité", color: "violet" },
   ];
 
   const extraServices = [
@@ -36,12 +53,12 @@ export default function ServicesPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-10" />
         <div className="container mx-auto px-6 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-3xl">
-            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">Nos Services</p>
+            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">{eyebrow}</p>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-6">
-              Un service <span className="text-gold">d&apos;exception</span> à chaque étape
+              {title}
             </h1>
             <p className="text-white/70 text-lg leading-relaxed">
-              De la réservation au retour du véhicule, Vectoria vous accompagne avec un service premium pensé pour les voyageurs exigeants.
+              {subtitle}
             </p>
           </motion.div>
         </div>
@@ -49,24 +66,32 @@ export default function ServicesPage() {
 
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {mainServices.map((svc, i) => (
-              <motion.div
-                key={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                custom={i}
-                className="bg-white rounded-3xl border border-slate-100 p-8 hover:shadow-xl transition-all group"
-              >
-                <div className={`w-14 h-14 rounded-2xl ${svc.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                  <svc.icon size={24} className={svc.color} />
-                </div>
-                <h3 className="text-xl font-black text-slate-900 mb-3">{svc.title}</h3>
-                <p className="text-slate-500 leading-relaxed">{svc.desc}</p>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {dynamicItems.map((svc: any, i: number) => {
+              const IconComp = getIconComponent(svc.icon, Shield);
+              return (
+                <motion.div
+                  key={svc.id || i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                  custom={i}
+                  className="bg-white rounded-3xl border border-slate-100 p-8 hover:shadow-xl transition-all group relative overflow-hidden"
+                >
+                  {svc.badge && (
+                    <span className="absolute top-6 right-6 text-[10px] font-black uppercase tracking-wider bg-gold/10 text-gold px-3 py-1 rounded-full">
+                      {svc.badge}
+                    </span>
+                  )}
+                  <div className="w-14 h-14 rounded-2xl bg-amber-50 text-gold flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <IconComp size={24} />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 mb-3">{svc.title}</h3>
+                  <p className="text-slate-500 leading-relaxed text-sm">{svc.description || svc.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -114,3 +139,4 @@ export default function ServicesPage() {
     </main>
   );
 }
+

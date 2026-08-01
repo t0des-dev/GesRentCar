@@ -135,92 +135,110 @@ function FleetSidebar({
   onFilterChange,
   onReset,
   vehicleCounts,
+  fleetConfig,
 }: {
   filters: FleetFilterState;
   onFilterChange: (key: keyof FleetFilterState, value: any) => void;
   onReset: () => void;
   vehicleCounts: Record<string, number>;
+  fleetConfig?: Record<string, any>;
 }) {
+  const showCategory = fleetConfig?.show_category_filter !== false;
+  const showTransmission = fleetConfig?.show_transmission_filter !== false;
+  const showFuel = fleetConfig?.show_fuel_filter !== false;
+  const showSeats = fleetConfig?.show_seats_filter !== false;
+  const showPrice = fleetConfig?.show_price_filter !== false;
+
   return (
     <aside className="w-full lg:w-[280px] shrink-0">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sticky top-28">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-base font-bold text-slate-900">Filters</h3>
+          <h3 className="text-base font-bold text-slate-900">Filtres</h3>
           {(filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.fuelType !== "All" || filters.maxPrice < 3000) && (
             <button
               onClick={onReset}
               className="text-[11px] font-semibold text-red-500 hover:text-red-600 transition-colors"
             >
-              Reset all filters
+              Réinitialiser
             </button>
           )}
         </div>
 
-        <FilterSection title="Category" defaultOpen={true}>
-          {CATEGORIES.map((cat) => (
-            <CheckboxItem
-              key={cat.id}
-              label={cat.label}
-              count={vehicleCounts[`cat_${cat.id}`]}
-              checked={filters.type === cat.id}
-              onChange={() => onFilterChange("type", cat.id)}
-            />
-          ))}
-        </FilterSection>
+        {showCategory && (
+          <FilterSection title="Catégorie" defaultOpen={true}>
+            {CATEGORIES.map((cat) => (
+              <CheckboxItem
+                key={cat.id}
+                label={cat.label}
+                count={vehicleCounts[`cat_${cat.id}`]}
+                checked={filters.type === cat.id}
+                onChange={() => onFilterChange("type", cat.id)}
+              />
+            ))}
+          </FilterSection>
+        )}
 
-        <FilterSection title="Transmission" defaultOpen={false}>
-          {TRANSMISSIONS.map((tr) => (
-            <CheckboxItem
-              key={tr.id}
-              label={tr.label}
-              count={vehicleCounts[`tr_${tr.id}`]}
-              checked={filters.transmission === tr.id}
-              onChange={() => onFilterChange("transmission", tr.id)}
-            />
-          ))}
-        </FilterSection>
+        {showTransmission && (
+          <FilterSection title="Transmission" defaultOpen={false}>
+            {TRANSMISSIONS.map((tr) => (
+              <CheckboxItem
+                key={tr.id}
+                label={tr.label}
+                count={vehicleCounts[`tr_${tr.id}`]}
+                checked={filters.transmission === tr.id}
+                onChange={() => onFilterChange("transmission", tr.id)}
+              />
+            ))}
+          </FilterSection>
+        )}
 
-        <FilterSection title="Fuel" defaultOpen={false}>
-          {FUEL_TYPES.map((f) => (
-            <CheckboxItem
-              key={f.id}
-              label={f.label}
-              count={vehicleCounts[`fuel_${f.id}`]}
-              checked={filters.fuelType === f.id}
-              onChange={() => onFilterChange("fuelType", f.id)}
-            />
-          ))}
-        </FilterSection>
+        {showFuel && (
+          <FilterSection title="Carburant" defaultOpen={false}>
+            {FUEL_TYPES.map((f) => (
+              <CheckboxItem
+                key={f.id}
+                label={f.label}
+                count={vehicleCounts[`fuel_${f.id}`]}
+                checked={filters.fuelType === f.id}
+                onChange={() => onFilterChange("fuelType", f.id)}
+              />
+            ))}
+          </FilterSection>
+        )}
 
-        <FilterSection title="Seats" defaultOpen={false}>
-          {SEATS.map((s) => (
-            <CheckboxItem
-              key={s.id}
-              label={s.id === "All" ? "All" : `${s.id} seats`}
-              count={vehicleCounts[`seats_${s.id}`]}
-              checked={filters.seats === s.id}
-              onChange={() => onFilterChange("seats", s.id)}
-            />
-          ))}
-        </FilterSection>
+        {showSeats && (
+          <FilterSection title="Nombre de places" defaultOpen={false}>
+            {SEATS.map((s) => (
+              <CheckboxItem
+                key={s.id}
+                label={s.id === "All" ? "Tous" : `${s.id} places`}
+                count={vehicleCounts[`seats_${s.id}`]}
+                checked={filters.seats === s.id}
+                onChange={() => onFilterChange("seats", s.id)}
+              />
+            ))}
+          </FilterSection>
+        )}
 
-        <FilterSection title="Price / Day" defaultOpen={true}>
-          <div className="px-2 pt-2">
-            <input
-              type="range"
-              min={200}
-              max={5000}
-              step={50}
-              value={filters.maxPrice}
-              onChange={(e) => onFilterChange("maxPrice", Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#16213E]"
-            />
-            <div className="flex justify-between mt-3">
-              <span className="text-[12px] font-semibold text-slate-500">300 MAD</span>
-              <span className="text-[12px] font-semibold text-slate-500">{filters.maxPrice.toLocaleString()} MAD</span>
+        {showPrice && (
+          <FilterSection title="Prix / Jour" defaultOpen={true}>
+            <div className="px-2 pt-2">
+              <input
+                type="range"
+                min={200}
+                max={5000}
+                step={50}
+                value={filters.maxPrice}
+                onChange={(e) => onFilterChange("maxPrice", Number(e.target.value))}
+                className="w-full h-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#16213E]"
+              />
+              <div className="flex justify-between mt-3">
+                <span className="text-[12px] font-semibold text-slate-500">200 MAD</span>
+                <span className="text-[12px] font-semibold text-slate-500">{filters.maxPrice.toLocaleString()} MAD</span>
+              </div>
             </div>
-          </div>
-        </FilterSection>
+          </FilterSection>
+        )}
       </div>
     </aside>
   );
@@ -256,7 +274,7 @@ function FleetContent() {
   const {
     sorted, isLoading, loadMore, hasMore
   } = useFleetData({
-    pageSize: fleetSettings.pageSize,
+    pageSize: Number(fleetConfig.page_size) || fleetSettings.pageSize,
     search,
     filters,
     sortBy,
@@ -290,7 +308,6 @@ function FleetContent() {
 
   const vehicleCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    const data = [];
     return counts;
   }, []);
 
@@ -345,7 +362,7 @@ function FleetContent() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Sort by:</span>
+              <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Trier par:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -366,6 +383,7 @@ function FleetContent() {
             onFilterChange={handleFilterChange}
             onReset={resetFilters}
             vehicleCounts={vehicleCounts}
+            fleetConfig={fleetConfig}
           />
 
           <div className="flex-1 min-w-0">

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/shared/utils";
+import { useAgency } from "@/hooks/useAgency";
 
 function FacebookIcon({ size = 16 }: { size?: number }) {
   return (
@@ -55,6 +56,16 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
+  const agency = useAgency();
+  const footerConfig = agency.footer_config || {};
+
+  const address = footerConfig.address || "Sidi Maârouf, Casablanca, Maroc";
+  const phone = footerConfig.phone || "+212 6 00 00 00 00";
+  const email = footerConfig.email || "contact@vectoria.com";
+  const facebookUrl = footerConfig.social_links?.facebook || "https://facebook.com";
+  const instagramUrl = footerConfig.social_links?.instagram || "https://instagram.com";
+  const whatsappNumber = footerConfig.social_links?.whatsapp || "212600000000";
+
   const [form, setForm] = useState<FormData>({
     name: "",
     email: "",
@@ -111,17 +122,17 @@ export default function ContactPage() {
     {
       icon: MapPin,
       label: "Adresse",
-      value: "Sidi Maârouf, Casablanca, Maroc",
+      value: address,
     },
     {
       icon: Phone,
       label: "Téléphone",
-      value: "+212 6 00 00 00 00",
+      value: phone,
     },
     {
       icon: Mail,
       label: "Email",
-      value: "contact@vectoria.com",
+      value: email,
     },
   ];
 
@@ -377,7 +388,7 @@ export default function ContactPage() {
                 </p>
                 <div className="flex gap-3">
                   <a
-                    href="https://facebook.com"
+                    href={facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-11 h-11 rounded-xl bg-surface-2 text-ink-3 flex items-center justify-center hover:bg-gold hover:text-white transition-all hover:-translate-y-0.5"
@@ -385,7 +396,7 @@ export default function ContactPage() {
                     <FacebookIcon size={18} />
                   </a>
                   <a
-                    href="https://instagram.com"
+                    href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-11 h-11 rounded-xl bg-surface-2 text-ink-3 flex items-center justify-center hover:bg-gold hover:text-white transition-all hover:-translate-y-0.5"
@@ -397,7 +408,7 @@ export default function ContactPage() {
 
               {/* WhatsApp CTA */}
               <motion.a
-                href="https://wa.me/212600000000?text=Bonjour%20Vectoria"
+                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Bonjour%20${encodeURIComponent(agency.agency_name || 'Vectoria')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 variants={fadeUp}
@@ -440,7 +451,7 @@ export default function ContactPage() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="w-full"
-              title="Vectoria Rent Car – Casablanca"
+              title={`${agency.agency_name || 'Vectoria Rent Car'} – Casablanca`}
             />
           </motion.div>
         </div>
@@ -448,7 +459,7 @@ export default function ContactPage() {
 
       {/* ── FLOATING WHATSAPP ─────────────────────────────────────────── */}
       <a
-        href="https://wa.me/212600000000?text=Bonjour%20Vectoria"
+        href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Bonjour%20${encodeURIComponent(agency.agency_name || 'Vectoria')}`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 hover:scale-110 transition-all animate-float-subtle"
@@ -459,3 +470,4 @@ export default function ContactPage() {
     </main>
   );
 }
+

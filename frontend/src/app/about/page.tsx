@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/shared/utils";
 import { useTranslation } from "@/shared/hooks/useTranslation";
+import { useAgency } from "@/hooks/useAgency";
 import {
   Award,
   Shield,
@@ -31,7 +32,16 @@ const fadeIn = {
 };
 
 export default function AboutPage() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const agency = useAgency();
+
+  const agencyName = agency.agency_name || "Vectoria Rent Car";
+  const agencySlogan = agency.agency_slogan || "Premium Car Rental Experience";
+
+  const aboutText = 
+    (lang === "en" ? agency.about_text_en : (lang as string) === "ar" ? agency.about_text_ar : agency.about_text_fr) || 
+    agency.about_text_fr || 
+    t("about_hero_subtitle_2");
 
   const values = [
     {
@@ -85,7 +95,12 @@ export default function AboutPage() {
     },
   ];
 
-  const stats = [
+  const cmsStats = agency.stats_config?.items || [];
+  const stats = cmsStats.length > 0 ? cmsStats.map(s => ({
+    value: s.value,
+    label: s.label,
+    icon: s.icon === "Users" ? Users : s.icon === "Car" ? Car : s.icon === "Clock" ? Clock : TrendingUp
+  })) : [
     { value: "15+", label: t("about_stat_experience"), icon: TrendingUp },
     { value: "2400+", label: t("about_stat_clients"), icon: Users },
     { value: "80+", label: t("about_stat_vehicles"), icon: Car },
@@ -110,10 +125,10 @@ export default function AboutPage() {
               {t("about_hero_eyebrow")}
             </span>
             <h1 className="font-display text-ink-1 mb-8 leading-[0.95] tracking-tight text-5xl md:text-7xl lg:text-8xl">
-              Vectoria
+              {agencyName}
             </h1>
             <p className="text-ink-2 text-xl md:text-2xl leading-relaxed max-w-2xl font-medium">
-              {t("about_hero_subtitle_2")}
+              {agencySlogan}
             </p>
           </motion.div>
         </div>
@@ -171,12 +186,8 @@ export default function AboutPage() {
               </div>
 
               <div className="space-y-5 text-ink-2 body-text leading-relaxed">
-                <p>
-                  {t("about_story_para_1")}
-                </p>
-                <p>
-                  {t("about_story_para_2")}
-                </p>
+                <p>{aboutText}</p>
+                <p>{t("about_story_para_2")}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-6 pt-4">
@@ -358,3 +369,4 @@ export default function AboutPage() {
     </main>
   );
 }
+
