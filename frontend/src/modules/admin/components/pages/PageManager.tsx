@@ -1,11 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, FileText, ExternalLink, Trash2, Pencil, Eye, EyeOff, GripVertical } from "lucide-react";
+import { Plus, FileText, ExternalLink, Trash2, Pencil, Eye, EyeOff, Car, Settings } from "lucide-react";
 import { pageService } from "@/lib/api/pages";
 import type { Page } from "@/types/page";
 import { ConfirmDialog, notifyError, notifySuccess } from "@/components/Notifications";
 import PageEditor from "./PageEditor";
+import FleetCmsEditor from "../fleet/FleetCmsEditor";
+
+const SYSTEM_PAGES = [
+  {
+    id: -1,
+    slug: "fleet",
+    title: "Page Fleet",
+    description: "Hero, filtres, emplacements et paramètres de la page flotte",
+    icon: Car,
+    color: "bg-amber-100 text-amber-600",
+    system: true as const,
+  },
+  {
+    id: -2,
+    slug: "home",
+    title: "Page d'Accueil",
+    description: "Hero, sections, CTA et structure de la page d'accueil",
+    icon: Settings,
+    color: "bg-indigo-100 text-indigo-600",
+    system: true as const,
+  },
+];
 
 export default function PageManager() {
   const [pages, setPages] = useState<Page[]>([]);
@@ -14,6 +36,7 @@ export default function PageManager() {
   const [editingPage, setEditingPage] = useState<Page | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<number | null>(null);
+  const [editingSystemPage, setEditingSystemPage] = useState<string | null>(null);
 
   const fetchPages = async () => {
     setLoading(true);
@@ -105,75 +128,28 @@ export default function PageManager() {
           <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">Chargement...</p>
         </div>
-      ) : pages.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-          <FileText size={48} className="mx-auto text-slate-300 mb-4" />
-          <h3 className="text-xl font-bold text-slate-900 mb-2">Aucune page</h3>
-          <p className="text-slate-500 mb-6">Commencez par créer votre première page CMS.</p>
-          <button
-            onClick={() => { setEditingPage(null); setShowEditor(true); }}
-            className="bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:scale-105 transition-all"
-          >
-            Créer une page
-          </button>
-        </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-100">
-                <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Page</th>
-                <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Slug</th>
-                <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Template</th>
-                <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Statut</th>
-                <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Mis à jour</th>
-                <th className="text-right px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pages.map((page) => (
-                <tr key={page.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <FileText size={18} className="text-primary" />
+        <div className="space-y-6">
+          {/* System Pages */}
+          <div>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-2">Pages Système</h3>
+            <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden divide-y divide-slate-50">
+              {SYSTEM_PAGES.map((sp) => {
+                const Icon = sp.icon;
+                return (
+                  <div key={sp.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl ${sp.color} flex items-center justify-center`}>
+                        <Icon size={18} />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900">{page.title}</p>
-                        {page.meta?.seo_description && (
-                          <p className="text-xs text-slate-400 truncate max-w-[200px]">{page.meta.seo_description}</p>
-                        )}
+                        <p className="font-bold text-slate-900">{sp.title}</p>
+                        <p className="text-xs text-slate-400">{sp.description}</p>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <code className="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">/{page.slug}</code>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${templateColor(page.template)}`}>
-                      {templateLabel(page.template)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleToggleStatus(page)}
-                      className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full transition-all ${
-                        page.status === "published"
-                          ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                          : "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                      }`}
-                    >
-                      {page.status === "published" ? <Eye size={12} /> : <EyeOff size={12} />}
-                      {page.status === "published" ? "Publié" : "Brouillon"}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500">
-                    {new Date(page.updated_at).toLocaleDateString("fr-FR")}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center gap-2">
                       <a
-                        href={`/${page.slug}`}
+                        href={`/${sp.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-all"
@@ -182,34 +158,149 @@ export default function PageManager() {
                         <ExternalLink size={14} />
                       </a>
                       <button
-                        onClick={() => { setEditingPage(page); setShowEditor(true); }}
+                        onClick={() => setEditingSystemPage(sp.slug)}
                         className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all"
                         title="Modifier"
                       >
                         <Pencil size={14} />
                       </button>
-                      <button
-                        onClick={() => { setPendingDelete(page.id); setConfirmOpen(true); }}
-                        className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center text-red-500 hover:bg-red-100 transition-all"
-                        title="Supprimer"
-                      >
-                        <Trash2 size={14} />
-                      </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Custom Pages */}
+          <div>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 px-2">Pages Personnalisées</h3>
+            {pages.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-slate-200">
+                <FileText size={48} className="mx-auto text-slate-300 mb-4" />
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Aucune page</h3>
+                <p className="text-slate-500 mb-6">Commencez par créer votre première page CMS.</p>
+                <button
+                  onClick={() => { setEditingPage(null); setShowEditor(true); }}
+                  className="bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm hover:scale-105 transition-all"
+                >
+                  Créer une page
+                </button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-slate-100">
+                      <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Page</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Slug</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Template</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Statut</th>
+                      <th className="text-left px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Mis à jour</th>
+                      <th className="text-right px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pages.map((page) => (
+                      <tr key={page.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                              <FileText size={18} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-slate-900">{page.title}</p>
+                              {page.meta?.seo_description && (
+                                <p className="text-xs text-slate-400 truncate max-w-[200px]">{page.meta.seo_description}</p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <code className="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-600 font-mono">/{page.slug}</code>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-xs font-bold px-3 py-1 rounded-full ${templateColor(page.template)}`}>
+                            {templateLabel(page.template)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => handleToggleStatus(page)}
+                            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full transition-all ${
+                              page.status === "published"
+                                ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                : "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                            }`}
+                          >
+                            {page.status === "published" ? <Eye size={12} /> : <EyeOff size={12} />}
+                            {page.status === "published" ? "Publié" : "Brouillon"}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-500">
+                          {new Date(page.updated_at).toLocaleDateString("fr-FR")}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <a
+                              href={`/${page.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-all"
+                              title="Voir"
+                            >
+                              <ExternalLink size={14} />
+                            </a>
+                            <button
+                              onClick={() => { setEditingPage(page); setShowEditor(true); }}
+                              className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 hover:bg-blue-100 transition-all"
+                              title="Modifier"
+                            >
+                              <Pencil size={14} />
+                            </button>
+                            <button
+                              onClick={() => { setPendingDelete(page.id); setConfirmOpen(true); }}
+                              className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center text-red-500 hover:bg-red-100 transition-all"
+                              title="Supprimer"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
+      {/* CMS Block Editor */}
       <PageEditor
         isOpen={showEditor}
         onClose={() => { setShowEditor(false); setEditingPage(null); }}
         page={editingPage}
         onSave={handleSave}
       />
+
+      {/* Fleet System Page Editor */}
+      {editingSystemPage === "fleet" && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setEditingSystemPage(null)} />
+          <div className="relative ml-auto w-full max-w-3xl bg-[#f8fafc] h-full overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-black text-slate-900">Modifier la Page Fleet</h2>
+              <button onClick={() => setEditingSystemPage(null)} className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-all text-slate-500">
+                ✕
+              </button>
+            </div>
+            <div className="p-6">
+              <FleetCmsEditor />
+            </div>
+          </div>
+        </div>
+      )}
 
       <ConfirmDialog
         open={confirmOpen}
