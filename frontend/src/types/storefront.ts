@@ -74,6 +74,8 @@ export interface SectionOrder {
   id: string;
   label: string;
   active: boolean;
+  desktop?: boolean;
+  mobile?: boolean;
 }
 
 export interface SEOConfig {
