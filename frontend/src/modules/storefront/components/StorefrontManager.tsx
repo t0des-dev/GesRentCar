@@ -38,8 +38,7 @@ export default function StorefrontManager() {
   const [form, setForm] = useState<StorefrontForm>({ ...defaultStorefrontForm });
   const [previewSectionId, setPreviewSectionId] = useState<string | null>(null);
   const justSavedRef = useRef(false);
-
-  // Sync from API once — skip if we just saved (avoid overwriting local state)
+  // Sync from API — re-runs when agency_name changes or sections_content is updated externally (e.g. FleetCmsEditor)
   useEffect(() => {
     if (currentAgency.agency_name && !justSavedRef.current) {
       setForm(prev => {
@@ -98,7 +97,7 @@ export default function StorefrontManager() {
     }
     justSavedRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentAgency.agency_name]);
+  }, [currentAgency.agency_name, JSON.stringify(currentAgency.sections_content)]); // sections_content dep ensures fleet config changes from FleetCmsEditor are picked up
 
   const queryClient = useQueryClient();
 
@@ -150,8 +149,19 @@ export default function StorefrontManager() {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
         saveTimerRef.current = null;
-        // Fire-and-forget save on unmount
-        api.post('/config', formRef.current).catch(() => {});
+        // Fire-and-forget save on unmount — use filtered payload to avoid overwriting fleet config
+        const allowedFields = [
+          'name', 'slogan', 'primary_color', 'logo_url', 'logo_config',
+          'hero_image_url', 'hero_video_url', 'about_text_fr', 'about_text_en',
+          'about_text_ar', 'sections_config', 'category_prices', 'special_offers',
+          'header_config', 'footer_config', 'theme_config', 'stats_config',
+          'sections_order', 'testimonials', 'seo_config', 'social_hub',
+          'faq_config', 'features_config', 'concierge_config', 'sections_content',
+        ];
+        const payload = Object.fromEntries(
+          allowedFields.map(k => [k, (formRef.current as any)[k]]).filter(([, v]) => v !== undefined)
+        );
+        api.post('/config', payload).catch(() => {});
       }
     };
   }, []);
