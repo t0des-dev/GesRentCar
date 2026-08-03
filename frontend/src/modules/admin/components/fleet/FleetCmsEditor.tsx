@@ -24,7 +24,7 @@ const DEFAULT_FLEET: FleetConfig = {
   ],
   default_columns: "3",
   default_sort: "price_asc",
-  page_size: "10",
+  page_size: "12",
   show_lifestyle_filter: true,
   show_category_filter: true,
   show_transmission_filter: true,
@@ -298,9 +298,10 @@ export default function FleetCmsEditor() {
                   onChange={(e) => setField("page_size", e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-primary appearance-none cursor-pointer"
                 >
-                  <option value="6">6</option>
-                  <option value="10">10</option>
-                  <option value="15">15</option>
+                  <option value="4">4</option>
+                  <option value="8">8</option>
+                  <option value="12">12</option>
+                  <option value="16">16</option>
                   <option value="20">20</option>
                 </select>
               </div>

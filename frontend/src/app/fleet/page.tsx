@@ -17,7 +17,7 @@ import { useFleetData } from "@/modules/fleet/hooks/useFleetData";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/shared/utils";
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 12;
 const DEFAULT_COLUMNS = 3;
 
 function getFleetSettings() {

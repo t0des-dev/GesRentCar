@@ -16,7 +16,7 @@ interface FleetSettings {
 }
 
 const DEFAULTS: FleetSettings = { pageSize: 10, columns: 4 };
-const PAGE_SIZES = [6, 8, 10, 12, 16, 20];
+const PAGE_SIZES = [4, 8, 12, 16, 20, 24];
 const COLUMN_OPTIONS = [
   { value: 2, icon: Grid2X2, label: "2 col" },
   { value: 3, icon: Grid3X3, label: "3 col" },
