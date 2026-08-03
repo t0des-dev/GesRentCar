@@ -6,8 +6,7 @@ import type { ReactNode } from "react";
 import { Layers, Settings, Bot, ChevronRight, Edit3, ArrowLeft, Search } from "lucide-react";
 import SectionReorder from "./SectionReorder";
 import SectionContentEditor from "./SectionContentEditor";
-import FleetCmsEditor, { DEFAULT_FLEET } from "@/modules/admin/components/fleet/FleetCmsEditor";
-import type { StorefrontForm, StatsConfig, ConciergeConfig, FleetConfig } from "@/types/storefront";
+import type { StorefrontForm, StatsConfig, ConciergeConfig } from "@/types/storefront";
 
 interface StructureManagerProps {
   form: StorefrontForm;
@@ -36,7 +35,7 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
   const selected = (form.sections_order ?? []).find((s) => s.id === selectedSection);
   const key = selectedSection ? contentKey(selectedSection) : null;
 
-  const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner" || id === "dual_cta" || id === "faq" || id === "fleet";
+  const isFormLevel = (id: string) => id === "stats" || id === "concierge_banner" || id === "dual_cta" || id === "faq";
 
   const specialEditors: Record<string, { label: string; editor: ReactNode }> = {
     stats: {
@@ -93,15 +92,6 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
             />
           </div>
         </div>
-      ),
-    },
-    fleet: {
-      label: "Page Flotte",
-      editor: (
-        <FleetCmsEditor
-          value={(form.sections_content.fleet ?? DEFAULT_FLEET) as FleetConfig}
-          onChange={(v: FleetConfig) => setForm({ ...form, sections_content: { ...form.sections_content, fleet: v } })}
-        />
       ),
     },
   };
