@@ -76,9 +76,6 @@ export default function LifestyleSlider({ content = {} }: {
         {/* Header */}
         <div className="text-center mb-16 space-y-5">
           <div className="w-px h-8 bg-slate-900 mx-auto" />
-          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-600">
-            {content?.badge || "TESTIMONIALS"}
-          </p>
           <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto"
             style={{ fontFamily: "var(--font-sora), sans-serif" }}>
             {heading}

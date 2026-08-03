@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Phone, Mail, ArrowRight, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
-import { useState } from "react";
-import { Button } from "@/shared/ui/button";
 
 function FacebookIcon({ size = 16 }: { size?: number }) {
   return (
@@ -49,27 +47,9 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
 export default function Footer() {
   const { t } = useTranslation();
   const agency = useAgency();
-  const [email, setEmail] = useState("");
-  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const footer = agency.footer_config || {};
   const social = footer.social_links || {};
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setSubscribeStatus("loading");
-    try {
-      await new Promise(r => setTimeout(r, 1000));
-      setSubscribeStatus("success");
-      setEmail("");
-      setTimeout(() => setSubscribeStatus("idle"), 3000);
-    } catch {
-      setSubscribeStatus("error");
-      setTimeout(() => setSubscribeStatus("idle"), 3000);
-    }
-  };
 
   return (
     <footer className="bg-surface-0 border-t border-border/20 mt-auto relative overflow-hidden">
@@ -217,33 +197,6 @@ export default function Footer() {
                     {footer.email}
                   </a>
                 </div>
-              )}
-            </div>
-
-            {/* Newsletter */}
-            <div className="flex flex-col gap-3 mt-2">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-ink-1">{t("footer_newsletter_heading")}</h3>
-              <p className="text-xs text-ink-3 leading-relaxed">{t("footer_newsletter_description")}</p>
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("footer_newsletter_placeholder")}
-                  className="flex-1 bg-surface-1 border border-border rounded-lg px-3 py-2.5 text-sm text-ink-1 placeholder:text-ink-4 focus:border-gold focus:shadow-lg focus:shadow-gold/10 focus:outline-none transition-all duration-300"
-                />
-                <Button
-                  variant="gold"
-                  size="sm"
-                  type="submit"
-                  disabled={subscribeStatus === "loading"}
-                  className="w-fit"
-                >
-                  <ArrowRight size={14} />
-                </Button>
-              </form>
-              {subscribeStatus === "success" && (
-                <p className="text-xs text-emerald-600 font-medium">✓ {t("footer_subscribe_success")}</p>
               )}
             </div>
           </div>
