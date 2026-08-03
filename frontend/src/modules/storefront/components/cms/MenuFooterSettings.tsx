@@ -476,7 +476,7 @@ export default function MenuFooterSettings({ form, setForm }: MenuFooterSettings
             { key: "whatsapp", label: "WA", color: "#25D366" },
             { key: "tiktok", label: "TK", color: "#010101" },
           ].map(({ key, label, color }) => {
-            const val = (form.footer_config.social_links as Record<string, string>)?.[key];
+            const val = (form.footer_config.social_links as unknown as Record<string, string>)?.[key];
             return (
               <span
                 key={key}
