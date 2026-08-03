@@ -11,7 +11,7 @@ import { cn } from "@/shared/utils";
 import AssetUpload from "@/components/AssetUpload";
 import type { FleetConfig } from "@/types/storefront";
 
-const DEFAULT_FLEET: FleetConfig = {
+export const DEFAULT_FLEET: FleetConfig = {
   hero_image_url: "",
   hero_eyebrow: "Premium Fleet",
   hero_title: "Explorez Notre Flotte Premium",
@@ -34,23 +34,36 @@ const DEFAULT_FLEET: FleetConfig = {
   theme: "light",
 };
 
-export default function FleetCmsEditor() {
+interface FleetCmsEditorProps {
+  value?: FleetConfig;
+  onChange?: (v: FleetConfig) => void;
+}
+
+export default function FleetCmsEditor({ value, onChange }: FleetCmsEditorProps = {}) {
+  const isControlled = value !== undefined && onChange !== undefined;
   const currentAgency = useAgency();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [form, setForm] = useState<FleetConfig>(DEFAULT_FLEET);
+  const [internalForm, setInternalForm] = useState<FleetConfig>(DEFAULT_FLEET);
   const [activeTab, setActiveTab] = useState<"hero" | "locations" | "settings" | "filters">("hero");
 
   useEffect(() => {
-    if (currentAgency.sections_content?.fleet) {
-      setForm({ ...DEFAULT_FLEET, ...currentAgency.sections_content.fleet });
+    if (!isControlled && currentAgency.sections_content?.fleet) {
+      setInternalForm({ ...DEFAULT_FLEET, ...currentAgency.sections_content.fleet });
     }
-  }, [currentAgency.sections_content?.fleet]);
+  }, [currentAgency.sections_content?.fleet, isControlled]);
 
-  const setField = useCallback(<K extends keyof FleetConfig>(key: K, value: FleetConfig[K]) => {
-    setForm(prev => ({ ...prev, [key]: value }));
-  }, []);
+  const form = isControlled ? value! : internalForm;
+
+  const setField = useCallback(<K extends keyof FleetConfig>(key: K, val: FleetConfig[K]) => {
+    const next = { ...form, [key]: val };
+    if (isControlled) {
+      onChange!(next);
+    } else {
+      setInternalForm(next);
+    }
+  }, [form, isControlled, onChange]);
 
   const saveToServer = async () => {
     setLoading(true);
@@ -96,7 +109,7 @@ export default function FleetCmsEditor() {
 
   return (
     <div className="space-y-8">
-      {/* Header with save */}
+      {/* Header with tabs + save (standalone only) */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {tabs.map((tab) => (
@@ -114,17 +127,19 @@ export default function FleetCmsEditor() {
             </button>
           ))}
         </div>
-        <button
-          onClick={saveToServer}
-          disabled={loading}
-          className={cn(
-            "flex items-center gap-3 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50",
-            saved ? "bg-emerald-500 shadow-emerald-500/20" : "bg-primary shadow-primary/20 hover:bg-blue-600"
-          )}
-        >
-          {loading ? <Loader2 size={18} className="animate-spin" /> : saved ? <>✓</> : <Save size={18} />}
-          {loading ? "Sauvegarde..." : saved ? "Sauvegardé" : "Enregistrer"}
-        </button>
+        {!isControlled && (
+          <button
+            onClick={saveToServer}
+            disabled={loading}
+            className={cn(
+              "flex items-center gap-3 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-50",
+              saved ? "bg-emerald-500 shadow-emerald-500/20" : "bg-primary shadow-primary/20 hover:bg-blue-600"
+            )}
+          >
+            {loading ? <Loader2 size={18} className="animate-spin" /> : saved ? <>✓</> : <Save size={18} />}
+            {loading ? "Sauvegarde..." : saved ? "Sauvegardé" : "Enregistrer"}
+          </button>
+        )}
       </div>
 
       {/* Hero Tab */}
@@ -294,7 +309,7 @@ export default function FleetCmsEditor() {
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Véhicules par page</label>
                 <select
-                  value={form.page_size || "10"}
+                  value={form.page_size || "12"}
                   onChange={(e) => setField("page_size", e.target.value)}
                   className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold focus:outline-none focus:border-primary appearance-none cursor-pointer"
                 >
@@ -303,6 +318,7 @@ export default function FleetCmsEditor() {
                   <option value="12">12</option>
                   <option value="16">16</option>
                   <option value="20">20</option>
+                  <option value="24">24</option>
                 </select>
               </div>
               <div>

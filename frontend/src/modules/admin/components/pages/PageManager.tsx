@@ -13,7 +13,7 @@ const SYSTEM_PAGES = [
     id: -1,
     slug: "fleet",
     title: "Page Fleet",
-    description: "Hero, filtres, emplacements et paramètres de la page flotte",
+    description: "Éditez aussi via Storefront > Structure > Page Flotte",
     icon: Car,
     color: "bg-amber-100 text-amber-600",
     system: true as const,
