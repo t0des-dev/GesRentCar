@@ -280,9 +280,12 @@ export default function FeaturedVehicles({ vehicles, loading, content = {} }: Fe
               viewport={{ once: true }}
               transition={{ delay: 0.16 }}
             >
-              <Link href={content.cta_link || "/fleet"} className="nav-link-gold font-bold uppercase text-sm tracking-wider flex items-center">
+              <Link
+                href={content.cta_link || "/fleet"}
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#16213E] hover:bg-[#0f172a] text-white font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-[#16213E]/20 hover:shadow-xl hover:shadow-[#16213E]/30 active:scale-[0.98] transition-all duration-300"
+              >
                 {content.cta_text || "Voir le catalogue"}
-                <ArrowRight size={16} className="ml-2" />
+                <ArrowRight size={16} />
               </Link>
             </motion.div>
           </div>
