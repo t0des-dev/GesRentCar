@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Fuel, Users, Gauge, Star, ArrowRight, Eye, Crown, Zap, BadgeCheck, Sparkles } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useCurrency } from "@/shared/hooks/useCurrency";
-import { Button } from "@/shared/ui/button";
 import Tooltip from "@/components/Tooltip";
 
 interface VehicleCardProps {
@@ -296,22 +295,18 @@ export default function VehicleCard({
         </div>
 
         <div className="flex items-center gap-2.5 mt-auto pt-3">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               if (onReserve) { onReserve(id); return; }
               window.location.href = `/booking?vehicle=${id}`;
             }}
-            className="flex-1 h-10 px-5 rounded-xl text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider border border-gold/30 text-gold hover:bg-gold/5 transition-all duration-300"
+            className="flex-1 h-10 px-5 rounded-full bg-[#16213E] hover:bg-[#0f172a] text-white font-semibold text-[11px] sm:text-[12px] tracking-wide shadow-md shadow-[#16213E]/20 hover:shadow-lg hover:shadow-[#16213E]/30 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-1.5"
           >
-            <span className="flex items-center justify-center gap-1.5">
-              Réserver
-              <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
-            </span>
-          </Button>
+            Réserver
+            <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
+          </button>
         </div>
       </div>
     </Link>
