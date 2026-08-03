@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAgency } from '@/hooks/useAgency';
 import Image from "next/image";
 import { 
-  Save, Palette, Type, Loader2, TrendingUp, Menu, Search, Smartphone, Monitor, Eye, EyeOff, Layers, QrCode, X
+  Save, Palette, Loader2, TrendingUp, Menu, Search, Smartphone, Monitor, Eye, EyeOff, Layers, QrCode, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/shared/services/client';
@@ -22,7 +22,6 @@ import SEOManager from './cms/SEOManager';
 import GlobalBranding from './cms/GlobalBranding';
 import MenuFooterSettings from './cms/MenuFooterSettings';
 import StructureManager from './cms/StructureManager';
-import MultilingualSettings from './cms/MultilingualSettings';
 import BusinessSettings from './cms/BusinessSettings';
 
 export default function StorefrontManager() {
@@ -195,7 +194,6 @@ export default function StorefrontManager() {
     { id: 'global', label: 'Branding & Identité', icon: Palette },
     { id: 'navigation', label: 'Menu & Navigation', icon: Menu },
     { id: 'cms', label: "Structure de l'Accueil", icon: Layers },
-    { id: 'multilingual', label: 'Contenu & Langues', icon: Type },
     { id: 'seo', label: 'SEO & Social Hub', icon: Search },
     { id: 'business', label: 'Tarification & Offres', icon: TrendingUp },
   ];
@@ -254,7 +252,6 @@ export default function StorefrontManager() {
             {activeTab === 'global' && <GlobalBranding form={form} setForm={setFormAndAutoSave} />}
             {activeTab === 'navigation' && <MenuFooterSettings form={form} setForm={setFormAndAutoSave} />}
             {activeTab === 'cms' && <StructureManager form={form} setForm={setFormAndAutoSave} onNavigate={setActiveTab} onSelectSection={setPreviewSectionId} />}
-            {activeTab === 'multilingual' && <MultilingualSettings form={form} setForm={setFormAndAutoSave} />}
             {activeTab === 'seo' && <SEOManager config={form.seo_config} onChange={(seo) => setFormAndAutoSave({ ...form, seo_config: seo })} />}
             {activeTab === 'business' && <BusinessSettings form={form} setForm={setFormAndAutoSave} />}
           </AnimatePresence>
