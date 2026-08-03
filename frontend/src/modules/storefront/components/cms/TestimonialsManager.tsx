@@ -35,6 +35,16 @@ function AvatarPicker({ currentImage, onSelect, onRemove }: { currentImage?: str
   const [showPicker, setShowPicker] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const btnRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  const togglePicker = () => {
+    if (!showPicker && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 8, left: rect.left });
+    }
+    setShowPicker(!showPicker);
+  };
 
   const handleUpload = async (file: File) => {
     setUploading(true);
@@ -55,10 +65,11 @@ function AvatarPicker({ currentImage, onSelect, onRemove }: { currentImage?: str
   };
 
   return (
-    <div className="relative">
+    <>
       <div
-        onClick={() => setShowPicker(!showPicker)}
-        className="w-14 h-14 rounded-full overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 cursor-pointer hover:border-primary transition-all flex items-center justify-center"
+        ref={btnRef}
+        onClick={togglePicker}
+        className="w-14 h-14 rounded-full overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 cursor-pointer hover:border-primary transition-all flex items-center justify-center shrink-0"
       >
         {currentImage ? (
           <img src={currentImage} alt="Avatar" className="w-full h-full object-cover" />
@@ -68,66 +79,72 @@ function AvatarPicker({ currentImage, onSelect, onRemove }: { currentImage?: str
       </div>
 
       {showPicker && (
-        <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-700">Choisir un avatar</p>
-            <button onClick={() => setShowPicker(false)} className="text-slate-400 hover:text-slate-600">
-              <X size={14} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-6 gap-2">
-            {AVATARS_PRESET.map((url, i) => (
-              <button
-                key={i}
-                onClick={() => { onSelect(url); setShowPicker(false); }}
-                className={cn(
-                  "w-10 h-10 rounded-full overflow-hidden border-2 hover:scale-110 transition-all",
-                  currentImage === url ? "border-primary" : "border-transparent"
-                )}
-              >
-                <img src={url} alt="" className="w-full h-full object-cover" />
+        <>
+          <div className="fixed inset-0 z-[99]" onClick={() => setShowPicker(false)} />
+          <div
+            className="fixed z-[100] w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl p-4 space-y-3"
+            style={{ top: pos.top, left: pos.left }}
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-slate-700">Choisir un avatar</p>
+              <button onClick={() => setShowPicker(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={14} />
               </button>
-            ))}
-          </div>
+            </div>
 
-          <div className="border-t border-slate-100 pt-3">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all"
-            >
-              {uploading ? (
-                <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-              ) : (
-                <Upload size={14} />
-              )}
-              {uploading ? "Upload..." : "Uploader une image"}
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleUpload(file);
-                e.target.value = "";
-              }}
-            />
-          </div>
+            <div className="grid grid-cols-6 gap-2">
+              {AVATARS_PRESET.map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => { onSelect(url); setShowPicker(false); }}
+                  className={cn(
+                    "w-10 h-10 rounded-full overflow-hidden border-2 hover:scale-110 transition-all",
+                    currentImage === url ? "border-primary" : "border-transparent"
+                  )}
+                >
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
 
-          {currentImage && (
-            <button
-              onClick={() => { onRemove(); setShowPicker(false); }}
-              className="w-full px-4 py-2 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
-            >
-              Supprimer l'image
-            </button>
-          )}
-        </div>
+            <div className="border-t border-slate-100 pt-3">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all"
+              >
+                {uploading ? (
+                  <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                ) : (
+                  <Upload size={14} />
+                )}
+                {uploading ? "Upload..." : "Uploader une image"}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUpload(file);
+                  e.target.value = "";
+                }}
+              />
+            </div>
+
+            {currentImage && (
+              <button
+                onClick={() => { onRemove(); setShowPicker(false); }}
+                className="w-full px-4 py-2 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
+              >
+                Supprimer l'image
+              </button>
+            )}
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 
