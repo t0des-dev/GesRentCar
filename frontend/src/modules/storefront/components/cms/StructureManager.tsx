@@ -194,13 +194,13 @@ export default function StructureManager({ form, setForm, onNavigate, onSelectSe
           <div className="xl:col-span-8 space-y-8">
             {renderEditor() ?? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div onClick={() => onNavigate?.("multilingual")} className="p-8 rounded-[32px] bg-indigo-50/30 border border-indigo-100/50 group hover:bg-indigo-50 transition-all cursor-pointer">
-                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-600"><Bot size={20} /></div><span className="text-sm font-black text-slate-900">Intelligence & FAQ</span></div>
-                   <p className="text-[11px] text-slate-500 font-medium">Gérez les questions fréquentes et la bannière Concierge IA.</p>
+                <div onClick={() => onNavigate?.("navigation")} className="p-8 rounded-[32px] bg-indigo-50/30 border border-indigo-100/50 group hover:bg-indigo-50 transition-all cursor-pointer">
+                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-600"><Bot size={20} /></div><span className="text-sm font-black text-slate-900">Intelligence &amp; FAQ</span></div>
+                   <p className="text-[11px] text-slate-500 font-medium">Sélectionnez la section FAQ ou Concierge IA dans la liste pour les modifier directement.</p>
                    <div className="flex justify-end"><ChevronRight size={16} className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" /></div>
                 </div>
                 <div onClick={() => onNavigate?.("seo")} className="p-8 rounded-[32px] bg-emerald-50/30 border border-emerald-100/50 group hover:bg-emerald-50 transition-all cursor-pointer">
-                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600"><Search size={20} /></div><span className="text-sm font-black text-slate-900">SEO & Visibilité</span></div>
+                   <div className="flex items-center gap-4 mb-4"><div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600"><Search size={20} /></div><span className="text-sm font-black text-slate-900">SEO &amp; Visibilité</span></div>
                    <p className="text-[11px] text-slate-500 font-medium">Gérez le référencement de votre agence sur Google et les réseaux sociaux.</p>
                    <div className="flex justify-end"><ChevronRight size={16} className="text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" /></div>
                 </div>
