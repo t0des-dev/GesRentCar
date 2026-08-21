@@ -23,6 +23,8 @@ return [
         env('FRONTEND_URL', 'http://localhost:3000'),
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'http://localhost:8080',
+        'http://127.0.0.1:8080',
         // Vercel preview deployments
         'https://vectoria-rent-car.vercel.app',
         // Production custom domain
@@ -30,7 +32,9 @@ return [
         env('VERCEL_URL', 'https://vectoria-rent-car.vercel.app'),
     ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https?://.*#',
+    ],
 
     'allowed_headers' => ['*'],
 

@@ -40,7 +40,16 @@ export default function LoginPage() {
       else if (role === "agent") router.push("/agent");
       else router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Identifiants incorrects ou serveur injoignable.');
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.errors?.email?.[0] ||
+        err.response?.data?.errors?.password?.[0] ||
+        err.response?.data?.error ||
+        (err.code === 'ECONNABORTED' ? 'Délai d\'attente dépassé (timeout).' : null) ||
+        (err.message === 'Network Error' ? 'Impossible de joindre le serveur API. Vérifiez la connexion.' : null) ||
+        err.message ||
+        'Identifiants incorrects ou serveur injoignable.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
