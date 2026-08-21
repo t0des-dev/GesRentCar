@@ -76,12 +76,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [scheduleLogout]);
 
+function extractUser(data: any): User | null {
+  if (!data) return null;
+  const raw = data.user || data.data?.user || data.data || data;
+  if (!raw || typeof raw !== "object") return null;
+  if (raw.id === undefined && raw.email === undefined) return null;
+  return {
+    id: Number(raw.id) || 0,
+    name: String(raw.name || raw.email || "Utilisateur"),
+    email: String(raw.email || ""),
+    role: String(raw.role || "client"),
+  };
+}
+
+function extractToken(data: any): string | null {
+  if (!data) return null;
+  return data.token || data.data?.token || data.access_token || data.data?.access_token || null;
+}
+
   const fetchUser = useCallback(async () => {
     const token = localStorage.getItem("vectoria_token");
     if (!token) { setLoading(false); return; }
     try {
       const res = await api.get("/user");
-      setUser(res.data);
+      const u = extractUser(res.data);
+      setUser(u);
     } catch {
       setUser(null);
     } finally {
@@ -96,7 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!token) { if (!cancelled) setLoading(false); return; }
       try {
         const res = await api.get("/user");
-        if (!cancelled) setUser(res.data);
+        const u = extractUser(res.data);
+        if (!cancelled) setUser(u);
       } catch {
         if (!cancelled) setUser(null);
       } finally {
@@ -109,12 +129,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     await safeCsrf();
     const res = await api.post("/auth/login", { email, password });
-    const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
+    const u = extractUser(res.data);
+    if (!u) {
+      throw new Error(res.data?.message || "Données de connexion utilisateur invalides.");
+    }
     setUser(u);
     localStorage.setItem("vectoria_user", JSON.stringify(u));
-    if (res.data.token) {
-      localStorage.setItem("vectoria_token", res.data.token);
-      localStorage.setItem("auth_token", res.data.token);
+    const token = extractToken(res.data);
+    if (token) {
+      localStorage.setItem("vectoria_token", token);
+      localStorage.setItem("auth_token", token);
     }
     scheduleLogout();
     return u;
@@ -123,12 +147,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string, password_confirmation: string) => {
     await safeCsrf();
     const res = await api.post("/auth/register", { name, email, password, password_confirmation });
-    const u: User = { id: res.data.user.id, name: res.data.user.name, email: res.data.user.email, role: res.data.user.role || "client" };
+    const u = extractUser(res.data);
+    if (!u) {
+      throw new Error(res.data?.message || "Données d'enregistrement utilisateur invalides.");
+    }
     setUser(u);
     localStorage.setItem("vectoria_user", JSON.stringify(u));
-    if (res.data.token) {
-      localStorage.setItem("vectoria_token", res.data.token);
-      localStorage.setItem("auth_token", res.data.token);
+    const token = extractToken(res.data);
+    if (token) {
+      localStorage.setItem("vectoria_token", token);
+      localStorage.setItem("auth_token", token);
     }
     scheduleLogout();
     return u;
