@@ -125,6 +125,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* sont des variables build-time en Next.js
+        # Elles doivent être passées via args au moment du build Docker
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api/v1}
     container_name: vectoria-frontend
     restart: unless-stopped
     healthcheck:
@@ -135,7 +139,6 @@ services:
       start_period: 60s
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
     depends_on:
       php-fpm:
         condition: service_healthy
