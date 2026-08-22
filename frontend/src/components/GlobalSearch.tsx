@@ -15,8 +15,7 @@ interface Vehicle {
   brand: string;
   model: string;
   price_per_day: number;
-  image?: string;
-  slug: string;
+  image_url?: string | null;
 }
 
 export default function GlobalSearch() {
@@ -178,14 +177,14 @@ export default function GlobalSearch() {
                       {results.map(vehicle => (
                         <Link
                           key={vehicle.id}
-                          href={`/fleet/${vehicle.slug}`}
+                          href={`/fleet/${vehicle.id}`}
                           onClick={() => setIsOpen(false)}
                           className="group flex gap-3 p-3 rounded-xl border border-border hover:border-gold/40 bg-surface-1/50 hover:bg-surface-1 transition-all"
                         >
                           <div className="h-16 w-16 rounded-lg overflow-hidden bg-surface-2 flex-shrink-0">
-                            {vehicle.image ? (
+                            {vehicle.image_url ? (
                               <img
-                                src={getImageUrl(vehicle.image)}
+                                src={getImageUrl(vehicle.image_url)}
                                 alt={`${vehicle.brand} ${vehicle.model}`}
                                 className="h-full w-full object-cover"
                               />

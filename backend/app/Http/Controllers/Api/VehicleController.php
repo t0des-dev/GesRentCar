@@ -40,6 +40,16 @@ class VehicleController extends Controller
                 });
             }
 
+            if ($request->filled('status')) {
+                $status = strtolower($request->status);
+                if ($status === 'available') {
+                    // Véhicules réservables : ni en location ni en maintenance
+                    $query->where('status', '!=', 'maintenance');
+                } else {
+                    $query->where('status', $status);
+                }
+            }
+
             if ($request->has('brand')) {
                 $query->where('brand', 'like', '%'.$request->brand.'%');
             }

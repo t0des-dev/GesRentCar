@@ -13,8 +13,6 @@ import ReservationsTable from "@/modules/admin/components/dashboard/Reservations
 import ReservationDrawer from "@/modules/admin/components/dashboard/ReservationDrawer";
 import DocumentPreviewModal from "@/modules/admin/components/dashboard/DocumentPreviewModal";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
-
 const STATUS_TABS = [
   { id: "all", label: "Toutes", icon: FileText },
   { id: "pending", label: "En attente", icon: AlertTriangle },
@@ -117,9 +115,24 @@ export default function ReservationsPage() {
     }
   };
 
-  const handleExport = () => {
-    const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
-    window.open(`${API}/exports/reservations?token=${token}`, "_blank");
+  const handleExport = async () => {
+    try {
+      const res = await api.get("/exports/reservations", { responseType: "blob" });
+      const disposition = res.headers["content-disposition"] as string | undefined;
+      const match = disposition?.match(/filename="?([^";]+)"?/i);
+      const filename = match?.[1] ?? "reservations.csv";
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error exporting reservations", err);
+      notifyError("Erreur lors de l'export des réservations.");
+    }
   };
 
   const filteredReservations = activeTab === "all"

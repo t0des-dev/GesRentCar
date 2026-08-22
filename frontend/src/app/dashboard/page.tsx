@@ -32,6 +32,43 @@ interface Reservation {
   img?: string;
 }
 
+type ApiReservation = {
+  id: number;
+  start_date?: string;
+  end_date?: string;
+  status?: string;
+  total_price?: number | string;
+  deposit_amount?: number | string | null;
+  vehicle?: { brand?: string; model?: string; plate?: string; image_url?: string | null } | null;
+  payment?: { paid_amount?: number | string | null } | null;
+  contract?: unknown;
+};
+
+function formatDate(value?: string): string {
+  if (!value) return "";
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? value : d.toLocaleDateString("fr-FR");
+}
+
+function mapReservation(r: ApiReservation): Reservation {
+  const vehicleLabel = r.vehicle?.brand
+    ? `${r.vehicle.brand} ${r.vehicle.model ?? ""}`.trim()
+    : "Véhicule";
+  return {
+    id: r.id,
+    vehicle: vehicleLabel,
+    plate: r.vehicle?.plate ?? "",
+    startDate: formatDate(r.start_date),
+    endDate: formatDate(r.end_date),
+    totalPrice: Number(r.total_price ?? 0) || 0,
+    depositAmount: Number(r.deposit_amount ?? 0) || 0,
+    status: (r.status ?? "confirmed") as ReservationStatus,
+    paidAmount: Number(r.payment?.paid_amount ?? r.deposit_amount ?? 0) || 0,
+    hasContract: Boolean(r.contract),
+    img: r.vehicle?.image_url ?? undefined,
+  };
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"all" | ReservationStatus>("all");
@@ -41,8 +78,13 @@ export default function DashboardPage() {
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-  
-  const RESERVATIONS: Reservation[] = useMemo(() => (apiReservations as any)?.data ?? [], [apiReservations]);
+
+  const RESERVATIONS: Reservation[] = useMemo(() => {
+    const raw = Array.isArray(apiReservations)
+      ? apiReservations
+      : (apiReservations as unknown as { data?: ApiReservation[] })?.data ?? [];
+    return (raw as ApiReservation[]).map(mapReservation);
+  }, [apiReservations]);
 
   const filtered = useMemo(() => activeTab === "all" ? RESERVATIONS : RESERVATIONS.filter((r) => r.status === activeTab), [RESERVATIONS, activeTab]);
 

@@ -3,8 +3,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import api from "@/shared/services/client";
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1").replace(/\/api\/v1$/, "");
-
 interface User {
   id: number;
   name: string;
@@ -39,11 +37,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logoutTimerRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const csrfTimerRef = useRef<any>(null);
-  const lastActivityRef = useRef(Date.now());
 
   const scheduleLogout = useCallback(() => {
     if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+    // Ne programme l'expiration de session que si un utilisateur est connecté.
+    if (!localStorage.getItem("vectoria_token")) return;
     logoutTimerRef.current = setTimeout(() => {
+      // Re-vérifie au déclenchement : le visiteur a pu se déconnecter entre-temps.
+      if (!localStorage.getItem("vectoria_token")) return;
       setUser(null);
       localStorage.removeItem("vectoria_user");
       localStorage.removeItem("vectoria_token");
@@ -65,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
     const resetTimer = () => {
-      lastActivityRef.current = Date.now();
       scheduleLogout();
     };
     events.forEach(e => document.addEventListener(e, resetTimer, { passive: true }));

@@ -40,6 +40,7 @@ api.interceptors.response.use(
         isRedirecting = true;
         localStorage.removeItem("vectoria_user");
         localStorage.removeItem("vectoria_token");
+        localStorage.removeItem("auth_token");
         window.location.href = "/login";
       }
     }

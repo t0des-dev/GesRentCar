@@ -52,6 +52,7 @@ class ReservationController extends Controller
             ->with([
             'vehicle:id,brand,model,plate,image_url',
             'client:id,name,email,phone',
+            'contract:id,reservation_id,file_path,signed_at',
         ])
             ->latest('id')
             ->get();

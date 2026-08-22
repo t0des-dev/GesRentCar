@@ -18,8 +18,6 @@ import { notifyError } from "@/components/Notifications";
 import MaintenanceScheduler from "@/components/MaintenanceScheduler";
 import RevenueForecast from "@/components/RevenueForecast";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
-
 export default function AdminDashboard() {
   const { user, checking } = useAuthGuard("admin");
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -61,9 +59,23 @@ export default function AdminDashboard() {
     catch { notifyError("Erreur lors de la generation du contrat."); } finally { setActionLoading(null); }
   };
 
-  const handleExport = () => {
-    const token = localStorage.getItem("vectoria_token") || localStorage.getItem("auth_token") || "";
-    window.open(`${API}/exports/reservations?token=${token}`, "_blank");
+  const handleExport = async () => {
+    try {
+      const res = await api.get("/exports/reservations", { responseType: "blob" });
+      const disposition = res.headers["content-disposition"] as string | undefined;
+      const match = disposition?.match(/filename="?([^";]+)"?/i);
+      const filename = match?.[1] ?? "reservations.csv";
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      notifyError("Erreur lors de l'export des réservations.");
+    }
   };
 
   return (
