@@ -2,7 +2,7 @@
 
 import { useState, Suspense, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Loader2, ArrowUpDown, ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
+import { Loader2, ChevronDown } from "lucide-react";
 import QuickViewModal from "@/components/QuickViewModal";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { FleetFilterState } from "@/modules/fleet/components/FleetFilters";
@@ -323,7 +323,12 @@ function FleetContent() {
       <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-transparent to-primary/5 pointer-events-none" />
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-        <FleetHeader search={search} setSearch={setSearch} fleetConfig={fleetConfig} onBookingSearch={handleBookingSearch} />
+        <FleetHeader
+          fleetConfig={fleetConfig}
+          initialStartDate={startDateParam}
+          initialEndDate={endDateParam}
+          onBookingSearch={handleBookingSearch}
+        />
       </motion.div>
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 mt-8">

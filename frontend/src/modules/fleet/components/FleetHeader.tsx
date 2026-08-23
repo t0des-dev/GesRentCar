@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Calendar, Clock, ChevronRight, Plane, Building2, X } from "lucide-react";
+import { Search, MapPin, Calendar, Clock, ChevronRight, Plane, Building2 } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useAgency } from "@/hooks/useAgency";
 import Link from "next/link";
 
 interface FleetHeaderProps {
-  search: string;
-  setSearch: (val: string) => void;
   fleetConfig?: Record<string, any>;
+  initialStartDate?: string;
+  initialEndDate?: string;
   onBookingSearch?: (params: {
     location: string;
     startDate: string;
@@ -31,10 +31,12 @@ const PREDEFINED_LOCATIONS = [
 ];
 
 function getTodayString(): string {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  // Date locale (pas UTC) : évite le décalage de jour pour les fuseaux UTC+ 
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
-export default function FleetHeader({ search, setSearch, fleetConfig, onBookingSearch }: FleetHeaderProps) {
+export default function FleetHeader({ fleetConfig, initialStartDate, initialEndDate, onBookingSearch }: FleetHeaderProps) {
   const { t } = useTranslation();
   const agency = useAgency();
 
@@ -46,14 +48,21 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
   const locations = fleetConfig?.locations || PREDEFINED_LOCATIONS;
 
   const [location, setLocation] = useState(defaultLocation);
-  const [startDate, setStartDate] = useState("");
+  const [startDate, setStartDate] = useState(initialStartDate || "");
   const [startTime, setStartTime] = useState("10:00");
-  const [endDate, setEndDate] = useState("");
+  const [endDate, setEndDate] = useState(initialEndDate || "");
   const [endTime, setEndTime] = useState("10:00");
   const [showLocations, setShowLocations] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
 
   const today = getTodayString();
+
+  const handleStartDateChange = (value: string) => {
+    setStartDate(value);
+    // La date de retour ne peut pas précéder la date de retrait
+    if (value && endDate && endDate < value) {
+      setEndDate(value);
+    }
+  };
 
   const handleSearch = () => {
     if (onBookingSearch) {
@@ -62,7 +71,7 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
   };
 
   return (
-    <div className="relative -mx-6 lg:-mx-8 -mt-32 mb-12">
+    <div className="relative mb-12">
       {/* Hero Background */}
       <div className="relative h-[380px] overflow-hidden">
         <div
@@ -158,9 +167,9 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
                     className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-slate-100 rounded-xl overflow-hidden z-50 shadow-2xl"
                   >
                     <div className="p-2 space-y-0.5 max-h-64 overflow-y-auto">
-                      {locations.map((loc: any) => (
+                      {locations.map((loc: any, idx: number) => (
                         <button
-                          key={loc.id}
+                          key={loc.id ?? `${loc.city}-${idx}`}
                           onMouseDown={(e) => {
                             e.preventDefault();
                             setLocation(`${loc.city} — ${loc.name}`);
@@ -193,7 +202,7 @@ export default function FleetHeader({ search, setSearch, fleetConfig, onBookingS
                   type="date"
                   value={startDate}
                   min={today}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
                   className="w-full bg-transparent text-slate-800 text-[13px] font-semibold focus:outline-none cursor-pointer"
                 />
                 <Calendar size={14} className="text-slate-400 shrink-0 pointer-events-none" />
