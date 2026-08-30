@@ -48,3 +48,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.bak.docx
+~$*.docx
+screenshots_captured/

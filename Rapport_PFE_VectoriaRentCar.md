@@ -350,10 +350,92 @@ Afin de garantir une portabilité absolue et d'éviter les dérives de configura
 *   **Scalabilité Horizontale Granulaire** : Si l'affluence B2C augmente, il est possible de dupliquer facilement les instances du frontend (`docker compose up --scale frontend=3`) ou d'ajouter de nouveaux workers pour traiter les notifications de masse, sans devoir cloner tout l'écosystème.
 *   **Facilité d'Installation et DevOps** : Aucune dépendance (PHP, Node, Redis) n'a besoin d'être installée sur le serveur hôte. Une seule commande (`docker compose -f docker-compose.prod.yml up -d --build`) suffit pour déployer instantanément toute la plateforme.
 
-## 4.2 Nginx et HTTPS (SSL Certbot)
+## 4.2 Procédure de Déploiement et de Mise à Jour Continue (GitHub & Docker)
+
+Pour maintenir la plateforme à jour en environnement de production sans interruption de service et avec une traçabilité totale, une procédure standardisée d'intégration et de déploiement continu a été formalisée.
+
+### A. Récupération et Mise à Jour du Code Source via GitHub
+Toutes les évolutions applicatives sont centralisées sur le dépôt Git distant (GitHub). Sur le serveur hôte (VPS / Serveur Docker), la mise à jour s'effectue comme suit :
+
+```bash
+# 1. Se positionner dans le répertoire racine du projet
+cd /opt/GesRentCar
+
+# 2. Vérifier l'état local et annuler les modifications temporaires si nécessaire
+git status
+git reset --hard HEAD
+
+# 3. Récupérer les dernières modifications depuis la branche principale
+git pull origin main
+```
+
+> [!TIP]
+> Si des variables d'environnement spécifiques ont été ajustées, s'assurer que le fichier `.env` à la racine et celui dans `backend/.env` restent intacts et contiennent les clés API requises (`APP_KEY`, `SANCTUM_STATEFUL_DOMAINS`, `STRIPE_SECRET_KEY`, etc.).
+
+---
+
+### B. Construction et Lancement des Conteneurs Docker (Build & Up)
+Une fois le code source synchronisé, la reconstruction des images et le redémarrage des services s'exécutent avec `docker compose` :
+
+```bash
+# 1. Reconstruire les images Docker (Frontend Next.js & Backend PHP-FPM) et démarrer les conteneurs en arrière-plan
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 2. Recharger spécifiquement un service sans redémarrer toute la stack (ex: frontend seul)
+docker compose -f docker-compose.prod.yml up -d --no-deps --build frontend
+```
+
+---
+
+### C. Exécution des Migrations et Amorçage des Données (Artisan)
+Après chaque mise à jour du schéma de base de données, les migrations doivent être appliquées à chaud dans le conteneur `php-fpm` :
+
+```bash
+# 1. Appliquer les migrations de base de données en mode forcé (production)
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan migrate --force
+
+# 2. (Optionnel) Insérer ou rafraîchir les comptes administrateurs et configurations par défaut
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan db:seed --force
+
+# 3. Régénérer le lien symbolique du stockage public (documents & photos véhicules)
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan storage:link
+```
+
+---
+
+### D. Optimisation des Performances et Purge des Caches
+Pour garantir une réactivité maximale et la prise en compte immédiate des nouvelles routes d'API :
+
+```bash
+# Vider et reconstruire les caches de configuration, de routes et de vues
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan config:clear
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan route:clear
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan cache:clear
+
+# Mettre en cache la configuration pour des performances optimales en production
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan config:cache
+docker compose -f docker-compose.prod.yml exec php-fpm php artisan route:cache
+```
+
+---
+
+### E. Surveillance, Diagnostic et Commandes de Maintenance
+
+| Action | Commande Docker |
+| :--- | :--- |
+| **Vérifier l'état de santé des conteneurs** | `docker compose -f docker-compose.prod.yml ps` |
+| **Consulter les journaux en direct (Live Logs)** | `docker compose -f docker-compose.prod.yml logs -f php-fpm` |
+| **Suivre les logs du Reverse Proxy Nginx** | `docker compose -f docker-compose.prod.yml logs -f nginx` |
+| **Redémarrer un service défaillant (ex: Redis)** | `docker compose -f docker-compose.prod.yml restart redis` |
+| **Nettoyer les images et caches Docker orphelins** | `docker system prune -af` |
+| **Arrêt complet et propre de la plateforme** | `docker compose -f docker-compose.prod.yml down` |
+
+---
+
+## 4.3 Nginx et HTTPS (SSL Certbot)
 Le serveur Nginx de l'hôte intercepte les requêtes externes sur les ports `80` et `443`. Les certificats de sécurité SSL sont configurés et renouvelés automatiquement grâce à **Certbot (Let's Encrypt)**, assurant le chiffrement de toutes les données sensibles (informations clients, signatures et identifiants de paiement).
 
-## 4.3 Sécurité des Données Privées
+## 4.4 Sécurité des Données Privées
 Pour des raisons évidentes de confidentialité et de conformité (RGPD / CNDP au Maroc), les images téléversées des cartes nationales d'identité et des permis de conduire ne doivent jamais être accessibles publiquement via des URLs de stockage standards.
 - Elles sont stockées dans le dossier `storage/app/private/`.
 - L'accès est protégé par un middleware d'audit et de restriction d'accès. Seul un agent ou un administrateur authentifié peut interroger la route `/api/documents/preview/{filename}`, qui vérifie les droits de l'utilisateur connecté avant de diffuser le fichier de manière sécurisée sous forme de flux binaire temporaire.

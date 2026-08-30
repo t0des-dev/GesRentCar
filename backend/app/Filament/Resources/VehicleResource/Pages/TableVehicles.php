@@ -60,8 +60,8 @@ class TableVehicles extends ListRecords
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('maintenance')
+                Actions\EditAction::make(),
+                Actions\Action::make('maintenance')
                     ->label('Garage')
                     ->icon('heroicon-o-wrench')
                     ->color('warning')
@@ -69,8 +69,8 @@ class TableVehicles extends ListRecords
                     ->action(fn ($record) => $record->update(['status' => 'maintenance'])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

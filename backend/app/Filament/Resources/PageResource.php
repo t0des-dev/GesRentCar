@@ -7,6 +7,7 @@ use App\Models\Page;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -239,19 +240,19 @@ class PageResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('preview')
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\Action::make('preview')
                     ->label('Aperçu')
                     ->icon('heroicon-m-eye')
                     ->color('gray')
                     ->url(fn (Page $record) => url('/page/' . $record->slug))
                     ->openUrlInNewTab(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

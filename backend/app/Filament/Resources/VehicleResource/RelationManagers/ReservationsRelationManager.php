@@ -5,6 +5,7 @@ namespace App\Filament\Resources\VehicleResource\RelationManagers;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -55,10 +56,10 @@ class ReservationsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                // Tables\Actions\CreateAction::make(),
+                // Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->url(fn ($record): string => url('/admin/reservations/'.$record->id.'/edit')),
             ])
             ->bulkActions([

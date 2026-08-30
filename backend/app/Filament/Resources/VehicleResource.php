@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -210,28 +211,28 @@ class VehicleResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('maintenance')
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\Action::make('maintenance')
                     ->label('Garage')
                     ->icon('heroicon-o-wrench')
                     ->color('warning')
                     ->visible(fn (Vehicle $record) => $record->status === 'available')
                     ->action(fn (Vehicle $record) => $record->update(['status' => 'maintenance'])),
-                Tables\Actions\Action::make('available')
+                Actions\Action::make('available')
                     ->label('Disponible')
                     ->icon('heroicon-o-check')
                     ->color('success')
                     ->visible(fn (Vehicle $record) => $record->status === 'maintenance')
                     ->action(fn (Vehicle $record) => $record->update(['status' => 'available'])),
-                Tables\Actions\RestoreAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
+                Actions\RestoreAction::make(),
+                Actions\ForceDeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
                 ]),
             ]);
     }

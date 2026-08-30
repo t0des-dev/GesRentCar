@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -191,10 +192,10 @@ class ReservationResource extends Resource
                     ->query(fn ($query) => $query->whereHas('client', fn ($q) => $q->whereNotNull('cin_image_url'))),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
 
-                Tables\Actions\Action::make('confirm')
+                Actions\Action::make('confirm')
                     ->label('Confirmer')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -202,7 +203,7 @@ class ReservationResource extends Resource
                     ->modalHeading('Confirmer la réservation')
                     ->modalDescription('Le client sera notifié par SMS.')
                     ->visible(fn ($record) => in_array($record->status, ['pending', 'pending_payment'])),
-                Tables\Actions\Action::make('cancel')
+                Actions\Action::make('cancel')
                     ->label('Annuler')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -228,8 +229,8 @@ class ReservationResource extends Resource
                     ->visible(fn ($record) => in_array($record->status, ['pending', 'pending_payment', 'confirmed', 'pending_partner'])),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

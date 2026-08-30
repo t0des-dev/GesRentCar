@@ -129,6 +129,7 @@ services:
         # NEXT_PUBLIC_* sont des variables build-time en Next.js
         # Elles doivent être passées via args au moment du build Docker
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api/v1}
+        - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
     container_name: vectoria-frontend
     restart: unless-stopped
     healthcheck:

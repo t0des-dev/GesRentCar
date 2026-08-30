@@ -15,6 +15,8 @@ COPY . .
 # Déclarer les ARGs build-time (variables NEXT_PUBLIC_* intégrées lors du next build)
 ARG NEXT_PUBLIC_API_URL=/api/v1
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 RUN npm run build
 
 # Production image, copy all the files and run next

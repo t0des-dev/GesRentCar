@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Vehicle;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -49,7 +50,7 @@ class MaintenanceAlertsWidget extends BaseWidget
                     ->color(fn ($record) => $record->tech_inspection_date && $record->tech_inspection_date <= now() ? 'danger' : ($record->tech_inspection_date && $record->tech_inspection_date <= now()->addDays(15) ? 'warning' : 'success')),
             ])
             ->actions([
-                Tables\Actions\Action::make('mark_active')
+                Actions\Action::make('mark_active')
                     ->label('Marquer Actif')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -57,7 +58,7 @@ class MaintenanceAlertsWidget extends BaseWidget
                     ->action(function (Vehicle $record) {
                         $record->update(['status' => 'available']);
                     }),
-                Tables\Actions\Action::make('send_maintenance')
+                Actions\Action::make('send_maintenance')
                     ->label('Envoyer au Garage')
                     ->icon('heroicon-o-wrench')
                     ->color('danger')
