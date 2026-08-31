@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Check, FileText, Clock, AlertTriangle, MapPin, Phone, MessageCircle, Download, Copy, Calendar, Shield, Plane, Headphones, Car } from "lucide-react";
+import { useEffect } from "react";
+import { Check, FileText, Clock, MapPin, Phone, MessageCircle, Download, Shield, Plane, Headphones, Car } from "lucide-react";
 import { BookingState } from "@/types/booking";
 import confetti from "canvas-confetti";
 import { fmt } from "@/shared/utils/format";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface ConfirmationVehicle {
   brand?: string;
@@ -26,6 +27,7 @@ interface ConfirmationViewProps {
 }
 
 export default function ConfirmationView({ booking, reservationId, reservationStatus, deposit, total, vehicle }: ConfirmationViewProps) {
+  const { t, lang } = useTranslation();
   const isPartnerPending = reservationStatus === "pending_partner";
 
   useEffect(() => {
@@ -51,12 +53,12 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
   const formatDate = (d?: string) => {
     if (!d) return "—";
-    return new Date(d).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+    return new Date(d).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", { day: "numeric", month: "short", year: "numeric" });
   };
 
   const formatDateFull = (d?: string) => {
     if (!d) return "";
-    return new Date(d).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+    return new Date(d).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", { day: "numeric", month: "short", year: "numeric" });
   };
 
   const days = (() => {
@@ -66,9 +68,6 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
   })();
 
   const vehicleRental = (vehicle?.price || 0) * (days || 1);
-  const extras = 0;
-  const insurance = 0;
-
   const refNumber = reservationId ? `ART-${String(reservationId).padStart(3, "0")}-2026` : "ART-000-2026";
 
   if (isPartnerPending) {
@@ -78,17 +77,24 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
           <div className="w-24 h-24 rounded-full bg-amber-50 flex items-center justify-center border-2 border-amber-200">
             <Clock size={40} className="text-amber-500" strokeWidth={2} />
           </div>
-          <h1 className="text-3xl font-black text-gray-900">Réservation en attente</h1>
+          <h1 className="text-3xl font-black text-gray-900">{t("confirm_pending_title")}</h1>
           <p className="text-gray-500 text-base leading-relaxed">
-            Votre réservation pour le <strong className="text-gray-900">{vehicle?.brand} {vehicle?.model}</strong> est en cours de validation auprès du partenaire.
+            {t("confirm_pending_desc")} <strong className="text-gray-900">{vehicle?.brand} {vehicle?.model}</strong> {t("confirm_pending_desc2")}
           </p>
           <a href="/" className="w-full py-4 bg-[#16213E] text-white rounded-2xl text-sm font-bold uppercase tracking-wider text-center hover:bg-[#1a2744] transition-all">
-            Retour à l&apos;accueil
+            {t("confirm_pending_back")}
           </a>
         </div>
       </main>
     );
   }
+
+  const stepsList = [
+    { label: t("confirm_step1_label"), desc: t("confirm_step1_desc"), active: true, icon: Check },
+    { label: t("confirm_step2_label"), desc: t("confirm_step2_desc"), active: true, icon: FileText },
+    { label: t("confirm_step3_label"), desc: t("confirm_step3_desc"), active: true, icon: Car },
+    { label: t("confirm_step4_label"), desc: t("confirm_step4_desc"), active: false, icon: MapPin },
+  ];
 
   return (
     <main className="min-h-screen bg-[#fafbfc] pb-16">
@@ -96,7 +102,7 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
       <div className="bg-white border-b border-gray-100 py-4 mb-10">
         <div className="container mx-auto px-6 max-w-4xl">
           <div className="flex items-center justify-between">
-            {["Reservation", "Vehicle", "Confirmation", "Payment", "Complete"].map((label, i) => (
+            {[t("booking_step_period"), t("booking_step_vehicle"), t("booking_step_options"), t("booking_step_payment"), t("status_completed")].map((label, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${i <= 3 ? "bg-[#16213E] text-white" : "bg-gray-200 text-gray-500"}`}>
                   {i < 3 ? <Check size={12} strokeWidth={3} /> : i === 3 ? "4" : "5"}
@@ -118,27 +124,27 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
           <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
             <Check size={36} className="text-emerald-600" strokeWidth={3} />
           </div>
-          <h1 className="text-4xl font-black text-gray-900">Reservation Confirmed</h1>
+          <h1 className="text-4xl font-black text-gray-900">{t("confirm_title")}</h1>
           <p className="text-gray-500 max-w-md mx-auto">
-            Your reservation has been successfully processed. A confirmation email has been sent to your email address.
+            {t("confirm_subtitle")}
           </p>
           <div className="flex items-center justify-center gap-3 pt-2">
-            <span className="text-sm text-gray-500">Reference</span>
+            <span className="text-sm text-gray-500">{t("confirm_ref_label")}</span>
             <span className="text-sm font-mono font-bold text-gray-900 bg-gray-100 px-3 py-1 rounded-lg">{refNumber}</span>
-            <button onClick={() => navigator.clipboard.writeText(refNumber)} className="text-xs font-semibold text-[#16213E] hover:underline">Copy</button>
+            <button onClick={() => navigator.clipboard.writeText(refNumber)} className="text-xs font-semibold text-[#16213E] hover:underline">{t("confirm_ref_copy")}</button>
             <span className="text-sm text-gray-400">|</span>
             <span className="text-sm text-gray-500">{formatDateFull(booking.startDate)}</span>
           </div>
           <div className="pt-2">
             <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-              <Check size={12} strokeWidth={3} /> Confirmed
+              <Check size={12} strokeWidth={3} /> {t("confirm_badge")}
             </span>
           </div>
         </motion.div>
 
         {/* Reservation Summary */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Reservation Summary</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_summary_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-20 h-16 bg-gray-100 rounded-xl overflow-hidden shrink-0">
@@ -149,38 +155,38 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
                 />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-0.5">{vehicle?.category || "Luxury Sedan"}</p>
-                <h3 className="text-lg font-black text-gray-900">{vehicle?.brand} {vehicle?.model || "Similar"}</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-0.5">{vehicle?.category || t("quickview_category_luxe")}</p>
+                <h3 className="text-lg font-black text-gray-900">{vehicle?.brand} {vehicle?.model || ""}</h3>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Pickup Location</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_pickup_location")}</p>
                 <p className="text-sm font-semibold text-gray-900">{booking.location || "Casablanca — Mohammed V Airport"}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Return Location</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_return_location")}</p>
                 <p className="text-sm font-semibold text-gray-900">{booking.location || "Casablanca — Mohammed V Airport"}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Pickup Date</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_pickup_date")}</p>
                 <p className="text-sm font-semibold text-gray-900">{formatDate(booking.startDate)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Return Date</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_return_date")}</p>
                 <p className="text-sm font-semibold text-gray-900">{formatDate(booking.endDate)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Pickup Time</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_pickup_time")}</p>
                 <p className="text-sm font-semibold text-gray-900">10:00</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Return Time</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_return_time")}</p>
                 <p className="text-sm font-semibold text-gray-900">10:00</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Rental Duration</p>
-                <p className="text-sm font-semibold text-gray-900">{days} Days</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">{t("confirm_duration")}</p>
+                <p className="text-sm font-semibold text-gray-900">{days} {days > 1 ? t("quickview_days") : t("quickview_day")}</p>
               </div>
             </div>
           </div>
@@ -188,33 +194,33 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Payment Summary */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Payment Summary</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_payment_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Vehicle Rental ({days} {days > 1 ? "Days" : "Day"})</span>
+              <span className="text-sm text-gray-500">{t("confirm_vehicle_rental")} ({days} {days > 1 ? t("quickview_days") : t("quickview_day")})</span>
               <span className="text-sm font-semibold text-gray-900">{fmt(vehicleRental)} MAD</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Extras</span>
+              <span className="text-sm text-gray-500">{t("confirm_extras")}</span>
               <span className="text-sm font-semibold text-gray-900">0 MAD</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Insurance</span>
-              <span className="text-sm font-semibold text-gray-900">Not included</span>
+              <span className="text-sm text-gray-500">{t("confirm_insurance")}</span>
+              <span className="text-sm font-semibold text-gray-900">{t("confirm_insurance_not")}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500">Taxes</span>
-              <span className="text-sm font-semibold text-gray-900">Included</span>
+              <span className="text-sm text-gray-500">{t("confirm_taxes")}</span>
+              <span className="text-sm font-semibold text-gray-900">{t("confirm_taxes_included")}</span>
             </div>
             <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
-              <span className="text-sm font-bold text-gray-900">Total Rental</span>
+              <span className="text-sm font-bold text-gray-900">{t("confirm_total")}</span>
               <span className="text-xl font-black text-gray-900">{fmt(total || vehicleRental)} MAD</span>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="text-sm font-bold text-gray-900">Deposit Paid Today</span>
-                  <p className="text-[11px] text-gray-400 mt-0.5">Remaining balance {fmt((total || vehicleRental) - deposit)} MAD — payable upon vehicle pickup.</p>
+                  <span className="text-sm font-bold text-gray-900">{t("confirm_deposit")}</span>
+                  <p className="text-[11px] text-gray-400 mt-0.5">{t("confirm_remaining")} {fmt((total || vehicleRental) - deposit)} MAD {t("confirm_remaining_note")}</p>
                 </div>
                 <span className="text-lg font-black text-emerald-600">{fmt(deposit)} MAD</span>
               </div>
@@ -224,15 +230,10 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* What's Next? */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">What&apos;s Next?</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_next_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="space-y-6">
-              {[
-                { label: "Reservation Confirmed", desc: "Your reservation is confirmed and paid.", active: true, icon: Check },
-                { label: "Confirmation Email Sent", desc: "A confirmation has been sent to your email.", active: true, icon: FileText },
-                { label: "We're Preparing Your Vehicle", desc: "Our team is preparing your vehicle for pickup.", active: true, icon: Car },
-                { label: "Vehicle Ready for Pickup", desc: "Your vehicle will be ready at the scheduled time.", active: false, icon: MapPin },
-              ].map((step, i) => (
+              {stepsList.map((step, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${step.active ? "bg-[#16213E] text-white" : "bg-gray-200 text-gray-500"}`}>
@@ -252,46 +253,46 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Airport Pickup Preference */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Airport Pickup Preference</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_airport_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Pickup Time</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_airport_time")}</label>
                 <input type="time" defaultValue="10:00" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E] [color-scheme:light]" />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Flight Number (Optional)</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_airport_flight")}</label>
                 <input type="text" placeholder="e.g. AT 200" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#16213E]" />
               </div>
             </div>
-            <p className="text-xs text-gray-400">We will monitor your flight and adjust pickup time if your flight is delayed.</p>
+            <p className="text-xs text-gray-400">{t("confirm_airport_note")}</p>
           </div>
         </motion.section>
 
         {/* Customer Information */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Customer Information</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_customer_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_field_name")}</label>
                 <input type="text" defaultValue={booking.client.name} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E]" />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Phone</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_field_phone")}</label>
                 <input type="tel" defaultValue={booking.client.phone} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E]" />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Email</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_field_email")}</label>
                 <input type="email" defaultValue={booking.client.email} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E]" />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">CIN / Passport</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_field_cin")}</label>
                 <input type="text" defaultValue={(booking.client as any).cin} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E]" />
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Driver License</label>
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{t("confirm_field_license")}</label>
               <input type="text" defaultValue={(booking.client as any).license} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:border-[#16213E] max-w-md" />
             </div>
           </div>
@@ -299,7 +300,7 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Vehicle Pickup Information */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Vehicle Pickup Information</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_vehicle_info_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <div className="flex flex-col md:flex-row md:items-center gap-6">
               <div className="flex-1 space-y-3">
@@ -307,14 +308,14 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
                   <MapPin size={16} className="text-[#16213E] mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-bold text-gray-900">Vectoria Car Rental — Mohammed V Airport</p>
-                    <p className="text-xs text-gray-500">Terminal 1, Arrivals Hall, Casablanca, Morocco</p>
+                    <p className="text-xs text-gray-500">{t("confirm_agency_address")}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Clock size={16} className="text-[#16213E] mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-sm font-bold text-gray-900">Open 24/7</p>
-                    <p className="text-xs text-gray-500">Available every day including holidays</p>
+                    <p className="text-sm font-bold text-gray-900">{t("confirm_open_247")}</p>
+                    <p className="text-xs text-gray-500">{t("confirm_open_holidays")}</p>
                   </div>
                 </div>
               </div>
@@ -325,7 +326,7 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-all shrink-0"
               >
                 <MapPin size={16} />
-                View on Google Maps
+                {t("confirm_gmaps")}
               </a>
             </div>
           </div>
@@ -333,13 +334,13 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Reservation Documents */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Reservation Documents</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_docs_title")}</h2>
           <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
             {[
-              { label: "Rental Confirmation", icon: FileText, url: contractUrl },
-              { label: "Insurance Certificate", icon: Shield, url: null },
-              { label: "Rental Terms", icon: FileText, url: "/terms" },
-              { label: "Invoice", icon: FileText, url: null },
+              { label: t("confirm_doc_confirmation"), icon: FileText, url: contractUrl },
+              { label: t("confirm_doc_insurance"), icon: Shield, url: null },
+              { label: t("confirm_doc_terms"), icon: FileText, url: "/terms" },
+              { label: t("confirm_doc_invoice"), icon: FileText, url: null },
             ].map((doc, i) => (
               <div key={i} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                 <div className="flex items-center gap-3">
@@ -350,10 +351,10 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
                 </div>
                 {doc.url ? (
                   <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-[#16213E] hover:underline">
-                    <Download size={14} /> Download
+                    <Download size={14} /> {t("confirm_doc_download")}
                   </a>
                 ) : (
-                  <span className="text-xs text-gray-400">Pending</span>
+                  <span className="text-xs text-gray-400">{t("confirm_doc_pending")}</span>
                 )}
               </div>
             ))}
@@ -362,25 +363,25 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Need Help? */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-          <h2 className="text-xl font-black text-gray-900 mb-4">Need Help?</h2>
+          <h2 className="text-xl font-black text-gray-900 mb-4">{t("confirm_help_title")}</h2>
           <div className="grid grid-cols-3 gap-4">
             <a href="https://wa.me/212600000000" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 py-6 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all">
               <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
                 <MessageCircle size={20} className="text-emerald-600" />
               </div>
-              <span className="text-sm font-bold text-gray-900">WhatsApp</span>
+              <span className="text-sm font-bold text-gray-900">{t("confirm_help_whatsapp")}</span>
             </a>
             <a href="tel:+212600000000" className="flex flex-col items-center gap-3 py-6 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all">
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                 <Phone size={20} className="text-blue-600" />
               </div>
-              <span className="text-sm font-bold text-gray-900">Call Us</span>
+              <span className="text-sm font-bold text-gray-900">{t("confirm_help_call")}</span>
             </a>
             <div className="flex flex-col items-center gap-3 py-6 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all cursor-pointer">
               <div className="w-12 h-12 rounded-full bg-[#16213E]/10 flex items-center justify-center">
                 <MessageCircle size={20} className="text-[#16213E]" />
               </div>
-              <span className="text-sm font-bold text-gray-900">Chat</span>
+              <span className="text-sm font-bold text-gray-900">{t("confirm_help_chat")}</span>
             </div>
           </div>
         </motion.section>
@@ -388,11 +389,11 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
         {/* Inclusions */}
         <div className="flex flex-wrap justify-center gap-6 py-6">
           {[
-            { icon: Shield, label: "Secure Payment" },
-            { icon: Shield, label: "Insurance Coverage" },
-            { icon: Headphones, label: "24/7 Support" },
-            { icon: Plane, label: "Airport Delivery" },
-            { icon: Check, label: "Free Cancellation" },
+            { icon: Shield, label: t("confirm_incl_payment") },
+            { icon: Shield, label: t("confirm_incl_insurance") },
+            { icon: Headphones, label: t("confirm_incl_support") },
+            { icon: Plane, label: t("confirm_incl_airport") },
+            { icon: Check, label: t("confirm_incl_cancel") },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-2">
               <item.icon size={14} className="text-gray-400" />
@@ -403,14 +404,14 @@ export default function ConfirmationView({ booking, reservationId, reservationSt
 
         {/* Bottom Actions */}
         <div className="flex flex-col md:flex-row gap-3 justify-center pb-8">
-          <Link href="/fleet" className="px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all text-center">
-            Modify Reservation
+          <Link href="/flotte" className="px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all text-center">
+            {t("confirm_modify")}
           </Link>
           <Link href="/" className="px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl text-sm font-bold hover:bg-gray-200 transition-all text-center">
-            Return to Homepage
+            {t("confirm_back_home")}
           </Link>
-          <Link href="/fleet" className="px-6 py-3 bg-[#16213E] text-white rounded-2xl text-sm font-bold hover:bg-[#1a2744] transition-all text-center">
-            Browse More Vehicles
+          <Link href="/flotte" className="px-6 py-3 bg-[#16213E] text-white rounded-2xl text-sm font-bold hover:bg-[#1a2744] transition-all text-center">
+            {t("confirm_browse")}
           </Link>
         </div>
       </div>

@@ -7,9 +7,10 @@ import Link from "next/link";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
 import type { LucideIcon } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface StatusConfig {
-  label: string;
+  labelKey: string;
   icon: LucideIcon;
   bg: string;
   border: string;
@@ -17,16 +18,17 @@ interface StatusConfig {
 }
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
-  confirmed:       { label: "Confirmée",       icon: CheckCircle,  bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
-  active:          { label: "En cours",        icon: Car,          bg: "from-primary/30 to-primary/10", border: "border-primary/40", text: "text-primary" },
-  completed:       { label: "Terminée",        icon: CheckCircle,  bg: "from-blue-500/30 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-400" },
-  cancelled:       { label: "Annulée",         icon: XCircle,      bg: "from-red-500/30 to-red-500/10", border: "border-red-400/40", text: "text-red-400" },
-  pending_payment: { label: "En attente",      icon: AlertCircle,  bg: "from-amber-500/30 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-400" },
+  confirmed:       { labelKey: "status_confirmed", icon: CheckCircle, bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
+  active:          { labelKey: "status_ongoing",   icon: Car,         bg: "from-primary/30 to-primary/10", border: "border-primary/40", text: "text-primary" },
+  completed:       { labelKey: "status_completed", icon: CheckCircle, bg: "from-blue-500/30 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-400" },
+  cancelled:       { labelKey: "status_cancelled", icon: XCircle,     bg: "from-red-500/30 to-red-500/10", border: "border-red-400/40", text: "text-red-400" },
+  pending_payment: { labelKey: "status_pending",   icon: AlertCircle, bg: "from-amber-500/30 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-400" },
 };
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.confirmed;
-  const { label, icon: Icon, bg, border, text } = config;
+  const { labelKey, icon: Icon, bg, border, text } = config;
   return (
     <motion.div 
       whileHover={{ scale: 1.05 }}
@@ -35,7 +37,7 @@ function StatusBadge({ status }: { status: string }) {
         `bg-gradient-to-br ${bg} ${border} ${text}`
       )}
     >
-      <Icon size={14} strokeWidth={2} /> {label}
+      <Icon size={14} strokeWidth={2} /> {t(labelKey)}
     </motion.div>
   );
 }
@@ -63,6 +65,8 @@ interface ReservationListProps {
 }
 
 export default function ReservationList({ reservations, loading, onSelect }: ReservationListProps) {
+  const { t, lang } = useTranslation();
+
   if (loading) {
     return (
       <motion.div 
@@ -71,7 +75,9 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
         className="text-center py-32"
       >
         <Loader2 size={52} className="animate-spin mx-auto text-gold opacity-60 mb-6" />
-        <p className="text-xs font-bold uppercase tracking-widest text-ink-3">Synchronisation des données...</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-3">
+          {lang === "fr" ? "Synchronisation des données..." : "Syncing data..."}
+        </p>
       </motion.div>
     );
   }
@@ -84,10 +90,16 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
         className="text-center py-32 bg-surface-1 rounded-2xl border-2 border-border"
       >
         <Car size={72} className="mx-auto mb-8 text-gold/30" />
-        <h3 className="text-2xl font-bold text-ink-1 mb-3 font-serif">Le garage est vide.</h3>
-        <p className="text-ink-2 max-w-sm mx-auto mb-8 font-light">Votre prochaine aventure n&apos;attend que vous. Explorez notre collection exclusive.</p>
-        <Link href="/fleet" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-8 py-4 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all">
-          Découvrir la flotte <ArrowRight size={16} strokeWidth={3} />
+        <h3 className="text-2xl font-bold text-ink-1 mb-3 font-serif">
+          {lang === "fr" ? "Le garage est vide." : "Your garage is empty."}
+        </h3>
+        <p className="text-ink-2 max-w-sm mx-auto mb-8 font-light">
+          {lang === "fr"
+            ? "Votre prochaine aventure n'attend que vous. Explorez notre collection exclusive."
+            : "Your next adventure is waiting for you. Explore our exclusive collection."}
+        </p>
+        <Link href="/flotte" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-8 py-4 rounded-lg text-xs font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-gold/40 transition-all">
+          {t("btn_catalog")} <ArrowRight size={16} strokeWidth={3} />
         </Link>
       </motion.div>
     );
@@ -129,7 +141,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
             {/* Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-8">
               <div className="flex-1">
-                <p className="section-eyebrow mb-3">Expérience Active</p>
+                <p className="section-eyebrow mb-3">{lang === "fr" ? "Expérience Active" : "Active Experience"}</p>
                 <h3 className="text-3xl font-normal text-ink-1 tracking-tight mb-4 font-display italic">{res.vehicle}</h3>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3 text-ink-2">
@@ -145,7 +157,7 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
 
               {/* Price */}
               <div className="text-right w-full lg:w-auto lg:border-none border-t border-border pt-6 lg:pt-0">
-                <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">Montant Total</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-ink-3 mb-2">{t("reservations_col_amount")}</p>
                 <p className="text-3xl font-bold text-gold tracking-tight">{fmt(res.totalPrice)} <span className="text-lg text-ink-3 ml-1">DH</span></p>
               </div>
             </div>
@@ -161,19 +173,19 @@ export default function ReservationList({ reservations, loading, onSelect }: Res
                 onClick={() => onSelect(res)}
                 className="px-6 py-2.5 bg-surface-1 border-2 border-border rounded-lg text-xs font-bold uppercase tracking-wider text-ink-1 hover:border-gold hover:bg-gold/5 transition-all"
               >
-                Détails
+                {lang === "fr" ? "Détails" : "Details"}
               </motion.button>
 
               {res.hasContract && (
                 <motion.a 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=fr`}
+                  href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=${lang}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-500/20 border border-emerald-400/30 rounded-lg text-xs font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/30 transition-all cursor-pointer"
                 >
-                  <Download size={14} strokeWidth={2} /> Contrat
+                  <Download size={14} strokeWidth={2} /> {t("reservations_col_contract")}
                 </motion.a>
               )}
 

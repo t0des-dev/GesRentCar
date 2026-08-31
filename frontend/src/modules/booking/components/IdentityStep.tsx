@@ -8,13 +8,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BookingStepProps, BookingState } from "@/types/booking";
 import DocumentScanOverlay from "./DocumentScanOverlay";
 import { scanSessionService, type ScanSession } from "@/lib/api/scan-sessions";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const ScanSessionQR = dynamic(() => import("./ScanSessionQR"), {
   ssr: false,
   loading: () => (
     <div className="flex flex-col items-center gap-4 py-12">
       <Loader2 className="animate-spin text-primary" size={32} />
-      <p className="text-xs text-ink-3 uppercase tracking-wider font-semibold">Chargement...</p>
+      <p className="text-xs text-ink-3 uppercase tracking-wider font-semibold">...</p>
     </div>
   ),
 });
@@ -43,6 +44,7 @@ function FieldError({ error }: { error: string | null }) {
 }
 
 export default function IdentityStep({ booking, update, isScanning, setIsScanning, setBooking, getFieldError, handleBlur, clientFieldChange }: IdentityStepProps) {
+  const { t } = useTranslation();
   const [scanSuccess, setScanSuccess] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
@@ -157,13 +159,13 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
               <div className="max-w-md text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
                   <ScanLine size={14} />
-                  <span className="text-xs font-semibold uppercase tracking-wider">IA Smart Verification</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider">{t("identity_scan_badge")}</span>
                 </div>
                 <h3 className="text-2xl font-bold text-ink-1 mb-3 tracking-tight">
-                  Vérification <span className="text-primary">Instantanée</span>
+                  {t("identity_scan_title")} <span className="text-primary">{t("identity_scan_accent")}</span>
                 </h3>
                 <p className="text-sm text-ink-2 leading-relaxed">
-                  Scannez vos documents depuis votre téléphone. Le formulaire se remplit automatiquement.
+                  {t("identity_scan_desc")}
                 </p>
               </div>
 
@@ -183,8 +185,8 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                   <QrCode size={28} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-wider">Scanner depuis le téléphone</p>
-                  <p className="text-[10px] text-ink-3 mt-1">CIN & Permis en un scan</p>
+                  <p className="text-sm font-bold uppercase tracking-wider">{t("identity_scan_phone_btn")}</p>
+                  <p className="text-[10px] text-ink-3 mt-1">{t("identity_scan_phone_hint")}</p>
                 </div>
               </motion.button>
             </div>
@@ -202,7 +204,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                   <div className="flex items-center gap-2 mb-6">
                     <Smartphone size={16} className="text-primary" />
                     <p className="text-xs font-bold uppercase tracking-widest text-ink-2">
-                      Scannez ce QR code avec votre téléphone
+                      {t("identity_scan_qr_label")}
                     </p>
                   </div>
 
@@ -216,7 +218,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                     className="mt-4 inline-flex items-center gap-2 text-xs text-ink-3 font-semibold underline hover:text-slate-600 transition-colors"
                   >
                     <Camera size={14} />
-                    Utiliser la caméra de cet appareil
+                    {t("identity_scan_camera_btn")}
                   </button>
                 </div>
               </motion.div>
@@ -236,8 +238,8 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                   <ShieldCheck size={32} className="text-white" />
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-bold text-emerald-600 uppercase tracking-wider">Documents reçus !</p>
-                  <p className="text-xs text-ink-3 mt-1">Formulaire pré-rempli automatiquement</p>
+                  <p className="text-sm font-bold text-emerald-600 uppercase tracking-wider">{t("identity_scan_success")}</p>
+                  <p className="text-xs text-ink-3 mt-1">{t("identity_scan_auto_filled")}</p>
                 </div>
               </motion.div>
             )}
@@ -257,9 +259,9 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
                 <ShieldCheck size={24} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Identité Authentifiée</p>
+                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">{t("identity_verified_label")}</p>
                 <p className="text-sm text-ink-2 italic">
-                  Vos documents ont été validés par notre système.
+                  {t("identity_verified_desc")}
                 </p>
               </div>
             </motion.div>
@@ -270,16 +272,16 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
       {/* Manual Fields */}
       <div className="bg-surface-0 p-10 rounded-3xl border border-border/80 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 relative">
         <div className="md:col-span-2 mb-2">
-          <h4 className="text-xl font-bold text-ink-1 tracking-tight">Informations Personnelles</h4>
-          <p className="text-sm text-ink-3 mt-1">Vérifiez ou complétez les champs ci-dessous.</p>
+          <h4 className="text-xl font-bold text-ink-1 tracking-tight">{t("identity_form_title")}</h4>
+          <p className="text-sm text-ink-3 mt-1">{t("identity_form_desc")}</p>
         </div>
 
         {[
-          { k: "name" as const, l: "Nom Complet", p: "Ex: John Doe" },
-          { k: "email" as const, l: "Adresse Email", p: "Ex: contact@premium.com", t: "email" },
-          { k: "phone" as const, l: "Téléphone Mobile", p: "Ex: +212 6 00 00 00 00", t: "tel" },
-          { k: "cin" as const, l: "Numéro CIN / Passeport", p: "Ex: AB123456" },
-          { k: "licenseNumber" as const, l: "Numéro de Permis", p: "Ex: 12345678", span: "md:col-span-2" }
+          { k: "name" as const, l: t("identity_field_name"), p: "Ex: John Doe" },
+          { k: "email" as const, l: t("identity_field_email"), p: "Ex: contact@premium.com", t: "email" },
+          { k: "phone" as const, l: t("identity_field_phone"), p: "Ex: +212 6 00 00 00 00", t: "tel" },
+          { k: "cin" as const, l: t("identity_field_cin"), p: "Ex: AB123456" },
+          { k: "licenseNumber" as const, l: t("identity_field_license"), p: "Ex: 12345678", span: "md:col-span-2" }
         ].map((f) => {
           const err = getFieldError(f.k);
           return (
@@ -287,7 +289,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
               <label className="text-xs font-semibold uppercase tracking-wider text-ink-3 flex items-center gap-2">
                 {f.l}
                 {scanSuccess && (f.k === "name" || f.k === "cin" || f.k === "licenseNumber") &&
-                  <span className="text-emerald-500 text-xs bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 font-medium">EXTRAIT PAR IA</span>
+                  <span className="text-emerald-500 text-xs bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 font-medium">{t("identity_ai_extracted")}</span>
                 }
               </label>
               <input
@@ -313,7 +315,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
         onClose={handleCloseOverlay}
         onCapture={handleOverlayCapture}
         scanning={overlayScanning}
-        title={overlayScanType === "cin" ? "Carte Nationale d'Identité" : "Permis de Conduire"}
+        title={overlayScanType === "cin" ? t("identity_overlay_cin") : t("identity_overlay_license")}
       />
     </div>
   );

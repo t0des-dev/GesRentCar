@@ -4,10 +4,12 @@ import { cn } from "@/shared/utils";
 import { CreditCard, Route, Check } from "lucide-react";
 import { BookingStepProps } from "@/types/booking";
 import PromoCodeInput from "@/components/PromoCodeInput";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 export default function OptionsStep({ booking, update }: BookingStepProps) {
+  const { t } = useTranslation();
+
   const handlePromoApply = async (code: string) => {
-    // TODO: integrate with backend promo validation API
     await new Promise(r => setTimeout(r, 800));
     const promoCodes: Record<string, number> = {
       "WELCOME10": 100,
@@ -15,9 +17,9 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
       "PREMIUM": 150,
     };
     if (promoCodes[code.toUpperCase()]) {
-      return { valid: true, discount: promoCodes[code.toUpperCase()], message: `Réduction de ${promoCodes[code.toUpperCase()]} DH appliquée !` };
+      return { valid: true, discount: promoCodes[code.toUpperCase()], message: `-${promoCodes[code.toUpperCase()]} DH` };
     }
-    return { valid: false, message: "Code promo invalide ou expiré" };
+    return { valid: false, message: t("options_promo_invalid") };
   };
 
   return (
@@ -34,8 +36,8 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
             <CreditCard size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-ink-1">Options de paiement</h3>
-            <p className="text-sm text-ink-2">Choisissez le niveau de flexibilité pour votre réservation.</p>
+            <h3 className="text-lg font-bold text-ink-1">{t("options_payment_title")}</h3>
+            <p className="text-sm text-ink-2">{t("options_payment_desc")}</p>
           </div>
         </div>
         
@@ -50,16 +52,16 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
               </div>
             )}
             <div className="mb-4">
-              <p className="font-bold text-ink-1 text-lg mb-1">Meilleur prix</p>
+              <p className="font-bold text-ink-1 text-lg mb-1">{t("options_best_price")}</p>
               <ul className="text-sm text-ink-2 space-y-2 mt-3">
                 <li className="flex items-start gap-2">
                   <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Annulation gratuite dans les 24 heures</span>
+                  <span>{t("options_best_price_feat")}</span>
                 </li>
               </ul>
             </div>
             <div className="mt-auto pt-4 border-t border-border/80">
-              <span className="inline-block px-3 py-1 bg-surface-2 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">Inclus</span>
+              <span className="inline-block px-3 py-1 bg-surface-2 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">{t("options_included")}</span>
             </div>
           </button>
 
@@ -73,17 +75,17 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
               </div>
             )}
             <div className="mb-4">
-              <p className="font-bold text-ink-1 text-lg mb-1">Restez flexible</p>
+              <p className="font-bold text-ink-1 text-lg mb-1">{t("options_flexible")}</p>
               <ul className="text-sm text-ink-2 space-y-2 mt-3">
                 <li className="flex items-start gap-2">
                   <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Annulation gratuite à tout moment avant la prise en charge</span>
+                  <span>{t("options_flexible_feat")}</span>
                 </li>
               </ul>
             </div>
             <div className="mt-auto pt-4 border-t border-border/80">
               <p className={cn("text-lg font-bold", booking.flexibility === "flexible" ? "text-emerald-600" : "text-ink-1")}>
-                + 60 <span className="text-xs uppercase tracking-wider text-ink-3">DH / jour</span>
+                + 60 <span className="text-xs uppercase tracking-wider text-ink-3">DH / {t("quickview_day")}</span>
               </p>
             </div>
           </button>
@@ -97,8 +99,8 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
             <Route size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-ink-1">Kilométrage</h3>
-            <p className="text-sm text-ink-2">Définissez la limite kilométrique selon vos besoins.</p>
+            <h3 className="text-lg font-bold text-ink-1">{t("options_mileage_title")}</h3>
+            <p className="text-sm text-ink-2">{t("options_mileage_desc")}</p>
           </div>
         </div>
         
@@ -113,16 +115,16 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
               </div>
             )}
             <div className="mb-4">
-              <p className="font-bold text-ink-1 text-lg mb-1">680 km</p>
+              <p className="font-bold text-ink-1 text-lg mb-1">{t("options_limited_km")}</p>
               <ul className="text-sm text-ink-2 space-y-2 mt-3">
                 <li className="flex items-start gap-2">
                   <Check size={16} className="text-blue-500 shrink-0 mt-0.5" />
-                  <span>+ 2 DH / pour chaque kilomètre supplémentaire</span>
+                  <span>{t("options_limited_extra")}</span>
                 </li>
               </ul>
             </div>
             <div className="mt-auto pt-4 border-t border-border/80">
-              <span className="inline-block px-3 py-1 bg-surface-2 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">Inclus</span>
+              <span className="inline-block px-3 py-1 bg-surface-2 text-slate-600 font-semibold text-xs rounded-full uppercase tracking-wider">{t("options_included")}</span>
             </div>
           </button>
 
@@ -136,17 +138,17 @@ export default function OptionsStep({ booking, update }: BookingStepProps) {
               </div>
             )}
             <div className="mb-4">
-              <p className="font-bold text-ink-1 text-lg mb-1">Kilomètres illimités</p>
+              <p className="font-bold text-ink-1 text-lg mb-1">{t("options_unlimited_km")}</p>
               <ul className="text-sm text-ink-2 space-y-2 mt-3">
                 <li className="flex items-start gap-2">
                   <Check size={16} className="text-blue-500 shrink-0 mt-0.5" />
-                  <span>Tous les kilomètres sont inclus</span>
+                  <span>{t("options_unlimited_feat")}</span>
                 </li>
               </ul>
             </div>
             <div className="mt-auto pt-4 border-t border-border/80">
               <p className={cn("text-lg font-bold", booking.mileage === "unlimited" ? "text-blue-600" : "text-ink-1")}>
-                + 140 <span className="text-xs uppercase tracking-wider text-ink-3">DH / jour</span>
+                + 140 <span className="text-xs uppercase tracking-wider text-ink-3">DH / {t("quickview_day")}</span>
               </p>
             </div>
           </button>

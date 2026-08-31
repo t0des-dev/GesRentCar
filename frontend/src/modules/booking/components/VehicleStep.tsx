@@ -6,6 +6,7 @@ import { Car, Loader2, ChevronRight, Users, Settings2, Fuel, Star, MapPin, Snowf
 import { BookingStepProps } from "@/types/booking";
 import { DisplayVehicle } from "@/modules/booking/hooks/useBooking";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface VehicleStepProps extends BookingStepProps {
   isLoading: boolean;
@@ -17,6 +18,7 @@ type SortKey = "default" | "price-asc" | "price-desc";
 type ViewMode = "grid" | "list";
 
 export default function VehicleStep({ booking, update, isLoading, vehicles, setStep }: VehicleStepProps) {
+  const { t, lang } = useTranslation();
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>("default");
   const [priceMin, setPriceMin] = useState<string>("");
@@ -71,9 +73,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
   const renderEquipmentTags = (v: DisplayVehicle) => {
     const tags: { icon: typeof MapPin; label: string; color: string }[] = [];
     if (v.gps) tags.push({ icon: MapPin, label: "GPS", color: "text-emerald-500" });
-    if (v.airConditioning) tags.push({ icon: Snowflake, label: "Clim", color: "text-sky-500" });
+    if (v.airConditioning) tags.push({ icon: Snowflake, label: lang === "fr" ? "Clim" : "A/C", color: "text-sky-500" });
     if (v.bluetooth) tags.push({ icon: MapPin, label: "BT", color: "text-blue-500" });
-    if (v.rearCamera) tags.push({ icon: MapPin, label: "Cam", color: "text-violet-500" });
+    if (v.rearCamera) tags.push({ icon: MapPin, label: lang === "fr" ? "Cam" : "Cam", color: "text-violet-500" });
     if (v.carplay) tags.push({ icon: MapPin, label: "CarPlay", color: "text-indigo-500" });
     return tags;
   };
@@ -82,7 +84,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
     return (
       <div className="flex flex-col items-center justify-center py-24 text-ink-3">
         <Loader2 className="animate-spin mb-4" size={36} strokeWidth={1} />
-        <p className="text-xs font-semibold uppercase tracking-wider">Ouverture du showroom...</p>
+        <p className="text-xs font-semibold uppercase tracking-wider">{t("identity_loading")}</p>
       </div>
     );
   }
@@ -91,7 +93,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
     return (
       <div className="flex flex-col items-center justify-center py-24 text-ink-4 bg-surface-1 rounded-3xl border-2 border-dashed border-border">
         <Car size={48} className="mb-4 opacity-20" />
-        <p className="font-semibold uppercase tracking-wider text-sm">Aucun joyau disponible actuellement</p>
+        <p className="font-semibold uppercase tracking-wider text-sm">{t("fleet_empty_title")}</p>
       </div>
     );
   }
@@ -115,7 +117,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Votre sélection</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">{lang === "fr" ? "Votre sélection" : "Your selection"}</span>
               <span className="bg-surface-1 text-ink-2 px-2 py-0.5 rounded text-[9px] font-semibold uppercase border border-border">{selectedVehicle.type}</span>
             </div>
             <p className="text-sm font-bold text-ink-1 uppercase truncate mt-0.5">
@@ -123,14 +125,14 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
             </p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-lg font-bold text-ink-1">{selectedVehicle.price} <span className="text-xs text-ink-3 font-medium">DH/j</span></p>
+            <p className="text-lg font-bold text-ink-1">{selectedVehicle.price} <span className="text-xs text-ink-3 font-medium">DH/{lang === "fr" ? "j" : "d"}</span></p>
           </div>
           <div className="flex gap-2 shrink-0">
             <button
               onClick={handleReserveSelected}
               className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all flex items-center gap-1.5"
             >
-              Réserver
+              {t("rent_now")}
               <ChevronRight size={14} />
             </button>
             <button
@@ -155,7 +157,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
                 : "bg-surface-0 text-ink-2 border-border hover:border-ink-3"
             )}
           >
-            Tous
+            {t("cat_all")}
           </button>
           {categories.map((cat) => (
             <button
@@ -208,7 +210,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
               onChange={(e) => setPriceMax(e.target.value)}
               className="w-20 bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs font-semibold text-ink-1 placeholder:text-ink-4"
             />
-            <span className="text-ink-4 text-xs font-medium">DH/j</span>
+            <span className="text-ink-4 text-xs font-medium">DH/{lang === "fr" ? "j" : "d"}</span>
           </div>
         </div>
         <select
@@ -216,9 +218,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
           onChange={(e) => setSortBy(e.target.value as SortKey)}
           className="bg-surface-1 border border-border rounded-lg px-4 py-2 text-xs font-semibold text-ink-2 appearance-none cursor-pointer w-full sm:w-auto"
         >
-          <option value="default">Par défaut</option>
-          <option value="price-asc">Prix ↑</option>
-          <option value="price-desc">Prix ↓</option>
+          <option value="default">{lang === "fr" ? "Par défaut" : "Default"}</option>
+          <option value="price-asc">{lang === "fr" ? "Prix ↑" : "Price ↑"}</option>
+          <option value="price-desc">{lang === "fr" ? "Prix ↓" : "Price ↓"}</option>
         </select>
       </div>
 
@@ -259,7 +261,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
                 </div>
                 {isSelected && (
                   <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider shadow-sm">
-                    ✓ Sélectionné
+                    {lang === "fr" ? "✓ Sélectionné" : "✓ Selected"}
                   </div>
                 )}
               </div>
@@ -288,9 +290,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
 
                 <div className={cn("grid grid-cols-3 gap-2 mb-5")}>
                   {[
-                    { icon: Users, val: v.specs?.seats || 5, label: "PLACES" },
-                    { icon: Settings2, val: v.specs?.transmission || "AUTO", label: "TRANS" },
-                    { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: "CARB" },
+                    { icon: Users, val: v.specs?.seats || 5, label: t("qv_seats") },
+                    { icon: Settings2, val: v.specs?.transmission || "AUTO", label: t("qv_transmission") },
+                    { icon: Fuel, val: v.specs?.fuel || "DIESEL", label: t("qv_fuel") },
                   ].map((spec, i) => (
                     <div key={i} className="bg-surface-1 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border border-border">
                       <spec.icon size={12} className="text-primary" />
@@ -301,9 +303,9 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
 
                 <div className="mt-auto">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">Tarif privilège</span>
+                    <span className="text-ink-3 text-[10px] font-semibold uppercase tracking-wider">{lang === "fr" ? "Tarif privilège" : "Member rate"}</span>
                     <span className="text-xl font-bold text-ink-1">
-                      {v.price} <span className="text-xs text-ink-3 font-medium">DH/j</span>
+                      {v.price} <span className="text-xs text-ink-3 font-medium">DH/{lang === "fr" ? "j" : "d"}</span>
                     </span>
                   </div>
                   <div className="flex gap-2">
@@ -317,14 +319,14 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
                       )}
                     >
                       <Car size={16} />
-                      {isSelected ? "Sélectionné" : "Choisir"}
+                      {isSelected ? (lang === "fr" ? "Sélectionné" : "Selected") : (lang === "fr" ? "Choisir" : "Select")}
                     </button>
                     <button
                       onClick={() => handleQuickBook(v)}
                       className="flex-1 bg-surface-1 text-ink-1 border border-border py-3.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider hover:bg-surface-2 transition-all flex items-center justify-center gap-1.5"
                     >
                       <ChevronRight size={14} />
-                      Réserver
+                      {t("rent_now")}
                     </button>
                   </div>
                 </div>
@@ -337,7 +339,7 @@ export default function VehicleStep({ booking, update, isLoading, vehicles, setS
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-ink-4 bg-surface-1 rounded-3xl border-2 border-dashed border-border">
           <Car size={48} className="mb-4 opacity-20" />
-          <p className="font-semibold uppercase tracking-wider text-sm">Aucun véhicule dans cette catégorie</p>
+          <p className="font-semibold uppercase tracking-wider text-sm">{t("fleet_empty_desc")}</p>
         </div>
       )}
     </div>

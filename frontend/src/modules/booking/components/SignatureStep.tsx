@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import { PenTool, CheckCircle2, RotateCcw, Shield } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface SignatureStepProps {
   onComplete: (signature: string) => void;
@@ -10,6 +11,7 @@ interface SignatureStepProps {
 }
 
 export default function SignatureStep({ onComplete, onBack }: SignatureStepProps) {
+  const { t } = useTranslation();
   const sigCanvas = useRef<SignatureCanvas>(null);
   const [hasSignature, setHasSignature] = useState(false);
 
@@ -19,15 +21,14 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
   };
 
   const save = () => {
-    console.log("Saving signature...", typeof onComplete);
     if (sigCanvas.current?.isEmpty()) return;
     const dataUrl = sigCanvas.current?.getTrimmedCanvas().toDataURL("image/png");
     if (dataUrl) {
-        if (typeof onComplete === 'function') {
-            onComplete(dataUrl);
-        } else {
-            console.error("onComplete is not a function!", onComplete);
-        }
+      if (typeof onComplete === 'function') {
+        onComplete(dataUrl);
+      } else {
+        console.error("onComplete is not a function!", onComplete);
+      }
     }
   };
 
@@ -37,9 +38,9 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
         <div className="w-14 h-14 bg-surface-1 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary border border-border">
           <PenTool size={24} />
         </div>
-        <h3 className="text-2xl font-bold text-ink-1 mb-3 tracking-tight">Validation <span className="text-primary">Juridique</span></h3>
+        <h3 className="text-2xl font-bold text-ink-1 mb-3 tracking-tight">{t("signature_title")} <span className="text-primary">{t("signature_accent")}</span></h3>
         <p className="text-sm text-ink-2 leading-relaxed italic">
-          Veuillez apposer votre signature ci-dessous.
+          {t("signature_desc")}
         </p>
       </div>
 
@@ -48,12 +49,12 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
           <div className="bg-surface-1 p-4 border-b border-border flex justify-between items-center px-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-3 flex items-center gap-2">
               <Shield size={12} className="text-primary" />
-              Zone de signature sécurisée
+              {t("signature_secure_zone")}
             </span>
             <button 
               onClick={clear} 
               className="p-1.5 text-ink-4 hover:text-red-500 transition-colors"
-              title="Effacer"
+              title={t("signature_clear")}
             >
               <RotateCcw size={16} />
             </button>
@@ -69,7 +70,7 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
           </div>
 
           <div className="bg-surface-1 p-3 text-center border-t border-border">
-            <p className="text-xs text-ink-3 font-medium uppercase tracking-wider">Document Vectoria Rent Car • Certifié</p>
+            <p className="text-xs text-ink-3 font-medium uppercase tracking-wider">{t("signature_certified")}</p>
           </div>
         </div>
       </div>
@@ -80,14 +81,14 @@ export default function SignatureStep({ onComplete, onBack }: SignatureStepProps
             onClick={onBack} 
             className="flex-1 py-5 rounded-2xl border border-border font-semibold uppercase text-xs tracking-wider text-ink-3 hover:bg-surface-1 transition-all"
           >
-            Retour
+            {t("booking_prev_button")}
           </button>
           <button 
             onClick={save} 
             disabled={!hasSignature}
             className="flex-[2] bg-primary text-primary-foreground py-5 rounded-2xl font-semibold uppercase text-xs tracking-wider shadow-sm hover:bg-primary active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-30"
           >
-            Finaliser & Payer <CheckCircle2 size={18} />
+            {t("signature_finalize")} <CheckCircle2 size={18} />
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { cn } from "@/shared/utils";
 import { Car, CheckCircle, Clock, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface StatsGridProps {
   totalCount: number;
@@ -12,11 +13,14 @@ interface StatsGridProps {
 }
 
 export default function StatsGrid({ totalCount, confirmedCount, pendingCount, totalSpent }: StatsGridProps) {
+  const { lang } = useTranslation();
+  const isEn = lang === "en";
+
   const stats = [
-    { icon: Car, label: "Expériences", value: totalCount, color: "from-primary/30 to-primary/10", iconColor: "text-primary", borderColor: "border-primary/40" },
-    { icon: CheckCircle, label: "Confirmées", value: confirmedCount, color: "from-emerald-500/30 to-emerald-500/10", iconColor: "text-emerald-400", borderColor: "border-emerald-400/40" },
-    { icon: Clock, label: "En Attente", value: pendingCount, color: "from-amber-500/30 to-amber-500/10", iconColor: "text-amber-400", borderColor: "border-amber-400/40" },
-    { icon: Wallet, label: "Total Investi", value: totalSpent, color: "from-gold/30 to-gold/10", iconColor: "text-gold", borderColor: "border-gold/40" },
+    { icon: Car, label: isEn ? "Experiences" : "Expériences", value: totalCount, color: "from-primary/30 to-primary/10", iconColor: "text-primary", borderColor: "border-primary/40" },
+    { icon: CheckCircle, label: isEn ? "Confirmed" : "Confirmées", value: confirmedCount, color: "from-emerald-500/30 to-emerald-500/10", iconColor: "text-emerald-400", borderColor: "border-emerald-400/40" },
+    { icon: Clock, label: isEn ? "Pending" : "En Attente", value: pendingCount, color: "from-amber-500/30 to-amber-500/10", iconColor: "text-amber-400", borderColor: "border-amber-400/40" },
+    { icon: Wallet, label: isEn ? "Total Spent" : "Total Investi", value: totalSpent, color: "from-gold/30 to-gold/10", iconColor: "text-gold", borderColor: "border-gold/40" },
   ];
 
   return (

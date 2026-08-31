@@ -8,6 +8,7 @@ import type { AvailabilityStatus } from "../hooks/useVehicleAvailability";
 import { useMemo } from "react";
 import { calculatePrice } from "@/shared/utils/pricing";
 import { fmt } from "@/shared/utils/format";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface PeriodStepProps {
   booking: BookingState;
@@ -33,6 +34,7 @@ function FieldError({ error }: { error: string | null }) {
 }
 
 function AvailabilityBadge({ status }: { status: AvailabilityStatus }) {
+  const { t } = useTranslation();
   if (status === "idle") return null;
 
   const config = {
@@ -40,25 +42,25 @@ function AvailabilityBadge({ status }: { status: AvailabilityStatus }) {
       bg: "bg-blue-50 border-blue-200",
       text: "text-blue-700",
       icon: <Loader2 size={14} className="animate-spin" />,
-      label: "Vérification de la disponibilité...",
+      label: t("period_avail_checking"),
     },
     available: {
       bg: "bg-emerald-50 border-emerald-200",
       text: "text-emerald-700",
       icon: <CheckCircle2 size={14} />,
-      label: "Véhicule disponible pour ces dates",
+      label: t("period_avail_available"),
     },
     unavailable: {
       bg: "bg-red-50 border-red-200",
       text: "text-red-700",
       icon: <AlertCircle size={14} />,
-      label: "Véhicule non disponible — veuillez modifier vos dates",
+      label: t("period_avail_unavailable"),
     },
     error: {
       bg: "bg-amber-50 border-amber-200",
       text: "text-amber-700",
       icon: <WifiOff size={14} />,
-      label: "Impossible de vérifier la disponibilité",
+      label: t("period_avail_error"),
     },
   } as const;
 
@@ -93,6 +95,8 @@ export default function PeriodStep({
   availability = "idle",
   vehiclePricePerDay = 0,
 }: PeriodStepProps) {
+  const { t } = useTranslation();
+
   const days = useMemo(() => {
     if (!booking.startDate || !booking.endDate) return 0;
     const diff = new Date(booking.endDate).getTime() - new Date(booking.startDate).getTime();
@@ -109,6 +113,7 @@ export default function PeriodStep({
       mileage: booking.mileage,
     });
   }, [vehiclePricePerDay, days, booking.startDate, booking.flexibility, booking.mileage]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <motion.div
@@ -127,7 +132,7 @@ export default function PeriodStep({
             htmlFor="startDate"
             className="text-xs font-semibold uppercase tracking-wider text-ink-2"
           >
-            Départ du séjour
+            {t("period_start_label")}
           </label>
         </div>
         <input
@@ -163,7 +168,7 @@ export default function PeriodStep({
             htmlFor="endDate"
             className="text-xs font-semibold uppercase tracking-wider text-ink-2"
           >
-            Fin du séjour
+            {t("period_end_label")}
           </label>
         </div>
         <input
@@ -200,13 +205,13 @@ export default function PeriodStep({
             htmlFor="location"
             className="text-xs font-semibold uppercase tracking-wider text-ink-2"
           >
-            Point de rencontre / Aéroport
+            {t("period_location_label")}
           </label>
         </div>
         <input
           id="location"
           type="text"
-          placeholder="Ex: Aéroport Mohammed V (CMN)..."
+          placeholder={t("period_location_placeholder")}
           value={booking.location}
           onChange={(e) => update("location", e.target.value)}
           onBlur={(e) => handleBlur("location", e.target.value)}
@@ -233,32 +238,32 @@ export default function PeriodStep({
         >
           <div className="flex items-center gap-3 mb-4">
             <Calculator size={18} className="text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-ink-2">Aperçu du prix</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-2">{t("period_price_preview")}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Jours</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{t("period_days_label")}</p>
               <p className="text-xl font-black text-ink-1">{days}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Tarif/jour</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{t("period_rate_label")}</p>
               <p className="text-xl font-black text-ink-1">{fmt(pricePreview.dailyRate)} DH</p>
             </div>
             {pricePreview.optionsPrice > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Options</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{t("period_options_label")}</p>
                 <p className="text-xl font-black text-primary">+{fmt(pricePreview.optionsPrice)} DH</p>
               </div>
             )}
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">Total</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-ink-3 mb-1">{t("period_total_label")}</p>
               <p className="text-2xl font-black text-gold">{fmt(pricePreview.total)} DH</p>
             </div>
           </div>
           {pricePreview.dynamicReason && (
             <p className="text-xs text-primary font-semibold mt-3 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              {pricePreview.dynamicReason} appliqué(e)
+              {pricePreview.dynamicReason} {t("period_dynamic_applied")}
             </p>
           )}
         </motion.div>

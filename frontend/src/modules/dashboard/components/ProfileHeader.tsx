@@ -4,6 +4,7 @@ import { Crown, User, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/modules/auth/context/context";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface ProfileHeaderProps {
   session: { user?: { name?: string } } | null;
@@ -11,6 +12,7 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ session }: ProfileHeaderProps) {
   const { logout } = useAuth();
+  const { t, lang } = useTranslation();
   
   return (
     <motion.header 
@@ -53,13 +55,13 @@ export default function ProfileHeader({ session }: ProfileHeaderProps) {
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <div className="flex items-center gap-2">
               <Crown size={16} className="text-gold" />
-              <p className="text-gold font-bold text-xs uppercase tracking-widest">Membre Élite Vectoria</p>
+              <p className="text-gold font-bold text-xs uppercase tracking-widest">{lang === "fr" ? "Membre Élite Vectoria" : "Vectoria Elite Member"}</p>
             </div>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-ink-1 tracking-tight font-serif">
-            {session?.user?.name || "L'Excellence"}
+            {session?.user?.name || (lang === "fr" ? "L'Excellence" : "VIP Member")}
           </h1>
-          <p className="text-ink-3 text-sm font-medium">Votre voyage sur mesure continue ici.</p>
+          <p className="text-ink-3 text-sm font-medium">{lang === "fr" ? "Votre voyage sur mesure continue ici." : "Your bespoke journey continues here."}</p>
         </motion.div>
       </div>
 
@@ -75,7 +77,7 @@ export default function ProfileHeader({ session }: ProfileHeaderProps) {
           className="flex items-center justify-center gap-2 px-5 py-3 bg-surface-1 border-2 border-border rounded-lg text-xs font-bold uppercase tracking-wider text-ink-2 hover:border-gold hover:bg-gold/5 hover:text-gold transition-all group"
         >
           <Settings size={16} className="group-hover:rotate-90 transition-transform" />
-          Profil
+          {lang === "fr" ? "Profil" : "Profile"}
         </Link>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -84,7 +86,7 @@ export default function ProfileHeader({ session }: ProfileHeaderProps) {
           className="flex items-center justify-center gap-2 px-5 py-3 bg-red-500/20 border-2 border-red-400/30 rounded-lg text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/30 hover:border-red-400/60 transition-all group"
         >
           <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Déconnexion
+          {t("nav_logout")}
         </motion.button>
       </motion.div>
     </motion.header>
