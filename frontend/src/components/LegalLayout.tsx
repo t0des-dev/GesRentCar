@@ -3,6 +3,7 @@
 import { Shield, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface LegalLayoutProps {
   title: string;
@@ -10,6 +11,7 @@ interface LegalLayoutProps {
 }
 
 export default function LegalLayout({ title, children }: LegalLayoutProps) {
+  const { t, lang } = useTranslation();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-24">
         <nav className="flex items-center gap-2 text-sm text-slate-500 mb-12">
-          <Link href="/" className="text-primary hover:text-primary/80 transition-colors">Accueil</Link>
+          <Link href="/" className="text-primary hover:text-primary/80 transition-colors">{t("nav_home")}</Link>
           <ChevronRight size={14} />
           <span className="text-slate-900 font-medium">{title}</span>
         </nav>
@@ -39,7 +41,7 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
                 {title}
               </h1>
               <p className="text-sm text-slate-500">
-                Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                {t("legal_last_updated")} : {new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR', { month: 'long', year: 'numeric' })}
               </p>
               <div className="h-0.5 w-16 bg-primary rounded-full" />
             </div>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useStorefront } from "@/hooks/useStorefront";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 import { 
   Plane, Crown, Shield, Clock, MapPin, Phone, Headphones, Car, 
   Briefcase, Baby, Camera, Globe, Users, Award, Star, Zap 
@@ -26,25 +27,26 @@ function getIconComponent(iconName?: string, defaultIcon = Shield) {
 }
 
 export default function ServicesPage() {
+  const { t } = useTranslation();
   const storefront = useStorefront();
   const servicesContent = storefront.sections_content?.services || {};
 
-  const eyebrow = servicesContent.eyebrow || "Nos Services";
-  const title = servicesContent.title || "Un service d'exception à chaque étape";
-  const subtitle = servicesContent.subtitle || "De la réservation au retour du véhicule, Vectoria vous accompagne avec un service premium pensé pour les voyageurs exigeants.";
+  const eyebrow = servicesContent.eyebrow || t("services_eyebrow");
+  const title = servicesContent.title || t("services_hero_title");
+  const subtitle = servicesContent.subtitle || t("services_hero_subtitle");
 
   const dynamicItems = servicesContent.items || [
-    { id: "srv-1", title: "Livraison Aéroport 24/7", description: "Accueil personnalisé dès votre descente d'avion avec gestion VIP des bagages.", icon: "Plane", badge: "24/7", color: "blue" },
-    { id: "srv-2", title: "Service Conciergerie VIP", description: "Conciergerie dédiée, véhicule haut de gamme, conducteur privé sur demande.", icon: "Crown", badge: "VIP", color: "amber" },
-    { id: "srv-3", title: "Location Longue Durée", description: "Tarifs dégressifs pour les séjours de 7 jours et plus. Flexibilité totale.", icon: "Clock", badge: "Flex", color: "emerald" },
-    { id: "srv-4", title: "Assurance Premium", description: "Couverture complète zéro franchise. Conduisez l'esprit tranquille.", icon: "Shield", badge: "Tranquillité", color: "violet" },
+    { id: "srv-1", title: t("feat_support_title"), description: t("feat_support_desc"), icon: "Plane", badge: "24/7", color: "blue" },
+    { id: "srv-2", title: t("feat_chauffeur_title"), description: t("feat_chauffeur_desc"), icon: "Crown", badge: "VIP", color: "amber" },
+    { id: "srv-3", title: t("feat_fleet_title"), description: t("feat_fleet_desc"), icon: "Clock", badge: "Flex", color: "emerald" },
+    { id: "srv-4", title: t("quickview_spec_insurance"), description: t("faq_a3"), icon: "Shield", badge: "VIP", color: "violet" },
   ];
 
   const extraServices = [
-    { icon: Baby, title: "Siège bébé", desc: "Ensemble complet homologué disponible", price: "50 MAD/jour" },
-    { icon: Briefcase, title: "GPS intégré", desc: "Système de navigation dernière génération", price: "Inclus" },
-    { icon: Camera, title: "Dashcam", desc: "Enregistreur vidéo embarqué pour votre sécurité", price: "30 MAD/jour" },
-    { icon: Headphones, title: "Assistance 24/7", desc: "Support téléphonique multilingue à tout moment", price: "Inclus" },
+    { icon: Baby, title: t("services_extra_baby_seat"), desc: t("services_extra_baby_seat_desc"), price: "50 MAD / " + t("quickview_day") },
+    { icon: Briefcase, title: t("services_extra_gps"), desc: t("services_extra_gps_desc"), price: t("services_extra_included") },
+    { icon: Camera, title: t("services_extra_dashcam"), desc: t("services_extra_dashcam_desc"), price: "30 MAD / " + t("quickview_day") },
+    { icon: Headphones, title: t("services_extra_support"), desc: t("services_extra_support_desc"), price: t("services_extra_included") },
   ];
 
   return (
@@ -100,7 +102,7 @@ export default function ServicesPage() {
         <div className="container mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-16">
             <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-3">Options</p>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Services supplémentaires</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">{t("services_extras_title")}</h2>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {extraServices.map((svc, i) => (
@@ -128,10 +130,10 @@ export default function ServicesPage() {
       <section className="py-20">
         <div className="container mx-auto px-6 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">Prêt à réserver ?</h2>
-            <p className="text-slate-500 text-lg mb-10 max-w-xl mx-auto">Découvrez notre flotte et choisissez le véhicule parfait pour votre prochain voyage.</p>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">{t("cta_title")}</h2>
+            <p className="text-slate-500 text-lg mb-10 max-w-xl mx-auto">{t("cta_desc")}</p>
             <Link href="/fleet" className="inline-flex items-center gap-2 bg-[#16213E] text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-all">
-              <Car size={18} /> Voir la flotte
+              <Car size={18} /> {t("btn_catalog")}
             </Link>
           </motion.div>
         </div>
@@ -139,4 +141,5 @@ export default function ServicesPage() {
     </main>
   );
 }
+
 

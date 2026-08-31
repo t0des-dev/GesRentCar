@@ -14,60 +14,60 @@ const fadeUp = {
 };
 
 export default function ZonesPage() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const zones = [
     {
       icon: Plane,
-      name: "Aéroport Mohammed V",
-      desc: "Livraison et retour directement en zone arrivée. Service de accueil personnalisé avec panneau Vectoria.",
+      name: lang === 'en' ? "Mohammed V Airport" : "Aéroport Mohammed V",
+      desc: lang === 'en' ? "Direct pickup and drop-off in arrival terminal. Personalized welcome with Vectoria sign." : "Livraison et retour directement en zone arrivée. Service de accueil personnalisé avec panneau Vectoria.",
       address: "Aéroport Mohammed V, Terminal 1",
-      hours: "24h/24, 7j/7",
+      hours: "24/7",
       color: "text-blue-600",
       bg: "bg-blue-50",
     },
     {
       icon: Building2,
-      name: "Centre-ville Casablanca",
-      desc: "Agence principale Corniche. Livraison gratuite dans un rayon de 5 km.",
+      name: lang === 'en' ? "Casablanca Downtown" : "Centre-ville Casablanca",
+      desc: lang === 'en' ? "Main Corniche agency. Free delivery within 5 km radius." : "Agence principale Corniche. Livraison gratuite dans un rayon de 5 km.",
       address: "Boulevard de la Corniche, Casablanca",
-      hours: "Lun-Sam: 9h00 - 19h00",
+      hours: "09:00 - 19:00",
       color: "text-primary",
       bg: "bg-primary/10",
     },
     {
       icon: Waves,
       name: "Corniche & Ain Diab",
-      desc: "Zone touristique et balnéaire. Livraison à votre hôtel ou résidence.",
+      desc: lang === 'en' ? "Beachfront & tourist zone. Delivery to your hotel or residence." : "Zone touristique et balnéaire. Livraison à votre hôtel ou résidence.",
       address: "Zone Corniche, Ain Diab",
-      hours: "Lun-Sam: 9h00 - 19h00",
+      hours: "09:00 - 19:00",
       color: "text-emerald-600",
       bg: "bg-emerald-50",
     },
     {
       icon: Building2,
       name: "Casa Finance City",
-      desc: "Zone d'affaires. Service express pour les professionnels. Livraison en 30 min.",
+      desc: lang === 'en' ? "Business district. Express service for professionals. Delivery in 30 min." : "Zone d'affaires. Service express pour les professionnels. Livraison en 30 min.",
       address: "Casa Finance City, Tour 1",
-      hours: "Lun-Ven: 8h00 - 20h00",
+      hours: "08:00 - 20:00",
       color: "text-violet-600",
       bg: "bg-violet-50",
     },
     {
       icon: Mountain,
-      name: "Casablanca>Anfa",
-      desc: "Quartier résidentiel haut de gamme. Service VIP à domicile.",
+      name: "Casablanca > Anfa",
+      desc: lang === 'en' ? "High-end residential neighborhood. VIP home service." : "Quartier résidentiel haut de gamme. Service VIP à domicile.",
       address: "Zone Anfa, Casablanca",
-      hours: "Lun-Sam: 9h00 - 19h00",
+      hours: "09:00 - 19:00",
       color: "text-amber-600",
       bg: "bg-amber-50",
     },
     {
       icon: Navigation,
-      name: "Livraison nationale",
-      desc: "Marrakech, Rabat, Tanger, Agadir. Supplément selon distance. Demandez un devis.",
-      address: "Partout au Maroc",
-      hours: "Sur réservation",
+      name: lang === 'en' ? "National Delivery" : "Livraison nationale",
+      desc: lang === 'en' ? "Marrakech, Rabat, Tangier, Agadir. Supplement based on distance." : "Marrakech, Rabat, Tanger, Agadir. Supplément selon distance. Demandez un devis.",
+      address: lang === 'en' ? "All over Morocco" : "Partout au Maroc",
+      hours: lang === 'en' ? "On booking" : "Sur réservation",
       color: "text-rose-600",
       bg: "bg-rose-50",
     },
@@ -79,12 +79,12 @@ export default function ZonesPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-10" />
         <div className="container mx-auto px-6 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-3xl">
-            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">Nos Agences</p>
+            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">{t("zones_eyebrow")}</p>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-6">
-              Où nous <span className="text-gold">trouver</span>
+              {t("zones_title")}
             </h1>
             <p className="text-white/70 text-lg leading-relaxed">
-              Plusieurs points de service à Casablanca et livraison dans tout le Maroc. Retrouvez-nous près de chez vous.
+              {t("zones_subtitle")}
             </p>
           </motion.div>
         </div>
@@ -128,7 +128,7 @@ export default function ZonesPage() {
         <div className="container mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-12">
             <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-3">Carte</p>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Notre zone de couverture</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{t("zones_title")}</h2>
           </motion.div>
           <motion.div
             initial="hidden"
@@ -154,14 +154,14 @@ export default function ZonesPage() {
       <section className="py-16 bg-[#16213E]">
         <div className="container mx-auto px-6 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-            <h2 className="text-3xl font-black text-white tracking-tight mb-4">Besoin d&apos;un renseignement ?</h2>
-            <p className="text-white/60 mb-8 max-w-xl mx-auto">Notre équipe est disponible pour répondre à toutes vos questions sur nos zones de service.</p>
+            <h2 className="text-3xl font-black text-white tracking-tight mb-4">{t("zones_cta_title")}</h2>
+            <p className="text-white/60 mb-8 max-w-xl mx-auto">{t("zones_cta_desc")}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="tel:+212600000000" className="inline-flex items-center justify-center gap-2 bg-white text-[#16213E] px-8 py-4 rounded-full font-bold hover:scale-105 transition-all">
                 <Phone size={18} /> +212 6 00 00 00 00
               </a>
               <Link href="/contact" className="inline-flex items-center justify-center gap-2 bg-gold text-[#16213E] px-8 py-4 rounded-full font-bold hover:scale-105 transition-all">
-                Nous contacter
+                {t("zones_cta_button")}
               </Link>
             </div>
           </motion.div>
@@ -170,3 +170,4 @@ export default function ZonesPage() {
     </main>
   );
 }
+

@@ -6,6 +6,7 @@ import { CheckCircle2, AlertCircle, Shield, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/shared/services/client";
 import { cn } from "@/shared/utils";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 // Modular Components
 import ProfileHeaderNavigation from "@/modules/dashboard/components/profile/ProfileHeaderNavigation";
@@ -13,6 +14,7 @@ import PersonalInfoForm from "@/modules/dashboard/components/profile/PersonalInf
 import SecuritySettingsForm from "@/modules/dashboard/components/profile/SecuritySettingsForm";
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { user, refresh: update } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,10 +40,10 @@ export default function ProfilePage() {
     setMsg(null);
     try {
       await api.put("/user/profile", profileData);
-      setMsg({ type: "success", text: "Votre profil a été mis à jour avec succès." });
+      setMsg({ type: "success", text: t("profile_update_success") });
       await update();
     } catch (err: any) {
-      setMsg({ type: "error", text: err.response?.data?.message || "Une erreur est survenue." });
+      setMsg({ type: "error", text: err.response?.data?.message || t("login_error_generic") });
     } finally {
       setLoading(false);
     }
@@ -50,17 +52,17 @@ export default function ProfilePage() {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordData.password !== passwordData.password_confirmation) {
-      setMsg({ type: "error", text: "Les mots de passe ne correspondent pas." });
+      setMsg({ type: "error", text: t("profile_password_mismatch") });
       return;
     }
     setLoading(true);
     setMsg(null);
     try {
       await api.put("/user/password", passwordData);
-      setMsg({ type: "success", text: "Votre mot de passe a été modifié avec succès." });
+      setMsg({ type: "success", text: t("profile_password_success") });
       setPasswordData({ current_password: "", password: "", password_confirmation: "" });
     } catch (err: any) {
-      setMsg({ type: "error", text: err.response?.data?.message || "Erreur lors du changement de mot de passe." });
+      setMsg({ type: "error", text: err.response?.data?.message || t("login_error_generic") });
     } finally {
       setLoading(false);
     }
@@ -105,11 +107,14 @@ export default function ProfilePage() {
             <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
               <Shield size={16} />
             </div>
-            <p className="text-sm text-slate-300">Besoin d'aide pour sécuriser votre compte ?</p>
+            <p className="text-sm text-slate-300">{t("profile_security_help")}</p>
           </div>
-          <button className="text-[10px] font-semibold uppercase tracking-widest text-primary hover:underline">Contactez la Conciergerie VIP</button>
+          <a href="/contact" className="text-[10px] font-semibold uppercase tracking-widest text-primary hover:underline">
+            {t("profile_vip_concierge")}
+          </a>
         </div>
       </div>
     </main>
   );
 }
+

@@ -6,8 +6,10 @@ import { HelpCircle, ArrowLeft, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import FAQSection from "@/components/FAQSection";
 import { useStorefront } from "@/hooks/useStorefront";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 export default function FaqPage() {
+  const { t } = useTranslation();
   const storefront = useStorefront();
 
   useEffect(() => {
@@ -33,20 +35,20 @@ export default function FaqPage() {
               className="inline-flex items-center gap-2 text-white/50 hover:text-gold text-sm font-semibold mb-8 transition-colors"
             >
               <ArrowLeft size={16} />
-              Retour à l&apos;accueil
+              {t("nav_home")}
             </Link>
 
             <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full mb-8">
               <HelpCircle size={16} className="text-gold" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-80">Support Client</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-80">{t("faq_eyebrow")}</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter mb-6 leading-[0.9]">
-              Questions <span className="text-gold">Fréquentes</span>
+              {t("faq_title")}
             </h1>
 
             <p className="text-xl text-slate-300 font-medium max-w-xl leading-relaxed">
-              Tout ce que vous devez savoir sur la location de prestige chez Vectoria.
+              {t("faq_subtitle")}
             </p>
           </motion.div>
         </div>
@@ -67,13 +69,13 @@ export default function FaqPage() {
             <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto">
               <MessageCircle size={28} className="text-gold" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Vous n&apos;avez pas trouvé votre réponse ?</h2>
-            <p className="text-slate-500">Notre équipe est disponible 24/7 pour répondre à toutes vos questions.</p>
+            <h2 className="text-2xl font-bold text-slate-900">{t("faq_not_found_title")}</h2>
+            <p className="text-slate-500">{t("faq_not_found_desc")}</p>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-white rounded-xl text-sm font-bold hover:bg-gold/90 transition-all hover:shadow-lg hover:shadow-gold/30 uppercase tracking-wider"
             >
-              Nous contacter
+              {t("faq_contact_btn")}
               <span className="ml-1">→</span>
             </Link>
           </div>
@@ -82,3 +84,4 @@ export default function FaqPage() {
     </main>
   );
 }
+

@@ -6,6 +6,7 @@ import { pageService } from "@/lib/api/pages";
 import ContentBlockRenderer from "@/modules/storefront/components/ContentBlockRenderer";
 import type { Page } from "@/types/page";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const RESERVED_SLUGS = new Set([
   "about", "accessibility", "admin", "agent", "auth", "booking", "c",
@@ -15,6 +16,7 @@ const RESERVED_SLUGS = new Set([
 ]);
 
 export default function DynamicPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const slug = params?.slug as string;
   const [page, setPage] = useState<Page | null>(null);
@@ -46,7 +48,7 @@ export default function DynamicPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-6xl font-semibold text-ink-1">404</h1>
-        <p className="text-ink-3">Page non trouvée</p>
+        <p className="text-ink-3">{t("page_not_found")}</p>
       </div>
     );
   }

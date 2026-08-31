@@ -13,6 +13,7 @@ import {
 import toast from "react-hot-toast";
 import { cn } from "@/shared/utils";
 import { useAgency } from "@/hooks/useAgency";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 function FacebookIcon({ size = 16 }: { size?: number }) {
   return (
@@ -56,6 +57,7 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
+  const { t } = useTranslation();
   const agency = useAgency();
   const footerConfig = agency.footer_config || {};
 
@@ -78,22 +80,22 @@ export default function ContactPage() {
 
   const validate = (): boolean => {
     const e: FormErrors = {};
-    if (!form.name.trim()) e.name = "Le nom est requis";
+    if (!form.name.trim()) e.name = t("validation_name_required");
     if (!form.email.trim()) {
-      e.email = "L'email est requis";
+      e.email = t("validation_email_required");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      e.email = "Email invalide";
+      e.email = t("validation_email_invalid");
     }
     if (!form.phone.trim()) {
-      e.phone = "Le téléphone est requis";
+      e.phone = t("validation_phone_required");
     } else if (!/^[0-9+\s()-]{8,}$/.test(form.phone)) {
-      e.phone = "Téléphone invalide";
+      e.phone = t("validation_phone_invalid");
     }
-    if (!form.subject.trim()) e.subject = "Le sujet est requis";
+    if (!form.subject.trim()) e.subject = t("validation_subject_required");
     if (!form.message.trim()) {
-      e.message = "Le message est requis";
+      e.message = t("validation_message_required");
     } else if (form.message.trim().length < 10) {
-      e.message = "Minimum 10 caractères";
+      e.message = t("validation_message_min");
     }
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -105,7 +107,7 @@ export default function ContactPage() {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 1200));
     setLoading(false);
-    toast.success("Message envoyé avec succès ! Nous vous répondrons rapidement.");
+    toast.success(t("contact_success_full"));
     setForm({ name: "", email: "", phone: "", subject: "", message: "" });
     setErrors({});
   };
@@ -121,17 +123,17 @@ export default function ContactPage() {
   const agencyInfo = [
     {
       icon: MapPin,
-      label: "Adresse",
+      label: t("contact_address_label"),
       value: address,
     },
     {
       icon: Phone,
-      label: "Téléphone",
+      label: t("contact_phone_label"),
       value: phone,
     },
     {
       icon: Mail,
-      label: "Email",
+      label: t("contact_email_label_info"),
       value: email,
     },
   ];
@@ -153,18 +155,16 @@ export default function ContactPage() {
             <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full mb-8">
               <MessageCircle size={16} className="text-gold" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-80">
-                Contactez-nous
+                {t("contact_title")}
               </span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter mb-6 leading-[0.9]">
-              Parlons{" "}
-              <span className="text-gold">Ensemble</span>
+              {t("contact_title")}
             </h1>
 
             <p className="text-xl text-slate-300 font-medium max-w-xl leading-relaxed">
-              Une question, un devis personnalisé ou simplement envie d&apos;échanger ?
-              Notre équipe est à votre écoute.
+              {t("contact_subtitle")}
             </p>
           </motion.div>
         </div>
@@ -189,7 +189,7 @@ export default function ContactPage() {
                     <Send size={22} />
                   </div>
                   <h2 className="text-2xl font-bold text-ink-1 tracking-tight">
-                    Envoyez-nous un message
+                    {t("contact_title")}
                   </h2>
                 </div>
 
@@ -197,7 +197,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                        Nom complet
+                        {t("contact_name")}
                       </label>
                       <input
                         type="text"
@@ -207,7 +207,7 @@ export default function ContactPage() {
                           "w-full px-4 py-3.5 rounded-xl border-2 bg-surface-0 text-ink-1 placeholder:text-ink-4 transition-all outline-none focus:border-gold focus:ring-2 focus:ring-gold/10",
                           errors.name ? "border-red-400" : "border-border"
                         )}
-                        placeholder="Jean Dupont"
+                        placeholder={t("register_name_placeholder")}
                       />
                       {errors.name && (
                         <p className="text-xs text-red-500 mt-1">{errors.name}</p>
@@ -216,7 +216,7 @@ export default function ContactPage() {
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                        Email
+                        {t("contact_email")}
                       </label>
                       <input
                         type="email"
@@ -226,7 +226,7 @@ export default function ContactPage() {
                           "w-full px-4 py-3.5 rounded-xl border-2 bg-surface-0 text-ink-1 placeholder:text-ink-4 transition-all outline-none focus:border-gold focus:ring-2 focus:ring-gold/10",
                           errors.email ? "border-red-400" : "border-border"
                         )}
-                        placeholder="jean@example.com"
+                        placeholder="votre@email.com"
                       />
                       {errors.email && (
                         <p className="text-xs text-red-500 mt-1">{errors.email}</p>
@@ -237,7 +237,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                        Téléphone
+                        {t("contact_phone_label")}
                       </label>
                       <input
                         type="tel"
@@ -256,7 +256,7 @@ export default function ContactPage() {
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                        Sujet
+                        {t("contact_subject")}
                       </label>
                       <input
                         type="text"
@@ -266,7 +266,7 @@ export default function ContactPage() {
                           "w-full px-4 py-3.5 rounded-xl border-2 bg-surface-0 text-ink-1 placeholder:text-ink-4 transition-all outline-none focus:border-gold focus:ring-2 focus:ring-gold/10",
                           errors.subject ? "border-red-400" : "border-border"
                         )}
-                        placeholder="Demande de devis"
+                        placeholder={t("contact_subject")}
                       />
                       {errors.subject && (
                         <p className="text-xs text-red-500 mt-1">{errors.subject}</p>
@@ -276,7 +276,7 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-ink-3">
-                      Message
+                      {t("contact_message")}
                     </label>
                     <textarea
                       rows={5}
@@ -286,7 +286,7 @@ export default function ContactPage() {
                         "w-full px-4 py-3.5 rounded-xl border-2 bg-surface-0 text-ink-1 placeholder:text-ink-4 transition-all outline-none resize-none focus:border-gold focus:ring-2 focus:ring-gold/10",
                         errors.message ? "border-red-400" : "border-border"
                       )}
-                      placeholder="Décrivez votre demande..."
+                      placeholder={t("contact_message")}
                     />
                     {errors.message && (
                       <p className="text-xs text-red-500 mt-1">{errors.message}</p>
@@ -305,7 +305,7 @@ export default function ContactPage() {
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                       <>
-                        Envoyer
+                        {t("contact_send")}
                         <Send size={16} />
                       </>
                     )}
@@ -358,18 +358,16 @@ export default function ContactPage() {
                 <div className="flex items-center gap-3 mb-5">
                   <Clock size={20} className="text-gold" />
                   <h3 className="text-sm font-bold uppercase tracking-wider">
-                    Horaires
+                    {t("footer_hours_heading")}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400">Lundi – Samedi</span>
-                    <span className="font-bold">9h – 19h</span>
+                    <span className="text-slate-400">{t("footer_hours_weekdays")}</span>
                   </div>
                   <div className="h-px bg-white/10" />
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-400">Dimanche</span>
-                    <span className="font-bold text-gold">Fermé</span>
+                    <span className="text-slate-400">{t("footer_hours_sunday_closed")}</span>
                   </div>
                 </div>
               </motion.div>
@@ -384,7 +382,7 @@ export default function ContactPage() {
                 className="bg-surface-1 rounded-2xl border-2 border-border p-6"
               >
                 <p className="text-xs font-bold uppercase tracking-wider text-ink-3 mb-4">
-                  Suivez-nous
+                  Vectoria Social
                 </p>
                 <div className="flex gap-3">
                   <a
@@ -424,7 +422,7 @@ export default function ContactPage() {
                 <div>
                   <p className="text-sm font-bold text-ink-1">WhatsApp</p>
                   <p className="text-xs text-ink-3">
-                    Réponse rapide garantie
+                    24/7 VIP Support
                   </p>
                 </div>
               </motion.a>
@@ -463,7 +461,7 @@ export default function ContactPage() {
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 hover:scale-110 transition-all animate-float-subtle"
-        aria-label="Contactez-nous sur WhatsApp"
+        aria-label="WhatsApp VIP"
       >
         <MessageCircle size={26} />
       </a>

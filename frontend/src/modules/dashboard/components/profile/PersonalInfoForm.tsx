@@ -2,6 +2,7 @@
 
 import { User, Mail, Save, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface PersonalInfoFormProps {
   data: { name: string; email: string };
@@ -11,6 +12,8 @@ interface PersonalInfoFormProps {
 }
 
 export default function PersonalInfoForm({ data, setData, onSubmit, loading }: PersonalInfoFormProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
@@ -26,7 +29,7 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
         >
           <User size={20} strokeWidth={2} />
         </motion.div>
-        <h3 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">Identité</h3>
+        <h3 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">{t("profile_info_tab")}</h3>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
@@ -37,7 +40,7 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
           transition={{ delay: 0.2 }}
           className="space-y-2"
         >
-          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">Nom Complet</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">{t("register_name_label")}</label>
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
             <input
@@ -45,7 +48,7 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
               value={data.name}
               onChange={(e) => setData({...data, name: e.target.value})}
               className="input-premium w-full pl-12 pr-5 py-3.5"
-              placeholder="Votre nom"
+              placeholder={t("register_name_placeholder")}
               required
             />
           </div>
@@ -58,7 +61,7 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
           transition={{ delay: 0.3 }}
           className="space-y-2"
         >
-          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">Adresse Email</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">{t("register_email_label")}</label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
             <input
@@ -66,7 +69,7 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
               value={data.email}
               onChange={(e) => setData({...data, email: e.target.value})}
               className="input-premium w-full pl-12 pr-5 py-3.5"
-              placeholder="votre@email.com"
+              placeholder={t("register_email_placeholder")}
               required
             />
           </div>
@@ -81,9 +84,10 @@ export default function PersonalInfoForm({ data, setData, onSubmit, loading }: P
           className="w-full bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-8 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 hover:shadow-lg hover:shadow-gold/40 transition-all disabled:opacity-60"
         >
           {loading ? <Loader2 size={18} className="animate-spin" strokeWidth={2} /> : <Save size={18} strokeWidth={2} />}
-          Mettre à jour le profil
+          {t("profile_save_btn")}
         </motion.button>
       </form>
     </motion.section>
   );
 }
+

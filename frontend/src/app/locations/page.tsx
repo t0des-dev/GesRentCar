@@ -1,24 +1,28 @@
 "use client";
 
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const LOCATIONS = [
   {
-    name: "Marrakech Menara Airport",
+    name: "Aéroport Marrakech Ménara",
+    nameEn: "Marrakech Menara Airport",
     address: "Aéroport Marrakech Ménara, Marrakech 40000",
     phone: "+212 524-447910",
     email: "marrakech@vectoria.com",
     hours: "24/7",
   },
   {
-    name: "Casablanca Downtown",
+    name: "Casablanca Centre-Ville",
+    nameEn: "Casablanca Downtown",
     address: "Angle Boulevard Zerktouni, Casablanca",
     phone: "+212 522-123456",
     email: "casa@vectoria.com",
     hours: "08:00 - 20:00",
   },
   {
-    name: "Agadir Al Massira Airport",
+    name: "Aéroport Agadir Al Massira",
+    nameEn: "Agadir Al Massira Airport",
     address: "BP 2000, Agadir 80000",
     phone: "+212 528-839112",
     email: "agadir@vectoria.com",
@@ -27,14 +31,16 @@ const LOCATIONS = [
 ];
 
 export default function LocationsPage() {
+  const { t, lang } = useTranslation();
+
   return (
     <main className="min-h-screen py-28 bg-slate-50">
       <div className="container mx-auto px-6">
         <div className="mb-16">
-          <p className="text-primary text-[10px] font-semibold uppercase tracking-[0.2em] mb-3">Our Network</p>
-          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tighter mb-4">Pick-up Locations</h1>
+          <p className="text-primary text-[10px] font-semibold uppercase tracking-[0.2em] mb-3">{t("locations_eyebrow")}</p>
+          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tighter mb-4">{t("locations_title")}</h1>
           <p className="text-slate-500 max-w-2xl">
-            We are present in the major cities and airports of Morocco. Find the nearest agency to start your journey.
+            {t("locations_desc")}
           </p>
         </div>
 
@@ -44,7 +50,7 @@ export default function LocationsPage() {
               <div className="bg-primary/10 text-primary w-12 h-12 rounded-xl flex items-center justify-center mb-6">
                 <MapPin size={24} />
               </div>
-              <h2 className="text-xl font-semibold text-slate-900 mb-4">{loc.name}</h2>
+              <h2 className="text-xl font-semibold text-slate-900 mb-4">{lang === 'en' ? loc.nameEn : loc.name}</h2>
               
               <div className="space-y-3">
                 <div className="flex items-start gap-3 text-sm text-slate-500">
@@ -65,9 +71,12 @@ export default function LocationsPage() {
                 </div>
               </div>
 
-              <button className="w-full mt-8 py-3 rounded-xl border border-primary text-primary text-xs font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-colors">
-                View on Map
-              </button>
+              <a 
+                href="/contact"
+                className="block text-center w-full mt-8 py-3 rounded-xl border border-primary text-primary text-xs font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-colors"
+              >
+                {t("nav_contact")}
+              </a>
             </div>
           ))}
         </div>
@@ -75,3 +84,4 @@ export default function LocationsPage() {
     </main>
   );
 }
+

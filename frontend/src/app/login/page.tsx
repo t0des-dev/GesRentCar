@@ -7,9 +7,11 @@ import { Mail, Lock, LogIn, Shield, Car, AlertCircle, Loader2, Eye, EyeOff, User
 import { useAuth } from '@/modules/auth/context/context';
 import { motion } from 'framer-motion';
 import { notifyInfo } from "@/components/Notifications";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, user, loading: authLoading } = useAuth();
@@ -57,7 +59,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-surface-0 pt-16">
-      {/* Left Side — Hero Section (with sliding gradient animation) */}
+      {/* Left Side — Hero Section */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -89,11 +91,14 @@ export default function LoginPage() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="space-y-4"
           >
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full mb-2">
+              <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">{t("login_hero_badge")}</span>
+            </div>
             <h1 className="text-5xl font-bold text-white leading-tight font-serif">
-              Bienvenue à <span className="text-gold">Vectoria</span>
+              {t("login_hero_title")} <span className="text-gold">{t("login_hero_title_accent")}</span>{" "}{t("login_hero_title_end")}
             </h1>
             <p className="text-lg text-white/85 font-light leading-relaxed">
-              Accédez à votre tableau de bord de gestion de flotte premium et explorez les meilleures voitures de luxe.
+              {t("login_hero_subtitle")}
             </p>
           </motion.div>
 
@@ -105,15 +110,16 @@ export default function LoginPage() {
             className="space-y-4 pt-6"
           >
             {[
-              { icon: Shield, label: "Sécurité premium" },
-              { icon: Mail, label: "Support 24/7" },
-              { icon: Car, label: "Flotte mondiale" }
+              { icon: Shield, key: "login_feat_reservations" },
+              { icon: Mail, key: "login_feat_contracts" },
+              { icon: Car, key: "login_feat_offers" },
+              { icon: UserCheck, key: "login_feat_support" },
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3 text-white">
                 <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
                   <feature.icon size={18} />
                 </div>
-                <span className="font-medium">{feature.label}</span>
+                <span className="font-medium">{t(feature.key)}</span>
               </div>
             ))}
           </motion.div>
@@ -127,9 +133,9 @@ export default function LoginPage() {
           className="grid grid-cols-3 gap-6 relative z-10 pt-12"
         >
           {[
-            { value: "15K+", label: "Véhicules" },
-            { value: "50+", label: "Destinations" },
-            { value: "98%", label: "Satisfaction" }
+            { value: "15K+", label: t("stat_clients") },
+            { value: "50+", label: t("nav_locations") },
+            { value: "98%", label: t("about_stat_satisfaction_label") },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <div className="text-2xl font-bold text-gold mb-1">{stat.value}</div>
@@ -162,7 +168,7 @@ export default function LoginPage() {
             <p className="text-ink-3 text-sm font-medium">Premium Car Rental</p>
           </motion.div>
 
-          {/* Form Card (with premium Glassmorphism look) */}
+          {/* Form Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -171,8 +177,8 @@ export default function LoginPage() {
           >
             {/* Title */}
             <div>
-              <h2 className="text-2xl font-bold text-ink-1 mb-2">Connexion</h2>
-              <p className="text-ink-3 text-sm">Accédez à votre compte Vectoria</p>
+              <h2 className="text-2xl font-bold text-ink-1 mb-2">{t("login_title")}</h2>
+              <p className="text-ink-3 text-sm">{t("login_subtitle")}</p>
             </div>
 
             {/* Error Alert */}
@@ -193,14 +199,14 @@ export default function LoginPage() {
               {/* Email Field */}
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="flex items-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
-                  <Mail size={14} className="text-gold" /> Email
+                  <Mail size={14} className="text-gold" /> {t("login_email_label")}
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
+                  placeholder={t("login_email_placeholder")}
                   required
                   autoComplete="email"
                   className="input-premium focus:border-gold focus:ring-2 focus:ring-gold/20"
@@ -211,7 +217,7 @@ export default function LoginPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label htmlFor="password" className="flex items-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
-                    <Lock size={14} className="text-gold" /> Mot de passe
+                    <Lock size={14} className="text-gold" /> {t("login_password_label")}
                   </label>
                   <a 
                     href="#forgot" 
@@ -221,7 +227,7 @@ export default function LoginPage() {
                     }} 
                     className="text-xs font-semibold text-gold hover:text-gold-dark hover:underline transition-colors"
                   >
-                    Mot de passe oublié ?
+                    {t("login_forgot_password")}
                   </a>
                 </div>
                 <div className="relative">
@@ -239,7 +245,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-gold transition-colors focus:outline-none"
-                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -256,7 +262,7 @@ export default function LoginPage() {
                   className="rounded border-border text-gold focus:ring-gold/50 cursor-pointer w-4 h-4"
                 />
                 <label htmlFor="remember" className="text-xs font-medium text-ink-3 select-none cursor-pointer">
-                  Se souvenir de moi
+                  {t("login_remember_me")}
                 </label>
               </div>
 
@@ -272,12 +278,12 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 size={18} className="animate-spin" />
-                    Connexion en cours...
+                    {t("login_loading")}
                   </>
                 ) : (
                   <>
                     <LogIn size={18} />
-                    Se connecter
+                    {t("login_submit")}
                   </>
                 )}
               </motion.button>
@@ -287,7 +293,7 @@ export default function LoginPage() {
             <div className="pt-5 border-t border-border space-y-4">
               <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-ink-3 uppercase tracking-wider">
                 <Sparkles size={14} className="text-gold animate-pulse" />
-                Connexion rapide (Démo)
+                {t("login_or_divider")} Demo
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {[
@@ -314,9 +320,9 @@ export default function LoginPage() {
             {/* Register Link */}
             <div className="text-center pt-4 border-t border-border">
               <p className="text-ink-3 text-sm">
-                Pas encore de compte ?{' '}
+                {t("login_no_account")}{' '}
                 <Link href="/register" className="font-bold text-gold hover:text-gold-dark transition-colors">
-                  S'inscrire
+                  {t("register_title")}
                 </Link>
               </p>
             </div>
@@ -330,7 +336,7 @@ export default function LoginPage() {
             className="mt-8 text-center"
           >
             <p className="text-xs text-ink-4">
-              Sélectionnez un rôle ci-dessus pour pré-remplir automatiquement les identifiants de test.
+              {t("login_welcome")} — Vectoria Premium
             </p>
           </motion.div>
         </div>

@@ -14,54 +14,54 @@ const fadeUp = {
 };
 
 export default function PricingPage() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const categories = [
     {
-      name: "Économique",
-      nameEn: "Economy",
+      name: lang === 'en' ? t("pricing_cat_economy") : "Économique",
+      categorySlug: "economique",
       price: 250,
       image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?auto=format&fit=crop&q=80&w=600",
-      features: ["Climatisation", "Bluetooth", "4 places", "GPS intégré"],
-      excluded: ["Assurance premium", "Siège bébé"],
+      features: [t("pricing_feat_ac"), t("pricing_feat_bluetooth"), t("pricing_feat_seats_4"), t("pricing_feat_gps")],
+      excluded: [t("pricing_excl_premium_insurance"), t("pricing_excl_baby_seat")],
       color: "from-emerald-500 to-emerald-600",
     },
     {
-      name: "Standard",
-      nameEn: "Standard",
+      name: lang === 'en' ? t("pricing_cat_standard") : "Standard",
+      categorySlug: "standard",
       price: 400,
       image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600",
-      features: ["Climatisation", "Bluetooth", "5 places", "GPS intégré", "Caméra recul"],
-      excluded: ["Assurance premium"],
+      features: [t("pricing_feat_ac"), t("pricing_feat_bluetooth"), t("pricing_feat_seats_5"), t("pricing_feat_gps"), t("pricing_feat_rear_cam")],
+      excluded: [t("pricing_excl_premium_insurance")],
       color: "from-blue-500 to-blue-600",
       popular: true,
     },
     {
-      name: "SUV",
-      nameEn: "SUV",
+      name: lang === 'en' ? t("pricing_cat_suv") : "SUV",
+      categorySlug: "suv",
       price: 600,
       image: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=600",
-      features: ["Climatisation", "Bluetooth", "7 places", "GPS intégré", "Caméra 360°", "Toit panoramique"],
+      features: [t("pricing_feat_ac"), t("pricing_feat_bluetooth"), t("pricing_feat_seats_7"), t("pricing_feat_gps"), t("pricing_feat_cam_360"), t("pricing_feat_panoramic")],
       excluded: [],
       color: "from-violet-500 to-violet-600",
     },
     {
-      name: "Luxe",
-      nameEn: "Luxury",
+      name: lang === 'en' ? t("pricing_cat_luxury") : "Luxe",
+      categorySlug: "luxe",
       price: 1000,
       image: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=600",
-      features: ["Climatisation bi-zone", "Cuir intégral", "5 places", "GPS premium", "Caméra 360°", "Toit panoramique", "Son harman/kardon"],
+      features: [t("pricing_feat_dual_ac"), t("pricing_feat_leather"), t("pricing_feat_seats_5"), t("pricing_feat_gps_premium"), t("pricing_feat_cam_360"), t("pricing_feat_panoramic"), t("pricing_feat_premium_sound")],
       excluded: [],
       color: "from-amber-500 to-amber-600",
     },
   ];
 
   const extras = [
-    { name: "Conducteur privé", price: "500 MAD/jour" },
-    { name: "Siège bébé", price: "50 MAD/jour" },
-    { name: "GPS avancé", price: "30 MAD/jour" },
-    { name: "Assurance tous risques", price: "100 MAD/jour" },
-    { name: "Lavage extérieur", price: "50 MAD" },
+    { name: t("pricing_extra_driver"), price: "500 MAD / " + t("quickview_day") },
+    { name: t("pricing_extra_baby_seat"), price: "50 MAD / " + t("quickview_day") },
+    { name: t("pricing_extra_gps"), price: "30 MAD / " + t("quickview_day") },
+    { name: t("pricing_extra_insurance_full"), price: "100 MAD / " + t("quickview_day") },
+    { name: t("pricing_extra_fuel"), price: "50 MAD" },
   ];
 
   return (
@@ -70,12 +70,12 @@ export default function PricingPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-10" />
         <div className="container mx-auto px-6 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-3xl">
-            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">Tarification</p>
+            <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-4">{t("pricing_eyebrow")}</p>
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-6">
-              Des tarifs <span className="text-gold">transparents</span> et compétitifs
+              {t("pricing_title")}
             </h1>
             <p className="text-white/70 text-lg leading-relaxed">
-              Pas de frais cachés. Prix affichés TTC avec kilométrage illimité. Le meilleur rapport qualité-prix de Casablanca.
+              {t("pricing_subtitle")}
             </p>
           </motion.div>
         </div>
@@ -98,7 +98,7 @@ export default function PricingPage() {
               >
                 {cat.popular && (
                   <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
-                    Populaire
+                    {t("pricing_popular")}
                   </div>
                 )}
                 <div className="aspect-[4/3] overflow-hidden">
@@ -108,7 +108,7 @@ export default function PricingPage() {
                   <h3 className="text-xl font-black text-slate-900 mb-1">{cat.name}</h3>
                   <div className="flex items-baseline gap-1 mb-4">
                     <span className="text-3xl font-black text-[#16213E]">{cat.price}</span>
-                    <span className="text-sm text-slate-400 font-medium">MAD/jour</span>
+                    <span className="text-sm text-slate-400 font-medium">MAD {t("pricing_per_day")}</span>
                   </div>
                   <ul className="space-y-2 mb-6">
                     {cat.features.map((f, j) => (
@@ -123,14 +123,14 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   <Link
-                    href={`/fleet?category=${cat.name.toLowerCase()}`}
+                    href={`/fleet?category=${cat.categorySlug}`}
                     className={`block text-center py-3 rounded-2xl font-bold text-sm transition-all ${
                       cat.popular
                         ? "bg-[#16213E] text-white hover:scale-105"
                         : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                     }`}
                   >
-                    Voir les véhicules
+                    {t("btn_catalog")}
                   </Link>
                 </div>
               </motion.div>
@@ -143,7 +143,7 @@ export default function PricingPage() {
         <div className="container mx-auto px-6">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mb-12">
             <p className="text-gold text-xs font-black uppercase tracking-[0.3em] mb-3">Extras</p>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Options supplémentaires</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{t("pricing_extras_title")}</h2>
           </motion.div>
           <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-slate-100 overflow-hidden">
             {extras.map((extra, i) => (
@@ -159,10 +159,10 @@ export default function PricingPage() {
       <section className="py-16 bg-[#16213E]">
         <div className="container mx-auto px-6 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-            <h2 className="text-3xl font-black text-white tracking-tight mb-4">Tarifs de groupe et longue durée</h2>
-            <p className="text-white/60 mb-8 max-w-xl mx-auto">Réductions exclusives pour les locations de 7+ jours et les flottes d&apos;entreprise.</p>
+            <h2 className="text-3xl font-black text-white tracking-tight mb-4">{t("pricing_cta_title")}</h2>
+            <p className="text-white/60 mb-8 max-w-xl mx-auto">{t("pricing_cta_desc")}</p>
             <Link href="/contact" className="inline-flex items-center gap-2 bg-gold text-[#16213E] px-8 py-4 rounded-full font-bold hover:scale-105 transition-all">
-              Demander un devis
+              {t("pricing_cta_button")}
             </Link>
           </motion.div>
         </div>
@@ -170,3 +170,4 @@ export default function PricingPage() {
     </main>
   );
 }
+

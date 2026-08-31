@@ -2,6 +2,7 @@
 
 import { Shield, Lock, KeyRound, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface SecurityData {
   current_password: string;
@@ -17,6 +18,8 @@ interface SecuritySettingsFormProps {
 }
 
 export default function SecuritySettingsForm({ data, setData, onSubmit, loading }: SecuritySettingsFormProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
@@ -32,7 +35,7 @@ export default function SecuritySettingsForm({ data, setData, onSubmit, loading 
         >
           <Shield size={20} strokeWidth={2} />
         </motion.div>
-        <h3 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">Sécurité</h3>
+        <h3 className="text-2xl font-bold text-ink-1 tracking-tight font-serif">{t("profile_security_tab")}</h3>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
@@ -43,7 +46,7 @@ export default function SecuritySettingsForm({ data, setData, onSubmit, loading 
           transition={{ delay: 0.3 }}
           className="space-y-2"
         >
-          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">Ancien Mot de Passe</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">{t("profile_old_password")}</label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
             <input
@@ -63,7 +66,7 @@ export default function SecuritySettingsForm({ data, setData, onSubmit, loading 
           transition={{ delay: 0.35 }}
           className="space-y-2"
         >
-          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">Nouveau Mot de Passe</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">{t("profile_new_password")}</label>
           <div className="relative">
             <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
             <input
@@ -83,7 +86,7 @@ export default function SecuritySettingsForm({ data, setData, onSubmit, loading 
           transition={{ delay: 0.4 }}
           className="space-y-2"
         >
-          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">Confirmation</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-ink-3 ml-1">{t("profile_confirm_password")}</label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" size={18} />
             <input
@@ -105,9 +108,10 @@ export default function SecuritySettingsForm({ data, setData, onSubmit, loading 
           className="w-full bg-gradient-to-r from-emerald-500 to-emerald-500/90 text-white px-8 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-2 hover:shadow-lg hover:shadow-emerald-500/40 transition-all disabled:opacity-60"
         >
           {loading ? <Loader2 size={18} className="animate-spin" strokeWidth={2} /> : <Lock size={18} strokeWidth={2} />}
-          Changer le mot de passe
+          {t("profile_change_password_btn")}
         </motion.button>
       </form>
     </motion.section>
   );
 }
+
