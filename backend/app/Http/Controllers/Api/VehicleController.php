@@ -43,7 +43,6 @@ class VehicleController extends Controller
             if ($request->filled('status')) {
                 $status = strtolower($request->status);
                 if ($status === 'available') {
-                    // Véhicules réservables : ni en location ni en maintenance
                     $query->where('status', '!=', 'maintenance');
                 } else {
                     $query->where('status', $status);
@@ -116,16 +115,32 @@ class VehicleController extends Controller
 
             $perPage = $request->query('per_page', 6);
 
-            $vehicles = $query->withSum(['reservations as total_revenue' => function ($q) {
-                $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
-            }], 'total_price')
-                ->withSum('maintenances as total_maintenance_cost', 'cost')
-                ->withExists(['reservations as is_currently_rented' => function ($q) {
-                    $q->whereIn('status', ['ongoing', 'confirmed'])
-                        ->where('start_date', '<=', now())
-                        ->where('end_date', '>=', now());
-                }])
-                ->paginate($perPage);
+            // Déterminer si c'est une requête admin (besoin des agrégats lourds)
+            $isAdmin = $request->boolean('admin') || $request->has('ids');
+
+            if ($isAdmin) {
+                // Requête admin complète avec agrégats pour le dashboard
+                $vehicles = $query
+                    ->withSum(['reservations as total_revenue' => function ($q) {
+                        $q->whereIn('status', ['completed', 'ongoing', 'confirmed']);
+                    }], 'total_price')
+                    ->withSum('maintenances as total_maintenance_cost', 'cost')
+                    ->withExists(['reservations as is_currently_rented' => function ($q) {
+                        $q->whereIn('status', ['ongoing', 'confirmed'])
+                            ->where('start_date', '<=', now())
+                            ->where('end_date', '>=', now());
+                    }])
+                    ->paginate($perPage);
+            } else {
+                // Requête publique légère — pas d'agrégats coûteux
+                $vehicles = $query
+                    ->withExists(['reservations as is_currently_rented' => function ($q) {
+                        $q->whereIn('status', ['ongoing', 'confirmed'])
+                            ->where('start_date', '<=', now())
+                            ->where('end_date', '>=', now());
+                    }])
+                    ->paginate($perPage);
+            }
 
             $totalVehicles = Vehicle::count();
             $rentedVehicles = Vehicle::where('status', 'rented')->count();
@@ -150,6 +165,7 @@ class VehicleController extends Controller
             }
         });
     }
+
 
     protected function clearCache()
     {
