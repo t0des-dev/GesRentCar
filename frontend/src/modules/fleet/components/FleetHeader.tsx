@@ -240,18 +240,17 @@ export default function FleetHeader({
             </div>
 
             {/* Pickup Time */}
-            <div className="md:col-span-2 space-y-1.5">
+            <div className="md:col-span-1 space-y-1.5">
               <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
                 {lang === "fr" ? "Heure" : "Time"}
               </label>
-              <div className="flex items-center gap-2 px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
+              <div className="flex items-center gap-1 px-2 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
                 <input
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full bg-transparent text-slate-800 text-[13px] font-semibold focus:outline-none cursor-pointer"
+                  className="w-full bg-transparent text-slate-800 text-[12px] font-semibold focus:outline-none cursor-pointer"
                 />
-                <Clock size={14} className="text-slate-400 shrink-0 pointer-events-none" />
               </div>
             </div>
 
@@ -289,13 +288,13 @@ export default function FleetHeader({
             </div>
 
             {/* Search Button */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-3">
               <button
                 onClick={handleSearch}
                 className="w-full py-3.5 px-6 rounded-xl bg-[#16213E] hover:bg-[#0f172a] text-white font-bold text-sm tracking-wide shadow-lg shadow-[#16213E]/20 hover:shadow-xl hover:shadow-[#16213E]/30 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <Search size={16} />
-                <span>{t("hero_search_btn") || (lang === "fr" ? "Rechercher" : "Search")}</span>
+                <span>{lang === "fr" ? "Chercher un véhicule" : "Search a vehicle"}</span>
               </button>
             </div>
           </div>
