@@ -5,6 +5,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1
 const api = axios.create({
   baseURL: baseURL,
   withCredentials: true,
+  timeout: 15000, // 15s — évite les requêtes pendantes infinies
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -26,6 +27,20 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Timeout (408 serveur ou ECONNABORTED client)
+    const isTimeout =
+      error.code === "ECONNABORTED" ||
+      error.response?.status === 408 ||
+      error.message?.includes("timeout");
+
+    if (isTimeout) {
+      return Promise.reject({
+        ...error,
+        isTimeout: true,
+        message: "La requête a expiré. Vérifiez votre connexion et réessayez.",
+      });
+    }
+
     if (error.response?.status === 401 && typeof window !== "undefined") {
       const url = error.config?.url || "";
 

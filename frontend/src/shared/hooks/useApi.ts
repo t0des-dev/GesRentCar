@@ -14,6 +14,8 @@ export function useVehicles(filters: VehicleFilters = {}, options?: { enabled?: 
     queryFn: () => vehicleService.getVehicles(filters),
     placeholderData: (prev) => prev,
     enabled: options?.enabled ?? true,
+    staleTime: 30_000,  // données fraîches 30s — évite refetch sur chaque navigation
+    retry: 1,           // 1 seule tentative en cas d'erreur (408, réseau...)
   });
 }
 
