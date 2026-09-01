@@ -81,16 +81,13 @@ class Vehicle extends Model
      */
     public function scopeAvailable($query, $start, $end)
     {
-        return $query->whereDoesntHave('reservations', function ($q) use ($start, $end) {
+        $startStr = str_contains($start, ' ') ? $start : $start . ' 00:00:00';
+        $endStr = str_contains($end, ' ') ? $end : $end . ' 23:59:59';
+
+        return $query->whereDoesntHave('reservations', function ($q) use ($startStr, $endStr) {
             $q->whereIn('status', ['pending', 'pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
-                ->where(function ($query) use ($start, $end) {
-                    $query->whereBetween('start_date', [$start, $end])
-                        ->orWhereBetween('end_date', [$start, $end])
-                        ->orWhere(function ($query) use ($start, $end) {
-                            $query->where('start_date', '<=', $start)
-                                ->where('end_date', '>=', $end);
-                        });
-                });
+              ->where('start_date', '<', $endStr)
+              ->where('end_date', '>', $startStr);
         });
     }
 
@@ -99,15 +96,13 @@ class Vehicle extends Model
      */
     public function isAvailable($start, $end): bool
     {
+        $startStr = str_contains($start, ' ') ? $start : $start . ' 00:00:00';
+        $endStr = str_contains($end, ' ') ? $end : $end . ' 23:59:59';
+
         return ! $this->reservations()
             ->whereIn('status', ['pending', 'pending_payment', 'pending_partner', 'confirmed', 'ongoing'])
-            ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end])
-                    ->orWhere(function ($query) use ($start, $end) {
-                        $query->where('start_date', '<=', $start)
-                            ->where('end_date', '>=', $end);
-                    });
-            })->exists();
+            ->where('start_date', '<', $endStr)
+            ->where('end_date', '>', $startStr)
+            ->exists();
     }
 }
