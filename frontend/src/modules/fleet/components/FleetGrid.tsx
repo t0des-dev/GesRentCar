@@ -33,7 +33,7 @@ export default function FleetGrid({
   layoutView = "grid",
   columns = 4,
 }: FleetGridProps) {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const gridClass =
     layoutView === "grid"
@@ -127,11 +127,11 @@ export default function FleetGrid({
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    Chargement...
+                    {lang === "fr" ? "Chargement..." : "Loading..."}
                   </span>
                 ) : (
                   <>
-                    Afficher plus de véhicules
+                    {lang === "fr" ? "Afficher plus de véhicules" : "Show more vehicles"}
                     <ChevronDown
                       size={18}
                       className="group-hover:translate-y-1 transition-transform"

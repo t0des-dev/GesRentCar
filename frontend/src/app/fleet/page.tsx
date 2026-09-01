@@ -143,30 +143,63 @@ function FleetSidebar({
   vehicleCounts: Record<string, number>;
   fleetConfig?: Record<string, any>;
 }) {
+  const { t, lang } = useTranslation();
   const showCategory = fleetConfig?.show_category_filter !== false;
   const showTransmission = fleetConfig?.show_transmission_filter !== false;
   const showFuel = fleetConfig?.show_fuel_filter !== false;
   const showSeats = fleetConfig?.show_seats_filter !== false;
   const showPrice = fleetConfig?.show_price_filter !== false;
 
+  const categories = [
+    { id: "All", label: lang === "fr" ? "Tous" : "All" },
+    { id: "Economy", label: lang === "fr" ? "Économique" : "Economy" },
+    { id: "Compact", label: lang === "fr" ? "Compacte" : "Compact" },
+    { id: "SUV", label: "SUV" },
+    { id: "Luxury", label: lang === "fr" ? "Luxe" : "Luxury" },
+    { id: "Sport", label: "Sport" },
+    { id: "Sedan", label: lang === "fr" ? "Berline" : "Sedan" },
+  ];
+
+  const transmissions = [
+    { id: "All", label: lang === "fr" ? "Tous" : "All" },
+    { id: "Automatic", label: lang === "fr" ? "Automatique" : "Automatic" },
+    { id: "Manual", label: lang === "fr" ? "Manuelle" : "Manual" },
+  ];
+
+  const fuelTypes = [
+    { id: "All", label: lang === "fr" ? "Tous" : "All" },
+    { id: "Essence", label: lang === "fr" ? "Essence" : "Petrol / Gas" },
+    { id: "Diesel", label: "Diesel" },
+    { id: "Hybride", label: lang === "fr" ? "Hybride" : "Hybrid" },
+    { id: "Électrique", label: lang === "fr" ? "Électrique" : "Electric" },
+  ];
+
+  const seatsList = [
+    { id: "All", label: lang === "fr" ? "Tous" : "All" },
+    { id: "2", label: lang === "fr" ? "2 places" : "2 seats" },
+    { id: "4", label: lang === "fr" ? "4 places" : "4 seats" },
+    { id: "5", label: lang === "fr" ? "5 places" : "5 seats" },
+    { id: "7+", label: lang === "fr" ? "7+ places" : "7+ seats" },
+  ];
+
   return (
     <aside className="w-full lg:w-[280px] shrink-0">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sticky top-28">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-base font-bold text-slate-900">Filtres</h3>
+          <h3 className="text-base font-bold text-slate-900">{t("filter_title") || (lang === "fr" ? "Filtres" : "Filters")}</h3>
           {(filters.type !== "All" || filters.transmission !== "All" || filters.seats !== "All" || filters.fuelType !== "All" || filters.maxPrice < 3000) && (
             <button
               onClick={onReset}
               className="text-[11px] font-semibold text-red-500 hover:text-red-600 transition-colors"
             >
-              Réinitialiser
+              {t("filter_clear") || (lang === "fr" ? "Réinitialiser" : "Reset")}
             </button>
           )}
         </div>
 
         {showCategory && (
-          <FilterSection title="Catégorie" defaultOpen={true}>
-            {CATEGORIES.map((cat) => (
+          <FilterSection title={t("filter_category") || (lang === "fr" ? "Catégorie" : "Category")} defaultOpen={true}>
+            {categories.map((cat) => (
               <CheckboxItem
                 key={cat.id}
                 label={cat.label}
@@ -179,8 +212,8 @@ function FleetSidebar({
         )}
 
         {showTransmission && (
-          <FilterSection title="Transmission" defaultOpen={false}>
-            {TRANSMISSIONS.map((tr) => (
+          <FilterSection title={t("filter_transmission") || (lang === "fr" ? "Transmission" : "Transmission")} defaultOpen={false}>
+            {transmissions.map((tr) => (
               <CheckboxItem
                 key={tr.id}
                 label={tr.label}
@@ -193,8 +226,8 @@ function FleetSidebar({
         )}
 
         {showFuel && (
-          <FilterSection title="Carburant" defaultOpen={false}>
-            {FUEL_TYPES.map((f) => (
+          <FilterSection title={t("spec_fuel") || (lang === "fr" ? "Carburant" : "Fuel")} defaultOpen={false}>
+            {fuelTypes.map((f) => (
               <CheckboxItem
                 key={f.id}
                 label={f.label}
@@ -207,11 +240,11 @@ function FleetSidebar({
         )}
 
         {showSeats && (
-          <FilterSection title="Nombre de places" defaultOpen={false}>
-            {SEATS.map((s) => (
+          <FilterSection title={t("filter_capacity") || (lang === "fr" ? "Nombre de places" : "Seats")} defaultOpen={false}>
+            {seatsList.map((s) => (
               <CheckboxItem
                 key={s.id}
-                label={s.id === "All" ? "Tous" : `${s.id} places`}
+                label={s.label}
                 count={vehicleCounts[`seats_${s.id}`]}
                 checked={filters.seats === s.id}
                 onChange={() => onFilterChange("seats", s.id)}
@@ -221,7 +254,7 @@ function FleetSidebar({
         )}
 
         {showPrice && (
-          <FilterSection title="Prix / Jour" defaultOpen={true}>
+          <FilterSection title={t("filter_price_max") || (lang === "fr" ? "Prix / Jour" : "Price / Day")} defaultOpen={true}>
             <div className="px-2 pt-2">
               <input
                 type="range"
@@ -245,7 +278,7 @@ function FleetSidebar({
 }
 
 function FleetContent() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const startDateParam = searchParams.get("start_date") || undefined;
@@ -312,10 +345,10 @@ function FleetContent() {
   }, []);
 
   const sortOptions = [
-    { value: "price_asc", label: "Prix: Croissant" },
-    { value: "price_desc", label: "Prix: Décroissant" },
-    { value: "year_desc", label: "Plus Récents" },
-    { value: "brand_asc", label: "Marque (A-Z)" },
+    { value: "price_asc", label: lang === "fr" ? "Prix: Croissant" : "Price: Low to High" },
+    { value: "price_desc", label: lang === "fr" ? "Prix: Décroissant" : "Price: High to Low" },
+    { value: "year_desc", label: lang === "fr" ? "Plus Récents" : "Newest" },
+    { value: "brand_asc", label: lang === "fr" ? "Marque (A-Z)" : "Brand (A-Z)" },
   ];
 
   return (
@@ -343,10 +376,10 @@ function FleetContent() {
             {isLoading ? (
               <span className="flex items-center gap-2">
                 <Loader2 size={14} className="animate-spin" />
-                Chargement...
+                {lang === "fr" ? "Chargement..." : "Loading..."}
               </span>
             ) : (
-              <span><span className="text-slate-900 font-bold">{sorted.length}</span> Véhicules trouvés</span>
+              <span><span className="text-slate-900 font-bold">{sorted.length}</span> {lang === "fr" ? "Véhicules trouvés" : "Vehicles found"}</span>
             )}
           </p>
 
@@ -367,7 +400,7 @@ function FleetContent() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-400 hidden sm:inline">Trier par:</span>
+              <span className="text-xs font-semibold text-slate-400 hidden sm:inline">{lang === "fr" ? "Trier par:" : "Sort by:"}</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -415,12 +448,13 @@ function FleetContent() {
 }
 
 export default function FleetPage() {
+  const { lang } = useTranslation();
   return (
     <Suspense fallback={
       <div className="min-h-screen pt-28 flex justify-center items-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-gold" size={36} />
-          <p className="text-slate-400 text-sm font-medium">Chargement de la flotte...</p>
+          <p className="text-slate-400 text-sm font-medium">{lang === "fr" ? "Chargement de la flotte..." : "Loading fleet..."}</p>
         </div>
       </div>
     }>
