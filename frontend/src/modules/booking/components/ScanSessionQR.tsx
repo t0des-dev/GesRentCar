@@ -18,6 +18,7 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [expiresIn, setExpiresIn] = useState(0);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -27,6 +28,9 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
       setError(null);
       const s = await scanSessionService.create();
       setSession(s);
+      // Init le timer dès la réception de la session
+      const initialExpiry = Math.max(0, Math.floor((new Date(s.expires_at).getTime() - Date.now()) / 1000));
+      setExpiresIn(initialExpiry);
       onScanningChange?.(true);
     } catch {
       setError("Impossible de créer la session de scan.");
@@ -71,9 +75,21 @@ export default function ScanSessionQR({ onComplete, onScanningChange }: ScanSess
     createSession();
   }, [createSession]);
 
-  const expiresIn = session
-    ? Math.max(0, Math.floor((new Date(session.expires_at).getTime() - Date.now()) / 1000))
-    : 0;
+  // Décompte en temps réel
+  useEffect(() => {
+    if (!session || expiresIn <= 0) return;
+    const timer = setInterval(() => {
+      setExpiresIn((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   if (loading && !session) {
     return (

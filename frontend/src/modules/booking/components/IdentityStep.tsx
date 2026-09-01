@@ -63,6 +63,13 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
     cinImageUrl?: string;
     licenseImageUrl?: string;
   }) => {
+    // Vérification : les 3 champs essentiels doivent être présents
+    const isFullyVerified = !!(
+      (data.name || "") &&
+      (data.cin || "") &&
+      (data.licenseNumber || "")
+    );
+
     setBooking((prev) => ({
       ...prev,
       client: {
@@ -72,7 +79,7 @@ export default function IdentityStep({ booking, update, isScanning, setIsScannin
         licenseNumber: data.licenseNumber || prev.client.licenseNumber,
         cinImageUrl: data.cinImageUrl || prev.client.cinImageUrl,
         licenseImageUrl: data.licenseImageUrl || prev.client.licenseImageUrl,
-        verified: true,
+        verified: isFullyVerified,
       },
     }));
 

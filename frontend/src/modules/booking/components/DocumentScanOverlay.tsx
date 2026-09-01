@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Camera, Loader2 } from "lucide-react";
 import { cn } from "@/shared/utils";
+import { compressImage } from "@/shared/utils/image";
 
 interface DocumentScanOverlayProps {
   open: boolean;
@@ -59,7 +60,7 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
     };
   }, [open]);
 
-  const handleCapture = () => {
+  const handleCapture = async () => {
     if (!videoRef.current) return;
     const video = videoRef.current;
     const canvas = document.createElement("canvas");
@@ -67,16 +68,19 @@ export default function DocumentScanOverlay({ open, onClose, onCapture, scanning
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(video, 0, 0);
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (!blob) return;
-      const file = new File([blob], `scan_${Date.now()}.jpg`, { type: "image/jpeg", lastModified: Date.now() });
-      onCapture(file);
+      const raw = new File([blob], `scan_${Date.now()}.jpg`, { type: "image/jpeg", lastModified: Date.now() });
+      // Compression avant envoi (alignement avec ScanClient mobile)
+      const compressed = await compressImage(raw);
+      onCapture(compressed);
     }, "image/jpeg", 0.92);
   };
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      onCapture(e.target.files[0]);
+      const compressed = await compressImage(e.target.files[0]);
+      onCapture(compressed);
     }
   };
 
