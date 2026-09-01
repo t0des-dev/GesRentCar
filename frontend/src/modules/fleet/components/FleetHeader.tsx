@@ -120,16 +120,6 @@ export default function FleetHeader({
 
         {/* Content */}
         <div className="relative h-full container mx-auto px-6 lg:px-8 flex flex-col justify-center">
-          {/* Breadcrumb */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-white/50 text-xs font-medium mb-6"
-          >
-            <Link href="/" className="hover:text-white/80 transition-colors">{t("nav_home") || "Accueil"}</Link>
-            <ChevronRight size={12} />
-            <span className="text-white/90">{t("nav_fleet") || "Flotte"}</span>
-          </motion.div>
 
           {/* Eyebrow */}
           <motion.div
