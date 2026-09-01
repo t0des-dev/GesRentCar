@@ -281,8 +281,11 @@ function FleetContent() {
   const { t, lang } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const startDateParam = searchParams.get("start_date") || undefined;
-  const endDateParam = searchParams.get("end_date") || undefined;
+  const locationParam = searchParams.get("location") || (typeof window !== "undefined" ? localStorage.getItem("vrc_search_location") || "" : "");
+  const startDateParam = searchParams.get("start_date") || (typeof window !== "undefined" ? localStorage.getItem("vrc_search_start") || "" : "");
+  const endDateParam = searchParams.get("end_date") || (typeof window !== "undefined" ? localStorage.getItem("vrc_search_end") || "" : "");
+  const startTimeParam = searchParams.get("start_time") || (typeof window !== "undefined" ? localStorage.getItem("vrc_search_start_time") || "10:00" : "10:00");
+  const endTimeParam = searchParams.get("end_time") || (typeof window !== "undefined" ? localStorage.getItem("vrc_search_end_time") || "10:00" : "10:00");
   const agency = useAgency();
   const fleetConfig = agency?.sections_content?.fleet || {};
 
@@ -311,8 +314,8 @@ function FleetContent() {
     search,
     filters,
     sortBy,
-    startDate: startDateParam,
-    endDate: endDateParam
+    startDate: startDateParam || undefined,
+    endDate: endDateParam || undefined
   });
 
   const handleFilterChange = useCallback((key: keyof FleetFilterState, value: any) => {
@@ -330,14 +333,21 @@ function FleetContent() {
     endDate: string;
     endTime: string;
   }) => {
-    const query = new URLSearchParams();
+    if (typeof window !== "undefined") {
+      if (params.location) localStorage.setItem("vrc_search_location", params.location);
+      if (params.startDate) localStorage.setItem("vrc_search_start", params.startDate);
+      if (params.endDate) localStorage.setItem("vrc_search_end", params.endDate);
+      if (params.startTime) localStorage.setItem("vrc_search_start_time", params.startTime);
+      if (params.endTime) localStorage.setItem("vrc_search_end_time", params.endTime);
+    }
+    const query = new URLSearchParams(searchParams.toString());
     if (params.location) query.set("location", params.location);
     if (params.startDate) query.set("start_date", params.startDate);
     if (params.endDate) query.set("end_date", params.endDate);
     if (params.startTime) query.set("start_time", params.startTime);
     if (params.endTime) query.set("end_time", params.endTime);
     router.push(`/fleet?${query.toString()}`);
-  }, [router]);
+  }, [router, searchParams]);
 
   const vehicleCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -358,8 +368,11 @@ function FleetContent() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
         <FleetHeader
           fleetConfig={fleetConfig}
+          initialLocation={locationParam}
           initialStartDate={startDateParam}
           initialEndDate={endDateParam}
+          initialStartTime={startTimeParam}
+          initialEndTime={endTimeParam}
           onBookingSearch={handleBookingSearch}
         />
       </motion.div>

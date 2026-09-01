@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Calendar, Clock, ChevronRight, Plane, Building2 } from "lucide-react";
 import { useTranslation } from "@/shared/hooks/useTranslation";
@@ -9,8 +9,11 @@ import Link from "next/link";
 
 interface FleetHeaderProps {
   fleetConfig?: Record<string, any>;
+  initialLocation?: string;
   initialStartDate?: string;
   initialEndDate?: string;
+  initialStartTime?: string;
+  initialEndTime?: string;
   onBookingSearch?: (params: {
     location: string;
     startDate: string;
@@ -35,25 +38,54 @@ function getTodayString(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
-export default function FleetHeader({ fleetConfig, initialStartDate, initialEndDate, onBookingSearch }: FleetHeaderProps) {
+export default function FleetHeader({
+  fleetConfig,
+  initialLocation,
+  initialStartDate,
+  initialEndDate,
+  initialStartTime,
+  initialEndTime,
+  onBookingSearch,
+}: FleetHeaderProps) {
   const { t, lang } = useTranslation();
   const agency = useAgency();
 
   const heroImage = fleetConfig?.hero_image_url || agency.hero_image_url || "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1920";
-  const heroEyebrow = fleetConfig?.hero_eyebrow || (lang === "fr" ? "Flotte Prestige" : "Prestige Fleet");
-  const heroTitle = fleetConfig?.hero_title || (lang === "fr" ? "Explorez Notre Flotte Premium" : "Explore Our Premium Fleet");
-  const heroSubtitle = fleetConfig?.hero_subtitle || (lang === "fr" ? "Trouvez le véhicule parfait pour vos voyages d'affaires, vacances familiales et expériences d'exception à travers le Maroc." : "Find the perfect vehicle for your business trips, family vacations, and luxury experiences across Morocco.");
-  const defaultLocation = fleetConfig?.default_location || (lang === "fr" ? "Casablanca — Aéroport Mohammed V (CMN)" : "Casablanca — Mohammed V Airport (CMN)");
+
+  const isDefaultOrFrenchEyebrow = !fleetConfig?.hero_eyebrow || fleetConfig.hero_eyebrow === "Flotte Prestige" || fleetConfig.hero_eyebrow === "Premium Fleet";
+  const heroEyebrow = lang === "fr"
+    ? (fleetConfig?.hero_eyebrow || "Flotte Prestige")
+    : (fleetConfig?.hero_eyebrow_en || (isDefaultOrFrenchEyebrow ? "Prestige Fleet" : fleetConfig.hero_eyebrow));
+
+  const isDefaultOrFrenchTitle = !fleetConfig?.hero_title || fleetConfig.hero_title === "Explorez Notre Flotte Premium" || fleetConfig.hero_title.includes("Explorez") || fleetConfig.hero_title.includes("Flotte");
+  const heroTitle = lang === "fr"
+    ? (fleetConfig?.hero_title || "Explorez Notre Flotte Premium")
+    : (fleetConfig?.hero_title_en || (isDefaultOrFrenchTitle ? "Explore Our Premium Fleet" : fleetConfig.hero_title));
+
+  const isDefaultOrFrenchSubtitle = !fleetConfig?.hero_subtitle || fleetConfig.hero_subtitle.includes("Trouvez le véhicule") || fleetConfig.hero_subtitle.includes("voyages d'affaires");
+  const heroSubtitle = lang === "fr"
+    ? (fleetConfig?.hero_subtitle || "Trouvez le véhicule parfait pour vos voyages d'affaires, vacances familiales et expériences d'exception à travers le Maroc.")
+    : (fleetConfig?.hero_subtitle_en || (isDefaultOrFrenchSubtitle ? "Find the perfect vehicle for your business trips, family vacations, and luxury experiences across Morocco." : fleetConfig.hero_subtitle));
+
+  const defaultLocation = initialLocation || fleetConfig?.default_location || (lang === "fr" ? "Casablanca — Aéroport Mohammed V (CMN)" : "Casablanca — Mohammed V Airport (CMN)");
   const locations = fleetConfig?.locations || PREDEFINED_LOCATIONS;
 
   const [location, setLocation] = useState(defaultLocation);
   const [startDate, setStartDate] = useState(initialStartDate || "");
-  const [startTime, setStartTime] = useState("10:00");
+  const [startTime, setStartTime] = useState(initialStartTime || "10:00");
   const [endDate, setEndDate] = useState(initialEndDate || "");
-  const [endTime, setEndTime] = useState("10:00");
+  const [endTime, setEndTime] = useState(initialEndTime || "10:00");
   const [showLocations, setShowLocations] = useState(false);
 
   const today = getTodayString();
+
+  useEffect(() => {
+    if (initialLocation) setLocation(initialLocation);
+    if (initialStartDate) setStartDate(initialStartDate);
+    if (initialEndDate) setEndDate(initialEndDate);
+    if (initialStartTime) setStartTime(initialStartTime);
+    if (initialEndTime) setEndTime(initialEndTime);
+  }, [initialLocation, initialStartDate, initialEndDate, initialStartTime, initialEndTime]);
 
   const handleStartDateChange = (value: string) => {
     setStartDate(value);
@@ -63,6 +95,13 @@ export default function FleetHeader({ fleetConfig, initialStartDate, initialEndD
   };
 
   const handleSearch = () => {
+    if (typeof window !== "undefined") {
+      if (location) localStorage.setItem("vrc_search_location", location);
+      if (startDate) localStorage.setItem("vrc_search_start", startDate);
+      if (endDate) localStorage.setItem("vrc_search_end", endDate);
+      if (startTime) localStorage.setItem("vrc_search_start_time", startTime);
+      if (endTime) localStorage.setItem("vrc_search_end_time", endTime);
+    }
     if (onBookingSearch) {
       onBookingSearch({ location, startDate, startTime, endDate, endTime });
     }
