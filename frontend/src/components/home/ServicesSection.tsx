@@ -27,16 +27,71 @@ const COLOR_STYLES: Record<string, { text: string; bg: string; border: string; g
 };
 
 export default function ServicesSection({ content }: { content: Partial<ServicesConfig> }) {
-  const { t } = useTranslation();
-  const eyebrow = content?.eyebrow || "NOS SERVICES VIP";
-  const title = content?.title || "Des services sur-mesure pour votre confort";
-  const subtitle = content?.subtitle || "Que ce soit pour un transfert aéroport, une location avec chauffeur ou une prise en charge sur-mesure, nous répondons à toutes vos exigences.";
+  const { t, lang } = useTranslation();
+  const eyebrow = content?.eyebrow && content.eyebrow !== "Services VIP" && content.eyebrow !== "NOS SERVICES VIP"
+    ? content.eyebrow
+    : (lang === "fr" ? "NOS SERVICES VIP" : "OUR VIP SERVICES");
+  const title = content?.title && content.title !== "Des services sur-mesure pour votre confort"
+    ? content.title
+    : (lang === "fr" ? "Des services sur-mesure pour votre confort" : "Tailored services for your comfort");
+  const subtitle = content?.subtitle && content.subtitle !== "Que ce soit pour un transfert aéroport, une location avec chauffeur ou une prise en charge sur-mesure, nous répondons à toutes vos exigences."
+    ? content.subtitle
+    : (lang === "fr"
+      ? "Que ce soit pour un transfert aéroport, une location avec chauffeur ou une prise en charge sur-mesure, nous répondons à toutes vos exigences."
+      : "Whether for airport transfers, chauffeur-driven rentals or custom concierge services, we meet all your requirements.");
   const items = content?.items || [];
   const columns = parseInt(content?.columns || "3");
   const theme = content?.theme || "dark";
   const layoutStyle = content?.layout_style || "cards";
 
   const isDark = theme === "dark";
+
+  const getServiceItemText = (srv: ServiceItem) => {
+    switch (srv.id) {
+      case "srv-1":
+        return {
+          title: t("srv_airport_title") || srv.title,
+          desc: t("srv_airport_desc") || srv.description,
+          badge: srv.badge
+        };
+      case "srv-2":
+        return {
+          title: t("srv_driver_title") || srv.title,
+          desc: t("srv_driver_desc") || srv.description,
+          badge: t("srv_badge_request") || srv.badge
+        };
+      case "srv-3":
+        return {
+          title: t("srv_delivery_title") || srv.title,
+          desc: t("srv_delivery_desc") || srv.description,
+          badge: t("srv_badge_included") || srv.badge
+        };
+      case "srv-4":
+        return {
+          title: t("srv_insurance_title") || srv.title,
+          desc: t("srv_insurance_desc") || srv.description,
+          badge: t("srv_badge_peace") || srv.badge
+        };
+      case "srv-5":
+        return {
+          title: t("srv_accessories_title") || srv.title,
+          desc: t("srv_accessories_desc") || srv.description,
+          badge: srv.badge
+        };
+      case "srv-6":
+        return {
+          title: t("srv_assistance_title") || srv.title,
+          desc: t("srv_assistance_desc") || srv.description,
+          badge: srv.badge
+        };
+      default:
+        return {
+          title: srv.title,
+          desc: srv.description,
+          badge: srv.badge
+        };
+    }
+  };
 
   return (
     <section
@@ -118,6 +173,7 @@ export default function ServicesSection({ content }: { content: Partial<Services
           {items.map((srv: ServiceItem, idx: number) => {
             const IconComponent = srv.icon ? ICON_MAP[srv.icon] ?? null : null;
             const colorScheme = COLOR_STYLES[srv.color || "amber"] || COLOR_STYLES.amber;
+            const itemText = getServiceItemText(srv);
 
             if (layoutStyle === "minimal") {
               return (
@@ -141,19 +197,19 @@ export default function ServicesSection({ content }: { content: Partial<Services
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className={cn("font-extrabold text-base tracking-tight", isDark ? "text-white" : "text-slate-900")}>
-                        {srv.title}
+                        {itemText.title}
                       </h3>
-                      {srv.badge && (
+                      {itemText.badge && (
                         <span className={cn(
                           "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border",
                           colorScheme.bg, colorScheme.border, colorScheme.text
                         )}>
-                          {srv.badge}
+                          {itemText.badge}
                         </span>
                       )}
                     </div>
                     <p className={cn("text-xs leading-relaxed", isDark ? "text-slate-400" : "text-slate-600")}>
-                      {srv.description}
+                      {itemText.desc}
                     </p>
                   </div>
                 </motion.div>
@@ -189,12 +245,12 @@ export default function ServicesSection({ content }: { content: Partial<Services
                       </div>
                     )}
 
-                    {srv.badge && (
+                    {itemText.badge && (
                       <span className={cn(
                         "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-sm",
                         colorScheme.bg, colorScheme.border, colorScheme.text
                       )}>
-                        {srv.badge}
+                        {itemText.badge}
                       </span>
                     )}
                   </div>
@@ -204,10 +260,10 @@ export default function ServicesSection({ content }: { content: Partial<Services
                       "text-lg font-black tracking-tight mb-2 group-hover:text-amber-400 transition-colors",
                       isDark ? "text-white" : "text-slate-900"
                     )}>
-                      {srv.title}
+                      {itemText.title}
                     </h3>
                     <p className={cn("text-xs leading-relaxed", isDark ? "text-slate-400" : "text-slate-600")}>
-                      {srv.description}
+                      {itemText.desc}
                     </p>
                   </div>
                 </div>

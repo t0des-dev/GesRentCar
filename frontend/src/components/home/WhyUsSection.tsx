@@ -23,11 +23,13 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
 
   const defaultFeatures: { icon: string; image?: string; title: string; desc: string }[] = [
     { icon: "Crown", title: t("feat_fleet_title"), desc: t("feat_fleet_desc") },
-    { icon: "HeadphonesIcon", title: t("feat_support_title"), desc: t("feat_support_desc") },
     { icon: "ShieldCheck", title: t("feat_chauffeur_title"), desc: t("feat_chauffeur_desc") },
+    { icon: "HeadphonesIcon", title: t("feat_support_title"), desc: t("feat_support_desc") },
   ];
 
-  const features = content?.features?.length ? content.features : defaultFeatures;
+  const features = content?.features?.length && content.features.some(f => !["Flotte d'Exception", "Assurance Premium", "Service Conciergerie"].includes(f.title))
+    ? content.features
+    : defaultFeatures;
 
   const getIcon = (iconName: string) => {
     const Icon = ICON_MAP[iconName];
@@ -46,7 +48,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
             viewport={{ once: true }}
             className="section-eyebrow"
           >
-            {content?.eyebrow || "Nos engagements"}
+            {content?.eyebrow && content.eyebrow !== "Nos engagements" ? content.eyebrow : t("why_us_eyebrow")}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 12 }}
@@ -55,7 +57,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-[44px] font-bold tracking-tight leading-[1.15] text-ink-1"
           >
-            {content?.title || t("features_title")}
+            {content?.title && content.title !== "Pourquoi nous choisir ?" ? content.title : t("why_us_title")}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -64,7 +66,7 @@ export default function WhyUsSection({ content = {} }: WhyUsSectionProps) {
             transition={{ delay: 0.2 }}
             className="mt-4 text-[17px] text-ink-3 leading-relaxed max-w-lg"
           >
-            {content?.subtitle || t("features_subtitle")}
+            {content?.subtitle && content.subtitle !== "L'excellence à chaque étape" ? content.subtitle : t("why_us_subtitle")}
           </motion.p>
         </div>
 

@@ -12,52 +12,7 @@ const ICON_MAP: Record<string, ElementType> = {
   ShieldCheck, Wind, Mountain, Zap
 };
 
-const DEFAULT_VIBES: (LifestyleItem & { color: string })[] = [
-  {
-    id: "business",
-    title: "Business Elite",
-    subtitle: "Prestige & Stratégie",
-    icon: "ShieldCheck",
-    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
-    color_from: "primary",
-    color_via: "primary",
-    color: "from-primary/80 via-primary/60 to-transparent",
-    lifestyle: "business"
-  },
-  {
-    id: "romance",
-    title: "Grand Tourisme",
-    subtitle: "Émotion & Liberté",
-    icon: "Wind",
-    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800",
-    color_from: "rose-500",
-    color_via: "orange-500",
-    color: "from-rose-500/80 via-orange-500/60 to-transparent",
-    lifestyle: "romance"
-  },
-  {
-    id: "aventure",
-    title: "Wild Adventure",
-    subtitle: "Puissance & Exploration",
-    icon: "Mountain",
-    image: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800",
-    color_from: "emerald-600",
-    color_via: "teal-600",
-    color: "from-emerald-600/80 via-teal-600/60 to-transparent",
-    lifestyle: "adventure"
-  },
-  {
-    id: "family",
-    title: "Family First",
-    subtitle: "Confort & Partage",
-    icon: "Zap",
-    image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800",
-    color_from: "gold",
-    color_via: "gold",
-    color: "from-gold/80 via-gold/60 to-transparent",
-    lifestyle: "family"
-  }
-];
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface VibeSelectorProps {
   content?: {
@@ -70,17 +25,65 @@ interface VibeSelectorProps {
 
 export default function VibeSelector({ content }: VibeSelectorProps) {
   const router = useRouter();
+  const { t, lang } = useTranslation();
 
   const cols = content?.columns ? parseInt(content.columns) : 4;
   const gridColsClass = cols === 2 ? "lg:grid-cols-2" : cols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4";
 
-  const vibes = content?.items?.length
+  const defaultVibes: (LifestyleItem & { color: string })[] = [
+    {
+      id: "business",
+      title: "Business Elite",
+      subtitle: t("vibe_sub_business"),
+      icon: "ShieldCheck",
+      image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=800",
+      color_from: "primary",
+      color_via: "primary",
+      color: "from-primary/80 via-primary/60 to-transparent",
+      lifestyle: "business"
+    },
+    {
+      id: "romance",
+      title: lang === "fr" ? "Grand Tourisme" : "Grand Touring",
+      subtitle: t("vibe_sub_romance"),
+      icon: "Wind",
+      image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800",
+      color_from: "rose-500",
+      color_via: "orange-500",
+      color: "from-rose-500/80 via-orange-500/60 to-transparent",
+      lifestyle: "romance"
+    },
+    {
+      id: "aventure",
+      title: "Wild Adventure",
+      subtitle: t("vibe_sub_adventure"),
+      icon: "Mountain",
+      image: "https://images.unsplash.com/photo-1535704882196-765e5fc62a53?auto=format&fit=crop&q=80&w=800",
+      color_from: "emerald-600",
+      color_via: "teal-600",
+      color: "from-emerald-600/80 via-teal-600/60 to-transparent",
+      lifestyle: "adventure"
+    },
+    {
+      id: "family",
+      title: "Family First",
+      subtitle: t("vibe_sub_family"),
+      icon: "Zap",
+      image: "https://images.unsplash.com/photo-1549113294-313d8bc63a4c?auto=format&fit=crop&q=80&w=800",
+      color_from: "gold",
+      color_via: "gold",
+      color: "from-gold/80 via-gold/60 to-transparent",
+      lifestyle: "family"
+    }
+  ];
+
+  const vibes = content?.items?.length && content.items.some(i => i.subtitle && i.subtitle !== "Prestige & Stratégie")
     ? content.items.map((item) => ({
         ...item,
         Icon: ICON_MAP[item.icon] || ShieldCheck,
         color: `from-[${item.color_from}]/80 via-[${item.color_via}]/60 to-transparent`
       }))
-    : DEFAULT_VIBES.map((item) => ({
+    : defaultVibes.map((item) => ({
         ...item,
         Icon: ICON_MAP[item.icon] || ShieldCheck
       }));
@@ -99,7 +102,7 @@ export default function VibeSelector({ content }: VibeSelectorProps) {
             viewport={{ once: true }}
             className="section-eyebrow mx-auto"
           >
-            {content?.eyebrow || "Expérience Sur Mesure"}
+            {content?.eyebrow && content.eyebrow !== "Expérience Sur Mesure" ? content.eyebrow : t("vibe_eyebrow")}
           </motion.div>
           
           <motion.h2
@@ -109,7 +112,7 @@ export default function VibeSelector({ content }: VibeSelectorProps) {
             transition={{ delay: 0.08, duration: 0.6 }}
             className="display-lg text-ink-1 leading-tight"
           >
-            Quelle est votre <span className="text-gold">vibe</span> aujourd'hui ?
+            {t("vibe_title_prefix")} <span className="text-gold">vibe</span> {t("vibe_title_suffix")}
           </motion.h2>
           
           <motion.p
@@ -119,7 +122,7 @@ export default function VibeSelector({ content }: VibeSelectorProps) {
             transition={{ delay: 0.16, duration: 0.6 }}
             className="body-feature text-ink-2 leading-relaxed"
           >
-            Choisissez l'émotion qui guidera votre prochain voyage. Nous nous occupons du reste.
+            {t("vibe_subtitle")}
           </motion.p>
         </div>
 

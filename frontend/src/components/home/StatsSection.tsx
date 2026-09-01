@@ -94,7 +94,10 @@ const COLOR_STYLES: Record<string, { text: string; bg: string; border: string }>
   primary: { text: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
 };
 
+import { useTranslation } from "@/shared/hooks/useTranslation";
+
 export default function StatsSection({ content }: { content: Partial<StatsConfig> }) {
+  const { t } = useTranslation();
   const items = content?.items || [];
   const columns = parseInt(content?.columns || "4");
   const theme = content?.theme || "dark";
@@ -104,6 +107,22 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
   const customTextColor = content?.text_color || "";
 
   const isDark = theme === "dark";
+
+  const getStatLabel = (s: StatItem) => {
+    switch (s.id) {
+      case "s1": return t("stat_clients") || s.label;
+      case "s2": return t("stat_fleet") || s.label;
+      case "s3": return t("stat_exp") || s.label;
+      case "s4": return t("stat_support") || s.label;
+      default: {
+        if (s.label === "Clients satisfaits" || s.label === "Clients") return t("stat_clients");
+        if (s.label === "Véhicules premium" || s.label === "Véhicules") return t("stat_fleet");
+        if (s.label === "Années d'expérience" || s.label === "Expérience") return t("stat_exp");
+        if (s.label === "Support disponible" || s.label === "Support") return t("stat_support");
+        return s.label;
+      }
+    }
+  };
 
   const heightClass =
     height === "small" ? "py-6 md:py-8" :
@@ -187,7 +206,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                       "text-[12px] font-bold uppercase tracking-wider mt-1.5 transition-colors",
                       isDark ? "text-white/70 group-hover:text-white" : "text-slate-600 group-hover:text-slate-900"
                     )}>
-                      {s.label}
+                      {getStatLabel(s)}
                     </p>
                     {s.description && (
                       <p className={cn(
@@ -239,7 +258,7 @@ export default function StatsSection({ content }: { content: Partial<StatsConfig
                     "text-[12px] font-semibold uppercase tracking-[0.02em] mt-1.5 transition-colors",
                     isDark ? "text-white/60 group-hover:text-white/90" : "text-slate-600 group-hover:text-slate-900"
                   )}>
-                    {s.label}
+                    {getStatLabel(s)}
                   </p>
                   {s.description && (
                     <p className={cn(

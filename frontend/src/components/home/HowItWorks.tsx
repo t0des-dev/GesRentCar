@@ -15,7 +15,11 @@ interface HowItWorksProps {
 export default function HowItWorks({ content = {} }: HowItWorksProps) {
   const { t } = useTranslation();
 
-  const steps = content?.steps?.length
+  const isCustomSteps = content?.steps?.length && content.steps.some(
+    s => s.title && !["Choisissez", "Réservez", "Profitez", "Choose", "Book", "Drive", "Enjoy"].includes(s.title)
+  );
+
+  const steps = isCustomSteps && content?.steps
     ? content.steps.map((s, i) => ({
         num: s.num || String(i + 1).padStart(2, "0"),
         title: s.title || t(`step_${i + 1}_title`),
@@ -26,6 +30,9 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
         { num: "02", title: t("step_2_title"), desc: t("step_2_desc") },
         { num: "03", title: t("step_3_title"), desc: t("step_3_desc") },
       ];
+
+  const badge = content?.badge && content.badge !== "Simple & Rapide" ? content.badge : t("how_it_works_badge");
+  const title = content?.title && content.title !== "Comment ça marche ?" ? content.title : t("how_it_works");
 
   return (
     <section className="py-24 bg-surface-2" aria-labelledby="how-it-works-heading">
@@ -39,10 +46,10 @@ export default function HowItWorks({ content = {} }: HowItWorksProps) {
             viewport={{ once: true }}
             className="section-eyebrow justify-center"
           >
-            {content?.badge || t("how_it_works_badge")}
+            {badge}
           </motion.p>
           <h2 id="how-it-works-heading" className="text-3xl md:text-[40px] font-bold tracking-tight text-ink-1 mt-2">
-            {content?.title || t("how_it_works")}
+            {title}
           </h2>
         </div>
 

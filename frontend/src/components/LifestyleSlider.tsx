@@ -48,6 +48,8 @@ function Stars({ count = 5 }: { count?: number }) {
   );
 }
 
+import { useTranslation } from "@/shared/hooks/useTranslation";
+
 export default function LifestyleSlider({ content = {} }: {
   content?: {
     badge?: string;
@@ -56,7 +58,39 @@ export default function LifestyleSlider({ content = {} }: {
     items?: Testimonial[] | { id: number; user: string; role: string; text: string; image: string }[]
   }
 }) {
-  const testimonials = (content?.items && content.items.length > 0)
+  const { t, lang } = useTranslation();
+
+  const defaultTestimonials = [
+    {
+      id: 1,
+      user: "Youssef B.",
+      role: lang === "fr" ? "Casablanca, Maroc · BMW Série 5" : "Casablanca, Morocco · BMW 5 Series",
+      text: lang === "fr"
+        ? "Réservation fluide et véhicule impeccable qui m'attendait à l'aéroport à l'heure exacte. Une vraie expérience haut de gamme du début à la fin."
+        : "Effortless booking and the car was waiting exactly on time at the airport. Genuinely felt like a premium experience from start to finish.",
+      image: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?q=80&w=2400&auto=format&fit=crop",
+    },
+    {
+      id: 2,
+      user: "Sophie L.",
+      role: lang === "fr" ? "Marrakech · SUV Tucson" : "Marrakech · Tucson SUV",
+      text: lang === "fr"
+        ? "Nous avons loué un SUV pour un voyage en famille à Marrakech. Voiture très propre, prix transparent et support WhatsApp ultra réactif."
+        : "We rented an SUV for a family trip to Marrakech. Spotless car, transparent price, and the support team answered instantly on WhatsApp.",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2400&auto=format&fit=crop",
+    },
+    {
+      id: 3,
+      user: "Nadia K.",
+      role: lang === "fr" ? "Rabat · Compte Entreprise" : "Rabat · Corporate Account",
+      text: lang === "fr"
+        ? "Notre entreprise réserve désormais tous ses véhicules professionnels chez Vectoria. Flotte fiable, facturation claire et zéro mauvaise surprise."
+        : "Our company now books all business travel vehicles through Vectoria. Reliable fleet, clean invoicing, zero surprises.",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2400&auto=format&fit=crop",
+    },
+  ];
+
+  const testimonials = (content?.items && content.items.length > 0 && content.items.some(i => (i as any).text && (i as any).text !== DEFAULT_TESTIMONIALS[0].text))
     ? content.items.map((item: any, i: number) => ({
         id: i,
         user: item.name || item.user || "Client",
@@ -64,11 +98,13 @@ export default function LifestyleSlider({ content = {} }: {
         text: item.content || item.text || "",
         image: item.image || "",
       }))
-    : DEFAULT_TESTIMONIALS;
+    : defaultTestimonials;
 
   if (testimonials.length === 0) return null;
 
-  const heading = content?.heading || "Trusted by thousands of travelers.";
+  const heading = content?.heading && content.heading !== "Ce que disent nos clients" && content.heading !== "Trusted by thousands of travelers."
+    ? content.heading
+    : t("testimonials_heading");
 
   return (
     <section className="py-28 bg-[#FAFAFA]">
@@ -87,7 +123,7 @@ export default function LifestyleSlider({ content = {} }: {
               ))}
             </div>
             <span className="text-sm font-bold text-slate-900">4.9/5</span>
-            <span className="text-sm text-slate-400">based on 2,400+ verified customers</span>
+            <span className="text-sm text-slate-400">{t("testimonials_sub")}</span>
           </div>
         </div>
 

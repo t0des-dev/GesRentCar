@@ -48,7 +48,21 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const menuLinks = agency.header_config?.menu_links || [
+  const getNavLabel = (url: string, fallback: string) => {
+    if (url === "/" || url === "") return t("nav_home") || fallback;
+    if (url.startsWith("/fleet")) return t("nav_fleet") || fallback;
+    if (url.startsWith("/services")) return t("nav_services") || fallback;
+    if (url.startsWith("/pricing")) return t("nav_pricing") || fallback;
+    if (url.startsWith("/zones")) return t("nav_zones") || fallback;
+    if (url.startsWith("/locations")) return t("nav_locations") || fallback;
+    if (url.startsWith("/offers")) return t("nav_offers") || fallback;
+    if (url.startsWith("/about")) return t("nav_about") || fallback;
+    if (url.startsWith("/faq")) return t("nav_faq") || fallback;
+    if (url.startsWith("/contact")) return t("nav_contact") || fallback;
+    return fallback;
+  };
+
+  const defaultLinks = [
     { label: t("nav_fleet"), url: "/fleet" },
     { label: t("nav_services"), url: "/services" },
     { label: t("nav_pricing"), url: "/pricing" },
@@ -59,6 +73,15 @@ export default function Navbar() {
     { label: t("nav_faq") || "FAQ", url: "/faq" },
     { label: t("nav_contact"), url: "/contact" }
   ];
+
+  const rawLinks = agency.header_config?.menu_links && agency.header_config.menu_links.length > 0
+    ? agency.header_config.menu_links
+    : defaultLinks;
+
+  const menuLinks = rawLinks.map(l => ({
+    label: getNavLabel(l.url, l.label),
+    url: l.url
+  }));
 
   const languages: { code: "fr" | "en"; label: string }[] = [
     { code: "fr", label: "Français" },
