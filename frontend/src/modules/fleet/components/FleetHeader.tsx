@@ -227,7 +227,7 @@ export default function FleetHeader({
               <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
                 {lang === "fr" ? "Date de départ" : "Pick-up date"}
               </label>
-              <div className="flex items-center gap-2 px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
+              <div className="flex items-center px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
                 <input
                   type="date"
                   value={startDate}
@@ -235,7 +235,6 @@ export default function FleetHeader({
                   onChange={(e) => handleStartDateChange(e.target.value)}
                   className="w-full bg-transparent text-slate-800 text-[13px] font-semibold focus:outline-none cursor-pointer"
                 />
-                <Calendar size={14} className="text-slate-400 shrink-0 pointer-events-none" />
               </div>
             </div>
 
@@ -259,7 +258,7 @@ export default function FleetHeader({
               <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
                 {lang === "fr" ? "Date de retour" : "Return date"}
               </label>
-              <div className="flex items-center gap-2 px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
+              <div className="flex items-center px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
                 <input
                   type="date"
                   value={endDate}
@@ -267,7 +266,6 @@ export default function FleetHeader({
                   onChange={(e) => setEndDate(e.target.value)}
                   className="w-full bg-transparent text-slate-800 text-[13px] font-semibold focus:outline-none cursor-pointer"
                 />
-                <Calendar size={14} className="text-slate-400 shrink-0 pointer-events-none" />
               </div>
             </div>
 
@@ -276,14 +274,13 @@ export default function FleetHeader({
               <label className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
                 {lang === "fr" ? "Heure" : "Time"}
               </label>
-              <div className="flex items-center gap-2 px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
+              <div className="flex items-center px-3 py-3 bg-[#EEF2F6] rounded-xl border border-transparent focus-within:border-amber-400 focus-within:bg-white transition-all duration-200 overflow-hidden">
                 <input
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
                   className="w-full bg-transparent text-slate-800 text-[13px] font-semibold focus:outline-none cursor-pointer"
                 />
-                <Clock size={14} className="text-slate-400 shrink-0 pointer-events-none" />
               </div>
             </div>
 
