@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import type { ComponentType } from "react";
 import type { ServicesConfig, ServiceItem } from "@/types/storefront";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const ICON_MAP: Record<string, ComponentType<{ size?: number; strokeWidth?: number; className?: string }>> = {
   Users, Car, Clock, Phone, Star, Shield, Award, MapPin,
@@ -26,6 +27,7 @@ const COLOR_STYLES: Record<string, { text: string; bg: string; border: string; g
 };
 
 export default function ServicesSection({ content }: { content: Partial<ServicesConfig> }) {
+  const { t } = useTranslation();
   const eyebrow = content?.eyebrow || "NOS SERVICES VIP";
   const title = content?.title || "Des services sur-mesure pour votre confort";
   const subtitle = content?.subtitle || "Que ce soit pour un transfert aéroport, une location avec chauffeur ou une prise en charge sur-mesure, nous répondons à toutes vos exigences.";
@@ -211,7 +213,7 @@ export default function ServicesSection({ content }: { content: Partial<Services
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-white/5 flex items-center gap-2 text-[11px] font-bold text-amber-400 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                  <span>En savoir plus</span>
+                  <span>{t("services_learn_more")}</span>
                   <ArrowRight size={13} />
                 </div>
               </motion.div>

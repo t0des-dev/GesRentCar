@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Star, Shield, Compass, Zap } from "lucide-react";
 import Link from "next/link";
 import type { LifestyleItem } from "@/types/storefront";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 const ICON_MAP: Record<string, any> = {
   Shield, Star, Compass, Zap
@@ -23,13 +24,16 @@ interface ExperienceSectionProps {
   };
 }
 
-const DEFAULT_LIFESTYLES: (LifestyleItem & { color: string })[] = [
-  { id: "business", title: "Business Elite", subtitle: "Ponctualité et prestige pour vos déplacements professionnels.", icon: "Shield", image: "", color_from: "blue-400", color_via: "blue-600", lifestyle: "business", color: "from-blue-400/20 to-blue-600/20" },
-  { id: "romance", title: "Grand Tourisme", subtitle: "L'élégance à ciel ouvert pour vos moments d'exception.", icon: "Star", image: "", color_from: "pink-400", color_via: "rose-600", lifestyle: "romance", color: "from-pink-400/20 to-rose-600/20" },
-  { id: "adventure", title: "Wild Adventure", subtitle: "Puissance et liberté pour explorer de nouveaux horizons.", icon: "Compass", image: "", color_from: "orange-400", color_via: "red-600", lifestyle: "adventure", color: "from-orange-400/20 to-red-600/20" },
-];
+
 
 export default function ExperienceSection({ content = {} }: ExperienceSectionProps) {
+  const { t, lang } = useTranslation();
+  const DEFAULT_LIFESTYLES = [
+    { id: "business", title: t("lifestyle_business_title"), subtitle: t("lifestyle_business_sub"), icon: "Shield", image: "", color_from: "blue-400", color_via: "blue-600", lifestyle: "business", color: "from-blue-400/20 to-blue-600/20" },
+    { id: "romance", title: t("lifestyle_tourisme_title"), subtitle: t("lifestyle_tourisme_sub"), icon: "Star", image: "", color_from: "pink-400", color_via: "rose-600", lifestyle: "romance", color: "from-pink-400/20 to-rose-600/20" },
+    { id: "adventure", title: t("lifestyle_adventure_title"), subtitle: t("lifestyle_adventure_sub"), icon: "Compass", image: "", color_from: "orange-400", color_via: "red-600", lifestyle: "adventure", color: "from-orange-400/20 to-red-600/20" },
+  ];
+
   const lifestyles = content?.lifestyles?.length
     ? content.lifestyles.map(item => ({
         ...item,
@@ -42,7 +46,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
       }));
 
   const stats = content?.stats || [
-    { value: "98%", label: "Recommandation" },
+    { value: "98%", label: lang === "fr" ? "Recommandation" : "Recommendation" },
     { value: "24/7", label: "Support VIP" },
   ];
 
@@ -66,7 +70,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
               transition={{ duration: 0.5 }}
               className="section-eyebrow"
             >
-              {content?.eyebrow || "L'Expérience Premium"}
+              {content?.eyebrow || t("experience_eyebrow")}
             </motion.div>
 
             {/* Title — Instrument Serif */}
@@ -77,10 +81,10 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
               transition={{ delay: 0.1, duration: 0.6 }}
               className="text-[clamp(30px,3.6vw,44px)] font-bold tracking-tight leading-[1.15] text-ink-1"
             >
-              {content?.title_line1 || "Bien plus qu'un"}
+              {content?.title_line1 || t("experience_title_1")}
               <br />
               <span className="bg-gradient-to-r from-gold via-gold/80 to-gold/60 bg-clip-text text-transparent">
-                {content?.title_line2 || "simple trajet."}
+                {content?.title_line2 || t("experience_title_2")}
               </span>
             </motion.h2>
 
@@ -92,7 +96,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
               transition={{ delay: 0.2, duration: 0.6 }}
               className="body-feature text-ink-2 leading-relaxed max-w-xl"
             >
-              {content?.description || "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception. Du confort absolu à la performance, chaque détail est pensé pour vous."}
+              {content?.description || t("experience_desc")}
             </motion.p>
 
             {/* Stats Display */}
@@ -123,7 +127,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
               viewport={{ once: true }}
               className="section-eyebrow"
             >
-              {content?.right_label || "Explorer par style"}
+              {content?.right_label || t("experience_right_label")}
             </motion.p>
 
             {/* Cards Grid */}
@@ -180,7 +184,7 @@ export default function ExperienceSection({ content = {} }: ExperienceSectionPro
                 href={content?.cta_link || "/fleet"} 
                 className="nav-link-gold text-sm font-bold uppercase tracking-wider"
               >
-                {content?.cta_text || "Voir toute la collection"}
+                {content?.cta_text || t("experience_cta")}
                 <span className="ml-2">→</span>
               </Link>
             </motion.div>

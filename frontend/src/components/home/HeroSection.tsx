@@ -47,7 +47,7 @@ export default function HeroSection({
   const heroImage = heroImageProp || getImageUrl(agency.hero_image_url) || "https://images.unsplash.com/photo-1503377215949-b98377627166?q=80&w=2400&auto=format&fit=crop";
   const heroVideo = heroVideoProp || agency.hero_video_url || "https://assets.mixkit.co/videos/preview/mixkit-black-luxury-car-driving-on-a-highway-42412-large.mp4";
 
-  const scrollText = content?.experience?.cta_text || "Découvrir";
+  const scrollText = content?.experience?.cta_text || t("hero_scroll_discover");
 
   return (
     <section

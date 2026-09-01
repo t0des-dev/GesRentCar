@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { MapPin, Calendar, Search, ChevronUp } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface StickyBookingBarProps {
   location: string;
@@ -27,6 +28,7 @@ export default function StickyBookingBar({
   location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch,
   content = {}
 }: StickyBookingBarProps) {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const { scrollY } = useScroll();
@@ -39,8 +41,8 @@ export default function StickyBookingBar({
   }, [scrollY]);
 
   const today = new Date().toISOString().split("T")[0];
-  const placeholder = content?.placeholder || "Destination";
-  const searchLabel = content?.search_label || "Rechercher";
+  const placeholder = content?.placeholder || t("sticky_destination");
+  const searchLabel = content?.search_label || t("sticky_search_btn");
 
   return (
     <AnimatePresence>

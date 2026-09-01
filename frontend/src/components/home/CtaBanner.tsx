@@ -29,7 +29,7 @@ export default function CtaBanner({ content = {} }: CtaBannerProps) {
 
       <div className="container mx-auto px-6 relative z-10 max-w-[620px]">
         <p className="section-eyebrow justify-center" style={{ color: "hsl(var(--gold-dark))" }}>
-          {content?.eyebrow || "Prêt à prendre le volant ?"}
+          {content?.eyebrow || t("cta_eyebrow")}
         </p>
         <h2 id="cta-heading" className="text-[clamp(32px,4.4vw,50px)] font-bold text-white tracking-tight leading-[1.15] mb-5 mt-3">
           {t("cta_title")}
@@ -52,7 +52,7 @@ export default function CtaBanner({ content = {} }: CtaBannerProps) {
             className="inline-flex items-center gap-2 rounded-full px-[38px] py-[19px] text-[15.5px] font-semibold border border-white/35 text-white hover:bg-white/8 transition-all duration-300"
             style={{ fontFamily: "var(--font-sora), sans-serif" }}
           >
-            Nous contacter
+            {t("cta_contact_us")}
           </Link>
         </div>
       </div>

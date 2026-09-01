@@ -230,6 +230,7 @@ const translations = {
     about_cta_button: "Creer Mon Compte",
     cta_title: "Prêt pour la route ?",
     cta_desc: "Réservez votre véhicule de rêve en quelques minutes et profitez de l'excellence.",
+    cta_eyebrow: "Prêt à prendre le volant ?",
 
     // ===== Errors =====
     errors_title: "Erreur",
@@ -963,6 +964,31 @@ const translations = {
     dash_res_number: "Réservation",
     dash_res_total: "Total",
     dash_res_details: "Voir détails",
+
+    // ===== Sections & Hero =====
+    hero_scroll_discover: "Découvrir",
+    services_learn_more: "En savoir plus",
+    experience_explore_style: "Explorer par style",
+    experience_view_collection: "Voir toute la collection",
+    experience_eyebrow: "L'Expérience Premium",
+    experience_title_1: "Bien plus qu'un",
+    experience_title_2: "simple trajet.",
+    experience_desc: "Nous redéfinissons la mobilité de luxe en intégrant chaque voyage dans un style de vie d'exception.",
+    experience_right_label: "Explorer par style",
+    experience_cta: "Voir toute la collection",
+    sticky_destination: "Destination",
+    sticky_search_btn: "Rechercher",
+    cta_contact_us: "Nous contacter",
+    nav_home: "Accueil",
+    section_all_label: "Tout",
+    section_see_catalogue: "Voir le catalogue",
+    featured_cta: "Voir le catalogue",
+    lifestyle_business_title: "Business Elite",
+    lifestyle_business_sub: "Ponctualité et prestige pour vos déplacements professionnels.",
+    lifestyle_tourisme_title: "Grand Tourisme",
+    lifestyle_tourisme_sub: "L'élégance à ciel ouvert pour vos moments d'exception.",
+    lifestyle_adventure_title: "Wild Adventure",
+    lifestyle_adventure_sub: "Puissance et liberté pour explorer de nouveaux horizons.",
   },
 
   en: {
@@ -1190,6 +1216,7 @@ const translations = {
     about_cta_button: "Create My Account",
     cta_title: "Ready for the road?",
     cta_desc: "Book your dream vehicle in minutes and experience excellence.",
+    cta_eyebrow: "Ready to hit the road?",
 
     // ===== Errors =====
     errors_title: "Error",
@@ -1923,6 +1950,31 @@ const translations = {
     dash_res_number: "Booking",
     dash_res_total: "Total",
     dash_res_details: "View details",
+
+    // ===== Sections & Hero =====
+    hero_scroll_discover: "Discover",
+    services_learn_more: "Learn more",
+    experience_explore_style: "Explore by style",
+    experience_view_collection: "View full collection",
+    experience_eyebrow: "The Premium Experience",
+    experience_title_1: "More than just a",
+    experience_title_2: "simple drive.",
+    experience_desc: "We redefine luxury mobility by weaving every journey into an extraordinary lifestyle.",
+    experience_right_label: "Explore by style",
+    experience_cta: "View full collection",
+    sticky_destination: "Destination",
+    sticky_search_btn: "Search",
+    cta_contact_us: "Contact us",
+    nav_home: "Home",
+    section_all_label: "All",
+    section_see_catalogue: "See catalogue",
+    featured_cta: "See catalogue",
+    lifestyle_business_title: "Business Elite",
+    lifestyle_business_sub: "Punctuality and prestige for your professional travel.",
+    lifestyle_tourisme_title: "Grand Tourisme",
+    lifestyle_tourisme_sub: "Open-top elegance for your most memorable moments.",
+    lifestyle_adventure_title: "Wild Adventure",
+    lifestyle_adventure_sub: "Power and freedom to explore new horizons.",
   }
 };
 

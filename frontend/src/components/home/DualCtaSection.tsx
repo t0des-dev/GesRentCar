@@ -90,7 +90,7 @@ export default function DualCtaSection({ promotion = {}, cta = {} }: DualCtaProp
             className="rounded-[40px] bg-white/5 backdrop-blur-sm border border-white/10 p-10 flex flex-col items-center justify-center text-center"
           >
             <p className="text-primary font-semibold text-[10px] uppercase tracking-[0.3em] mb-4">
-              {cta.eyebrow || "Prêt à prendre le volant ?"}
+              {cta.eyebrow || t("cta_eyebrow")}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">
               {t("cta_title")}
