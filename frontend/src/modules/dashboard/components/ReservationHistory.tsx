@@ -11,9 +11,11 @@ import { useMyReservations } from "@/shared/hooks/useApi";
 import ReservationDetailModal from "./ReservationDetailModal";
 import type { Reservation } from "@/lib/api/reservations";
 import type { LucideIcon } from "lucide-react";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface StatusConfig {
-  label: string;
+  labelFr: string;
+  labelEn: string;
   icon: LucideIcon;
   bg: string;
   border: string;
@@ -21,16 +23,17 @@ interface StatusConfig {
 }
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
-  confirmed:       { label: "Confirmée",  icon: CheckCircle, bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
-  active:          { label: "En cours",   icon: Car,         bg: "from-primary/30 to-primary/10", border: "border-primary/40", text: "text-primary" },
-  completed:       { label: "Terminée",   icon: CheckCircle, bg: "from-blue-500/30 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-400" },
-  cancelled:       { label: "Annulée",    icon: XCircle,     bg: "from-red-500/30 to-red-500/10", border: "border-red-400/40", text: "text-red-400" },
-  pending_payment: { label: "En attente", icon: AlertCircle, bg: "from-amber-500/30 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-400" },
+  confirmed:       { labelFr: "Confirmée", labelEn: "Confirmed", icon: CheckCircle, bg: "from-emerald-500/30 to-emerald-500/10", border: "border-emerald-400/40", text: "text-emerald-400" },
+  active:          { labelFr: "En cours", labelEn: "Active", icon: Car, bg: "from-primary/30 to-primary/10", border: "border-primary/40", text: "text-primary" },
+  completed:       { labelFr: "Terminée", labelEn: "Completed", icon: CheckCircle, bg: "from-blue-500/30 to-blue-500/10", border: "border-blue-400/40", text: "text-blue-400" },
+  cancelled:       { labelFr: "Annulée", labelEn: "Cancelled", icon: XCircle, bg: "from-red-500/30 to-red-500/10", border: "border-red-400/40", text: "text-red-400" },
+  pending_payment: { labelFr: "En attente", labelEn: "Pending", icon: AlertCircle, bg: "from-amber-500/30 to-amber-500/10", border: "border-amber-400/40", text: "text-amber-400" },
 };
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, lang }: { status: string; lang: string }) {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.confirmed;
-  const { label, icon: Icon, bg, border, text } = config;
+  const { labelFr, labelEn, icon: Icon, bg, border, text } = config;
+  const label = lang === "fr" ? labelFr : labelEn;
   return (
     <div className={cn(
       "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
@@ -42,6 +45,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function ReservationHistory() {
+  const { t, lang } = useTranslation();
   const { data: reservations, isLoading, error } = useMyReservations();
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
@@ -49,7 +53,7 @@ export default function ReservationHistory() {
     return (
       <div className="text-center py-32">
         <Loader2 size={48} className="animate-spin mx-auto text-gold opacity-60 mb-6" />
-        <p className="text-xs font-bold uppercase tracking-widest text-ink-3">Chargement des réservations...</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-ink-3">{t("dash_res_loading")}</p>
       </div>
     );
   }
@@ -58,8 +62,8 @@ export default function ReservationHistory() {
     return (
       <div className="text-center py-32 bg-surface-1 rounded-2xl border-2 border-border">
         <XCircle size={48} className="mx-auto mb-6 text-red-400/50" />
-        <h3 className="text-xl font-bold text-ink-1 mb-3 font-serif">Erreur de chargement</h3>
-        <p className="text-ink-2 text-sm">Impossible de récupérer vos réservations.</p>
+        <h3 className="text-xl font-bold text-ink-1 mb-3 font-serif">{t("dash_res_error_title")}</h3>
+        <p className="text-ink-2 text-sm">{t("dash_res_error_desc")}</p>
       </div>
     );
   }
@@ -74,10 +78,10 @@ export default function ReservationHistory() {
         className="text-center py-32 bg-surface-1 rounded-2xl border-2 border-border"
       >
         <Car size={64} className="mx-auto mb-8 text-gold/30" />
-        <h3 className="text-2xl font-bold text-ink-1 mb-3 font-serif">Aucune réservation</h3>
-        <p className="text-ink-2 max-w-sm mx-auto mb-8 text-sm">Votre prochaine aventure n&apos;attend que vous. Explorez notre collection exclusive.</p>
+        <h3 className="text-2xl font-bold text-ink-1 mb-3 font-serif">{t("dash_res_empty_title")}</h3>
+        <p className="text-ink-2 max-w-sm mx-auto mb-8 text-sm">{t("dash_res_empty_desc")}</p>
         <Link href="/fleet" className="inline-flex items-center gap-2 bg-gradient-to-r from-gold to-gold/90 text-ink-1 px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-gold/30 hover:shadow-xl hover:shadow-gold/40 transition-all">
-          Découvrir la flotte <ArrowRight size={16} strokeWidth={3} />
+          {t("dash_res_discover_fleet")} <ArrowRight size={16} strokeWidth={3} />
         </Link>
       </motion.div>
     );
@@ -104,13 +108,13 @@ export default function ReservationHistory() {
                 height={250}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-surface-0/80 to-transparent flex items-start p-4">
-                <StatusBadge status={res.status} />
+                <StatusBadge status={res.status} lang={lang} />
               </div>
             </div>
 
             <div className="p-6 flex-1 flex flex-col justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3 mb-2">Réservation #{res.id}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3 mb-2">{t("dash_res_number")} #{res.id}</p>
                 <h3 className="text-xl font-bold text-ink-1 tracking-tight mb-3 font-serif">
                   {res.vehicle ? `${res.vehicle.brand} ${res.vehicle.model}` : `Véhicule #${res.vehicle_id}`}
                 </h3>
@@ -132,7 +136,7 @@ export default function ReservationHistory() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <div className="text-right flex-1 sm:flex-none">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3 mb-1">Total</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3 mb-1">{t("dash_res_total")}</p>
                   <p className="text-xl font-bold text-gold tracking-tight">{fmt(res.total_price)} <span className="text-sm text-ink-3 ml-0.5">DH</span></p>
                 </div>
 
@@ -142,17 +146,17 @@ export default function ReservationHistory() {
                   onClick={() => setSelectedReservation(res)}
                   className="ml-auto px-5 py-2.5 bg-surface-1 border-2 border-border rounded-xl text-[10px] font-bold uppercase tracking-wider text-ink-1 hover:border-gold hover:bg-gold/5 transition-all"
                 >
-                  Détails
+                  {t("dash_res_details")}
                 </motion.button>
 
                 {(res as any).has_contract && (
                   <a
-                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=fr`}
+                    href={`${process.env.NEXT_PUBLIC_API_URL || "/api/v1"}/public/reservations/${res.id}/contract?lang=${lang}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-5 py-2.5 bg-emerald-500/15 border border-emerald-400/30 rounded-xl text-[10px] font-bold uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/25 transition-all"
                   >
-                    <Download size={12} strokeWidth={2.5} /> Contrat
+                    <Download size={12} strokeWidth={2.5} /> {lang === "fr" ? "Contrat" : "Contract"}
                   </a>
                 )}
 

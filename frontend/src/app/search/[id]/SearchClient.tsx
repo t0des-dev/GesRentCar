@@ -13,6 +13,7 @@ import BookingForm from "@/modules/booking/components/BookingForm";
 import BookingSuccess from "@/modules/booking/components/BookingSuccess";
 import SignatureStep from "@/modules/booking/components/SignatureStep";
 import { StripeCheckout } from "@/modules/payments/components/StripeCheckout";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 import { Vehicle } from "@/lib/api/vehicles";
 
@@ -25,6 +26,7 @@ const IMAGE_MAPPING: Record<string, string> = {
 type BookingStep = "info" | "signature" | "payment" | "success";
 
 export default function SearchClient() {
+  const { t, lang } = useTranslation();
   const { id } = useParams();
   const router = useRouter();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -108,7 +110,7 @@ export default function SearchClient() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between mb-12">
           <button onClick={() => router.back()} className="group flex items-center gap-2 text-slate-400 hover:text-primary transition-all text-xs font-black uppercase tracking-widest">
-            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Retour à la sélection
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> {lang === "fr" ? "Retour à la sélection" : "Back to selection"}
           </button>
           
           <div className="flex items-center gap-6">
@@ -134,11 +136,11 @@ export default function SearchClient() {
                 <motion.div key="info" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                   <div className="flex items-center justify-between mb-10">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Estimation du séjour</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{lang === "fr" ? "Estimation du séjour" : "Trip estimation"}</p>
                       <h2 className="text-3xl font-black text-slate-900 tracking-tight">{fmt(totalPrice)} DH</h2>
                     </div>
                     <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
-                       <span className="text-[10px] font-black uppercase tracking-widest text-primary">{form.start_date && form.end_date ? "Total" : "/ jour"}</span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-primary">{form.start_date && form.end_date ? (lang === "fr" ? "Total" : "Total") : (lang === "fr" ? "/ jour" : "/ day")}</span>
                     </div>
                   </div>
                   <BookingForm form={form} setForm={setForm} onSubmit={handleInfoSubmit} loading={false} today={today} />
@@ -153,10 +155,10 @@ export default function SearchClient() {
                 <motion.div key="payment" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
                    <div className="text-center mb-8">
                       <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest mb-4">
-                         <Shield size={14} /> Paiement de l'acompte (15%)
+                         <Shield size={14} /> {lang === "fr" ? "Paiement de l'acompte (15%)" : "Deposit payment (15%)"}
                       </div>
                       <h3 className="text-2xl font-black text-slate-900 mb-2">{fmt(deposit)} DH</h3>
-                      <p className="text-slate-400 text-xs font-medium italic">Le reste ({ fmt(totalPrice - deposit) } DH) sera payé lors de la prise du véhicule.</p>
+                      <p className="text-slate-400 text-xs font-medium italic">{lang === "fr" ? `Le reste (${fmt(totalPrice - deposit)} DH) sera payé lors de la prise du véhicule.` : `The remaining balance (${fmt(totalPrice - deposit)} DH) will be paid upon vehicle pickup.`}</p>
                    </div>
                    <StripeCheckout deposit={deposit} bookingPayload={bookingPayload} onSuccess={() => setStep("success")} />
                 </motion.div>
@@ -169,8 +171,8 @@ export default function SearchClient() {
 
             {step !== "success" && (
               <div className="mt-8 pt-8 border-t border-slate-100 space-y-3">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500"><CheckCircle2 size={14} /> Annulation gratuite (24h)</div>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400"><CheckCircle2 size={14} /> Kilométrage illimité</div>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500"><CheckCircle2 size={14} /> {t("confirm_incl_cancel")}</div>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400"><CheckCircle2 size={14} /> {lang === "fr" ? "Kilométrage illimité" : "Unlimited mileage"}</div>
               </div>
             )}
           </aside>

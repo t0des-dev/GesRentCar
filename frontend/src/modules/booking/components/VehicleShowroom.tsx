@@ -4,8 +4,10 @@ import { useState } from "react";
 import { cn } from "@/shared/utils";
 import { X, Rotate3d, ChevronRight } from "lucide-react";
 import { DisplayVehicle } from "@/modules/booking/hooks/useBooking";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: DisplayVehicle; onClose: () => void; onSelect: () => void }) {
+  const { t } = useTranslation();
   const [is360, setIs360] = useState(false);
   
   if (!vehicle) return null;
@@ -53,7 +55,7 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: Displ
                 )}
               >
                 <Rotate3d size={18} />
-                {is360 ? "Quitter Mode 360°" : "Activer Vue 360°"}
+                {is360 ? t("showroom_mode_360_off") : t("showroom_mode_360_on")}
               </button>
             </div>
           </div>
@@ -97,7 +99,7 @@ export function VehicleShowroom({ vehicle, onClose, onSelect }: { vehicle: Displ
               onClick={() => { onSelect(); onClose(); }} 
               className="w-full bg-primary text-primary-foreground py-5 rounded-xl font-semibold shadow-sm hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              Réserver ce modèle
+              {t("showroom_book_model")}
               <ChevronRight size={18} />
             </button>
           </div>

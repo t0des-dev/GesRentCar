@@ -5,8 +5,7 @@ import { useTranslation } from "@/shared/hooks/useTranslation";
 import { useVehicles } from "@/shared/hooks/useApi";
 import { getImageUrl } from "@/shared/utils/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronDown, ChevronUp, Check, MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
 
 // Components
 import StepIndicator from "@/modules/booking/components/StepIndicator";
@@ -119,119 +118,6 @@ export default function BookingPage() {
           {/* Left Content */}
           <div className="w-full lg:w-2/3 space-y-10">
 
-            {/* Section 1 — Reservation Summary */}
-            {vehicle && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-px w-8 bg-gold" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Section 1</p>
-                </div>
-                <h2 className="text-2xl font-black text-gray-900">Reservation Summary</h2>
-
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-24 h-20 bg-gray-100 rounded-xl overflow-hidden shrink-0">
-                      <img
-                        src={vehicle.img || "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=600"}
-                        alt={vehicle.model || ""}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-1">{vehicle.type || "Premium"}</p>
-                      <h3 className="text-lg font-black text-gray-900">{vehicle.brand} {vehicle.model || "Similar"}</h3>
-                      <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-gray-500">
-                        {booking.startDate && (
-                          <span className="flex items-center gap-1"><Calendar size={12} /> Pickup {new Date(booking.startDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}</span>
-                        )}
-                        {booking.endDate && (
-                          <span className="flex items-center gap-1"><Calendar size={12} /> Return {new Date(booking.endDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}</span>
-                        )}
-                        {days > 0 && <span className="flex items-center gap-1"><Clock size={12} /> {days} Days</span>}
-                        {booking.location && <span className="flex items-center gap-1"><MapPin size={12} /> {booking.location}</span>}
-                      </div>
-                    </div>
-                  </div>
-                  {vehicle && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <Check size={12} className="text-emerald-600" strokeWidth={3} />
-                      </div>
-                      <span className="text-sm font-semibold text-emerald-600">Instant Confirmation</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 pt-2">
-                    <span className="px-3 py-1.5 bg-[#16213E] text-white text-[11px] font-bold rounded-lg">ART Fleet — Instant</span>
-                    {vehicle.category === "collaborator" && (
-                      <span className="px-3 py-1.5 bg-gray-100 text-gray-600 text-[11px] font-bold rounded-lg">Partner Vehicle</span>
-                    )}
-                  </div>
-                </div>
-              </motion.section>
-            )}
-
-            {/* Section 2 — Rental Details */}
-            {vehicle && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-px w-8 bg-gold" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Section 2</p>
-                </div>
-                <h2 className="text-2xl font-black text-gray-900">Rental Details</h2>
-                <p className="text-sm text-gray-500">These were set on the vehicle page and are locked for checkout.</p>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Pickup Location</p>
-                    <p className="text-sm font-semibold text-gray-900">{booking.location || "Casablanca — Mohammed V Airport"}</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Return Location</p>
-                    <p className="text-sm font-semibold text-gray-900">{booking.location || "Casablanca — Mohammed V Airport"}</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Pickup Date</p>
-                    <p className="text-sm font-semibold text-gray-900">{booking.startDate ? new Date(booking.startDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—"}</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Pickup Time</p>
-                    <p className="text-sm font-semibold text-gray-900">10:00</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Return Date</p>
-                    <p className="text-sm font-semibold text-gray-900">{booking.endDate ? new Date(booking.endDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }) : "—"}</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Return Time</p>
-                    <p className="text-sm font-semibold text-gray-900">10:00</p>
-                  </div>
-                  <div className="bg-white rounded-xl border border-gray-100 p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Rental Duration</p>
-                    <p className="text-sm font-semibold text-gray-900">{days > 0 ? `${days} Days` : "—"}</p>
-                  </div>
-                </div>
-
-                <p className="text-xs text-gray-400">
-                  <span className="text-gold font-semibold cursor-pointer hover:underline">Need to change these details? Go back to the Vehicle page</span>
-                </p>
-
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-gold focus:ring-gold" />
-                  <span className="text-sm text-gray-600">I would like airport pickup / delivery</span>
-                </label>
-              </motion.section>
-            )}
-
             {/* Step Wizard */}
             <div>
               <StepIndicator currentStep={step} onStepClick={setStep} />
@@ -296,14 +182,14 @@ export default function BookingPage() {
                     className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors"
                   >
                     <ArrowLeft size={16} />
-                    Back
+                    {t("booking_back") || "Retour"}
                   </button>
                   <button
                     onClick={nextStep}
                     disabled={!canNext()}
-                    className="px-6 py-3 bg-[#16213E] text-white rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-[#1a2744] transition-all disabled:opacity-30"
+                    className="px-6 py-3 bg-[#16213E] text-white rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-[#1a2744] transition-all disabled:opacity-30 flex items-center gap-2"
                   >
-                    Continue
+                    {t("booking_continue") || "Continuer"}
                     <ChevronRight size={16} className="inline ml-1" />
                   </button>
                 </div>
@@ -317,7 +203,7 @@ export default function BookingPage() {
             className="lg:hidden flex items-center gap-2 w-full py-3 px-5 bg-white rounded-2xl border border-gray-100 text-sm font-semibold text-gray-600"
           >
             {showSummaryMobile ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            {showSummaryMobile ? "Masquer le récapitulatif" : "Afficher le récapitulatif"}
+            {showSummaryMobile ? t("booking_hide_summary") : t("booking_show_summary")}
           </button>
 
           {/* Right Sidebar */}

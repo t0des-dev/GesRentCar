@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/shared/ui/button";
 import { useState } from "react";
 import MagneticWrapper from "@/shared/ui/MagneticWrapper";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface HeroSearchFormProps {
   location: string;
@@ -39,14 +40,15 @@ const PREDEFINED_LOCATIONS = [
 export default function HeroSearchForm({
   location, setLocation, startDate, setStartDate, endDate, setEndDate, startTime, setStartTime, endTime, setEndTime, onSearch, y1, mounted, content = {}
 }: HeroSearchFormProps) {
+  const { t, lang } = useTranslation();
   const today = getTodayString();
   const sf = content?.search_form || {};
-  const locationLabel = sf?.location_label || "Destination";
-  const locationPlaceholder = sf?.location_placeholder || "Ville, aéroport...";
-  const startLabel = sf?.start_label || "Départ";
-  const endLabel = sf?.end_label || "Retour";
-  const searchButton = sf?.search_button || "Chercher un véhicule";
-  const fleetLinkText = sf?.fleet_link_text || "Voir toute la flotte";
+  const locationLabel = sf?.location_label || t("hero_pickup_location") || (lang === "fr" ? "Lieu de prise en charge" : "Pick-up location");
+  const locationPlaceholder = sf?.location_placeholder || (lang === "fr" ? "Casablanca — Aéroport Mohammed V" : "Casablanca — Mohammed V Airport");
+  const startLabel = sf?.start_label || t("hero_pickup_date") || (lang === "fr" ? "Date de départ" : "Pick-up date");
+  const endLabel = sf?.end_label || t("hero_return_date") || (lang === "fr" ? "Date de retour" : "Return date");
+  const searchButton = sf?.search_button || t("hero_search_btn") || (lang === "fr" ? "Chercher un véhicule" : "Search a vehicle");
+  const fleetLinkText = sf?.fleet_link_text || t("hero_view_fleet") || (lang === "fr" ? "Voir toute la flotte" : "View full fleet");
   const fleetLinkHref = sf?.fleet_link_href || "/fleet";
 
   const [showLocations, setShowLocations] = useState(false);
@@ -63,10 +65,10 @@ export default function HeroSearchForm({
         {/* Header from Screenshot */}
         <div className="mb-6">
           <h3 className="text-[22px] font-bold text-[#16213E] mb-1" style={{ fontFamily: "var(--font-sora), sans-serif" }}>
-            {sf?.title || "Reserve your vehicle"}
+            {sf?.title || t("hero_card_title") || (lang === "fr" ? "Réservez votre véhicule" : "Reserve your vehicle")}
           </h3>
           <span className="text-[13px] text-[#8a8f98] block">
-            {sf?.subtitle || "Confirmed in under 2 minutes."}
+            {sf?.subtitle || t("hero_card_subtitle") || (lang === "fr" ? "Confirmé en moins de 2 minutes." : "Confirmed in under 2 minutes.")}
           </span>
         </div>
 
@@ -174,7 +176,7 @@ export default function HeroSearchForm({
 
             <div className="space-y-1.5">
               <label className="block text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#8a8f98]">
-                RETURN TIME
+                {t("booking_return_time") || (lang === "fr" ? "Heure de retour" : "Return time")}
               </label>
               <div className="flex items-center gap-2 px-3 py-2.5 bg-[#EEF2F6] border border-transparent rounded-xl focus-within:border-gold focus-within:bg-white transition-all duration-300 overflow-hidden">
                 <input
@@ -188,31 +190,31 @@ export default function HeroSearchForm({
             </div>
           </div>
 
-          {/* Vehicle Category Field from Screenshot */}
+          {/* Vehicle Category Field */}
           <div className="space-y-1.5">
             <label className="block text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#8a8f98]">
-              VEHICLE CATEGORY
+              {t("filter_category") || (lang === "fr" ? "Catégorie" : "Vehicle category")}
             </label>
             <select
               className="w-full bg-[#EEF2F6] text-[#1D1D1F] text-[14px] px-4 py-3 rounded-xl border border-transparent focus:border-gold focus:bg-white outline-none transition-all font-medium appearance-none cursor-pointer"
               defaultValue="any"
             >
-              <option value="any">Any category</option>
-              <option value="sedan">Berlines Premium</option>
-              <option value="suv">SUV & 4x4</option>
-              <option value="luxury">Sport & Prestige</option>
-              <option value="chauffeur">Chauffeur VIP</option>
+              <option value="any">{lang === "fr" ? "Toutes les catégories" : "Any category"}</option>
+              <option value="sedan">{lang === "fr" ? "Berlines Premium" : "Premium Sedans"}</option>
+              <option value="suv">{lang === "fr" ? "SUV & 4x4" : "SUV & 4x4"}</option>
+              <option value="luxury">{lang === "fr" ? "Sport & Prestige" : "Sport & Prestige"}</option>
+              <option value="chauffeur">{lang === "fr" ? "Chauffeur VIP" : "VIP Chauffeur"}</option>
             </select>
           </div>
 
-          {/* Action Button from Screenshot */}
+          {/* Action Button */}
           <div className="pt-2">
             <button
               onClick={onSearch}
               className="w-full py-4 px-6 rounded-full bg-[#16213E] hover:bg-[#0f172a] text-white font-semibold text-[15px] tracking-wide shadow-md transition-all duration-300"
               style={{ fontFamily: "var(--font-sora), sans-serif" }}
             >
-              {searchButton || "Check availability"}
+              {searchButton}
             </button>
           </div>
 

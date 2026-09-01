@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils";
 import { fmt } from "@/shared/utils/format";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 interface VehicleOption {
   id: number;
@@ -36,6 +37,7 @@ const MOCK_VEHICLES: VehicleOption[] = [
 ];
 
 export default function MultiVehicleBooking() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<SelectedVehicle[]>([]);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -135,7 +137,7 @@ export default function MultiVehicleBooking() {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-ink-3 uppercase tracking-widest mb-1 block">Fin</label>
+                    <label className="text-[10px] font-bold text-ink-3 uppercase tracking-widest mb-1 block">{t("booking_form_return") || "Fin"}</label>
                     <input
                       type="date"
                       value={s.endDate}
@@ -145,7 +147,7 @@ export default function MultiVehicleBooking() {
                   </div>
                 </div>
                 <div className="mt-2 text-right">
-                  <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">{days} jour(s) · </span>
+                  <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">{days} {t("multi_days_unit") || "jour(s)"} · </span>
                   <span className="text-sm font-black text-primary">{fmt(subtotal)} DH</span>
                 </div>
               </motion.div>
@@ -157,15 +159,15 @@ export default function MultiVehicleBooking() {
       {selected.length === 0 && (
         <div className="py-12 text-center border-2 border-dashed border-border rounded-xl">
           <Car size={32} className="mx-auto text-ink-3/30 mb-3" />
-          <p className="text-ink-3 text-sm font-bold">Aucun véhicule sélectionné</p>
-          <p className="text-[10px] text-ink-3 font-bold uppercase tracking-widest mt-1">Cliquez sur &quot;Ajouter&quot; pour commencer</p>
+          <p className="text-ink-3 text-sm font-bold">{t("multi_empty_title") || "Aucun véhicule sélectionné"}</p>
+          <p className="text-[10px] text-ink-3 font-bold uppercase tracking-widest mt-1">{t("multi_empty_desc") || "Cliquez sur \"Ajouter\" pour commencer"}</p>
         </div>
       )}
 
       {selected.length > 0 && (
         <div className="mt-4 pt-4 border-t border-border">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">Total estimé</span>
+            <span className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">{t("multi_total_est") || "Total estimé"}</span>
             <span className="text-xl font-black text-ink-1">{fmt(total)} <span className="text-[10px] text-ink-3">DH</span></span>
           </div>
           <button
@@ -173,7 +175,7 @@ export default function MultiVehicleBooking() {
             className="w-full flex items-center justify-center gap-2 bg-primary text-white px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-colors"
           >
             <CreditCard size={14} />
-            Réserver tout ({selected.length})
+            {t("multi_book_all") || "Réserver tout"} ({selected.length})
           </button>
         </div>
       )}

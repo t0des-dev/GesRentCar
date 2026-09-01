@@ -9,20 +9,22 @@ import ProfileHeader from "./ProfileHeader";
 import ReservationHistory from "./ReservationHistory";
 import LoyaltyCard from "./LoyaltyCard";
 import ReferralPanel from "./ReferralPanel";
+import { useTranslation } from "@/shared/hooks/useTranslation";
 
 type DashboardTab = "reservations" | "loyalty" | "referrals" | "reviews" | "searches";
 
-const TABS: { key: DashboardTab; label: string; icon: typeof History }[] = [
-  { key: "reservations", label: "Réservations", icon: History },
-  { key: "loyalty", label: "Fidélité", icon: Star },
-  { key: "referrals", label: "Parrainage", icon: Gift },
-  { key: "reviews", label: "Avis", icon: MessageSquare },
-  { key: "searches", label: "Recherches", icon: Search },
-];
-
 export default function ClientDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<DashboardTab>("reservations");
+
+  const tabs: { key: DashboardTab; label: string; icon: typeof History }[] = [
+    { key: "reservations", label: t("dash_tab_reservations") || "Réservations", icon: History },
+    { key: "loyalty", label: t("dash_tab_loyalty") || "Fidélité", icon: Star },
+    { key: "referrals", label: t("dash_tab_referrals") || "Parrainage", icon: Gift },
+    { key: "reviews", label: t("dash_tab_reviews") || "Avis", icon: MessageSquare },
+    { key: "searches", label: t("dash_tab_searches") || "Recherches", icon: Search },
+  ];
 
   return (
     <section className="min-h-screen bg-surface-0 py-12 px-4 sm:px-6 lg:px-8">
@@ -35,7 +37,7 @@ export default function ClientDashboard() {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="flex flex-wrap gap-2 mb-10 pb-6 border-b-2 border-border"
         >
-          {TABS.map((tab) => {
+          {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
               <motion.button

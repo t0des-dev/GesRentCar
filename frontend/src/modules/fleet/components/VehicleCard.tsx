@@ -304,7 +304,7 @@ export default function VehicleCard({
             }}
             className="flex-1 h-10 px-5 rounded-full bg-[#16213E] hover:bg-[#0f172a] text-white font-semibold text-[11px] sm:text-[12px] tracking-wide shadow-md shadow-[#16213E]/20 hover:shadow-lg hover:shadow-[#16213E]/30 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-1.5"
           >
-            Réserver
+            {t("nav_book") || "Réserver"}
             <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </div>
